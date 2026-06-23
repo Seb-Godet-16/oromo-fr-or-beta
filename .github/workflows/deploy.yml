@@ -1,8 +1,3 @@
-# ══════════════════════════════════════════════════════════════════
-#  Oromo — Déploiement Direct GitHub Actions (Sans branche)
-#  Auteur : Sébastien Godet
-# ══════════════════════════════════════════════════════════════════
-
 name: 🚀 Deploy Oromo to GitHub Pages
 
 on:
@@ -29,22 +24,8 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Bump SW cache version
-        run: |
-          # Remplacez "taphadmeuh-v" ci-dessous par le préfixe de cache de votre app Oromo si nécessaire
-          CURRENT=$(grep -oE "taphadmeuh-v[0-9]+" sw.js | head -n 1 | grep -oE "[0-9]+")
-          NEXT=$((CURRENT + 1))
-          TODAY=$(date +'%Y-%m-%d')
-          echo "Version Oromo en cours : v${NEXT}"
-          sed -i "s|var CACHE_NAME = 'taphadmeuh-v${CURRENT}'.*;|var CACHE_NAME = 'taphadmeuh-v${NEXT}'; /* v${NEXT} — déployé le ${TODAY} */|g" sw.js
-
       - name: Setup Pages
-        uses: actions/configure-pages@v5
-
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: '.'
+        uses: actions/configure-pages@v4
 
       - name: Injecter le numero de version automatique
         run: |
