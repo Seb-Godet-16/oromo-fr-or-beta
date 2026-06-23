@@ -42,7 +42,7 @@
    incrément de ce suffixe. Sans ça, les utilisateurs ayant déjà
    l'app installée continuent de voir l'ancienne version.
    ────────────────────────────────────────────────────────────────── */
-var CACHE_NAME = 'taphadmeuh-v3';   /* v3 — Juin 2026 : méta PWA, lang dynamique, CSS vars */
+var CACHE_NAME = 'taphadmeuh-GITHUB_RUN_NUMBER';   /* Suffixe automatisé par GitHub Actions */
 
 /*
   Liste exhaustive des ressources à pré-cacher lors de l'installation.
