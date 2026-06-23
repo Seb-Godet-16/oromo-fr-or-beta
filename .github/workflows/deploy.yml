@@ -31,6 +31,11 @@ jobs:
         run: |
           sed -i "s/GITHUB_RUN_NUMBER/${{ github.run_number }}/g" sw.js
 
+      - name: Packager les fichiers du site
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: '.'
+
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
