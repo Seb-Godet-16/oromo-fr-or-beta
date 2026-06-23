@@ -46,6 +46,10 @@ jobs:
         with:
           path: '.'
 
+      - name: Injecter le numero de version automatique
+        run: |
+          sed -i "s/GITHUB_RUN_NUMBER/${{ github.run_number }}/g" sw.js
+
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
