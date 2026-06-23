@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<!--
+  ╔══════════════════════════════════════════════════════════════════╗
+  ║  Language App 🇫🇷🇪🇹  —  index.html                           ║
+  ║  Auteur   : Sébastien Godet                                     ║
+  ║  Assisté  : Claude Sonnet 4.6 · Gemini 3.5 Flash               ║
+  ║  Version  : Juin 2026                                           ║
+  ╠══════════════════════════════════════════════════════════════════╣
+  ║  RÔLE DE CE FICHIER                                             ║
+  ║  Ce fichier est le point d'entrée unique de l'application.      ║
+  ║  Il déclare la structure HTML des 4 "écrans" (screens) et de   ║
+  ║  la modale. Aucune logique métier n'y est présente : tout le   ║
+  ║  comportement est délégué à js/app.js et js/data-fr/or.js.     ║
+  ╠══════════════════════════════════════════════════════════════════╣
+  ║  ARCHITECTURE GLOBALE DU PROJET                                 ║
+  ║  ├── index.html   → Structure HTML (ce fichier)                ║
+  ║  ├── css/                                                       ║
+  ║  │   └── style.css  → Mise en forme visuelle                   ║
+  ║  └── js/                                                        ║
+  ║      ├── data-fr.js → Contenu linguistique — mode Français      ║
+  ║      ├── data-or.js → Contenu linguistique — mode Oromo        ║
+  ║      └── app.js     → Logique applicative (navigation, score…) ║
+  ╠══════════════════════════════════════════════════════════════════╣
+  ║  NAVIGATION ENTRE ÉCRANS                                        ║
+  ║  La visibilité des écrans est contrôlée par la classe CSS       ║
+  ║  "active" (gérée dans app.js via showScreen()).                 ║
+  ║  Ordre du parcours utilisateur :                                ║
+  ║    [0] app-launcher → [1] home → [2] sections → [3] lesson     ║
+  ╚══════════════════════════════════════════════════════════════════╝
+-->
+<html lang="fr">
+
+<head>
+  <meta charset="UTF-8">
+  <!--
+    viewport : empêche le zoom manuel (maximum-scale=1.0) pour
+    conserver un affichage stable sur mobile.
+  -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+  <title>Taphad'Meuh 🐄</title>
+
+  <!-- ── PWA : manifest + couleur de thème ── -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#002395" id="meta-theme-color">
+  <meta name="description"
+        content="Taphad'Meuh — Application bilingue Français ↔ Afaan Oromoo. Apprenez hors-ligne, sur mobile et desktop.">
+
+  <!-- ── iOS PWA : icône et couleur de la barre de statut ── -->
+  <link rel="apple-touch-icon" href="icons/icon-192x192.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Taphad'Meuh">
+
+  <!-- ── Open Graph (partage réseaux sociaux) ── -->
+  <meta property="og:title"       content="Taphad'Meuh 🐄 — Français ↔ Afaan Oromoo">
+  <meta property="og:description" content="Application bilingue d'apprentissage Français / Oromo. Gratuite et hors-ligne.">
+  <meta property="og:image"       content="icons/icon-512x512.png">
+  <meta property="og:type"        content="website">
+
+  <!-- Feuille de styles unique — voir css/style.css pour les détails -->
+  <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+<!--
+  ┌──────────────────────────────────────────────────────────────────┐
+  │  .app — Conteneur racine                                         │
+  │  Sert de point d'ancrage pour le positionnement CSS de tous      │
+  │  les écrans. Chaque écran enfant direct est une .screen.         │
+  └──────────────────────────────────────────────────────────────────┘
+-->
+<div class="app">
+
+
+  <!-- ════════════════════════════════════════════════════════════════
+       ÉCRAN 0 — LANCEUR D'APPLICATION  (#app-launcher)
+       ────────────────────────────────────────────────────────────────
+       Premier écran affiché au lancement (classe "active" par défaut).
+       Permet à l'utilisateur de choisir sa langue cible :
+         • Apprendre le Français  → appelle initApp('learn_french')
+         • Apprendre l'Oromo     → appelle initApp('learn_oromo')
+       initApp() est défini dans js/app.js ; il initialise le contexte
+       linguistique et affiche l'écran #home.
+       ════════════════════════════════════════════════════════════════ -->
+  <div id="app-launcher" class="screen active">
+
+    <!-- Couche d'arrière-plan décorative (gérée par style.css) -->
+    <div class="launcher-bg"></div>
+
+    <!-- Contenu centré du lanceur -->
+    <div class="launcher-inner">
+      <!--
+        Logo principal — image landscape (1408×768) du projet.
+        • width:100%  → s'adapte à la largeur du .launcher-inner (max 420px)
+        • height:auto → conserve le ratio 16:9 (~0.545 × largeur)
+        • max-width   → limite sur grands écrans (voir style.css .launcher-logo)
+        • alt bilingue pour l'accessibilité
+        • loading="eager" car c'est la ressource visuelle principale de l'écran 0
+      -->
+      <img
+        class="launcher-logo"
+        src="img/Logo-appli-or-fr.png"
+        alt="Taphad'Meuh — vache tricolore parlant français et oromo / Taphad'Meuh — sa'a trikolore Faransaayii fi Oromoo dubbatu"
+        width="1408"
+        height="768"
+        loading="eager"
+        decoding="async"
+      >
+      <!-- Titre bilingue Français / Oromo -->
+      <div class="launcher-title">
+    Choisis ta langue <span class="launcher-title-translation">· Afaan kee filadhu</span>
+</div>
+
+      <!-- Cartes de sélection de langue -->
+      <div class="launcher-cards">
+
+        <!--
+          Carte Français
+          • lang-card--fr : variante colorée (voir style.css)
+          • data-lang non utilisé ici ; le clic est géré par l'écouteur
+            d'événements ajouté dans app.js (voir OPTIMISATION ci-dessous)
+          OPTIMISATION : l'attribut onclick inline a été remplacé par un
+          écouteur addEventListener dans app.js afin de séparer
+          strictement le HTML (structure) du JS (comportement).
+        -->
+        <button class="lang-card lang-card--fr" data-lang="learn_french">
+          <div class="lang-card-flag">🇫🇷</div>
+          <div class="lang-card-body">
+            <span class="lang-card-name">Apprendre le Français</span>
+            <span class="lang-card-sub">Afaan Faransaayii Barachuu</span>
+          </div>
+          <div class="lang-card-arrow">›</div>
+        </button>
+
+        <!--
+          Carte Oromo
+          • lang-card--or : variante colorée (voir style.css)
+        -->
+        <button class="lang-card lang-card--or" data-lang="learn_oromo">
+          <div class="lang-card-flag">🇪🇹</div>
+          <div class="lang-card-body">
+            <span class="lang-card-name">Afaan Oromoo Barachuu</span>
+            <span class="lang-card-sub">Apprendre l'Oromo</span>
+          </div>
+          <div class="lang-card-arrow">›</div>
+        </button>
+
+      </div><!-- /.launcher-cards -->
+    </div><!-- /.launcher-inner -->
+
+    <!-- Pied de page propre à cet écran (classe spécifique pour le style) -->
+    <footer class="launcher-footer">
+      © Juin 2026 – Développé par Sébastien Godet · Assisté par IA Claude Sonnet 4.6 et Gemini 3.5 Flash<br>
+      sebastien.godet16@gmail.com ·
+      <a href="https://www.linkedin.com/in/s%C3%A9bastien-godet-142ba6145" target="_blank">LinkedIn</a> ·
+      <!--
+        showCredits() est défini dans app.js ; il affiche la modale
+        #credits-modal en changeant son display de "none" à "flex".
+        OPTIMISATION : onclick inline conservé ici car c'est un simple
+        déclencheur de modale sans logique propre à la vue.
+      -->
+      <a href="#" onclick="showCredits()">Remerciements</a>
+    </footer>
+
+  </div><!-- /#app-launcher -->
+
+
+  <!-- ════════════════════════════════════════════════════════════════
+       ÉCRAN 1 — GUIDE / ONBOARDING  (#home)
+       ────────────────────────────────────────────────────────────────
+       Affiché après la sélection de langue (remplace l'ancien Home).
+       Contenu injecté dynamiquement par app.js via _buildHomeGuide().
+       Langue : Oromo si l'apprenant apprend le Français, et vice versa.
+       Checkbox "Ne plus afficher" → flag localStorage par mode.
+       ════════════════════════════════════════════════════════════════ -->
+  <div id="home" class="screen">
+
+    <!-- Bouton retour → launcher -->
+    <button class="back-btn home-back-btn" id="homeBackBtn">← Retour / Duubatti</button>
+
+    <!-- En-tête coloré selon le mode -->
+    <div class="home-guide-header" id="homeGuideHeader">
+      <div class="home-guide-flags" id="homeGuideFlagsRow"></div>
+      <h1 class="home-guide-title" id="homeTitle"></h1>
+      <p class="home-guide-subtitle" id="homeGuideSubtitle"></p>
+
+      <!-- Badges fonctionnalités -->
+      <div class="home-guide-badges" id="homeGuideBadges"></div>
+    </div>
+
+    <!-- Corps : accordéons d'aide — injectés par app.js -->
+    <div class="home-guide-body" id="homeGuideBody"></div>
+
+    <!-- Checkbox "Ne plus afficher" -->
+    <div class="home-guide-noshow">
+      <label class="noshow-label" id="homeNoshowLabel">
+        <input type="checkbox" id="homeNoshowChk">
+        <span id="homeNoshowText"></span>
+      </label>
+    </div>
+
+    <!-- Bouton principal "Commencer" -->
+    <div class="home-guide-cta">
+      <button class="btn-primary" id="homeStartBtn"></button>
+    </div>
+
+    <footer>
+      © Juin 2026 – Développé par Sébastien Godet · Assisté par IA Claude Sonnet 4.6 et Gemini 3.5 Flash<br>
+      sebastien.godet16@gmail.com ·
+      <a href="https://www.linkedin.com/in/s%C3%A9bastien-godet-142ba6145" target="_blank">LinkedIn</a> ·
+      <a href="#" onclick="showCredits()">Remerciements</a> ·
+      <a href="#" onclick="showOnboardingGuide()">Aide / Gargaarsa</a>
+    </footer>
+
+  </div><!-- /#home -->
+
+
+  <!-- ════════════════════════════════════════════════════════════════
+       ÉCRAN 2 — LISTE DES MODULES  (#sections)
+       ────────────────────────────────────────────────────────────────
+       Header : retour + titre + progression (gauche) + drapeau (droite).
+       Niveaux 1 et 2 en mode déroulant (<details> natif), ouverts par défaut.
+       Les grilles #grid1 et #grid2 sont générées dynamiquement par app.js.
+       ════════════════════════════════════════════════════════════════ -->
+  <div id="sections" class="screen">
+
+    <!-- ── Header sticky ── -->
+    <div class="sections-header">
+
+      <!-- Ligne gauche : retour + titre + progression + étoiles -->
+      <div class="sections-header-left">
+        <button class="back-btn" onclick="showScreen('home')" id="sectionsBackBtn"></button>
+        <h2 id="sectionsTitle"></h2>
+        <div class="progress-bar-wrap">
+          <div class="progress-bar" id="globalProgress" style="width:0%"></div>
+        </div>
+        <div class="progress-label" id="progressLabel"></div>
+        <!-- Étoiles récupérées depuis l'ancien Home -->
+        <div class="sections-stars" id="sectionsStars"></div>
+      </div>
+
+      <!-- Drapeau en haut à droite -->
+      <div class="sections-flag" id="sectionsFlagRight"></div>
+
+    </div><!-- /.sections-header -->
+
+    <div class="sections-body">
+
+      <!-- NIVEAU 1 — déroulant, ouvert par défaut -->
+      <details class="level-details" id="level1Details" open>
+        <summary class="level-summary">
+          <span class="level-badge" id="level1Badge"></span>
+          <span id="level1Label"></span>
+          <span class="level-chevron">▼</span>
+        </summary>
+        <div class="themes-grid" id="grid1"></div>
+      </details>
+
+      <!-- NIVEAU 2 — déroulant, ouvert par défaut -->
+      <details class="level-details" id="level2Details" open>
+        <summary class="level-summary">
+          <span class="level-badge l2" id="level2Badge"></span>
+          <span id="level2Label"></span>
+          <span class="level-chevron">▼</span>
+        </summary>
+        <div class="themes-grid" id="grid2"></div>
+      </details>
+
+    </div><!-- /.sections-body -->
+
+    <footer>
+      © Juin 2026 – Développé par Sébastien Godet · Assisté par IA Claude Sonnet 4.6 et Gemini 3.5 Flash<br>
+      sebastien.godet16@gmail.com ·
+      <a href="https://www.linkedin.com/in/s%C3%A9bastien-godet-142ba6145" target="_blank">LinkedIn</a> ·
+      <a href="#" onclick="showCredits()">Remerciements</a> ·
+      <a href="#" onclick="showOnboardingGuide()">Aide / Gargaarsa</a>
+    </footer>
+
+  </div><!-- /#sections -->
+
+
+  <!-- ════════════════════════════════════════════════════════════════
+       ÉCRAN 3 — LEÇON  (#lesson)
+       ────────────────────────────────────────────────────────────────
+       Affiche le contenu d'un thème sélectionné.
+       Structuré en onglets (#lessonTabs) dont le contenu (#tabContent)
+       est entièrement généré par app.js selon le thème actif.
+       ════════════════════════════════════════════════════════════════ -->
+  <div id="lesson" class="screen">
+
+    <div class="lesson-header">
+      <!-- Retour vers la liste des sections -->
+      <button class="back-btn" onclick="showScreen('sections')" id="lessonBackBtn">←</button>
+
+      <!--
+        Emoji du thème courant — injecté par app.js.
+        OPTIMISATION : les styles inline (font-size, margin-right) ont été
+        déplacés dans style.css sous le sélecteur #lessonEmoji
+        pour centraliser la mise en forme.
+      -->
+      <span id="lessonEmoji"></span>
+
+      <!-- Titre du thème courant — injecté par app.js -->
+      <h3 id="lessonTitle"></h3>
+    </div><!-- /.lesson-header -->
+
+    <div class="lesson-body" id="lessonBody">
+      <!--
+        #lessonTabs   : barre d'onglets (Vocabulaire, Quiz, etc.)
+                        générée par app.js
+        #tabContent   : contenu de l'onglet actif, mis à jour par app.js
+                        à chaque changement d'onglet
+      -->
+      <div class="tabs" id="lessonTabs"></div>
+      <div id="tabContent" aria-live="polite" aria-atomic="false"></div>
+    </div><!-- /.lesson-body -->
+
+    <!--
+      Pas de footer sur cet écran pour maximiser l'espace
+      disponible sur mobile pendant l'apprentissage.
+    -->
+
+  </div><!-- /#lesson -->
+
+
+  <!-- ════════════════════════════════════════════════════════════════
+       MODALE — REMERCIEMENTS  (#credits-modal)
+       ────────────────────────────────────────────────────────────────
+       Fenêtre superposée, cachée par défaut (display:none).
+       Ouverte par showCredits() (app.js) via display:"flex".
+       Fermée par le bouton interne qui rappelle display:"none".
+       OPTIMISATION : tous les styles inline (position, background,
+       border-radius…) ont été déplacés dans style.css sous
+       les sélecteurs .modal et .modal-content pour garder le HTML
+       lisible et la mise en forme centralisée.
+       ════════════════════════════════════════════════════════════════ -->
+  <div id="credits-modal" class="modal">
+
+    <div class="modal-content">
+
+      <h3>Remerciements</h3>
+
+      <p>
+        Un grand merci à <strong>Fédérico Calo</strong>
+        (<a href="https://www.linkedin.com/in/federicocalo/" target="_blank">
+          Architecte Développeur Web</a>)
+        pour son aide technique.<br><br>
+        Merci beaucoup également à <strong>Mussa Sembro</strong>
+        (<a href="https://www.linkedin.com/in/mussa-sembro-137472174/" target="_blank">
+          Traducteur-Interprète en Oromo</a>)
+        et à mes parents pour leur travail de relecture, leurs corrections
+        sur les traductions et leurs conseils sur l'ergonomie de l'application.
+      </p>
+
+      <!-- Fermeture de la modale : remet display à "none" -->
+      <button onclick="document.getElementById('credits-modal').style.display='none'">
+        Fermer
+      </button>
+
+    </div><!-- /.modal-content -->
+
+  </div><!-- /#credits-modal -->
+
+
+  <!-- ════════════════════════════════════════════════════════════════
+       MODALE — GUIDE UTILISATEUR  (#onboarding-modal)
+       ────────────────────────────────────────────────────────────────
+       Affiché automatiquement à la PREMIÈRE visite de chaque mode
+       (flag localStorage 'tm_onboarded_fr' / 'tm_onboarded_or').
+       Le contenu (texte, titre, langue) est injecté par app.js via
+       _buildOnboardingContent() selon le mode actif.
+
+       STRUCTURE :
+         .ob-overlay        Fond semi-transparent (ferme au clic outside)
+         .ob-sheet          Panneau blanc scrollable centré
+           .ob-header       Bandeau dégradé (emoji + titre bilingue)
+           .ob-body         Corps : sections accordéon (<details>)
+           .ob-footer       Bouton "Commencer" + lien relecture
+       ════════════════════════════════════════════════════════════════ -->
+  <div id="onboarding-modal" class="ob-overlay" aria-modal="true" role="dialog" aria-labelledby="ob-title">
+
+    <div class="ob-sheet">
+
+      <!-- En-tête dégradé (identité visuelle de l'app) -->
+      <div class="ob-header">
+        <div class="ob-header-emoji" aria-hidden="true">🐄</div>
+        <h2 class="ob-title" id="ob-title">
+          <!-- Titre injecté par app.js -->
+        </h2>
+        <p class="ob-subtitle">
+          <!-- Sous-titre injecté par app.js -->
+        </p>
+      </div>
+
+      <!-- Corps : accordéons d'aide -->
+      <div class="ob-body" id="ob-body">
+        <!-- Sections injectées dynamiquement par _buildOnboardingContent() -->
+      </div>
+
+      <!-- Pied de page : CTA principal + lien de relecture -->
+      <div class="ob-footer">
+        <button class="ob-start-btn" id="ob-start-btn">
+          <!-- Libellé injecté par app.js -->
+        </button>
+        <p class="ob-reread-hint" id="ob-reread-hint">
+          <!-- Hint "relire plus tard" injecté par app.js -->
+        </p>
+      </div>
+
+    </div><!-- /.ob-sheet -->
+
+  </div><!-- /#onboarding-modal -->
+
+
+</div><!-- /.app -->
+
+
+<!--
+  ══════════════════════════════════════════════════════════════════
+  CHARGEMENT DES SCRIPTS
+  ══════════════════════════════════════════════════════════════════
+  Les scripts sont placés en fin de <body> pour s'assurer que
+  l'intégralité du DOM est parsé avant leur exécution.
+
+  ARCHITECTURE DE CHARGEMENT (depuis Juin 2026) :
+    1. app.js   — moteur applicatif. Contient _loadDataScript(),
+                  qui injecte dynamiquement le bon fichier de
+                  données au moment du choix de langue :
+                    • learn_french → js/data-fr.js  (~1 350 lignes)
+                    • learn_oromo  → js/data-or.js  (~1 350 lignes)
+
+  AVANTAGE : seul le dataset du mode choisi est chargé en mémoire
+  (~50% de mémoire JS par mode vs un fichier monolithique unique).
+  data-fr.js et data-or.js sont pré-cachés dès l'installation par
+  le Service Worker pour garantir le fonctionnement hors-ligne.
+  ══════════════════════════════════════════════════════════════════
+-->
+<script src="js/app.js"></script>
+
+</body>
+</html>

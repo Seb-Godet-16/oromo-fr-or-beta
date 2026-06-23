@@ -1,0 +1,2276 @@
+/*
+ * ╔══════════════════════════════════════════════════════════════════╗
+ * ║  Language App 🇫🇷🇪🇹  —  css/style.css                        ║
+ * ║  Auteur   : Sébastien Godet                                     ║
+ * ║  Assisté  : Claude Sonnet 4.6 · Gemini 3.5 Flash               ║
+ * ║  Version  : Juin 2026                                           ║
+ * ╠══════════════════════════════════════════════════════════════════╣
+ * ║  RÔLE DE CE FICHIER                                             ║
+ * ║  Feuille de styles UNIQUE de l'application. Couvre :           ║
+ * ║    1. Reset & base globale                                      ║
+ * ║    2. Variables de thème (tokens CSS) — Français & Oromo       ║
+ * ║    3. Styles par écran (lanceur, home, sections, leçon)        ║
+ * ║    4. Composants réutilisables (boutons, onglets, flashcards…)  ║
+ * ║    5. Modale Remerciements                                      ║
+ * ╠══════════════════════════════════════════════════════════════════╣
+ * ║  SYSTÈME DE THÈME DYNAMIQUE                                     ║
+ * ║  initApp() dans app.js pose une classe sur <html> :            ║
+ * ║    • html.theme-french  → couleurs bleu-blanc-rouge            ║
+ * ║    • html.theme-oromo   → couleurs vert-or-rouge               ║
+ * ║  Tous les composants utilisent var(--c-*) ; il suffit de       ║
+ * ║  changer la classe sur <html> pour basculer l'intégralité du   ║
+ * ║  rendu visuel.                                                  ║
+ * ╠══════════════════════════════════════════════════════════════════╣
+ * ║  PLAN DU FICHIER                                                ║
+ * ║   §1  Reset & base                          ligne ~  55         ║
+ * ║   §2  Variables de thème (:root / fallback) ligne ~  75        ║
+ * ║   §3  Thème Français (html.theme-french)    ligne ~ 115        ║
+ * ║   §4  Thème Oromo (html.theme-oromo)        ligne ~ 155        ║
+ * ║   §5  Écran 0 — Lanceur                     ligne ~ 195        ║
+ * ║   §6  Écran 1 — Accueil #home               ligne ~ 280        ║
+ * ║   §7  Écran 2 — Sections                    ligne ~ 345        ║
+ * ║   §8  Écran 3 — Leçon                       ligne ~ 395        ║
+ * ║   §9  Composants : Flashcards               ligne ~ 425        ║
+ * ║   §10 Composants : Alphabet                 ligne ~ 495        ║
+ * ║   §11 Composants : Quiz                     ligne ~ 530        ║
+ * ║   §12 Composants : Dialogues / Situations   ligne ~ 590        ║
+ * ║   §13 Composants : Vocabulaire              ligne ~ 640        ║
+ * ║   §14 Modale Remerciements                  ligne ~ 680        ║
+ * ║   §15 Footer commun                         ligne ~ 720        ║
+ * ║   §16 Toast notification                    ligne ~ 745        ║
+ * ║   §17 Onglet Répète                         ligne ~ 785        ║
+ * ║   §18 Focus clavier                         ligne ~ 970        ║
+ * ╚══════════════════════════════════════════════════════════════════╝
+ */
+
+
+/* ══════════════════════════════════════════════════════════════════
+   §1 — RESET & BASE GLOBALE
+   ══════════════════════════════════════════════════════════════════
+   • box-sizing:border-box sur tout → largeurs prévisibles
+   • -webkit-tap-highlight-color:transparent → supprime le flash
+     bleu sur mobile lors d'un tap (iOS / Android)
+   • background de body = couleur du lanceur (#app-launcher).
+     Quand un thème est actif, html.theme-* l'écrase (voir §3/§4).
+   ══════════════════════════════════════════════════════════════════ */
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+  -webkit-tap-highlight-color:transparent;
+}
+
+body{
+  font-family:'Segoe UI', system-ui, sans-serif;
+  min-height:100vh;
+  font-size:16px;
+  /* Couleur de fond du lanceur (écran 0).
+     Écrasée par html.theme-* dès qu'un thème est activé (§3/§4). */
+  background:#f5f5f0;
+}
+
+/* Conteneur racine — centré, max 480 px (format mobile-first) */
+.app{
+  max-width:480px;
+  margin:0 auto;
+  width:100%;
+}
+
+/*
+  Système d'écrans :
+  • .screen      → caché par défaut (display:none)
+  • .screen.active → affiché en colonne flex
+  La classe "active" est posée/retirée par showScreen() dans app.js.
+*/
+.screen{display:none;min-height:100vh;flex-direction:column}
+.screen.active{display:flex}
+
+
+/* ══════════════════════════════════════════════════════════════════
+   §2 — VARIABLES DE THÈME — FALLBACK PAR DÉFAUT
+   ══════════════════════════════════════════════════════════════════
+   Ces valeurs s'appliquent si aucune classe html.theme-* n'est
+   présente (ex. : premier rendu avant que initApp() soit appelé).
+   Elles correspondent au thème Français.
+
+   OPTIMISATION : le bloc :root ci-dessous est le SEUL point de
+   vérité pour les valeurs par défaut. Auparavant, les mêmes
+   variables étaient répétées intégralement dans html.theme-french,
+   créant 19 doublons inutiles. La règle html.theme-french (§3)
+   surcharge maintenant uniquement les valeurs qui doivent être
+   explicitement réaffirmées pour la spécificité CSS.
+
+   Nomenclature des tokens :
+     --c-primary        Couleur principale (boutons, bordures…)
+     --c-primary-dark   Variante sombre (état :active)
+     --c-accent         Couleur d'accentuation (rouge FR / rouge OR)
+     --c-accent2        Couleur secondaire d'accent (blanc pour FR)
+     --c-bg             Fond des écrans sections & leçon
+     --c-done           Vert de complétion (✓ sur les cartes thème)
+     --c-progress-bg    Fond de la barre de progression
+     --c-footer-bg/border  Fond et bordure du footer
+     --c-vocab-chip-*   Puce de vocabulaire (fond + bordure)
+     --c-fc-nav-hover   Survol des boutons nav flashcard
+     --c-grad-*         Dégradés nommés par zone d'usage
+     --c-home-*         Couleurs spécifiques à l'écran #home
+   ══════════════════════════════════════════════════════════════════ */
+:root{
+  --c-primary:#002395;
+  --c-primary-dark:#001A6E;
+  --c-accent:#ED2939;
+  --c-accent2:#fff;
+  --c-bg:#f0f4ff;
+  --c-done:#4CAF50;
+  --c-progress-bg:rgba(0,56,147,.2);
+  --c-footer-bg:#e8ecf8;
+  --c-footer-border:#d0d8ee;
+  --c-vocab-chip-bg:#eef0ff;
+  --c-vocab-chip-border:#8090c0;
+  --c-fc-nav-hover:#e8eeff;
+  --c-grad-home:linear-gradient(135deg,#002395 0%,#ffffff 50%,#ED2939 100%);
+  --c-grad-sections:linear-gradient(135deg,#002395,#ED2939);
+  --c-grad-lesson:linear-gradient(135deg,#002395,#ED2939);
+  --c-grad-fc-back:linear-gradient(135deg,#002395,#ED2939);
+  --c-grad-alpha-btn:linear-gradient(135deg,#002395,#ED2939);
+  --c-home-title:#001A6E;
+  --c-home-subtitle:#002395;
+  --c-home-progress:#002395;          /* utilisé si besoin en JS */
+  --c-home-progress-label:#002395;
+
+  /* ── Couleurs sémantiques — lues par app.js via getComputedStyle ──
+     Centraliser ici évite les couleurs hardcodées dans le JS.
+     Pour changer la palette, modifier UNIQUEMENT ce bloc :root.     */
+  --c-success:#009A44;   /* feedback correct (quiz, répète)           */
+  --c-error:#c0392b;     /* feedback incorrect                        */
+  --c-star:#f1c40f;      /* étoiles ⭐ (progression, résultats)       */
+}
+
+
+/* ══════════════════════════════════════════════════════════════════
+   §3 — THÈME FRANÇAIS  (html.theme-french)
+   ══════════════════════════════════════════════════════════════════
+   Activé par initApp('learn_french') → app.js pose la classe
+   "theme-french" sur <html>.
+
+   La règle html:not([class*="theme-"]) couvre le cas où la classe
+   n'est pas encore posée (premier rendu, ou reload sans thème).
+
+   Les valeurs ici sont identiques à :root ; elles sont conservées
+   pour la spécificité CSS : html.theme-french bat :root, ce qui
+   garantit qu'un éventuel autre sélecteur ne peut pas s'y glisser.
+   ══════════════════════════════════════════════════════════════════ */
+html.theme-french,
+html:not([class*="theme-"]){
+  --c-primary:#002395;
+  --c-primary-dark:#001A6E;
+  --c-accent:#ED2939;
+  --c-bg:#f0f4ff;
+  --c-done:#4CAF50;
+  --c-progress-bg:rgba(0,56,147,.2);
+  --c-footer-bg:#e8ecf8;
+  --c-footer-border:#d0d8ee;
+  --c-vocab-chip-bg:#eef0ff;
+  --c-vocab-chip-border:#8090c0;
+  --c-fc-nav-hover:#e8eeff;
+  --c-grad-home:linear-gradient(135deg,#002395 0%,#ffffff 50%,#ED2939 100%);
+  --c-grad-sections:linear-gradient(135deg,#002395,#ED2939);
+  --c-grad-lesson:linear-gradient(135deg,#002395,#ED2939);
+  --c-grad-fc-back:linear-gradient(135deg,#002395,#ED2939);
+  --c-grad-alpha-btn:linear-gradient(135deg,#002395,#ED2939);
+  --c-home-title:#001A6E;
+  --c-home-subtitle:#002395;
+  --c-home-progress-label:#002395;
+}
+
+/* Fond de body synchronisé avec le thème français */
+html.theme-french body{background:#f0f4ff}
+
+
+/* ══════════════════════════════════════════════════════════════════
+   §4 — THÈME OROMO  (html.theme-oromo)
+   ══════════════════════════════════════════════════════════════════
+   Activé par initApp('learn_oromo') → app.js pose la classe
+   "theme-oromo" sur <html>.
+
+   Palette inspirée du drapeau éthiopien :
+     vert  #009A44 · or/jaune #FED141 · rouge #EF2B2D
+   ══════════════════════════════════════════════════════════════════ */
+html.theme-oromo{
+  --c-primary:#009A44;
+  --c-primary-dark:#004d22;
+  --c-accent:#EF2B2D;
+  --c-bg:#f4f9f4;
+  --c-done:#009A44;
+  --c-progress-bg:rgba(0,154,68,.2);
+  --c-footer-bg:#ebf3eb;
+  --c-footer-border:#d0ebd8;
+  --c-vocab-chip-bg:#f0f9f4;
+  --c-vocab-chip-border:#a0d8b4;
+  --c-fc-nav-hover:#e8f5e9;
+  --c-grad-home:linear-gradient(135deg,#009A44 0%,#ffffff 50%,#EF2B2D 100%);
+  --c-grad-sections:linear-gradient(135deg,#009A44,#FED141,#EF2B2D);
+  --c-grad-lesson:linear-gradient(135deg,#009A44,#FED141);
+  --c-grad-fc-back:linear-gradient(135deg,#009A44,#FED141);
+  --c-grad-alpha-btn:linear-gradient(135deg,#009A44,#FED141);
+  --c-home-title:#004d22;
+  --c-home-subtitle:#6b5200;
+  --c-home-progress-label:#004d22;
+}
+
+/* Fond de body synchronisé avec le thème oromo */
+html.theme-oromo body{background:#f4f9f4}
+
+
+/* ══════════════════════════════════════════════════════════════════
+   §5 — ÉCRAN 0 : LANCEUR D'APPLICATION  (#app-launcher)
+   ══════════════════════════════════════════════════════════════════
+   Premier écran visible. Fond café au lait (Option 2B), motif de 
+   dégradé discret pour rappeler les deux drapeaux sans imposer un thème.
+   ══════════════════════════════════════════════════════════════════ */
+#app-launcher{
+  background: #D9C8B4; /* Option 2B : Café au lait plus foncé */
+  align-items: center;
+  justify-content: center;
+  padding: 24px 20px 80px; /* padding-bottom réservé au footer absolu */
+  position: relative;
+  overflow: hidden;
+  min-height: 100vh;
+}
+
+/*
+   Couche décorative de fond :
+   Trois dégradés radiaux superposés évoquent subtilement le bleu
+   français (haut-gauche), le vert éthiopien (bas-droite) et
+   le rouge partagé (centre). pointer-events:none → non cliquable.
+*/
+.launcher-bg{
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 15% 20%, rgba(0,35,149,.10)   0%, transparent 45%),
+    radial-gradient(circle at 85% 75%, rgba(0,154,68,.10)   0%, transparent 45%),
+    radial-gradient(circle at 50% 50%, rgba(237,41,57,.06)  0%, transparent 60%);
+  pointer-events: none;
+}
+
+/* Contenu centré — z-index:1 pour passer au-dessus de .launcher-bg */
+.launcher-inner{
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 420px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+/* Logo bannière horizontale (1408×768) — remplace l'emoji globe.
+   • width:100% + max-width → occupe toute la largeur disponible du
+     .launcher-inner (420px max) sans dépasser.
+   • height:auto → conserve le ratio natif (~54.5% de la largeur).
+   • border-radius:16px → cohérent avec le border-radius des lang-cards.
+   • object-fit:cover n'est pas nécessaire : on garde l'image entière.
+   • margin-bottom réduit : l'image est déjà imposante, on resserre.
+   • drop-shadow conservé pour la profondeur, renforcé légèrement. */
+.launcher-logo{
+  display: block;
+  width: 100%;
+  max-width: 420px;
+  height: auto;
+  border-radius: 16px;
+  margin-bottom: 18px;
+  box-shadow: 0 6px 28px rgba(0,0,0,.18);
+  /* Empêche le glissement de l'image sur iOS */
+  -webkit-user-drag: none;
+  user-select: none;
+}
+
+/* Titre bilingue principal sur la même ligne (Style Espagne) */
+.launcher-title{
+  font-size: 1rem; /* Taille épurée identique à la version Espagne */
+  font-weight: normal; /* Normal comme sur la version Espagne */
+  color: #4A3E3D; /* Marron très foncé */
+  margin-top: 15px;
+  margin-bottom: 25px;
+  letter-spacing: -.01em;
+  text-align: center;
+}
+
+/* Traduction Oromo à la suite du titre principal sur la même ligne */
+.launcher-title-translation {
+  color: #7D6B69; /* Marron plus doux et discret pour la traduction */
+  font-weight: normal;
+}
+
+/* ── Cartes de sélection de langue ──────────────────────────────── */
+
+/* Colonne de cartes */
+.launcher-cards{
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  width: 100%;
+}
+
+/*
+   Carte de base :
+   • overflow:hidden + border-radius → le dégradé ne déborde pas
+   • position:relative → pour le ::before (effet lumineux au tap)
+   • transition sur transform + box-shadow → feedback visuel fluide
+*/
+.lang-card{
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+  padding: 20px 22px;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  text-align: left;
+  box-shadow: 0 6px 24px rgba(0,0,0,.1);
+  transition: transform .15s ease, box-shadow .15s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+/*
+   Voile blanc semi-transparent révélé au tap (::before) :
+   simule un "highlight" sans changer la couleur de fond.
+*/
+.lang-card::before{
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(255,255,255,.12);
+  opacity: 0;
+  transition: opacity .15s;
+}
+.lang-card:active{
+  transform: scale(.97);
+  box-shadow: 0 3px 12px rgba(0,0,0,.12);
+}
+.lang-card:active::before{ opacity: 1 }
+
+/* Variante Français — dégradé bleu-blanc-rouge */
+.lang-card--fr{
+  background: linear-gradient(135deg,#002395 0%,#1a3a9f 50%,#c0192b 100%);
+  color: #fff;
+}
+
+/* Variante Oromo — dégradé vert-or */
+.lang-card--or{
+  background: linear-gradient(135deg,#007a35 0%,#009A44 45%,#c8960a 100%);
+  color: #fff;
+}
+
+/* Drapeau emoji, non rétréci si l'espace manque */
+.lang-card-flag{
+  font-size: 2.8rem;
+  flex-shrink: 0;
+  filter: drop-shadow(0 2px 6px rgba(0,0,0,.25));
+  line-height: 1;
+}
+
+/* Zone texte (s'étire pour prendre tout l'espace disponible) */
+.lang-card-body{
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+/* Libellé principal de la carte */
+.lang-card-name{
+  font-size: 1.05rem;
+  font-weight: 800;
+  line-height: 1.2;
+  color: #fff;
+}
+
+/* Traduction en italique sous le libellé */
+.lang-card-sub{
+  font-size: .72rem;
+  color: rgba(255,255,255,.75);
+  font-weight: 500;
+  font-style: italic;
+  line-height: 1.3;
+}
+
+/* Chevron décoratif à droite */
+.lang-card-arrow{
+  font-size: 2rem;
+  font-weight: 300;
+  color: rgba(255,255,255,.6);
+  flex-shrink: 0;
+  line-height: 1;
+  margin-left: 4px;
+}
+
+/* ── Footer du lanceur ───────────────────────────────────────────── */
+/*
+   Position:absolute + bottom:0 → colle au bas de #app-launcher
+   sans pousser le contenu vers le bas (d'où le padding-bottom:80px
+   sur #app-launcher pour éviter le chevauchement).
+*/
+.launcher-footer{
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  text-align: center;
+  padding: 14px 12px;
+  font-size: .68rem;
+  color: #aaa;
+  background: transparent;
+  line-height: 1.7;
+  z-index: 1;
+}
+.launcher-footer a{ color: #888; text-decoration: none; font-weight: 600 }
+.launcher-footer a:hover{ text-decoration: underline }
+
+/* ══════════════════════════════════════════════════════════════════
+   §6 — ÉCRAN 1 : HOME / GUIDE  (#home)
+   ══════════════════════════════════════════════════════════════════
+   Le fond et le layout principal sont définis dans §22.
+   Ce bloc contient les éléments communs réutilisés.
+   ══════════════════════════════════════════════════════════════════ */
+
+/* Bouton principal "Commencer" / "Continuer" */
+.btn-primary{
+  background:var(--c-primary);
+  color:#fff;
+  font-size:1.05rem;
+  font-weight:800;
+  border:3px solid rgba(255,255,255,.85);
+  border-radius:50px;
+  padding:14px 36px;
+  cursor:pointer;
+  box-shadow:0 6px 20px rgba(0,0,0,0.22);
+  transition:transform .15s;
+  position:relative;
+  z-index:1;
+}
+.btn-primary:active{
+  transform:scale(.96);
+  background:var(--c-primary-dark);
+  box-shadow:0 4px 10px rgba(0,0,0,.2);
+}
+
+/* Footer de l'écran home */
+#home footer{
+  position:relative;
+  background:transparent;
+  border:none;
+  color:#00000066;
+  padding:18px 12px 10px;
+  margin-top:auto;
+}
+#home footer a{color:#00000088;font-weight:600}
+#home footer a:hover{text-decoration:underline}
+
+/* Bouton retour — positionné en absolu haut-gauche */
+.home-back-btn{
+  position:absolute;
+  top:14px; left:14px;
+  background:rgba(255,255,255,.25);
+  border:none;
+  border-radius:50px;
+  padding:8px 16px;
+  font-size:.8rem;
+  font-weight:700;
+  color:inherit;
+  cursor:pointer;
+  backdrop-filter:blur(4px);
+  z-index:10;
+  min-height:40px;
+}
+.home-back-btn:active{background:rgba(255,255,255,.4)}
+
+
+/* ══════════════════════════════════════════════════════════════════
+   §7 — ÉCRAN 2 : SECTIONS / MODULES  (#sections)
+   ══════════════════════════════════════════════════════════════════
+   Fond plat + header redesigné (§23).
+   ══════════════════════════════════════════════════════════════════ */
+#sections{background:var(--c-bg);overflow-y:auto}
+
+/* Barre de progression dans l'en-tête */
+.progress-bar-wrap{background:rgba(255,255,255,.3);border-radius:20px;height:8px;margin:4px 0}
+.progress-bar{background:#fff;height:8px;border-radius:20px;transition:width .4s}
+.progress-label{font-size:.73rem;opacity:.9;margin-top:2px}
+
+/* Corps scrollable — les niveaux sont maintenant des <details> */
+.sections-body{padding:0 0 10px}
+
+/* Badge coloré (dans .level-summary) */
+.level-badge{
+  background:var(--c-primary);
+  color:#fff;
+  border-radius:50px;
+  padding:2px 9px;
+  font-size:.68rem;
+  font-weight:800;
+  flex-shrink:0;
+}
+.level-badge.l2{background:var(--c-primary-dark)}
+
+/* Grille 2 colonnes des cartes-thèmes (défaut mobile) */
+.themes-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+
+/*
+  Carte d'un thème :
+  • border:3px solid transparent → espace réservé pour la bordure
+    verte .done (évite le saut de layout à la complétion)
+  • position:relative → pour le ::after "✓"
+*/
+.theme-card{
+  background:#fff;
+  border-radius:16px;
+  padding:12px 8px;
+  text-align:center;
+  cursor:pointer;
+  box-shadow:0 2px 8px #0001;
+  border:3px solid transparent;
+  transition:transform .15s, border-color .2s;
+  position:relative;
+}
+.theme-card:active{transform:scale(.96)}
+
+/* État "complété" : bordure verte + coche en haut à droite */
+.theme-card.done{border-color:var(--c-done)}
+.theme-card.done::after{
+  content:"✓";
+  position:absolute;
+  top:6px; right:8px;
+  color:var(--c-done);
+  font-weight:900;
+  font-size:.9rem;
+}
+
+/* Éléments internes de la carte-thème */
+.t-emoji{font-size:1.9rem}
+.t-name{font-size:.8rem;font-weight:700;color:#333;margin-top:4px;line-height:1.2}
+.t-sub{font-size:.65rem;color:#aaa;margin-top:2px}
+.t-stars{font-size:.8rem;margin-top:3px}
+/* Bouton reset d'un thème (anciennement styles inline dans app.js) */
+.btn-reset-theme{
+  display:inline-block;
+  margin-top:6px;
+  font-size:.65rem;
+  background:#fff;
+  border:1.5px solid #009A44;
+  color:#009A44;
+  border-radius:50px;
+  padding:4px 10px;
+  cursor:pointer;
+  font-weight:700;
+  transition:background .15s, color .15s;
+}
+.btn-reset-theme:hover{
+  background:#009A44;
+  color:#fff;
+}
+.theme-french .btn-reset-theme{
+  border-color:var(--c-primary);
+  color:var(--c-primary);
+}
+.theme-french .btn-reset-theme:hover{
+  background:var(--c-primary);
+  color:#fff;
+}
+
+
+/* ══════════════════════════════════════════════════════════════════
+   §8 — ÉCRAN 3 : LEÇON  (#lesson)
+   ══════════════════════════════════════════════════════════════════
+   En-tête en dégradé + corps scrollable avec onglets.
+   ══════════════════════════════════════════════════════════════════ */
+#lesson{background:var(--c-bg)}
+
+.lesson-header{
+  background:var(--c-grad-lesson);
+  padding:14px 16px;
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+.lesson-header h3{color:#fff;font-size:1rem;flex:1;line-height:1.3}
+
+/*
+  #lessonEmoji : emoji du thème affiché dans l'en-tête de leçon.
+  OPTIMISATION : ces styles étaient auparavant inline dans index.html
+  (style="font-size:1.4rem;margin-right:4px") ; déplacés ici pour
+  centraliser toute la mise en forme dans ce fichier.
+*/
+#lessonEmoji{
+  font-size:1.4rem;
+  margin-right:4px;
+  flex-shrink:0;
+}
+
+.lesson-body{padding:14px}
+
+/* ── Bouton retour (commun à #sections et #lesson) ──────────────── */
+/*
+  !important nécessaires ici car .back-btn apparaît dans des
+  contextes à spécificité variable (en-têtes colorés, home).
+  La règle .sections-header/.lesson-header confirme la couleur
+  blanche quelle que soit la cascade.
+*/
+.back-btn{
+  background:none;
+  border:none;
+  color:#fff;
+  font-size:1rem!important;
+  font-weight:800!important;
+  cursor:pointer;
+  padding:4px 8px;
+  line-height:1;
+}
+.sections-header .back-btn,
+.lesson-header .back-btn{
+  font-size:1rem!important;
+  font-weight:800!important;
+  color:#fff!important;
+}
+
+/* Hint bilingue dans les boutons retour (ex. "← Retour / Duubatti") */
+.fr-hint{font-size:.65rem;color:#ffffff99;font-weight:400}
+
+/* ── Onglets ─────────────────────────────────────────────────────── */
+/*
+  overflow-x:auto → les onglets scrollent horizontalement si
+  leur nombre dépasse la largeur de l'écran (petits mobiles).
+*/
+.tabs{display:flex;gap:6px;margin-bottom:14px;overflow-x:auto}
+.tab{
+  flex:1;
+  min-width:80px;
+  padding:9px 4px;
+  border-radius:10px;
+  border:2px solid var(--c-primary);
+  background:#fff;
+  color:var(--c-primary);
+  font-weight:700;
+  font-size:.74rem;
+  cursor:pointer;
+  text-align:center;
+  transition:all .15s;
+  white-space:nowrap;
+}
+/* Onglet actif : fond plein */
+.tab.active{background:var(--c-primary);color:#fff}
+
+/* Étiquette de section dans le contenu des onglets */
+.section-label{
+  font-size:.7rem;
+  color:#888;
+  text-align:center;
+  margin:0 0 8px;
+  text-transform:uppercase;
+  letter-spacing:1px;
+}
+
+
+/* ══════════════════════════════════════════════════════════════════
+   §9 — COMPOSANT : FLASHCARDS
+   ══════════════════════════════════════════════════════════════════
+   Animation de retournement 3D via transform:rotateY(180deg).
+   Les deux faces (.fc-front et .fc-back) sont superposées ;
+   backface-visibility:hidden masque la face non active.
+   ══════════════════════════════════════════════════════════════════ */
+
+/* Conteneur de perspective 3D */
+.fc-wrap{perspective:900px;margin-bottom:12px;user-select:none}
+
+/*
+  Carte 3D :
+  • transform-style:preserve-3d → les faces sont des enfants 3D
+  • cursor:pointer → signal visuel de clicabilité
+  • transition cubic-bezier → retournement fluide et naturel
+*/
+.fc{
+  width:100%;
+  min-height:240px;
+  border-radius:20px;
+  position:relative;
+  transform-style:preserve-3d;
+  transition:transform .45s cubic-bezier(.4,0,.2,1);
+  cursor:pointer;
+}
+/* État retourné (ajouté par app.js au clic) */
+.fc.flipped{transform:rotateY(180deg)}
+
+/* Propriétés communes aux deux faces */
+.fc-front,.fc-back{
+  position:absolute;
+  width:100%;
+  min-height:240px;
+  border-radius:20px;
+  backface-visibility:hidden;
+  -webkit-backface-visibility:hidden; /* Safari */
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  padding:20px 16px;
+}
+
+/* Face recto : fond blanc */
+.fc-front{background:#fff;box-shadow:0 4px 20px #0002}
+.fc-front-emoji{font-size:3.5rem;margin-bottom:10px}
+.fc-front-word{
+  font-size:1.9rem;
+  font-weight:900;
+  color:var(--c-primary);
+  text-align:center;
+  line-height:1.3;
+}
+.fc-front-hint{font-size:.72rem;color:#bbb;margin-top:10px;letter-spacing:.5px}
+
+/* Face verso : dégradé coloré + texte blanc */
+.fc-back{
+  background:var(--c-grad-fc-back);
+  transform:rotateY(180deg); /* pré-retournée pour être cachée au départ */
+  color:#fff;
+}
+.fc-back-emoji{font-size:3.5rem;margin-bottom:10px}
+.fc-back-word{font-size:1.9rem;font-weight:900;text-align:center;line-height:1.3;color:#fff}
+.fc-back-hint{font-size:.72rem;opacity:.7;margin-top:10px;letter-spacing:.5px}
+
+/* Conjugaisons affichées sur les flashcards de verbes */
+.fc-conj{margin-top:10px;width:100%;text-align:left;padding:0 4px}
+.fc-conj-line{
+  font-size:.78rem;
+  line-height:1.6;
+  color:inherit;
+  border-bottom:1px solid rgba(255,255,255,.15);
+  padding:2px 0;
+}
+/* Surcharge pour la face recto (texte sombre) */
+.fc-front .fc-conj-line{color:#444;border-bottom-color:rgba(0,0,0,.08)}
+
+/* ── Navigation entre flashcards ────────────────────────────────── */
+.fc-nav{display:flex;align-items:center;justify-content:space-between;margin-top:12px}
+.fc-nav button{
+  background:#fff;
+  border:2px solid var(--c-primary);
+  border-radius:50px;
+  padding:9px 18px;
+  font-weight:700;
+  color:var(--c-primary);
+  cursor:pointer;
+  font-size:.85rem;
+  min-height:44px; /* zone de tap confortable */
+}
+.fc-nav button:active{background:var(--c-fc-nav-hover)}
+.fc-counter{font-size:.85rem;color:#555;font-weight:600}
+
+/* Bouton audio sous la flashcard */
+.audio-btn-big{
+  width:100%;
+  margin-top:10px;
+  padding:12px;
+  background:var(--c-primary);
+  color:#fff;
+  border:none;
+  border-radius:13px;
+  font-size:.95rem;
+  font-weight:700;
+  cursor:pointer;
+  min-height:48px;
+}
+.audio-btn-big:active{background:var(--c-primary-dark)}
+
+
+/* ══════════════════════════════════════════════════════════════════
+   §10 — COMPOSANT : ALPHABET
+   ══════════════════════════════════════════════════════════════════
+   Grille 4 colonnes de lettres + détail de la lettre sélectionnée
+   + quiz audio interactif.
+   ══════════════════════════════════════════════════════════════════ */
+
+/* Grille des lettres */
+.alpha-grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:8px;
+  margin-bottom:12px;
+}
+
+/* Cellule d'une lettre */
+.alpha-card{
+  background:#fff;
+  border-radius:12px;
+  padding:10px 4px;
+  text-align:center;
+  cursor:pointer;
+  border:2px solid var(--c-primary);
+  transition:background .15s;
+  min-height:54px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+}
+/* Inversion couleur au tap */
+.alpha-card:active{background:var(--c-primary);color:#fff}
+
+.alpha-letter{font-size:1.5rem;font-weight:900;color:var(--c-primary)}
+.alpha-name{font-size:.55rem;color:#888;margin-top:2px}
+
+/* Panneau de détail de la lettre sélectionnée */
+.alpha-detail{
+  background:#fff;
+  border-radius:14px;
+  padding:14px;
+  text-align:center;
+  box-shadow:0 2px 8px #0001;
+  margin-top:4px;
+}
+
+/*
+  Classes générées par buildAlphaDetail() dans app.js.
+  Remplacent les styles inline hardcodés (#009A44, #555…).
+  La couleur principale suit var(--c-primary) : elle s'adapte
+  automatiquement au thème actif (Français/Oromo).
+*/
+.alpha-detail-letter{
+  font-size:2.5rem;
+  font-weight:900;
+  color:var(--c-primary);
+}
+.alpha-detail-name{
+  color:#555;
+  margin:4px 0;
+  font-size:.85rem;
+}
+.alpha-detail-btn{
+  margin-top:10px;
+  background:var(--c-primary);
+  color:#fff;
+  border:none;
+  border-radius:50px;
+  padding:9px 18px;
+  cursor:pointer;
+  font-weight:700;
+  min-height:44px;
+}
+.alpha-detail-btn:active{
+  background:var(--c-primary-dark);
+}
+
+/* Quiz audio de l'alphabet */
+.alpha-audio-quiz{background:#fff;border-radius:16px;padding:18px;text-align:center}
+
+/* Bouton circulaire de lecture audio */
+.alpha-audio-btn{
+  background:var(--c-grad-alpha-btn);
+  color:#fff;
+  border:none;
+  border-radius:50%;
+  width:90px;
+  height:90px;
+  font-size:2.2rem;
+  cursor:pointer;
+  margin:10px auto;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  box-shadow:0 4px 16px #0003;
+}
+.alpha-audio-btn:active{transform:scale(.94)}
+.alpha-audio-label{font-size:.8rem;color:#888;margin-bottom:10px}
+
+
+/* ══════════════════════════════════════════════════════════════════
+   §11 — COMPOSANT : QUIZ
+   ══════════════════════════════════════════════════════════════════
+   QCM à 4 options (grille 2×2).
+   États des options : neutre → correct (vert) / wrong (rouge).
+   ══════════════════════════════════════════════════════════════════ */
+
+/* Question : emoji + texte */
+.quiz-q{text-align:center;margin-bottom:14px}
+.quiz-q .q-emoji{font-size:3rem}
+.quiz-q .q-text{font-size:.9rem;color:#333;margin-top:6px;font-weight:600;line-height:1.4}
+
+/* Grille 2 colonnes des options */
+.quiz-options{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+
+/* Option de réponse */
+.quiz-opt{
+  background:#fff;
+  border:3px solid var(--c-primary);
+  border-radius:14px;
+  padding:16px 6px;
+  text-align:center;
+  cursor:pointer;
+  font-size:.9rem;
+  font-weight:700;
+  color:var(--c-primary);
+  transition:all .15s;
+  min-height:54px;
+  line-height:1.3;
+}
+/* Feedback tactile (uniquement si non désactivé) */
+.quiz-opt:active:not(.disabled){
+  background:var(--c-fc-nav-hover);
+  transform:scale(.97);
+}
+
+/* États de correction */
+.quiz-opt.correct{background:#4CAF50;border-color:#4CAF50;color:#fff}
+.quiz-opt.wrong{background:var(--c-accent);border-color:var(--c-accent);color:#fff}
+/* Une fois une réponse donnée, toutes les options sont désactivées */
+.quiz-opt.disabled{cursor:default;opacity:.75}
+
+/* Texte de feedback (Bonne réponse ! / Essaie encore…) */
+.quiz-feedback{
+  text-align:center;
+  font-size:.95rem;
+  font-weight:700;
+  margin:10px 0;
+  min-height:26px; /* reserve l'espace même vide pour éviter le saut */
+  color:#333;
+}
+
+/* Bouton "Question suivante" (caché jusqu'à réponse) */
+.next-btn{
+  width:100%;
+  padding:14px;
+  background:var(--c-primary);
+  color:#fff;
+  border:none;
+  border-radius:14px;
+  font-size:.95rem;
+  font-weight:700;
+  cursor:pointer;
+  margin-top:6px;
+  display:none; /* affiché par app.js après réponse */
+  min-height:54px;
+}
+.next-btn:active{background:var(--c-primary-dark)}
+
+/* Écran de résultat final du quiz */
+.result-box{
+  text-align:center;
+  background:#fff;
+  border-radius:18px;
+  padding:22px;
+  box-shadow:0 2px 12px #0001;
+}
+.result-box h3{color:var(--c-primary);font-size:1.2rem;margin-bottom:8px}
+
+/* Score affiché en grand (ex. "8 / 10") */
+.score-num{font-size:2.8rem;font-weight:900;color:var(--c-primary)}
+
+/* Bouton "Recommencer le quiz" */
+.retry-btn{
+  margin-top:14px;
+  background:var(--c-primary);
+  color:#fff;
+  border:none;
+  border-radius:50px;
+  padding:12px 28px;
+  font-size:.92rem;
+  font-weight:700;
+  cursor:pointer;
+  min-height:48px;
+}
+.retry-btn:active{background:var(--c-primary-dark)}
+
+/*
+  Variante du quiz pour les dialogues (options en colonne pleine
+  largeur, texte aligné à gauche pour les phrases longues).
+*/
+.dialog-quiz-wrap .quiz-options{grid-template-columns:1fr;gap:8px}
+.dialog-quiz-wrap .quiz-opt{text-align:left;padding:14px 16px;font-size:.88rem}
+
+
+/* ══════════════════════════════════════════════════════════════════
+   §12 — COMPOSANT : DIALOGUES / SITUATIONS
+   ══════════════════════════════════════════════════════════════════
+   Interface de conversation simulée avec bulles de chat
+   (style iMessage) + sous-titres de traduction + bouton audio.
+   ══════════════════════════════════════════════════════════════════ */
+
+/* Boîte encadrée contenant le dialogue */
+.dialogue-box{
+  background:#fff;
+  border-radius:16px;
+  border:2px solid #e0ddd6;
+  padding:14px;
+  margin-bottom:12px;
+}
+
+/* Illustration emoji de la scène (ex. ✈️ pour Aéroport) */
+.scene-img-big{text-align:center;font-size:3rem;margin-bottom:12px}
+
+/* Barre de navigation entre situations */
+.sit-nav{display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap}
+.sit-btn{
+  flex:1;
+  min-width:70px;
+  padding:9px 4px;
+  border-radius:10px;
+  border:2px solid var(--c-primary);
+  background:#fff;
+  color:var(--c-primary);
+  font-weight:700;
+  font-size:.74rem;
+  cursor:pointer;
+  text-align:center;
+  min-height:44px;
+}
+.sit-btn.active{background:var(--c-primary);color:#fff}
+
+/* Colonne de bulles */
+.bubble-wrap{display:flex;flex-direction:column;gap:10px}
+
+/*
+  Bulle de conversation :
+  • .right → interlocuteur principal (fond coloré, aligné à droite)
+  • .left  → autre interlocuteur (fond gris clair, aligné à gauche)
+*/
+.bubble{display:flex;flex-direction:column;max-width:92%}
+.bubble.right{align-self:flex-end;align-items:flex-end}
+.bubble.left{align-self:flex-start;align-items:flex-start}
+
+/* Nom du locuteur au-dessus de la bulle */
+.speaker-name{
+  font-size:.65rem;
+  color:#aaa;
+  margin-bottom:3px;
+  font-weight:700;
+  text-transform:uppercase;
+  letter-spacing:.05em;
+}
+
+/* Rangée : bulle + bouton audio côte à côte */
+.msg-row{display:flex;align-items:flex-end;gap:6px}
+/* Pour .right, le bouton audio est à gauche du texte */
+.bubble.right .msg-row{flex-direction:row-reverse}
+
+/* Texte de la bulle */
+.msg{
+  padding:.6rem .9rem;
+  border-radius:14px;
+  font-size:.9rem;
+  line-height:1.5;
+  word-break:break-word;
+  font-weight:500;
+}
+/* Bulle droite : fond coloré, coin inférieur droit aplati */
+.bubble.right .msg{
+  background:var(--c-primary);
+  color:#fff;
+  border-radius:14px 14px 4px 14px;
+}
+/* Bulle gauche : fond beige, coin inférieur gauche aplati */
+.bubble.left .msg{
+  background:#f0ede6;
+  color:#1a1a1a;
+  border-radius:14px 14px 14px 4px;
+}
+
+/* Traduction en italique sous la bulle */
+.bubble-translation{font-size:.72rem;color:#888;margin-top:3px;font-style:italic}
+
+/* Bouton audio intégré dans la bulle */
+.speak-bubble-btn{
+  background:none;
+  border:none;
+  cursor:pointer;
+  font-size:1.1rem;
+  padding:2px 5px;
+  opacity:.7;
+  flex-shrink:0;
+  min-width:30px;
+  min-height:30px;
+  line-height:1;
+}
+.speak-bubble-btn:active{opacity:1;transform:scale(1.2)}
+
+
+/* ══════════════════════════════════════════════════════════════════
+   §13 — COMPOSANT : VOCABULAIRE
+   ══════════════════════════════════════════════════════════════════
+   Liste de mots affichés sous forme de puces clicables.
+   Un clic déclenche la synthèse vocale via app.js.
+   ══════════════════════════════════════════════════════════════════ */
+
+/* Boîte groupée par catégorie */
+.vocab-section{
+  background:#fff;
+  border-radius:14px;
+  border:2px solid #e0ddd6;
+  padding:12px;
+  margin-bottom:12px;
+}
+.vocab-title{font-size:.82rem;font-weight:700;color:#555;margin-bottom:8px}
+
+/* Rangée de puces flex-wrap */
+.vocab-grid{display:flex;flex-wrap:wrap;gap:7px}
+
+/* Puce clicable */
+.vocab-chip{
+  background:var(--c-vocab-chip-bg);
+  border:1.5px solid var(--c-vocab-chip-border);
+  border-radius:50px;
+  padding:6px 12px;
+  font-size:.76rem;
+  cursor:pointer;
+  color:var(--c-primary);
+  min-height:34px;
+  display:flex;
+  align-items:center;
+  font-weight:600;
+}
+.vocab-chip:active{background:var(--c-primary);color:#fff}
+
+/* Rangée de boutons d'action (lancer le quiz, écouter tout…) */
+.action-row{
+  display:flex;
+  gap:8px;
+  justify-content:center;
+  flex-wrap:wrap;
+  margin:8px 0 4px;
+  padding-bottom:8px;
+}
+
+/* Bouton "Commencer le quiz de vocabulaire" */
+.btn-start-quiz{
+  background:var(--c-primary);
+  color:#fff;
+  border:none;
+  border-radius:50px;
+  padding:13px 28px;
+  font-size:.95rem;
+  font-weight:700;
+  cursor:pointer;
+  min-height:54px;
+}
+.btn-start-quiz:active{background:var(--c-primary-dark)}
+
+/*
+  Dans les listes de vocabulaire, le mot source est en gras
+  et la traduction en clair, séparés visuellement par la taille.
+*/
+.vocab-item-es{font-weight:700;font-size:.82rem;color:var(--c-primary)}
+.vocab-item-fr{font-weight:400;font-size:.72rem;color:#555;margin-left:4px}
+
+
+/* ══════════════════════════════════════════════════════════════════
+   §14 — MODALE : REMERCIEMENTS  (#credits-modal)
+   ══════════════════════════════════════════════════════════════════
+   Fenêtre superposée masquée par défaut.
+   OPTIMISATION : ces styles étaient précédemment en inline sur
+   l'élément dans index.html. Centralisés ici pour garder le HTML
+   propre et permettre une surcharge CSS simple si besoin.
+
+   Ouverture  : showCredits() dans app.js → style.display = "flex"
+   Fermeture  : bouton interne          → style.display = "none"
+   ══════════════════════════════════════════════════════════════════ */
+.modal{
+  display:none;           /* caché par défaut */
+  position:fixed;
+  inset:0;                /* équivaut à top/right/bottom/left:0 */
+  background:rgba(0,0,0,0.6);
+  z-index:9999;
+  align-items:center;
+  justify-content:center; /* centrage vertical + horizontal */
+}
+
+/* Carte blanche centrée */
+.modal-content{
+  background:#fff;
+  margin:0 20px;
+  padding:25px;
+  border-radius:15px;
+  text-align:center;
+  position:relative;
+  box-shadow:0 4px 15px rgba(0,0,0,0.2);
+}
+
+.modal-content h3{
+  margin-top:0;
+  color:#333;
+}
+
+.modal-content p{
+  font-size:.95rem;
+  color:#555;
+  line-height:1.6;
+}
+
+/* Liens dans le texte de la modale */
+.modal-content a{
+  color:#007bff;
+  text-decoration:none;
+  font-weight:bold;
+}
+.modal-content a:hover{text-decoration:underline}
+
+/* Bouton "Fermer" */
+.modal-content button{
+  margin-top:15px;
+  padding:10px 25px;
+  border-radius:8px;
+  border:none;
+  background:#007bff;
+  color:#fff;
+  font-weight:bold;
+  cursor:pointer;
+}
+.modal-content button:hover{background:#0056b3}
+
+
+/* ══════════════════════════════════════════════════════════════════
+   §15 — FOOTER COMMUN
+   ══════════════════════════════════════════════════════════════════
+   S'applique aux footers des écrans #home, #sections, #lesson.
+   Le footer de #app-launcher utilise .launcher-footer (§5)
+   car il est positionné en absolu et a un style distinct.
+   ══════════════════════════════════════════════════════════════════ */
+footer{
+  text-align:center;
+  padding:16px 12px 20px;
+  font-size:.72rem;
+  color:#888;
+  background:var(--c-footer-bg);
+  border-top:1px solid var(--c-footer-border);
+  line-height:1.7;
+}
+footer a{color:var(--c-primary);text-decoration:none;font-weight:600}
+footer a:hover{text-decoration:underline}
+
+
+/* ══════════════════════════════════════════════════════════════════
+   §16 — TOAST (NOTIFICATION DISCRÈTE)
+   ══════════════════════════════════════════════════════════════════
+   Remplace les popups alert() natives — bloquantes et qui coupent
+   le flux d'apprentissage — par une bannière flottante en haut de
+   l'écran. Générée dynamiquement par _showToast() (app.js), utilisée
+   pour la notification de la voix Oromo choisie.
+   • pointer-events:none → ne bloque jamais les clics sous le toast
+   • var(--c-primary) → couleur cohérente avec le thème actif (FR/OR)
+   ══════════════════════════════════════════════════════════════════ */
+.app-toast{
+  position:fixed;
+  top:14px;
+  left:50%;
+  max-width:88%;
+  background:var(--c-primary);
+  color:#fff;
+  padding:10px 20px;
+  border-radius:50px;
+  font-size:.78rem;
+  font-weight:600;
+  text-align:center;
+  line-height:1.4;
+  box-shadow:0 4px 14px rgba(0,0,0,0.25);
+  z-index:10000;
+  opacity:0;
+  transform:translate(-50%,-16px);
+  transition:opacity .3s ease, transform .3s ease;
+  pointer-events:none;
+}
+.app-toast.visible{
+  opacity:1;
+  transform:translate(-50%,0);
+}
+
+
+/* ══════════════════════════════════════════════════════════════════
+   §17 — ONGLET RÉPÈTE  (.repeat-*)
+   ══════════════════════════════════════════════════════════════════
+   Interface de répétition vocale : carte du mot, boutons écouter /
+   parler / passer, zone de feedback, barre de progression, message
+   d'indisponibilité.
+   ══════════════════════════════════════════════════════════════════ */
+
+/* ── Message d'indisponibilité ─────────────────────────────────── */
+.repeat-unavailable{
+  background:#fff;
+  border-radius:16px;
+  padding:28px 20px;
+  text-align:center;
+  box-shadow:0 2px 10px #0001;
+  margin-top:8px;
+}
+.repeat-unavail-icon{font-size:2.8rem;margin-bottom:12px}
+.repeat-unavail-main{
+  font-size:.92rem;
+  font-weight:600;
+  color:#444;
+  margin-bottom:10px;
+  line-height:1.5;
+}
+.repeat-unavail-tip{
+  font-size:.78rem;
+  color:#888;
+  line-height:1.5;
+}
+
+/* ── Bandeau langue alternative ────────────────────────────────── */
+.repeat-alt-lang{
+  background:#fff8e1;
+  border:1.5px solid #f9a825;
+  border-radius:12px;
+  padding:10px 14px;
+  font-size:.78rem;
+  color:#5d4e00;
+  line-height:1.5;
+  margin-bottom:10px;
+}
+
+/* ── Info langue utilisée ──────────────────────────────────────── */
+.repeat-lang-info{
+  font-size:.7rem;
+  color:#aaa;
+  text-align:right;
+  margin-bottom:8px;
+  padding-right:2px;
+}
+
+/* ── Carte du mot à répéter ────────────────────────────────────── */
+.repeat-card{
+  background:#fff;
+  border-radius:20px;
+  box-shadow:0 4px 18px #0002;
+  padding:24px 18px 18px;
+  text-align:center;
+  margin-bottom:12px;
+  min-height:130px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+}
+.repeat-card-emoji{font-size:2.8rem;margin-bottom:6px}
+.repeat-card-counter{
+  font-size:.68rem;
+  color:#bbb;
+  margin-bottom:6px;
+  font-weight:600;
+  letter-spacing:.5px;
+}
+.repeat-card-word{
+  font-size:1.9rem;
+  font-weight:900;
+  color:var(--c-primary);
+  line-height:1.3;
+  text-align:center;
+}
+.repeat-card-hint{
+  font-size:.82rem;
+  color:#aaa;
+  margin-top:6px;
+  font-style:italic;
+}
+
+/* ── Zone de feedback ──────────────────────────────────────────── */
+.repeat-feedback{
+  min-height:52px;
+  border-radius:14px;
+  padding:10px 14px;
+  margin-bottom:10px;
+  font-size:.88rem;
+  font-weight:600;
+  text-align:center;
+  line-height:1.5;
+  transition:background .2s, color .2s;
+}
+.repeat-feedback--listening{
+  background:#e8f4fd;
+  color:var(--c-primary);
+  animation:repeat-pulse-bg 1.2s ease-in-out infinite;
+}
+@keyframes repeat-pulse-bg{
+  0%,100%{background:#e8f4fd}
+  50%{background:#cce5f7}
+}
+.repeat-feedback--correct{
+  background:#e8f8ed;
+  color:#1a7a3a;
+  border:1.5px solid #a5d6b0;
+}
+.repeat-feedback--wrong{
+  background:#fdecea;
+  color:#b71c1c;
+  border:1.5px solid #f5b3ae;
+}
+.repeat-feedback--error{
+  background:#fff3e0;
+  color:#7b4a00;
+  border:1.5px solid #ffc87a;
+}
+.repeat-feedback--neutral{
+  background:#f5f5f5;
+  color:#555;
+}
+.repeat-fb-icon{font-size:1.1rem;margin-right:4px}
+.repeat-fb-heard{
+  font-size:.72rem;
+  margin-top:4px;
+  opacity:.75;
+  font-weight:400;
+}
+
+/* ── Boutons de contrôle ───────────────────────────────────────── */
+.repeat-controls{
+  display:flex;
+  gap:8px;
+  justify-content:center;
+  flex-wrap:wrap;
+  margin-bottom:10px;
+}
+.repeat-btn{
+  flex:1;
+  min-width:90px;
+  max-width:140px;
+  padding:13px 8px;
+  border-radius:14px;
+  border:2.5px solid var(--c-primary);
+  background:#fff;
+  color:var(--c-primary);
+  font-size:.82rem;
+  font-weight:700;
+  cursor:pointer;
+  text-align:center;
+  transition:all .15s;
+  min-height:50px;
+  line-height:1.3;
+}
+.repeat-btn:active:not(:disabled){
+  transform:scale(.96);
+  background:var(--c-fc-nav-hover);
+}
+/* Bouton "Écouter" : accent secondaire */
+.repeat-btn--listen{
+  background:var(--c-primary);
+  color:#fff;
+  border-color:var(--c-primary);
+}
+.repeat-btn--listen:active{background:var(--c-primary-dark)}
+/* Bouton "Micro" en cours d'enregistrement */
+.repeat-btn--recording{
+  background:#d32f2f!important;
+  color:#fff!important;
+  border-color:#d32f2f!important;
+  animation:repeat-mic-blink 0.9s ease-in-out infinite;
+}
+@keyframes repeat-mic-blink{
+  0%,100%{opacity:1}
+  50%{opacity:.6}
+}
+/* Bouton désactivé */
+.repeat-btn:disabled{opacity:.5;cursor:default}
+/* Animation pulse sur le bouton écouter */
+.repeat-btn--pulse{
+  transform:scale(1.06);
+}
+
+/* Bouton "Passer" : discret */
+.repeat-btn--skip{
+  border-style:dashed;
+  color:#999;
+  border-color:#ccc;
+  font-weight:600;
+}
+.repeat-btn--skip:active{background:#f0f0f0}
+
+/* ── Barre de progression de session ───────────────────────────── */
+.repeat-progress-wrap{margin-top:4px}
+.repeat-progress-bar{
+  background:var(--c-progress-bg);
+  border-radius:20px;
+  height:7px;
+  margin-bottom:4px;
+  overflow:hidden;
+}
+.repeat-progress-fill{
+  background:var(--c-primary);
+  height:100%;
+  border-radius:20px;
+  transition:width .4s;
+}
+.repeat-progress-label{
+  font-size:.7rem;
+  color:#aaa;
+  text-align:center;
+  font-weight:600;
+}
+
+
+/* ══════════════════════════════════════════════════════════════════
+   §18 — FOCUS CLAVIER (ÉLÉMENTS "BOUTON" NON NATIFS)
+   ══════════════════════════════════════════════════════════════════
+   .theme-card, .fc, .alpha-card et .vocab-chip sont des div/span
+   avec role="button" + tabindex="0" (voir app.js §16). Le focus par
+   défaut du navigateur est souvent peu visible sur ces éléments ;
+   on le renforce ici avec la couleur du thème actif, uniquement
+   pour la navigation clavier (:focus-visible ignore les clics
+   souris/tactiles, qui n'ont pas besoin de cet indicateur).
+   ══════════════════════════════════════════════════════════════════ */
+.theme-card:focus-visible,
+.fc:focus-visible,
+.alpha-card:focus-visible,
+.vocab-chip:focus-visible{
+  outline:3px solid var(--c-primary);
+  outline-offset:2px;
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   §19 — GUIDE UTILISATEUR  (.ob-*)
+   ══════════════════════════════════════════════════════════════════
+   Overlay d'onboarding affiché à la première visite de chaque mode.
+   Composants :
+     .ob-overlay   → fond plein écran semi-opaque, z-index 9998
+     .ob-sheet     → carte scrollable centrée, max 460px
+     .ob-header    → bandeau dégradé thème-aware (var(--c-grad-home))
+     .ob-body      → accordéons <details>/<summary> natifs
+     .ob-footer    → bouton CTA + hint de relecture
+   Couleurs : 100% via var(--c-*) → suit automatiquement FR/Oromo.
+   Animation : translateY + opacity à l'ouverture (.ob-visible).
+   ══════════════════════════════════════════════════════════════════ */
+
+/* ── Fond semi-transparent ──────────────────────────────────────── */
+.ob-overlay{
+  display:none;           /* caché par défaut ; montré par JS */
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.55);
+  z-index:9998;
+  overflow-y:auto;        /* scroll si le contenu dépasse la fenêtre */
+  -webkit-overflow-scrolling:touch;
+  padding:20px 16px 40px;
+  align-items:flex-start;
+  justify-content:center;
+}
+/* Classe posée par JS pour afficher et animer le panneau */
+.ob-overlay.ob-visible{
+  display:flex;
+}
+
+/* ── Panneau principal ──────────────────────────────────────────── */
+.ob-sheet{
+  background:#fff;
+  border-radius:22px;
+  width:100%;
+  max-width:460px;
+  box-shadow:0 12px 48px rgba(0,0,0,.28);
+  overflow:hidden;        /* les coins arrondis s'appliquent aux enfants */
+  animation:ob-slide-in .35s cubic-bezier(.22,1,.36,1) both;
+}
+@keyframes ob-slide-in{
+  from{opacity:0;transform:translateY(28px)}
+  to  {opacity:1;transform:translateY(0)}
+}
+
+/* ── En-tête dégradé ────────────────────────────────────────────── */
+.ob-header{
+  background:var(--c-grad-home);
+  padding:28px 24px 22px;
+  text-align:center;
+  color:#fff;
+}
+.ob-header-emoji{
+  font-size:2.8rem;
+  margin-bottom:10px;
+  filter:drop-shadow(0 2px 6px rgba(0,0,0,.2));
+}
+.ob-title{
+  font-size:1.35rem;
+  font-weight:900;
+  margin:0 0 6px;
+  line-height:1.25;
+  text-shadow:0 1px 3px rgba(0,0,0,.25);
+}
+.ob-subtitle{
+  font-size:.82rem;
+  opacity:.88;
+  margin:0;
+  font-style:italic;
+  line-height:1.5;
+}
+
+/* ── Corps : liste d'accordéons ─────────────────────────────────── */
+.ob-body{
+  padding:16px 18px 4px;
+}
+
+/*
+  Accordéon natif <details>/<summary> :
+  Pas de JS, pas de bibliothèque — le navigateur gère l'ouverture
+  et la fermeture. CSS only : flèche personnalisée, transition douce.
+*/
+.ob-section{
+  border:1.5px solid var(--c-progress-bg);
+  border-radius:14px;
+  margin-bottom:10px;
+  overflow:hidden;
+  background:#fafafa;
+}
+/* Ligne d'en-tête clicable */
+.ob-section summary{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:13px 16px;
+  cursor:pointer;
+  font-weight:700;
+  font-size:.9rem;
+  color:var(--c-primary);
+  list-style:none;          /* supprime le triangle natif */
+  user-select:none;
+  -webkit-user-select:none;
+}
+/* Suppression du triangle sur WebKit (Chrome/Safari) */
+.ob-section summary::-webkit-details-marker{display:none}
+
+/* Flèche personnalisée via pseudo-élément, auto-rotated à l'ouverture */
+.ob-section summary::after{
+  content:'›';
+  margin-left:auto;
+  font-size:1.2rem;
+  font-weight:900;
+  color:var(--c-primary);
+  transition:transform .2s ease;
+  flex-shrink:0;
+}
+.ob-section[open] summary::after{
+  transform:rotate(90deg);
+}
+/* Fond légèrement coloré quand l'accordéon est ouvert */
+.ob-section[open]{
+  background:#fff;
+  border-color:var(--c-primary);
+}
+.ob-section[open] summary{
+  border-bottom:1px solid var(--c-progress-bg);
+}
+
+/* Émoji illustrant chaque section */
+.ob-icon{
+  font-size:1.25rem;
+  flex-shrink:0;
+}
+
+/* Texte du titre de la section */
+.ob-section-label{
+  flex:1;
+  line-height:1.3;
+}
+/* Sous-titre bilingue en dessous du titre principal */
+.ob-section-sub{
+  display:block;
+  font-size:.68rem;
+  font-weight:400;
+  color:#999;
+  margin-top:1px;
+}
+
+/* Corps déroulant de l'accordéon */
+.ob-detail{
+  padding:12px 16px 14px;
+  font-size:.86rem;
+  line-height:1.65;
+  color:#444;
+}
+/* Italique pour les passages en langue secondaire */
+.ob-detail em{
+  color:#888;
+  font-style:italic;
+  font-size:.82rem;
+}
+/* Puces de liste à l'intérieur des accordéons */
+.ob-detail ul{
+  margin:8px 0 4px 16px;
+  padding:0;
+}
+.ob-detail ul li{
+  margin-bottom:6px;
+  line-height:1.55;
+}
+/* Étiquette en gras (ex. "⭐⭐⭐ :") */
+.ob-detail strong{
+  color:var(--c-primary);
+  font-weight:700;
+}
+
+/* Encart coloré "astuce" à l'intérieur d'un accordéon */
+.ob-tip{
+  background:var(--c-vocab-chip-bg);
+  border-left:3px solid var(--c-primary);
+  border-radius:0 10px 10px 0;
+  padding:9px 12px;
+  margin-top:10px;
+  font-size:.81rem;
+  color:var(--c-primary);
+  line-height:1.55;
+}
+
+/* ── Pied de page ───────────────────────────────────────────────── */
+.ob-footer{
+  padding:18px 20px 24px;
+  text-align:center;
+  border-top:1px solid var(--c-progress-bg);
+  background:#fafafa;
+}
+
+/* Bouton "Commencer / Jalqabi" */
+.ob-start-btn{
+  width:100%;
+  padding:15px 24px;
+  border:none;
+  border-radius:50px;
+  background:var(--c-primary);
+  color:#fff;
+  font-size:1.05rem;
+  font-weight:800;
+  cursor:pointer;
+  box-shadow:0 4px 16px rgba(0,0,0,.18);
+  transition:background .15s, transform .1s;
+  min-height:54px;
+  letter-spacing:.01em;
+}
+.ob-start-btn:active{
+  background:var(--c-primary-dark);
+  transform:scale(.98);
+}
+
+/* Hint "relire plus tard" sous le bouton */
+.ob-reread-hint{
+  margin:12px 0 0;
+  font-size:.74rem;
+  color:#aaa;
+  line-height:1.5;
+}
+.ob-reread-hint a{
+  color:var(--c-primary);
+  font-weight:600;
+  text-decoration:none;
+  cursor:pointer;
+}
+.ob-reread-hint a:hover{text-decoration:underline}
+
+/* ════════════════════════════════════════════════════════════════
+   §20 — SPINNER DE CHARGEMENT (.app-loading)
+   ════════════════════════════════════════════════════════════════ */
+.app-loading{
+  position:fixed;
+  inset:0;
+  background:rgba(255,255,255,.92);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:9999;
+  opacity:0;
+  transition:opacity .2s ease;
+}
+.app-loading--visible{opacity:1;}
+.app-loading-inner{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:18px;
+}
+.app-loading-spinner{
+  width:48px;
+  height:48px;
+  border:5px solid var(--c-progress-bg);
+  border-top-color:var(--c-primary);
+  border-radius:50%;
+  animation:spin .75s linear infinite;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+.app-loading-label{
+  font-size:.9rem;
+  color:var(--c-primary);
+  font-weight:600;
+  letter-spacing:.02em;
+}
+
+/* ════════════════════════════════════════════════════════════════
+   §22 — ÉCRAN HOME REDESIGNÉ : GUIDE / ONBOARDING
+   ════════════════════════════════════════════════════════════════
+   Remplace l'ancien écran Home (barre de progression + étoiles).
+   Structure : en-tête coloré → corps accordéons → checkbox → CTA.
+   ════════════════════════════════════════════════════════════════ */
+
+/* L'écran #home garde son fond en dégradé tricolore */
+#home{
+  background:
+    var(--c-grad-home),
+    radial-gradient(circle at 20% 20%, rgba(255,255,255,0.35) 0%, transparent 40%),
+    radial-gradient(circle at 80% 80%, rgba(237,41,57,0.2) 0%, transparent 60%);
+  background-blend-mode:overlay;
+  align-items:stretch;
+  justify-content:flex-start;
+  padding:0 0 80px;
+  text-align:center;
+  position:relative;
+  overflow-y:auto;
+  overflow-x:hidden;
+}
+
+/* ── En-tête coloré du Guide ── */
+.home-guide-header{
+  padding:56px 20px 22px; /* top: espace pour le bouton retour absolu */
+  background:transparent;
+  text-align:center;
+  position:relative;
+  z-index:1;
+}
+
+.home-guide-flags{
+  font-size:2.2rem;
+  margin-bottom:6px;
+  letter-spacing:4px;
+}
+
+.home-guide-title{
+  font-size:clamp(1.5rem, 5vw, 2.2rem);
+  color:var(--c-home-title);
+  font-weight:900;
+  text-shadow:0 2px 10px rgba(255,255,255,0.7);
+  margin:4px 0 6px;
+  line-height:1.15;
+}
+
+.home-guide-subtitle{
+  font-size:clamp(.75rem, 2.5vw, .9rem);
+  color:var(--c-home-subtitle);
+  font-weight:600;
+  margin:0 auto 14px;
+  max-width:380px;
+  line-height:1.5;
+}
+
+/* ── Badges de fonctionnalités ── */
+.home-guide-badges{
+  display:flex;
+  flex-wrap:wrap;
+  gap:7px;
+  justify-content:center;
+  margin-bottom:6px;
+}
+
+.hg-badge{
+  background:rgba(255,255,255,.28);
+  backdrop-filter:blur(4px);
+  border:1.5px solid rgba(255,255,255,.5);
+  border-radius:50px;
+  padding:5px 13px;
+  font-size:.78rem;
+  font-weight:700;
+  color:var(--c-home-title);
+  white-space:nowrap;
+}
+
+/* ── Corps des accordéons ── */
+.home-guide-body{
+  margin:12px 14px 0;
+  border-radius:16px;
+  overflow:hidden;
+  background:rgba(255,255,255,.92);
+  backdrop-filter:blur(8px);
+  box-shadow:0 4px 20px rgba(0,0,0,.1);
+  position:relative;
+  z-index:1;
+}
+
+/* Accordéon individuel */
+.hg-section{
+  border-bottom:1px solid rgba(0,0,0,.07);
+}
+.hg-section:last-child{border-bottom:none}
+
+.hg-summary{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:12px 14px;
+  cursor:pointer;
+  list-style:none;
+  font-size:.85rem;
+  font-weight:700;
+  color:#333;
+  background:#fff;
+  transition:background .15s;
+}
+.hg-summary::-webkit-details-marker{display:none}
+.hg-summary:hover{background:#f5f5fa}
+
+.hg-icon{font-size:1.2rem;flex-shrink:0}
+.hg-label{flex:1;text-align:left}
+.hg-chevron{
+  font-size:.65rem;
+  color:#aaa;
+  transition:transform .2s;
+  flex-shrink:0;
+}
+.hg-section[open] .hg-chevron{transform:rotate(180deg)}
+
+.hg-detail{
+  padding:10px 14px 14px 42px;
+  font-size:.82rem;
+  color:#555;
+  line-height:1.6;
+  background:#fafafa;
+}
+.hg-detail ul{margin:6px 0 6px 14px;padding:0}
+.hg-detail li{margin-bottom:4px}
+.hg-detail p{margin:4px 0}
+.hg-detail strong{color:#333}
+
+/* Tip réutilisant le style ob-tip */
+.hg-detail .ob-tip{
+  margin-top:10px;
+  font-size:.78rem;
+}
+
+/* ── Checkbox "Ne plus afficher" ── */
+.home-guide-noshow{
+  margin:14px 14px 0;
+  position:relative;
+  z-index:1;
+}
+
+.noshow-label{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  background:rgba(255,255,255,.75);
+  backdrop-filter:blur(4px);
+  border-radius:50px;
+  padding:9px 18px;
+  cursor:pointer;
+  font-size:.8rem;
+  font-weight:600;
+  color:var(--c-home-title);
+  border:1.5px solid rgba(255,255,255,.6);
+}
+.noshow-label input[type="checkbox"]{
+  width:16px;height:16px;
+  accent-color:var(--c-primary);
+  cursor:pointer;
+  flex-shrink:0;
+}
+
+/* ── Bouton CTA principal ── */
+.home-guide-cta{
+  margin:16px 14px 0;
+  position:relative;
+  z-index:1;
+}
+.home-guide-cta .btn-primary{
+  width:100%;
+  max-width:380px;
+}
+
+/* ════════════════════════════════════════════════════════════════
+   §23 — ÉCRAN SECTIONS REDESIGNÉ
+   ════════════════════════════════════════════════════════════════
+   Header : flex row (gauche = infos, droite = drapeau).
+   Niveaux : <details> déroulants avec chevron animé.
+   ════════════════════════════════════════════════════════════════ */
+
+/* Header redesigné : flex row */
+.sections-header{
+  background:var(--c-grad-sections);
+  padding:12px 14px 16px;
+  color:#fff;
+  display:flex;
+  align-items:flex-start;
+  gap:10px;
+}
+
+.sections-header-left{
+  flex:1;
+  min-width:0;
+  display:flex;
+  flex-direction:column;
+  gap:3px;
+}
+
+/* Retour + titre sur la même ligne */
+.sections-header-left .back-btn{
+  align-self:flex-start;
+  margin-bottom:4px;
+  font-size:.85rem !important;
+}
+
+.sections-header-left h2{
+  font-size:.95rem !important;
+  font-weight:800;
+  margin:0 0 4px;
+  line-height:1.2;
+}
+
+/* Étoiles (récupérées depuis l'ancien Home) */
+.sections-stars{
+  margin-top:2px;
+}
+.sections-stars-inner{
+  font-size:.85rem;
+  font-weight:800;
+  color:#fff;
+  background:rgba(255,255,255,.2);
+  border-radius:50px;
+  padding:3px 10px;
+  display:inline-block;
+}
+
+/* Drapeau en haut à droite */
+.sections-flag{
+  font-size:2.8rem;
+  flex-shrink:0;
+  line-height:1;
+  padding-top:2px;
+  filter:drop-shadow(0 2px 4px rgba(0,0,0,.2));
+}
+
+/* Niveaux déroulants */
+.level-details{
+  margin:14px 14px 0;
+  border-radius:14px;
+  overflow:hidden;
+  background:#fff;
+  box-shadow:0 2px 8px rgba(0,0,0,.07);
+}
+.level-details:last-child{margin-bottom:14px}
+
+.level-summary{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  padding:11px 14px;
+  cursor:pointer;
+  list-style:none;
+  font-size:.72rem;
+  font-weight:800;
+  text-transform:uppercase;
+  letter-spacing:1.2px;
+  color:#555;
+  background:#f5f5fa;
+  border-bottom:1px solid rgba(0,0,0,.06);
+  user-select:none;
+}
+.level-summary::-webkit-details-marker{display:none}
+
+.level-details[open] .level-summary{
+  border-bottom:1px solid rgba(0,0,0,.08);
+}
+
+.level-chevron{
+  margin-left:auto;
+  font-size:.6rem;
+  color:#aaa;
+  transition:transform .2s;
+  flex-shrink:0;
+}
+.level-details[open] .level-chevron{transform:rotate(180deg)}
+
+/* La grille de cartes dans le details */
+.level-details .themes-grid{
+  padding:12px;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+}
+
+/* ════════════════════════════════════════════════════════════════
+   §24 — RESPONSIVE : TABLETTE & DESKTOP
+   ════════════════════════════════════════════════════════════════
+   Breakpoints :
+   • ≥ 600px (tablette portrait)  : grille 3 colonnes, max-width sur l'app
+   • ≥ 900px (desktop / tablette paysage) : grille 4 colonnes, centrage
+   ════════════════════════════════════════════════════════════════ */
+
+/* ── Tablette portrait ≥ 600px ── */
+@media (min-width:600px){
+
+  .app{
+    max-width:600px;
+    margin:0 auto;
+    box-shadow:0 0 40px rgba(0,0,0,.12);
+    min-height:100vh;
+  }
+
+  /* Guide home */
+  .home-guide-body{margin:12px 24px 0}
+  .home-guide-noshow{margin:14px 24px 0}
+  .home-guide-cta{margin:16px 24px 0}
+
+  /* Grille sections : 3 colonnes */
+  .level-details .themes-grid{
+    grid-template-columns:1fr 1fr 1fr;
+  }
+  .level-details{margin:14px 24px 0}
+  .level-details:last-child{margin-bottom:24px}
+
+  .sections-flag{font-size:3.2rem}
+  .home-guide-flags{font-size:2.6rem}
+  .home-guide-title{font-size:2rem}
+}
+
+/* ── Desktop / tablette paysage ≥ 900px ── */
+@media (min-width:900px){
+
+  body{
+    background:#e8eaf0;
+    display:flex;
+    align-items:flex-start;
+    justify-content:center;
+    min-height:100vh;
+    padding:30px 0;
+  }
+
+  .app{
+    max-width:520px;
+    border-radius:32px;
+    overflow:hidden;
+    box-shadow:0 8px 60px rgba(0,0,0,.18);
+    min-height:0;
+  }
+
+  .screen{min-height:0}
+
+  /* Guide home */
+  #home{
+    border-radius:32px;
+    min-height:600px;
+  }
+
+  /* Grille sections : 4 colonnes */
+  .level-details .themes-grid{
+    grid-template-columns:1fr 1fr 1fr 1fr;
+  }
+
+  /* Sections */
+  #sections{border-radius:0 0 32px 32px}
+  #lesson{border-radius:0 0 32px 32px}
+}
+
+/* ── Grand écran ≥ 1200px : deux colonnes côte à côte ── */
+@media (min-width:1200px){
+  body{
+    padding:40px 0;
+    align-items:flex-start;
+  }
+  .app{max-width:480px}
+}
+
+/* ════════════════════════════════════════════════════════════════
+   §21 — MODE SOMBRE  @media (prefers-color-scheme: dark)
+   ════════════════════════════════════════════════════════════════
+   Ajuste uniquement les surfaces de fond et les couleurs de texte
+   neutres. Les couleurs primaires (bleu FR, vert OR) restent
+   identiques pour conserver l'identité visuelle.
+   ════════════════════════════════════════════════════════════════ */
+@media (prefers-color-scheme: dark) {
+
+  /* ── Fond global ── */
+  body, .app{background:#1a1a1f;}
+
+  /* ── Écrans ── */
+  .screen{background:#1a1a1f;}
+
+  /* ── En-tête home & sections ── */
+  .home-header, .sections-header, .lesson-header{
+    background:var(--c-primary);   /* conservé — contraste suffisant */
+  }
+
+  /* ── Cartes thème ── */
+  .theme-card{
+    background:#26262e;
+    border-color:#38383f;
+    color:#e8e8e8;
+  }
+  .theme-card.done{background:#1e2e22;border-color:#2d4a30;}
+  .t-name{color:#f0f0f0;}
+  .t-sub{color:#aaa;}
+
+  /* ── Onglets (tabs) ── */
+  .tab{background:#26262e;color:#ccc;border-color:#38383f;}
+  .tab.active{background:var(--c-primary);color:#fff;}
+
+  /* ── Contenu des onglets ── */
+  #tabContent{background:#1a1a1f;color:#e0e0e0;}
+
+  /* ── Cartes flash ── */
+  .fc-front,.fc-back{
+    background:#26262e;
+    color:#f0f0f0;
+    border-color:#38383f;
+  }
+  .fc-front-word,.fc-back-word{color:#f0f0f0;}
+  .fc-front-hint{color:#aaa;}
+  .fc-conj-line{color:#bbb;}
+
+  /* ── Quiz ── */
+  .quiz-opt{
+    background:#26262e;
+    color:#e0e0e0;
+    border-color:#444;
+  }
+  .quiz-opt.correct{background:#1a3a22;color:#6fcf97;border-color:#27ae60;}
+  .quiz-opt.wrong{background:#3a1a1a;color:#eb5757;border-color:#c0392b;}
+  .quiz-opt.disabled{opacity:.6;}
+  .result-box{background:#26262e;color:#e0e0e0;}
+
+  /* ── Dialogues ── */
+  .bubble{background:#26262e;}
+  .bubble.left{background:#1e2e22;}
+  .msg{color:#e0e0e0;}
+  .bubble-translation{color:#aaa;}
+
+  /* ── Vocabulaire chips ── */
+  .vocab-chip{background:#26262e;color:#e0e0e0;border-color:#444;}
+
+  /* ── Onglet Répète ── */
+  .repeat-card{background:#26262e;color:#f0f0f0;}
+  .repeat-progress-bar{background:#38383f;}
+
+  /* ── Modales ── */
+  .modal-content{background:#26262e;color:#e0e0e0;}
+  .ob-sheet{background:#1f1f26;}
+  .ob-body{background:#1f1f26;}
+  .ob-section summary{background:#26262e;color:#e0e0e0;}
+  .ob-section[open] summary{background:#2a2a34;}
+  .ob-detail{background:#1f1f26;color:#ccc;}
+  .ob-tip{background:#2a2a1a;color:#d4b84a;border-left-color:#d4b84a;}
+  .ob-feat-card,.ob-stat,.ob-vs-card,.ob-audio-block,.ob-bio-card,.ob-audio-help{
+    background:#26262e;border-color:#38383f;
+  }
+  .ob-feat-desc,.ob-vs-chip,.ob-audio-step{color:#bbb;}
+
+  /* ── Toast ── */
+  .app-toast{background:#26262e;color:#e0e0e0;border:1px solid #444;}
+
+  /* ── Spinner ── */
+  .app-loading{background:rgba(26,26,31,.94);}
+  .app-loading-label{color:#e0e0e0;}
+
+  /* ── Guide Home (§22) ── */
+  .home-guide-body{background:rgba(30,30,38,.95);}
+  .hg-summary{background:#26262e;color:#e0e0e0;}
+  .hg-summary:hover{background:#2e2e3a;}
+  .hg-detail{background:#1f1f28;color:#ccc;}
+  .hg-section{border-bottom-color:rgba(255,255,255,.08);}
+  .noshow-label{background:rgba(30,30,38,.8);color:#e0e0e0;border-color:rgba(255,255,255,.2);}
+  #home footer{color:rgba(255,255,255,.4);}
+  #home footer a{color:rgba(255,255,255,.55);}
+
+  /* ── Sections redesignées (§23) ── */
+  .level-details{background:#26262e;box-shadow:none;}
+  .level-summary{background:#1f1f28;color:#ccc;}
+  .level-details[open] .level-summary{border-bottom-color:rgba(255,255,255,.08);}
+  .sections-stars-inner{background:rgba(255,255,255,.15);}
+
+  /* ── Body desktop ── */
+  body{background:#111115;}
+}
