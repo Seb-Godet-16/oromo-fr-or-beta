@@ -34,13 +34,9 @@
 /* ──────────────────────────────────────────────────────────────────
    CONFIGURATION
    ──────────────────────────────────────────────────────────────────
-   CACHE_NAME : incrémenter le suffixe (v3, v4…) à chaque déploiement
-   pour invalider automatiquement l'ancien cache au prochain visit.
-
-   RÈGLE : toute modification de index.html, app.js, style.css,
-   data-fr.js, data-or.js ou sw.js doit être accompagnée d'un
-   incrément de ce suffixe. Sans ça, les utilisateurs ayant déjà
-   l'app installée continuent de voir l'ancienne version.
+   CACHE_NAME : suffixe automatiquement remplacé par GitHub Actions
+   (variable GITHUB_RUN_NUMBER) à chaque déploiement — pas d'action
+   manuelle requise.
    ────────────────────────────────────────────────────────────────── */
 var CACHE_NAME = 'taphadmeuh-GITHUB_RUN_NUMBER';   /* Suffixe automatisé par GitHub Actions */
 

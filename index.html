@@ -32,9 +32,9 @@
 
 <head>
   <meta charset="UTF-8">
-  <!--
-    viewport : empêche le zoom manuel (maximum-scale=1.0) pour
-    conserver un affichage stable sur mobile.
+  <!-- 
+    viewport : Autorise le zoom manuel jusqu'à 5.0 pour l'accessibilité (WCAG),
+    tout en préservant l'échelle initiale (1.0) pour un affichage stable sur mobile.
   -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
   <title>Taphad'Meuh 🐄</title>
@@ -176,11 +176,14 @@
        ════════════════════════════════════════════════════════════════ -->
   <div id="home" class="screen">
 
-    <!-- Bouton retour → launcher -->
-    <button class="back-btn home-back-btn" id="homeBackBtn">← Retour / Duubatti</button>
-
-    <!-- Bouton Fermer en haut à droite — libellé injecté par app.js -->
-    <button class="home-close-btn" id="homeCloseBtn" aria-label="Fermer"></button>
+    <!-- Barre fixe en haut : checkbox "Ne plus afficher" (gauche) + bouton Fermer (droite) -->
+    <div class="home-topbar">
+      <label class="topbar-noshow-label" id="homeTopbarNoshowLabel">
+        <input type="checkbox" id="homeTopbarNoshowChk">
+        <span id="homeTopbarNoshowText"></span>
+      </label>
+      <button class="home-close-btn" id="homeCloseBtn" aria-label="Fermer"></button>
+    </div>
 
     <!-- En-tête coloré selon le mode -->
     <div class="home-guide-header" id="homeGuideHeader">
@@ -206,6 +209,12 @@
     <!-- Bouton principal "Commencer" -->
     <div class="home-guide-cta">
       <button class="btn-primary" id="homeStartBtn"></button>
+      <!--
+        Bouton export PDF du guide — déclenche _exportGuide() dans app.js.
+        Placé sous le bouton Commencer pour ne pas perturber le parcours principal.
+        Le libellé est mis à jour dynamiquement par _buildHomeGuide() via id="homeExportBtn".
+      -->
+      <button class="btn-export-pdf" id="homeExportBtn" onclick="_exportGuide()">📄 Télécharger le guide</button>
     </div>
 
     <footer id="homeFooter">
@@ -318,6 +327,25 @@
       <div class="tabs" id="lessonTabs"></div>
       <div id="tabContent" aria-live="polite" aria-atomic="false"></div>
     </div><!-- /.lesson-body -->
+
+    <!--
+      Barre d'export PDF — affichée sous le contenu de la leçon.
+      • #lessonExportVocab  : visible uniquement sur les thèmes Niveau 1 (vocabulaire)
+      • #lessonExportSit    : visible uniquement sur les thèmes Niveau 2 (dialogue)
+      La visibilité est gérée par app.js via openTheme() :
+        Niveau 1 → display:'flex' sur #lessonExportVocab, 'none' sur #lessonExportSit
+        Niveau 2 → inverse
+      Les deux boutons sont cachés par défaut (display:none) et seul le
+      bon bouton est rendu visible selon le type du thème ouvert.
+    -->
+    <div class="lesson-export-bar">
+      <button class="btn-export-pdf" id="lessonExportVocab"
+              style="display:none"
+              onclick="_exportVocab()">📄 Télécharger ce module</button>
+      <button class="btn-export-pdf" id="lessonExportSit"
+              style="display:none"
+              onclick="_exportSituation()">📄 Télécharger cette situation</button>
+    </div>
 
     <!--
       Pas de footer sur cet écran pour maximiser l'espace

@@ -57,7 +57,6 @@ var fcIdx        = 0;       // Cartes Flash : index de la carte affichée
 
 var dqStep       = 0;       // Quiz Dialogue : numéro de la question
 var dqScore      = 0;       // Quiz Dialogue : score (bonnes réponses)
-var dqAnswered   = false;   // Quiz Dialogue : évite le double-clic sur une option
 
 var sitIdx       = 0;       // Dialogue : index de la situation affichée
 
@@ -991,6 +990,22 @@ function openTheme(id) {
     return '<button class="tab' + (i === 0 ? ' active' : '') + '" data-tab="' + t.k + '" onclick="switchTab(\'' + t.k + '\')">' + t.lbl + '</button>';
   }).join('');
 
+
+  /* ── Bouton d'export PDF : afficher le bon selon le type de thème ── */
+  var btnVocab = document.getElementById('lessonExportVocab');
+  var btnSit   = document.getElementById('lessonExportSit');
+  if (btnVocab && btnSit) {
+    if (CT.type === 'dialog') {
+      btnVocab.style.display = 'none';
+      btnSit.style.display   = 'flex';
+      btnSit.textContent = L('\ud83d\udcc4 Galmee haala kana buusi', '\ud83d\udcc4 Télécharger cette situation');
+    } else {
+      btnSit.style.display   = 'none';
+      btnVocab.style.display = 'flex';
+      btnVocab.textContent = L('\ud83d\udcc4 Moojuula kana buusi', '\ud83d\udcc4 Télécharger ce module');
+    }
+  }
+
   switchTab(tabs[0].k);
 }
 
@@ -1028,7 +1043,7 @@ function switchTab(tab) {
 function renderFlash() {
   var words = CT.words;
   var card  = words[fcIdx];
-  var keys  = langKeys();
+  var keys  = langKeys(); // Contient keys.src ('fr' ou 'om') et keys.tgt ('om' ou 'fr')
 
   /* ── Mode Alphabet : grille de lettres cliquables ── */
   if (CT.type === 'alpha') {
@@ -1043,8 +1058,8 @@ function renderFlash() {
           return '<div class="alpha-card" role="button" tabindex="0" '
             + 'aria-label="' + _escAttr(listenHint) + '" '
             + 'onclick="pickAlpha(' + i + ')">'
-            + '<div class="alpha-letter">' + bigLetter + '</div>'
-            + '<div class="alpha-name">'   + smallName  + '</div>'
+            + '<div class="alpha-letter" lang="' + keys.src + '">' + bigLetter + '</div>'
+            + '<div class="alpha-name" lang="' + keys.tgt + '">'   + smallName  + '</div>'
             + '</div>';
         }).join('')
       + '</div>'
@@ -1060,22 +1075,22 @@ function renderFlash() {
 
   if (hasConj) {
     frontContent = emFront
-      + '<div class="fc-front-word">' + card[keys.src] + '</div>'
-      + '<div class="fc-conj">' + card.conj[keys.src].map(function(l) {
+      + '<div class="fc-front-word" lang="' + keys.src + '">' + card[keys.src] + '</div>'
+      + '<div class="fc-conj" lang="' + keys.src + '">' + card.conj[keys.src].map(function(l) {
           return '<div class="fc-conj-line">' + l + '</div>';
         }).join('') + '</div>';
     backContent = emBack
-      + '<div class="fc-back-word">' + card[keys.tgt] + '</div>'
-      + '<div class="fc-conj">' + card.conj[keys.tgt].map(function(l) {
+      + '<div class="fc-back-word" lang="' + keys.tgt + '">' + card[keys.tgt] + '</div>'
+      + '<div class="fc-conj" lang="' + keys.tgt + '">' + card.conj[keys.tgt].map(function(l) {
           return '<div class="fc-conj-line">' + l + '</div>';
         }).join('') + '</div>';
   } else {
     var flipHint = L('Hiika isaa Afaan Oromootin arguuf cuqaasi', 'Cliquez pour voir la traduction en français');
     frontContent = emFront
-      + '<div class="fc-front-word">' + card[keys.src] + '</div>'
+      + '<div class="fc-front-word" lang="' + keys.src + '">' + card[keys.src] + '</div>'
       + '<div class="fc-front-hint">👆 ' + flipHint + '</div>';
     backContent  = emBack
-      + '<div class="fc-back-word">' + card[keys.tgt] + '</div>';
+      + '<div class="fc-back-word" lang="' + keys.tgt + '">' + card[keys.tgt] + '</div>';
   }
 
   var sectionLabel = L(
@@ -1111,15 +1126,8 @@ function renderFlash() {
  */
 function buildAlphaDetail(c) {
   var keys = langKeys();
-  /*
-    Styles déplacés dans style.css sous les sélecteurs :
-      .alpha-detail-letter  → grande lettre colorée (var(--c-primary))
-      .alpha-detail-name    → sous-texte discret
-      .alpha-detail-btn     → bouton écoute (remplace le inline background:#009A44)
-    Avantage : le changement de palette ne touche plus que style.css.
-  */
-  return '<div class="alpha-detail-letter">' + c[keys.src] + '</div>'
-    + '<div class="alpha-detail-name">' + c[keys.tgt] + '</div>'
+  return '<div class="alpha-detail-letter" lang="' + keys.src + '">' + c[keys.src] + '</div>'
+    + '<div class="alpha-detail-name" lang="' + keys.tgt + '">' + c[keys.tgt] + '</div>'
     + '<button class="alpha-detail-btn" onclick="speak(\'' + esc(c[keys.src]) + '\')">'
     + L('🔊 Dhaggeeffadhu', '🔊 Écouter')
     + '</button>';
@@ -1423,16 +1431,16 @@ function renderDialog() {
   }).join('');
   var sit = sits[sitIdx];
 
-  var keys = langKeys();
+  var keys = langKeys(); // Contient keys.src ('fr' ou 'om') et keys.tgt ('om' ou 'fr')
   var bubbles = sit.dialogue.map(function(ln, i) {
     var listenTip = L('Dhaggeeffadhu', 'Écouter');
     return '<div class="bubble ' + ln.side + '" style="opacity:0;transition:opacity .3s ' + (i * 0.08) + 's" id="bl' + i + '">'
       + '<div class="speaker-name">' + ln.s + '</div>'
       + '<div class="msg-row">'
-      + '<div class="msg">'   + ln[keys.src] + '</div>'
+      + '<div class="msg" lang="' + keys.src + '">' + ln[keys.src] + '</div>'
       + '<button class="speak-bubble-btn" onclick="speak(\'' + esc(ln[keys.src]) + '\')" title="' + listenTip + '">🔊</button>'
       + '</div>'
-      + '<div class="bubble-translation">' + ln[keys.tgt] + '</div>'
+      + '<div class="bubble-translation" lang="' + keys.tgt + '">' + ln[keys.tgt] + '</div>'
       + '</div>';
   }).join('');
 
@@ -2221,15 +2229,17 @@ function _quizResultStrings(pct, type) {
 
 /**
  * Échappe les caractères spéciaux pour une insertion sécurisée
- * dans les attributs HTML inline (onclick="...") et les littéraux JS.
+ * dans les attributs HTML inline (onclick="...") et les littéraux JS,
+ * en protégeant particulièrement les apostrophes (hudhaa) de l'Afaan Oromoo.
  * @param {string} s
  * @returns {string}
  */
 function esc(s) {
-  return (s || '')
+  if (!s) return '';
+  return s
     .replaceAll('\\', '\\\\')
-    .replaceAll("'",  "\\'")
-    .replaceAll('"',  '&quot;');
+    .replaceAll("'",  '&#39;')   // Protège l'apostrophe Oromo dans le DOM HTML
+    .replaceAll('"',  '&quot;'); // Protège les guillemets
 }
 
 /**
@@ -2341,6 +2351,17 @@ function _buildHomeGuide() {
           + '<li>📚 <strong>Sadarkaa 1 — Jechota (32)</strong> : Kaardota, Jechootaa, Quiz, Irra deebʼi</li>'
           + '<li>💬 <strong>Sadarkaa 2 — Dubbii (16)</strong> : Haala jireenya dhugaa keessatti fayyadamuu</li>'
           + '</ul>'
+          + '<div class="ob-flow">'
+          + '<span class="ob-flow-step">🚀 Jalqabaa</span>'
+          + '<span class="ob-flow-arrow">→</span>'
+          + '<span class="ob-flow-step">📚 Moojuulota</span>'
+          + '<span class="ob-flow-arrow">→</span>'
+          + '<span class="ob-flow-step">🃏 Kaardota</span>'
+          + '<span class="ob-flow-arrow">→</span>'
+          + '<span class="ob-flow-step">🎯 Quiz</span>'
+          + '<span class="ob-flow-arrow">→</span>'
+          + '<span class="ob-flow-step">⭐ Urjii</span>'
+          + '</div>'
           + '<p>Fuula <strong>Gargaarsa</strong> kun jalqaba hunda ni mulʼata — "Kaʼumsa irratti hin agarsiifin" cuqaasi hanqisuuf.</p>'
           + '<div class="ob-tip">💡 Sadarkaa 1 irraa jalqabi — booda sadarkaa 2 salphaa taʼa !</div>'
         /* Français : apprenant francophone */
@@ -2350,6 +2371,17 @@ function _buildHomeGuide() {
           + '<li>📚 <strong>Niveau 1 — Vocabulaire (32 thèmes)</strong> : Cartes Flash, Lexique, Quiz, Répétition orale</li>'
           + '<li>💬 <strong>Niveau 2 — Dialogues (16 mises en situation)</strong> : scènes de la vie réelle à écouter, comprendre et répéter</li>'
           + '</ul>'
+          + '<div class="ob-flow">'
+          + '<span class="ob-flow-step">🚀 Lancement</span>'
+          + '<span class="ob-flow-arrow">→</span>'
+          + '<span class="ob-flow-step">📚 Modules</span>'
+          + '<span class="ob-flow-arrow">→</span>'
+          + '<span class="ob-flow-step">🃏 Cartes</span>'
+          + '<span class="ob-flow-arrow">→</span>'
+          + '<span class="ob-flow-step">🎯 Quiz</span>'
+          + '<span class="ob-flow-arrow">→</span>'
+          + '<span class="ob-flow-step">⭐ Étoiles</span>'
+          + '</div>'
           + '<p>Ce <strong>Guide</strong> s\'affiche à chaque visite — cochez "Ne plus afficher" pour le passer à l\'avenir.</p>'
           + '<div class="ob-tip">💡 Commencez par le Niveau 1 — les dialogues du Niveau 2 seront plus faciles ensuite !</div>'
     },
@@ -2459,15 +2491,81 @@ function _buildHomeGuide() {
           + '<div class="ob-tip">\ud83d\udca1 Votre score total \u2b50 est visible en haut de l\'écran Modules.</div>'
     },
     {
-      icon : '\ud83d\udd0a',
+      icon : '\ud83d\udcd6',
+      title: isFr ? 'Jechootaa (Vocabulaire)' : 'L\'onglet Vocabulaire',
+      body : isFr
+        /* Oromo */
+        ? '<p>Onglet <strong>Jechootaa</strong> — jechota moojuulaa tarree keessatti agarsiisa, yeroo hundaa ilaaluuf.</p>'
+          + '<ul>'
+          + '<li>Jecha tokko irratti cuqaasi — sagalee dhageeffatta.</li>'
+          + '<li>Jechoonni Oromoo fi Faransaayii waliin ni mul\'atu.</li>'
+          + '<li>Kaardota fi Quiz caalaa salphaa — irra deebi\'uuf gaarii.</li>'
+          + '</ul>'
+          + '<div class="ob-tip">💡 Jechootaa irraa jalqabuun ni danda\'ama — booda Kaardota fi Quiz gali !</div>'
+        /* Français */
+        : '<p>L\'onglet <strong>Vocabulaire</strong> affiche tous les mots du module sous forme de liste, consultable à tout moment.</p>'
+          + '<ul>'
+          + '<li>Tapez sur un mot pour l\'entendre prononcé.</li>'
+          + '<li>Chaque entrée affiche le mot en Oromo et sa traduction française côte à côte.</li>'
+          + '<li>Plus rapide que les cartes — idéal pour réviser avant un quiz.</li>'
+          + '</ul>'
+          + '<div class="ob-tip">💡 Utilisez le Vocabulaire comme aide-mémoire entre deux sessions !</div>'
+    },
+    {
+      icon : '\ud83d\udcac',
+      title: isFr ? 'Dubbii — Sadarkaa 2' : 'Les Dialogues — Niveau 2',
+      body : isFr
+        /* Oromo */
+        ? '<p>Moojuulota Sadarkaa 2 keessa <strong>haalli jireenya dhugaa</strong> jira — gurgurtaa, hospitaala, masaraa xiyyaaraa fi kkf.</p>'
+          + '<ul>'
+          + '<li>Haaloota hedduu (<em>Sit. 1, Sit. 2…</em>) — ongletota irraa filanna.</li>'
+          + '<li>Bubbulliiwwan lama ni mullatu — 🔵 bitaa fi 🟢 mirga — nama lama gidduutti dubbii.</li>'
+          + '<li>Caancala 🔊 cuqaasi — hirmaataa dubbisu dhageeffadhu.</li>'
+          + '<li>Onglet <strong>Vocabulaire</strong> : jechota murteessoo dubbii sanaa.</li>'
+          + '<li>Onglet <strong>Quiz</strong> : gaafii dubbii irratti of-qori.</li>'
+          + '</ul>'
+          + '<div class="ob-tip">💡 Dura Sadarkaa 1 xumuruun gaarii — jechonni Sadarkaa 2 keessatti ni mul\'atu !</div>'
+        /* Français */
+        : '<p>Les modules du Niveau 2 proposent des <strong>mises en situation réelles</strong> — marché, hôpital, aéroport, etc.</p>'
+          + '<ul>'
+          + '<li>Plusieurs situations par thème (<em>Sit. 1, Sit. 2…</em>) — naviguez via les onglets en haut.</li>'
+          + '<li>Deux bulles de dialogue — 🔵 gauche et 🟢 droite — représentent les deux interlocuteurs.</li>'
+          + '<li>Cliquez sur 🔊 pour écouter chaque réplique prononcée.</li>'
+          + '<li>Onglet <strong>Vocabulaire</strong> : les mots-clés du dialogue.</li>'
+          + '<li>Onglet <strong>Quiz</strong> : questions de compréhension sur le dialogue.</li>'
+          + '</ul>'
+          + '<div class="ob-tip">💡 Conseil : lisez d\'abord le dialogue entier, puis écoutez-le, puis jouez le Quiz !</div>'
+    },
+    {
+      icon : '\ud83d\udd04',
+      title: isFr ? 'Moojuula haaromsuuu (\u2b50 haquuu)' : 'Réinitialiser un module',
+      body : isFr
+        /* Oromo */
+        ? '<p>Moojuula tokko irra deebi\'uu barbaaddaa? Urjiilee haquun <strong>jalqaba irraa jalqabuu</strong> ni dandaa\'ama.</p>'
+          + '<ul>'
+          + '<li>Fuula <strong>Moojuulota</strong> irratti moojuula filadhu.</li>'
+          + '<li>Caancala <strong>🔄 Haaromsi</strong> cuqaasi — mirkaneeffannaa ni gaafata.</li>'
+          + '<li>Urjiilee ni dhaban — garuu Quiz irra deebi\'uun urjii haaraa argachuu ni dandaa\'ama.</li>'
+          + '</ul>'
+          + '<div class="ob-tip">💡 Madaalli haaraan kan duraa caale qofti yaadatama — yeroo hunda waltajjii keessan ol ta\'a !</div>'
+        /* Français */
+        : '<p>Envie de recommencer un module à zéro ? Vous pouvez <strong>effacer vos étoiles</strong> et repartir de la base.</p>'
+          + '<ul>'
+          + '<li>Depuis l\'écran <strong>Modules</strong>, appuyez sur le thème concerné.</li>'
+          + '<li>Appuyez sur le bouton <strong>🔄 Recommencer</strong> — une confirmation vous sera demandée.</li>'
+          + '<li>Vos étoiles sont supprimées — rejouez le Quiz pour en regagner.</li>'
+          + '</ul>'
+          + '<div class="ob-tip">💡 Seul votre meilleur score est conservé — si vous rejouez et faites mieux, le compteur monte. Si vous faites moins bien, il ne bouge pas !</div>'
+    },
+    {
       title: isFr ? 'Sagalee qindeessuu (Synthèse Vocale)' : 'Configurer l\'audio',
       body : isFr
         /* Oromo — version concise */
         ? '<p>Sagalee sirriitti dhageeffachuun barachuu keessatti barbaachisaa dha. Appiin kun <strong>sagalee browser yookiin bilbila kee</strong> (Web Speech API) fayyadama.</p>'
-          + '<p>🤖 <strong>Android</strong> : Paramètres → Accessibilité → Synthèse vocale → Google TTS filadhu, sagalee buufadhu.</p>'
-          + '<p>🍎 <strong>iPhone/iPad</strong> : Réglages → Accessibilité → Contenu énoncé → Voix → afaan filadhu, \u2b07\ufe0f cuqaasi.</p>'
-          + '<p>💻 <strong>Kompiyuutara</strong> : Chrome yookiin Edge fayyadami — voix bultii qabdu.</p>'
-          + '<div class="ob-tip">\ud83d\udca1 Sagalee dhaabbataan yoo hin hojjenne — meeshaa kee gargaarsa barbaadi yookiin support Google/Apple quunnamaa.</div>'
+          + '<p>🤖 <strong>Android</strong> : Qindaa\'inaa → Gargaarsa → Sagalee uumamaa → Google TTS filadhu, sagalee buufadhu.</p>'
+          + '<p>🍎 <strong>iPhone/iPad</strong> : Qindaa\'inaa → Gargaarsa → Sagalee dubbisuu → Sagalee → afaan filadhu, ⬇️ cuqaasi.</p>'
+          + '<p>💻 <strong>Kompiyuutara</strong> : Chrome yookiin Edge fayyadami — sagalee gaarii qabdu.</p>'
+          + '<div class="ob-tip">💡 Sagalee dhaabbataan yoo hin hojjenne — meeshaa kee gargaarsa barbaadi yookiin support Google/Apple quunnamaa.</div>'
         /* Français — guide complet */
         : '<p>Bien entendre les mots, c\'est essentiel ! L\'appli utilise la <strong>synthèse vocale intégrée</strong> à votre téléphone ou navigateur (Web Speech API). Si le son est absent, robotique ou dans la mauvaise langue, suivez le guide ci-dessous.</p>'
           /* Android */
@@ -2517,7 +2615,7 @@ function _buildHomeGuide() {
     },
     {
       icon : '\ud83c\udfa4',
-      title: isFr ? 'Sagalee Oromoo — "Cascade of Voices"' : '\ud83c\udfa4 L\'audio en Oromo : la Cascade de Voix',
+      title: isFr ? 'Sagalee Oromoo — Tartiiba Sagalee' : 'L\'audio en Oromo : la Cascade de Voix',
       body : isFr
         /* Oromo — version concise */
         ? '<p>Afaan Oromoo qubee Latin (Qubee) fayyadama. Sagaleen Oromoo meeshaalee hedduurratti hin argamtu — kanaaf appiin kun <strong>sagalee walii galaa sirriitti dubbisu</strong> barbaacha hojjeta.</p>'
@@ -2581,6 +2679,7 @@ function _buildHomeGuide() {
     {
       icon : '\ud83c\udfa4',
       title: isFr ? 'Onglet Irra deeb\u02bci' : "L'onglet Répète",
+      sub  : isFr ? "L'onglet Répète"         : 'Onglet Irra deebʼi',
       body : isFr
         ? '<p>Onglet <strong>Irra deeb\u02bci</strong> sagalee shaakaaluuf maaykiroofoonii meeshaa kee fayyadama :</p>'
           + '<ul>'
@@ -2615,11 +2714,20 @@ function _buildHomeGuide() {
       title: isFr ? 'Galateeffannaa' : 'Remerciements',
       body : isFr
         /* Oromo */
-        ? '<p>Appiin kun nama hedduun gargaaramtee hojjetamte. Galata isaaniif qabna !</p>'
-          + '<button class="ob-credits-btn" onclick="showCredits()">\ud83d\ude4f Galateeffannaa ilaaluu \u2192</button>'
+        ? '<p>Galata guddaa <strong>Fédérico Calo</strong>'
+          + ' (<a href="https://www.linkedin.com/in/federicocalo/" target="_blank" rel="noopener">Architektii Guddisaa Web</a>)'
+          + ' gargaarsa teknikaaf.</p>'
+          + '<p>Galata baay\'een <strong>Mussa Sembro</strong>'
+          + ' (<a href="https://www.linkedin.com/in/mussa-sembro-137472174/" target="_blank" rel="noopener">Hiikkaa-Ibsituu Afaan Oromoo</a>)'
+          + ' fi maatii kootiif — irra deebi\'ee dubbisuu, hiika sirreessuu fi gorsa ergonomii appii kennuuf.</p>'
         /* Français */
-        : '<p>Cette appli n\'aurait pas vu le jour sans des personnes formidables — aide technique, traductions, relecture et conseils ergonomiques.</p>'
-          + '<button class="ob-credits-btn" onclick="showCredits()">\ud83d\ude4f Voir les remerciements \u2192</button>'
+        : '<p>Un grand merci à <strong>Fédérico Calo</strong>'
+          + ' (<a href="https://www.linkedin.com/in/federicocalo/" target="_blank" rel="noopener">Architecte Développeur Web</a>)'
+          + ' pour son aide technique.</p>'
+          + '<p>Merci beaucoup également à <strong>Mussa Sembro</strong>'
+          + ' (<a href="https://www.linkedin.com/in/mussa-sembro-137472174/" target="_blank" rel="noopener">Traducteur-Interprète en Oromo</a>)'
+          + ' et à mes parents pour leur travail de relecture, leurs corrections sur les traductions'
+          + ' et leurs conseils sur l\'ergonomie de l\'application.</p>'
     },
     {
       icon : '\ud83d\ude4b',
@@ -2655,7 +2763,7 @@ function _buildHomeGuide() {
   var bodyEl = document.getElementById('homeGuideBody');
   if (bodyEl) {
     bodyEl.innerHTML = sections.map(function(s) {
-      return '<details class="hg-section" open>'
+      return '<details class="hg-section">'
         + '<summary class="hg-summary">'
         + '<span class="hg-icon">' + s.icon + '</span>'
         + '<span class="hg-label">' + s.title + '</span>'
@@ -2667,29 +2775,38 @@ function _buildHomeGuide() {
   }
 
   /* ── Checkbox "Ne plus afficher" — libellé dans la langue maternelle ── */
+  var noshowLabel = isFr
+    ? "Ka'umsa irratti gargaarsa kana hin agarsiifin"  /* oromo */
+    : 'Ne plus afficher ce guide au démarrage';         /* français */
+
+  /* Checkbox du bas */
   var noshowText = document.getElementById('homeNoshowText');
-  if (noshowText) {
-    noshowText.textContent = isFr
-      ? "Ka'umsa irratti gargaarsa kana hin agarsiifin"  /* oromo */
-      : 'Ne plus afficher ce guide au démarrage';         /* français */
-  }
-  /* Synchroniser l'état de la checkbox avec localStorage */
-  var chk = document.getElementById('homeNoshowChk');
+  if (noshowText) noshowText.textContent = noshowLabel;
+
+  /* Checkbox de la topbar */
+  var topbarNoshowText = document.getElementById('homeTopbarNoshowText');
+  if (topbarNoshowText) topbarNoshowText.textContent = noshowLabel;
+
+  /* Synchroniser l'état des deux checkboxes avec localStorage */
+  var chk       = document.getElementById('homeNoshowChk');
+  var chkTopbar = document.getElementById('homeTopbarNoshowChk');
   var key = (currentMode === 'learn_french') ? _OB_KEY_FR : _OB_KEY_OR;
-  try {
-    if (chk) chk.checked = !!localStorage.getItem(key);
-  } catch(e) {}
-  if (chk) {
-    chk.onchange = function() {
-      try {
-        if (chk.checked) {
-          localStorage.setItem(key, '1');
-        } else {
-          localStorage.removeItem(key);
-        }
-      } catch(e) {}
-    };
+  var checked = false;
+  try { checked = !!localStorage.getItem(key); } catch(e) {}
+  if (chk)       chk.checked       = checked;
+  if (chkTopbar) chkTopbar.checked = checked;
+
+  /* Garder les deux en sync entre elles + localStorage */
+  function _syncNoshow(val) {
+    try {
+      if (val) { localStorage.setItem(key, '1'); }
+      else      { localStorage.removeItem(key); }
+    } catch(e) {}
+    if (chk       && chk.checked       !== val) chk.checked       = val;
+    if (chkTopbar && chkTopbar.checked !== val) chkTopbar.checked = val;
   }
+  if (chk)       chk.onchange       = function() { _syncNoshow(chk.checked); };
+  if (chkTopbar) chkTopbar.onchange = function() { _syncNoshow(chkTopbar.checked); };
 
   /* ── Bouton Commencer / Continuer ── */
   var btn = document.getElementById('homeStartBtn');
@@ -2729,9 +2846,11 @@ function _closeOnboarding() {
   overlay.classList.remove('ob-visible');
   var key = (currentMode === 'learn_french') ? _OB_KEY_FR : _OB_KEY_OR;
   try { localStorage.setItem(key, '1'); } catch(e) {}
-  /* Synchroniser la checkbox sur l'écran home */
+  /* Synchroniser les deux checkboxes sur l'écran home */
   var chk = document.getElementById('homeNoshowChk');
   if (chk) chk.checked = true;
+  var chkTopbar = document.getElementById('homeTopbarNoshowChk');
+  if (chkTopbar) chkTopbar.checked = true;
 }
 
 /**
@@ -2740,10 +2859,14 @@ function _closeOnboarding() {
  */
 function showOnboardingGuide() {
   showScreen('home');
-  /* Re-synchroniser la checkbox car le flag peut avoir changé */
+  /* Re-synchroniser les deux checkboxes car le flag peut avoir changé */
   var chk = document.getElementById('homeNoshowChk');
+  var chkTopbar = document.getElementById('homeTopbarNoshowChk');
   var key = (currentMode === 'learn_french') ? _OB_KEY_FR : _OB_KEY_OR;
-  try { if (chk) chk.checked = !!localStorage.getItem(key); } catch(e) {}
+  var checked = false;
+  try { checked = !!localStorage.getItem(key); } catch(e) {}
+  if (chk)       chk.checked       = checked;
+  if (chkTopbar) chkTopbar.checked = checked;
 }
 
 /**
@@ -2756,78 +2879,75 @@ function _buildOnboardingContent() {
 
   /* ── Textes de l'en-tête ── */
   var title    = isFr
-    ? 'Bienvenue dans Taphad\'Meuh !'
-    : 'Baga nagaan dhufte Taphad\'Meuh !';
+    ? 'Baga nagaan dhufte Taphad\'Meuh !'   /* oromophone apprend le français → titre en oromo */
+    : 'Bienvenue dans Taphad\'Meuh !';       /* francophone apprend l'oromo   → titre en français */
   var subtitle = isFr
-    ? 'Apprenez le Français pas à pas · Afaan Faransaayii tarkaanfiin baradhu'
-    : 'Afaan Oromoo harʼa jalqabi · Commencez l\'Oromo dès aujourd\'hui';
+    ? 'Afaan Faransaayii tarkaanfiin baradhu · Apprenez le Français pas à pas'   /* oromo en premier */
+    : 'Commencez l\'Oromo dès aujourd\'hui · Afaan Oromoo harʼa jalqabi';          /* français en premier */
 
   /* ── Texte du bouton CTA ── */
   var startLabel = isFr
-    ? '▶ Commencer l\'aventure !'
-    : '▶ Jalqabi waltajjii kana !';
+    ? '▶ Jalqabi waltajjii kana !'   /* oromophone */
+    : '▶ Commencer l\'aventure !';   /* francophone */
 
   /* ── Texte du hint "relire" ── */
   var rereadHint = isFr
-    ? 'Vous pourrez relire ce guide depuis le lien <a onclick="showOnboardingGuide()">Aide</a> en bas de chaque page.'
-    : 'Gargaarsa kana booda irra deebʼanii <a onclick="showOnboardingGuide()">Gargaarsa</a> jedhu cuqaasuun dubbisuu dandeessu.';
+    ? 'Gargaarsa kana booda irra deebʼanii <a onclick="showOnboardingGuide()">Gargaarsa</a> jedhu cuqaasuun dubbisuu dandeessu.'   /* oromo */
+    : 'Vous pourrez relire ce guide depuis le lien <a onclick="showOnboardingGuide()">Aide</a> en bas de chaque page.';              /* français */
 
   /* ── Définition des sections accordéon ── */
   var sections = [
     {
       icon : '🗺️',
-      title: isFr ? 'Comment naviguer dans l\'app'    : 'Appiin keessa akkamiin deemna',
-      sub  : isFr ? 'Comment naviguer dans l\'app'    : 'Comment naviguer dans l\'app',
+      title: isFr ? 'Appiin keessa akkamiin deemna'    : 'Comment naviguer dans l\'app',
+      sub  : isFr ? 'Comment naviguer dans l\'app'     : 'Appiin keessa akkamiin deemna',
       body : isFr
+        /* oromophone → oromo */
         ? '<ul>'
-          + '<li><strong>Écran d\'accueil</strong> : votre tableau de bord — progression globale et étoiles gagnées.</li>'
-          + '<li><strong>Modules (📚)</strong> : 32 thèmes de vocabulaire (Niveau 1) + 16 dialogues de situation (Niveau 2).</li>'
-          + '<li><strong>Dans chaque module</strong>, plusieurs onglets : <em>Cartes, Vocabulaire, Quiz, Dialogue, Répète</em>.</li>'
-          + '<li>Le bouton <strong>←</strong> remonte toujours d\'un niveau.</li>'
-          + '</ul>'
-          + '<div class="ob-tip">💡 Commencez par le Niveau 1 — les dialogues du Niveau 2 seront plus faciles ensuite !</div>'
-        : '<ul>'
           + '<li><strong>Fuula duraa</strong> : daashboordii keessan — tartiiba guutuu fi urjii argattan agarsiisa.</li>'
           + '<li><strong>Moojuulota (📚)</strong> : jechoota sadarkaa 1 (thèmes 32) + himoota sadarkaa 2 (dialogues 16).</li>'
           + '<li><strong>Moojuula tokko tokkoon</strong> keessa: <em>Kaardota, Jechootaa, Quiz, Dubbii, Irra deebʼi</em>.</li>'
           + '<li>Fuula <strong>←</strong> irra deebiʼuuf fayyadami.</li>'
           + '</ul>'
           + '<div class="ob-tip">💡 Sadarkaa 1 irraa jalqabi — booda sadarkaa 2 salphaa ta\'a !</div>'
+        /* francophone → français */
+        : '<ul>'
+          + '<li><strong>Écran d\'accueil</strong> : votre tableau de bord — progression globale et étoiles gagnées.</li>'
+          + '<li><strong>Modules (📚)</strong> : 32 thèmes de vocabulaire (Niveau 1) + 16 dialogues de situation (Niveau 2).</li>'
+          + '<li><strong>Dans chaque module</strong>, plusieurs onglets : <em>Cartes, Vocabulaire, Quiz, Dialogue, Répète</em>.</li>'
+          + '<li>Le bouton <strong>←</strong> remonte toujours d\'un niveau.</li>'
+          + '</ul>'
+          + '<div class="ob-tip">💡 Commencez par le Niveau 1 — les dialogues du Niveau 2 seront plus faciles ensuite !</div>'
     },
     {
       icon : '🃏',
-      title: isFr ? 'Les Cartes Flash'         : 'Kaardota (Cartes Flash)',
-      sub  : isFr ? 'Kaardota (Cartes Flash)'  : 'Les Cartes Flash',
+      title: isFr ? 'Kaardota (Cartes Flash)'  : 'Les Cartes Flash',
+      sub  : isFr ? 'Les Cartes Flash'          : 'Kaardota (Cartes Flash)',
       body : isFr
-        ? '<p>Chaque carte montre un mot en Français. <strong>Tapez dessus</strong> pour voir la traduction en Oromo et entendre la prononciation.</p>'
-          + '<ul>'
-          + '<li>Bouton <strong>🔊</strong> : écouter le mot prononcé.</li>'
-          + '<li>Boutons <strong>‹ ›</strong> : passer à la carte suivante ou précédente.</li>'
-          + '<li>La carte se <strong>retourne</strong> pour révéler la traduction.</li>'
-          + '</ul>'
-          + '<div class="ob-tip">💡 Écoutez plusieurs fois avant de passer au Quiz !</div>'
-        : '<p>Kaardni tokko jecha Oromoo agarsiisa. <strong>Cuqaasi</strong> sagalee dhageeffachuu fi hiika Faransaayii argachuuf.</p>'
+        /* oromophone → oromo */
+        ? '<p>Kaardni tokko jecha Oromoo agarsiisa. <strong>Cuqaasi</strong> sagalee dhageeffachuu fi hiika Faransaayii argachuuf.</p>'
           + '<ul>'
           + '<li>Caancala <strong>🔊</strong> : sagalee dhageeffadhu.</li>'
           + '<li>Caancalota <strong>‹ ›</strong> : kaardii itti aanu yookiin kan darbee ilaali.</li>'
           + '<li>Kaardiin <strong>garagalti</strong> hiika agarsisuuf.</li>'
           + '</ul>'
           + '<div class="ob-tip">💡 Dura sagalee dhageeffadhu, booda Quiz gali !</div>'
+        /* francophone → français */
+        : '<p>Chaque carte montre un mot en Oromo. <strong>Tapez dessus</strong> pour voir la traduction française et entendre la prononciation.</p>'
+          + '<ul>'
+          + '<li>Bouton <strong>🔊</strong> : écouter le mot prononcé.</li>'
+          + '<li>Boutons <strong>‹ ›</strong> : passer à la carte suivante ou précédente.</li>'
+          + '<li>La carte se <strong>retourne</strong> pour révéler la traduction.</li>'
+          + '</ul>'
+          + '<div class="ob-tip">💡 Écoutez plusieurs fois avant de passer au Quiz !</div>'
     },
     {
       icon : '🎯',
-      title: isFr ? 'Le Quiz et les Étoiles ⭐'    : 'Quiz fi Urjiin ⭐',
-      sub  : isFr ? 'Quiz fi Urjiin ⭐'             : 'Le Quiz et les Étoiles ⭐',
+      title: isFr ? 'Quiz fi Urjiin ⭐'           : 'Le Quiz et les Étoiles ⭐',
+      sub  : isFr ? 'Le Quiz et les Étoiles ⭐'  : 'Quiz fi Urjiin ⭐',
       body : isFr
-        ? '<p>Après les cartes, testez-vous avec le <strong>Quiz 10 questions</strong>. Choisissez la bonne réponse parmi 4 options.</p>'
-          + '<ul>'
-          + '<li><strong>⭐</strong> : ≥ 50% de bonnes réponses → module validé !</li>'
-          + '<li><strong>⭐⭐</strong> : ≥ 75% — Très bien !</li>'
-          + '<li><strong>⭐⭐⭐</strong> : 100% — Parfait ! 🎉</li>'
-          + '</ul>'
-          + '<p>Les étoiles ne <strong>diminuent jamais</strong> : seul votre meilleur score est conservé.</p>'
-          + '<div class="ob-tip">💡 Il faut au moins ⭐ (50%) pour valider un module et débloquer la barre de progression.</div>'
-        : '<p>Kaardota booda, <strong>Quiz gaafii 10</strong> waliin of-qori. Deebii sirrii 4 keessaa tokko filadhu.</p>'
+        /* oromophone → oromo */
+        ? '<p>Kaardota booda, <strong>Quiz gaafii 10</strong> waliin of-qori. Deebii sirrii 4 keessaa tokko filadhu.</p>'
           + '<ul>'
           + '<li><strong>⭐</strong> : ≥ 50% sirrii → kutaan darbe !</li>'
           + '<li><strong>⭐⭐</strong> : ≥ 75% — Baayʼee gaari !</li>'
@@ -2835,55 +2955,70 @@ function _buildOnboardingContent() {
           + '</ul>'
           + '<p>Urjiilee <strong>hir\'atan hin beekani</strong> : madaala keessan gaarii ta\'e qofti yaadatama.</p>'
           + '<div class="ob-tip">💡 Kutaa darbuuf xiqqaate ⭐ (50%) barbaachisa.</div>'
+        /* francophone → français */
+        : '<p>Après les cartes, testez-vous avec le <strong>Quiz 10 questions</strong>. Choisissez la bonne réponse parmi 4 options.</p>'
+          + '<ul>'
+          + '<li><strong>⭐</strong> : ≥ 50% de bonnes réponses → module validé !</li>'
+          + '<li><strong>⭐⭐</strong> : ≥ 75% — Très bien !</li>'
+          + '<li><strong>⭐⭐⭐</strong> : 100% — Parfait ! 🎉</li>'
+          + '</ul>'
+          + '<p>Les étoiles ne <strong>diminuent jamais</strong> : seul votre meilleur score est conservé.</p>'
+          + '<div class="ob-tip">💡 Il faut au moins ⭐ (50%) pour valider un module et débloquer la barre de progression.</div>'
     },
     {
       icon : '🔊',
-      title: isFr ? 'La Synthèse Vocale'         : 'Sagalee (Synthèse Vocale)',
-      sub  : isFr ? 'Sagalee (Synthèse Vocale)'  : 'La Synthèse Vocale',
+      title: isFr ? 'Sagalee (Synthèse Vocale)'  : 'La Synthèse Vocale',
+      sub  : isFr ? 'La Synthèse Vocale'          : 'Sagalee (Synthèse Vocale)',
       body : isFr
-        ? '<p>Chaque mot peut être <strong>écouté</strong> en cliquant sur le bouton 🔊. La prononciation française est lue par votre navigateur.</p>'
-          + '<div class="ob-tip">💡 Si le bouton 🔊 ne fonctionne pas, vérifiez que le son de votre appareil est activé et que votre navigateur supporte la synthèse vocale (Chrome et Firefox recommandés).</div>'
-        : '<p>Jecha tokko tokko <strong>dhageeffachuu</strong> ni dandʼama — caancala 🔊 cuqaasi. Sagaleen Oromoo sagalee jechoota Oromoo dhiyeessuf fayyadama.</p>'
+        /* oromophone → oromo */
+        ? '<p>Jecha tokko tokko <strong>dhageeffachuu</strong> ni dandʼama — caancala 🔊 cuqaasi. Sagaleen Oromoo sagalee jechoota Oromoo dhiyeessuf fayyadama.</p>'
           + '<p>Sagaleen sirrii ta\'uu ishee garanteessuu hin danda\'amu, garuu sagalee Afaan Oromootti dhiyoo kan argame fayyadamna.</p>'
           + '<div class="ob-tip">💡 Caancalli 🔊 hin hojjenne yoo taʼe: suursagalee meeshaa kee ilaali, Chrome yookiin Firefox fayyadami.</div>'
+        /* francophone → français */
+        : '<p>Chaque mot peut être <strong>écouté</strong> en cliquant sur le bouton 🔊. La prononciation de l\'Oromo est lue par votre navigateur.</p>'
+          + '<div class="ob-tip">💡 Si le bouton 🔊 ne fonctionne pas, vérifiez que le son de votre appareil est activé et que votre navigateur supporte la synthèse vocale (Chrome et Firefox recommandés).</div>'
     },
     {
       icon : '🎙️',
-      title: isFr ? 'L\'onglet Répète'         : 'Onglet Irra deebʼi',
-      sub  : isFr ? 'Onglet Irra deebʼi'      : 'L\'onglet Répète',
+      title: isFr ? 'Onglet Irra deebʼi'      : 'L\'onglet Répète',
+      sub  : isFr ? 'L\'onglet Répète'         : 'Onglet Irra deebʼi',
       body : isFr
-        ? '<p>L\'onglet <strong>Répète</strong> utilise le microphone de votre appareil pour vous faire pratiquer la prononciation :</p>'
-          + '<ul>'
-          + '<li>Appuyez sur <strong>🔊 Écouter</strong> pour entendre le mot.</li>'
-          + '<li>Appuyez sur <strong>🎙️ Parler</strong> et prononcez le mot.</li>'
-          + '<li>L\'app compare votre prononciation et donne un retour immédiat.</li>'
-          + '</ul>'
-          + '<div class="ob-tip">💡 Cette fonctionnalité nécessite l\'autorisation d\'accès au microphone. Elle peut ne pas être disponible sur tous les navigateurs.</div>'
-        : '<p>Onglet <strong>Irra deebʼi</strong> qoʼannaa sagalee gargaaruuf maaykiroofoonii meeshaa kee fayyadama :</p>'
+        /* oromophone → oromo */
+        ? '<p>Onglet <strong>Irra deebʼi</strong> qoʼannaa sagalee gargaaruuf maaykiroofoonii meeshaa kee fayyadama :</p>'
           + '<ul>'
           + '<li><strong>🔊 Dhageeffadhu</strong> cuqaasi — jecha dhaggeeffadhu.</li>'
           + '<li><strong>🎙️ Dubbadhu</strong> cuqaasi — jecha dubbadhuu.</li>'
           + '<li>Appiin sagalee kee madaalu, deebii ariifataa kenni.</li>'
           + '</ul>'
           + '<div class="ob-tip">💡 Hojii kanaaf hayyama maaykiroofoonii barbaachisa. Browser mara irratti hin hojjetu.</div>'
+        /* francophone → français */
+        : '<p>L\'onglet <strong>Répète</strong> utilise le microphone de votre appareil pour vous faire pratiquer la prononciation :</p>'
+          + '<ul>'
+          + '<li>Appuyez sur <strong>🔊 Écouter</strong> pour entendre le mot.</li>'
+          + '<li>Appuyez sur <strong>🎙️ Parler</strong> et prononcez le mot.</li>'
+          + '<li>L\'app compare votre prononciation et donne un retour immédiat.</li>'
+          + '</ul>'
+          + '<div class="ob-tip">💡 Cette fonctionnalité nécessite l\'autorisation d\'accès au microphone. Elle peut ne pas être disponible sur tous les navigateurs.</div>'
     },
     {
       icon : '📱',
-      title: isFr ? 'Installer l\'app (hors-ligne)'   : 'App gara meeshaa irratti buusi',
-      sub  : isFr ? 'App gara meeshaa irratti buusi'  : 'Installer l\'app (hors-ligne)',
+      title: isFr ? 'App gara meeshaa irratti buusi'  : 'Installer l\'app (hors-ligne)',
+      sub  : isFr ? 'Installer l\'app (hors-ligne)'   : 'App gara meeshaa irratti buusi',
       body : isFr
-        ? '<p>Taphad\'Meuh peut être <strong>installée sur votre téléphone</strong> comme une vraie app, sans passer par un store :</p>'
-          + '<ul>'
-          + '<li><strong>Android / Chrome</strong> : touchez le menu ⋮ puis <em>"Ajouter à l\'écran d\'accueil"</em>.</li>'
-          + '<li><strong>iOS / Safari</strong> : touchez 🔗 puis <em>"Sur l\'écran d\'accueil"</em>.</li>'
-          + '</ul>'
-          + '<p>Une fois installée, l\'app fonctionne <strong>entièrement hors-ligne</strong> — idéal pour apprendre sans connexion !</p>'
-        : '<p>Taphad\'Meuh bilbila kee irratti <strong>app dhugaa ta\'ee</strong> buusuun danda\'ama, store malee :</p>'
+        /* oromophone → oromo */
+        ? '<p>Taphad\'Meuh bilbila kee irratti <strong>app dhugaa ta\'ee</strong> buusuun danda\'ama, store malee :</p>'
           + '<ul>'
           + '<li><strong>Android / Chrome</strong> : ⋮ cuqaasi booda <em>"Fuula jalqabarratti ida\'i"</em>.</li>'
           + '<li><strong>iOS / Safari</strong> : 🔗 cuqaasi booda <em>"Fuula jalqabarratti"</em>.</li>'
           + '</ul>'
           + '<p>Erga buufamee booda, interneetii malee <strong>hojjeta</strong> — barachuu iddoo kamittiyyuu !</p>'
+        /* francophone → français */
+        : '<p>Taphad\'Meuh peut être <strong>installée sur votre téléphone</strong> comme une vraie app, sans passer par un store :</p>'
+          + '<ul>'
+          + '<li><strong>Android / Chrome</strong> : touchez le menu ⋮ puis <em>"Ajouter à l\'écran d\'accueil"</em>.</li>'
+          + '<li><strong>iOS / Safari</strong> : touchez 🔗 puis <em>"Sur l\'écran d\'accueil"</em>.</li>'
+          + '</ul>'
+          + '<p>Une fois installée, l\'app fonctionne <strong>entièrement hors-ligne</strong> — idéal pour apprendre sans connexion !</p>'
     }
   ];
 
@@ -3077,4 +3212,411 @@ if ('serviceWorker' in navigator) {
         console.warn('[SW] Enregistrement échoué :', err);
       });
   });
+}
+
+/* ============================================================
+   21. EXPORTS PDF — window.print() + @media print
+   ============================================================
+   Trois exports independants, 100% cote navigateur.
+   Chacun ouvre une fenetre temporaire avec un HTML complet
+   (styles inline @media print), declenche window.print(),
+   puis ferme la fenetre automatiquement.
+
+   _exportGuide()      -> Ecran Home  : guide complet toutes sections
+   _exportVocab()      -> Lecon Niv.1 : tableau 2 col. dense (Oromo|FR)
+   _exportSituation()  -> Lecon Niv.2 : situation courante (sitIdx)
+   ============================================================ */
+
+/* ── Utilitaire commun : ouvre une fenetre print et la ferme apres ── */
+function _openPrintWindow(htmlContent) {
+  var win = window.open('', '_blank', 'width=800,height=600');
+  if (!win) {
+    _showToast(L('\u26a0\ufe0f Autoriser les fenetres pop-up pour exporter le PDF.',
+                 '\u26a0\ufe0f Hayyama pop-up kennaa PDF baasuuf.'), 5000);
+    return;
+  }
+  win.document.open();
+  win.document.write(htmlContent);
+  win.document.close();
+  win.focus();
+  win.addEventListener('load', function() {
+    setTimeout(function() {
+      win.print();
+      win.addEventListener('afterprint', function() { win.close(); });
+      setTimeout(function() { try { win.close(); } catch(e) {} }, 30000);
+    }, 250);
+  });
+}
+
+/* ── CSS de base partage par les trois exports ── */
+function _printBaseCSS(primaryColor, accentColor) {
+  return '<style>'
+    + '*{box-sizing:border-box;margin:0;padding:0}'
+    + 'body{font-family:"Segoe UI",system-ui,sans-serif;font-size:11pt;color:#1a1a2e;background:#fff;padding:12mm 14mm}'
+    + 'h1{font-size:16pt;color:' + primaryColor + ';margin-bottom:4pt;font-weight:700}'
+    + 'h2{font-size:13pt;color:' + primaryColor + ';margin:8pt 0 4pt;font-weight:700}'
+    + 'h3{font-size:11pt;color:' + primaryColor + ';margin:6pt 0 2pt;font-weight:600}'
+    + 'p{margin:3pt 0;line-height:1.5}'
+    + 'ul{margin:3pt 0 3pt 14pt;line-height:1.6}'
+    + 'li{margin-bottom:1pt}'
+    + 'a{color:' + primaryColor + ';text-decoration:none}'
+    + '.print-header{border-bottom:3pt solid ' + primaryColor + ';padding-bottom:6pt;margin-bottom:10pt;display:flex;justify-content:space-between;align-items:flex-end}'
+    + '.print-title{font-size:18pt;font-weight:700;color:' + primaryColor + '}'
+    + '.print-subtitle{font-size:10pt;color:#555;margin-top:2pt}'
+    + '.print-meta{font-size:8.5pt;color:#777;text-align:right;line-height:1.6}'
+    + '.print-footer{border-top:1pt solid #ddd;margin-top:14pt;padding-top:5pt;font-size:8pt;color:#888;text-align:center}'
+    + '.badge{display:inline-block;background:' + accentColor + ';color:#fff;border-radius:3pt;padding:1pt 5pt;font-size:8pt;font-weight:600;margin-right:3pt;vertical-align:middle}'
+    + '@media print{body{padding:8mm 10mm}@page{margin:10mm 12mm;size:A4 portrait}}'
+    + '</style>';
+}
+
+/* ── En-tete commun de document ── */
+function _printDocHeader(titleLine1, titleLine2, meta1, meta2, primaryColor, accentColor) {
+  return '<div class="print-header">'
+    + '<div>'
+    + '<div class="print-title">\ud83d\udc04 ' + titleLine1 + '</div>'
+    + '<div class="print-subtitle">' + titleLine2 + '</div>'
+    + '</div>'
+    + '<div class="print-meta">'
+    + 'Taphad\'Meuh \xb7 Juin 2026<br>'
+    + meta1 + '<br>'
+    + meta2
+    + '</div>'
+    + '</div>';
+}
+
+/* ── Pied de page commun ── */
+function _printDocFooter() {
+  return '<div class="print-footer">'
+    + 'Taphad\'Meuh \u2014 Application bilingue Fran\u00e7ais \u2194 Afaan Oromoo \xb7 D\u00e9velopp\u00e9 par S\u00e9bastien Godet \xb7 '
+    + 'sebastien.godet16@gmail.com \xb7 linkedin.com/in/s\u00e9bastien-godet-142ba6145'
+    + '</div>';
+}
+
+
+/* ============================================================
+   21a. EXPORT GUIDE (Ecran Home)
+   ============================================================ */
+
+function _exportGuide() {
+  var isFr = isFrench();
+  var primary = isFr ? '#002395' : '#009A44';
+  var accent  = isFr ? '#ED2939' : '#EF2B2D';
+  var flag    = isFr ? '\ud83c\uddeb\ud83c\uddf7' : '\ud83c\uddea\ud83c\uddf9';
+  var langPair = isFr ? 'Fran\u00e7ais \u2194 Afaan Oromoo' : 'Afaan Oromoo \u2194 Fran\u00e7ais';
+  var modeLabel = isFr ? 'Mode : Apprendre le Fran\u00e7ais' : 'Mode : Afaan Oromoo Barachuu';
+
+  var bodyEl = document.getElementById('homeGuideBody');
+  var sectionsHTML = '';
+
+  if (bodyEl) {
+    var details = bodyEl.querySelectorAll('details.hg-section');
+    details.forEach(function(det) {
+      var summaryEl = det.querySelector('.hg-summary');
+      var detailEl  = det.querySelector('.hg-detail');
+      if (!summaryEl || !detailEl) return;
+
+      var icon  = summaryEl.querySelector('.hg-icon')  ? summaryEl.querySelector('.hg-icon').textContent  : '';
+      var label = summaryEl.querySelector('.hg-label') ? summaryEl.querySelector('.hg-label').textContent : '';
+
+      var tempDiv = document.createElement('div');
+      tempDiv.innerHTML = detailEl.innerHTML;
+      tempDiv.querySelectorAll('a[href="#"]').forEach(function(a) {
+        a.removeAttribute('href');
+        a.removeAttribute('onclick');
+      });
+      var cleanBody = tempDiv.innerHTML;
+
+      sectionsHTML +=
+        '<div class="guide-section">'
+        + '<h2>' + icon + ' ' + label + '</h2>'
+        + '<div class="guide-body">' + cleanBody + '</div>'
+        + '</div>';
+    });
+  }
+
+  var css = _printBaseCSS(primary, accent)
+    + '<style>'
+    + '.guide-section{margin-bottom:14pt;padding-bottom:10pt;border-bottom:0.5pt solid #e0e0e0;break-inside:avoid}'
+    + '.guide-section:last-child{border-bottom:none}'
+    + '.guide-body{margin-top:4pt;font-size:10.5pt;line-height:1.65}'
+    + '.guide-body p{margin:3pt 0}'
+    + '.guide-body ul{margin:3pt 0 3pt 16pt}'
+    + '.guide-body li{margin-bottom:2pt}'
+    + '.guide-body .ob-tip{background:#fffde7;border-left:3pt solid #FED141;padding:5pt 8pt;margin:6pt 0;font-size:10pt;border-radius:2pt}'
+    + '.guide-body .ob-flow{display:flex;flex-wrap:wrap;gap:4pt;margin:6pt 0;align-items:center}'
+    + '.guide-body .ob-flow-step{background:' + primary + ';color:#fff;padding:2pt 7pt;border-radius:10pt;font-size:9pt;font-weight:600}'
+    + '.guide-body .ob-flow-arrow{color:' + primary + ';font-weight:700}'
+    + '.guide-body .ob-compare{display:grid;grid-template-columns:repeat(2,1fr);gap:6pt;margin:6pt 0}'
+    + '.guide-body .ob-compare-col{border:0.5pt solid #ddd;padding:6pt;border-radius:3pt;font-size:9pt}'
+    + '.guide-body .ob-compare-head{font-weight:700;color:' + primary + ';margin-bottom:3pt;font-size:9.5pt}'
+    + '.guide-body .ob-cascade{margin:6pt 0}'
+    + '.guide-body .ob-cascade-row{display:flex;align-items:baseline;gap:6pt;padding:3pt 0;border-bottom:0.5pt solid #f0f0f0;flex-wrap:wrap}'
+    + '.guide-body .ob-cascade-badge{font-size:8pt;min-width:70pt}'
+    + '.guide-body .ob-cascade-lang{font-weight:600;font-size:9.5pt;min-width:90pt}'
+    + '.guide-body .ob-cascade-desc{font-size:9pt;color:#555}'
+    + '.guide-body .ob-cascade-example{display:flex;gap:10pt;font-size:8.5pt;padding:2pt 0 2pt 12pt;color:#555;flex-wrap:wrap}'
+    + '.guide-body .ob-cascade-example .ob-ex-bad{color:#c0392b}'
+    + '.guide-body .ob-cascade-example .ob-ex-good{color:#27ae60}'
+    + '.guide-body .ob-audio-block{border:0.5pt solid #e0e0e0;border-radius:3pt;padding:6pt 8pt;margin:5pt 0}'
+    + '.guide-body .ob-audio-head{font-weight:700;color:' + primary + ';font-size:10pt;margin-bottom:3pt}'
+    + '.guide-body .ob-audio-tip{background:#e8f4fd;padding:4pt 6pt;border-radius:2pt;font-size:8.5pt;margin-top:4pt}'
+    + '.guide-body .ob-bio-card{display:flex;align-items:center;gap:8pt;background:#f8f8f8;border-radius:4pt;padding:6pt 8pt;margin-bottom:6pt}'
+    + '.guide-body .ob-bio-avatar{font-size:22pt}'
+    + '.guide-body .ob-bio-name{font-weight:700;font-size:11pt}'
+    + '.guide-body .ob-bio-role{font-size:9pt;color:#555}'
+    + '.guide-body .ob-bio-btn{display:inline-block;border:1pt solid ' + primary + ';color:' + primary + ';padding:2pt 7pt;border-radius:3pt;font-size:9pt;margin-right:5pt}'
+    + '.guide-body .ob-bio-contact{background:#f5f5f5;border-radius:3pt;padding:6pt;margin-top:6pt}'
+    + '.guide-body .ob-bio-contact-title{font-weight:600;margin-bottom:3pt}'
+    + 'h2{page-break-after:avoid}'
+    + '</style>';
+
+  var html = '<!DOCTYPE html><html lang="' + (isFr ? 'om' : 'fr') + '"><head>'
+    + '<meta charset="UTF-8">'
+    + '<title>Taphad\'Meuh \u2014 Guide</title>'
+    + css
+    + '</head><body>'
+    + _printDocHeader(
+        'Guide Taphad\'Meuh ' + flag,
+        langPair,
+        modeLabel,
+        isFr ? '\ud83c\uddea\ud83c\uddf9 \u2192 \ud83c\uddeb\ud83c\uddf7' : '\ud83c\uddeb\ud83c\uddf7 \u2192 \ud83c\uddea\ud83c\uddf9',
+        primary, accent
+      )
+    + sectionsHTML
+    + _printDocFooter()
+    + '</body></html>';
+
+  _openPrintWindow(html);
+}
+
+
+/* ============================================================
+   21b. EXPORT VOCABULAIRE (Lecon Niveau 1)
+   ============================================================ */
+
+function _exportVocab() {
+  if (!CT || !CT.words || CT.words.length === 0) {
+    _showToast(L('\u26a0\ufe0f Aucun vocabulaire \u00e0 exporter.', '\u26a0\ufe0f Jechoota hin jiran.'), 3000);
+    return;
+  }
+
+  var keys    = langKeys();
+  var primary = isFrench() ? '#002395' : '#009A44';
+  var accent  = isFrench() ? '#ED2939' : '#EF2B2D';
+  var flag    = isFrench() ? '\ud83c\uddeb\ud83c\uddf7' : '\ud83c\uddea\ud83c\uddf9';
+  var title   = _themeTitle(CT);
+
+  var colSrc = isFrench() ? 'Fran\u00e7ais \ud83c\uddeb\ud83c\uddf7' : 'Afaan Oromoo \ud83c\uddea\ud83c\uddf9';
+  var colTgt = isFrench() ? 'Afaan Oromoo \ud83c\uddea\ud83c\uddf9' : 'Fran\u00e7ais \ud83c\uddeb\ud83c\uddf7';
+
+  var rows = CT.words.map(function(w, i) {
+    var mainWord = w[keys.src] || '';
+    var subWord  = w[keys.tgt] || '';
+    var em       = w.em || '';
+    var bg       = (i % 2 === 0) ? '#ffffff' : '#f8f8ff';
+    var conjHTML = '';
+
+    if (w.conj && w.conj[keys.src] && w.conj[keys.tgt]) {
+      var conjSrc = w.conj[keys.src].join(' \xb7 ');
+      var conjTgt = w.conj[keys.tgt].join(' \xb7 ');
+      conjHTML = '<div class="conj">'
+        + '\u2514 ' + conjSrc + '<br>'
+        + '\u2514 ' + conjTgt
+        + '</div>';
+    }
+
+    return '<tr style="background:' + bg + '">'
+      + '<td class="td-num">' + (i + 1) + '</td>'
+      + '<td class="td-em">' + em + '</td>'
+      + '<td class="td-src"><strong>' + mainWord + '</strong>' + conjHTML + '</td>'
+      + '<td class="td-tgt">' + subWord + '</td>'
+      + '</tr>';
+  }).join('');
+
+  var noteHTML = CT.note
+    ? '<div class="vocab-note">\ud83d\udca1 ' + CT.note + '</div>'
+    : '';
+
+  var css = _printBaseCSS(primary, accent)
+    + '<style>'
+    + 'table{width:100%;border-collapse:collapse;margin-top:8pt;font-size:10.5pt}'
+    + 'thead tr{background:' + primary + ';color:#fff}'
+    + 'th{padding:5pt 7pt;text-align:left;font-weight:600;font-size:10pt}'
+    + 'td{padding:4pt 7pt;vertical-align:top;border-bottom:0.5pt solid #ebebeb}'
+    + '.td-num{width:18pt;color:#aaa;font-size:9pt;text-align:right;padding-right:5pt}'
+    + '.td-em{width:22pt;font-size:14pt;text-align:center}'
+    + '.td-src{width:44%}'
+    + '.td-tgt{width:44%;color:#444}'
+    + '.conj{font-size:8.5pt;color:#777;margin-top:2pt;line-height:1.4}'
+    + '.vocab-note{margin-top:10pt;background:#fffde7;border-left:3pt solid #FED141;padding:6pt 10pt;font-size:10pt;border-radius:2pt}'
+    + '.stats{font-size:9pt;color:#777;margin-top:5pt;margin-bottom:2pt}'
+    + 'tr{break-inside:avoid}'
+    + 'thead{display:table-header-group}'
+    + '</style>';
+
+  var themeLabel = CT.emoji + ' ' + title.main + ' \u2014 ' + title.sub;
+
+  var html = '<!DOCTYPE html><html lang="' + (isFrench() ? 'om' : 'fr') + '"><head>'
+    + '<meta charset="UTF-8">'
+    + '<title>Taphad\'Meuh \u2014 ' + title.main + '</title>'
+    + css
+    + '</head><body>'
+    + _printDocHeader(
+        themeLabel,
+        isFrench() ? 'Module Vocabulaire \u2014 Apprendre le Fran\u00e7ais' : 'Module Vocabulaire \u2014 Afaan Oromoo Barachuu',
+        isFrench() ? 'Niveau 1 \u2014 Vocabulaire' : 'Sadarkaa 1 \u2014 Jechota',
+        CT.words.length + (isFrench() ? ' mots' : ' jechota'),
+        primary, accent
+      )
+    + '<div class="stats">' + CT.words.length + (isFrench() ? ' entr\u00e9es' : ' warra') + '</div>'
+    + '<table>'
+    + '<thead><tr>'
+    + '<th class="td-num">#</th>'
+    + '<th class="td-em"></th>'
+    + '<th class="td-src">' + colSrc + '</th>'
+    + '<th class="td-tgt">' + colTgt + '</th>'
+    + '</tr></thead>'
+    + '<tbody>' + rows + '</tbody>'
+    + '</table>'
+    + noteHTML
+    + _printDocFooter()
+    + '</body></html>';
+
+  _openPrintWindow(html);
+}
+
+
+/* ============================================================
+   21c. EXPORT SITUATION (Lecon Niveau 2 - dialogue)
+   ============================================================ */
+
+function _exportSituation() {
+  if (!CT || CT.type !== 'dialog' || !CT.situations) {
+    _showToast(L('\u26a0\ufe0f Aucune situation \u00e0 exporter.', '\u26a0\ufe0f Haala hin jiru.'), 3000);
+    return;
+  }
+
+  var sit = CT.situations[sitIdx];
+  if (!sit) { _showToast('\u26a0\ufe0f Situation introuvable.', 3000); return; }
+
+  var keys    = langKeys();
+  var primary = isFrench() ? '#002395' : '#009A44';
+  var accent  = isFrench() ? '#ED2939' : '#EF2B2D';
+  var title   = _themeTitle(CT);
+
+  var bubblesHTML = sit.dialogue.map(function(ln) {
+    var mainText = ln[keys.src] || '';
+    var subText  = ln[keys.tgt] || '';
+    var isLeft   = (ln.side === 'left');
+    return '<tr class="brow ' + (isLeft ? 'bleft' : 'bright') + '">'
+      + '<td class="speaker">' + ln.s + '</td>'
+      + '<td class="line-src">' + mainText + '</td>'
+      + '<td class="line-tgt">' + subText  + '</td>'
+      + '</tr>';
+  }).join('');
+
+  var vocabHTML = '';
+  if (CT.vocab && CT.vocab.length > 0) {
+    var vocabRows = CT.vocab.map(function(v, i) {
+      var parts  = v.split('=');
+      var et     = parts[0] ? parts[0].trim() : '';
+      var fr     = parts[1] ? parts[1].trim() : '';
+      var src    = keys.src === 'et' ? et : fr;
+      var tgt    = keys.tgt === 'et' ? et : fr;
+      var bg     = (i % 2 === 0) ? '#ffffff' : '#f5fdf5';
+      return '<tr style="background:' + bg + '">'
+        + '<td class="v-num">' + (i + 1) + '</td>'
+        + '<td class="v-src"><strong>' + src + '</strong></td>'
+        + '<td class="v-tgt">' + tgt + '</td>'
+        + '</tr>';
+    }).join('');
+
+    var vColSrc = isFrench() ? 'Fran\u00e7ais \ud83c\uddeb\ud83c\uddf7'     : 'Afaan Oromoo \ud83c\uddea\ud83c\uddf9';
+    var vColTgt = isFrench() ? 'Afaan Oromoo \ud83c\uddea\ud83c\uddf9'  : 'Fran\u00e7ais \ud83c\uddeb\ud83c\uddf7';
+
+    vocabHTML = '<h2>' + (isFrench() ? '\ud83d\udcda Jechoota murteessoo' : '\ud83d\udcda Lexique essentiel') + '</h2>'
+      + '<table class="vtable">'
+      + '<thead><tr>'
+      + '<th class="v-num">#</th>'
+      + '<th class="v-src">' + vColSrc + '</th>'
+      + '<th class="v-tgt">' + vColTgt + '</th>'
+      + '</tr></thead>'
+      + '<tbody>' + vocabRows + '</tbody>'
+      + '</table>';
+  }
+
+  var noteHTML = CT.note
+    ? '<div class="sit-note">\ud83d\udca1 ' + CT.note + '</div>'
+    : '';
+
+  var sitBadge = (CT.situations.length > 1)
+    ? '<span class="badge">' + sit.label + '</span> '
+    : '';
+
+  var css = _printBaseCSS(primary, accent)
+    + '<style>'
+    + '.sit-meta{font-size:10.5pt;color:#333;margin:4pt 0 10pt;font-weight:500}'
+    + '.scene-icon{font-size:28pt;text-align:center;margin:6pt 0 10pt}'
+    + '.sit-note{margin:8pt 0;background:#fffde7;border-left:3pt solid #FED141;padding:6pt 10pt;font-size:10pt;border-radius:2pt}'
+    + 'table.dtable{width:100%;border-collapse:collapse;margin:8pt 0;font-size:10.5pt}'
+    + 'table.dtable thead tr{background:' + primary + ';color:#fff}'
+    + 'table.dtable th{padding:5pt 7pt;text-align:left;font-size:10pt;font-weight:600}'
+    + 'table.dtable td{padding:5pt 7pt;vertical-align:top;border-bottom:0.5pt solid #ebebeb}'
+    + '.bleft td{background:#eef3ff}'
+    + '.bright td{background:#edfff4}'
+    + '.speaker{font-weight:700;font-size:9pt;color:' + primary + ';white-space:nowrap;width:54pt}'
+    + '.line-src{width:44%;font-weight:500}'
+    + '.line-tgt{width:44%;color:#555;font-style:italic;font-size:10pt}'
+    + 'table.vtable{width:100%;border-collapse:collapse;margin:6pt 0;font-size:10.5pt}'
+    + 'table.vtable thead tr{background:' + primary + ';color:#fff}'
+    + 'table.vtable th{padding:5pt 7pt;text-align:left;font-size:10pt;font-weight:600}'
+    + 'table.vtable td{padding:4pt 7pt;border-bottom:0.5pt solid #ebebeb}'
+    + '.v-num{width:18pt;color:#aaa;font-size:9pt;text-align:right}'
+    + '.v-src{width:48%}'
+    + '.v-tgt{width:48%;color:#444}'
+    + 'tr{break-inside:avoid}'
+    + 'thead{display:table-header-group}'
+    + 'h2{margin-top:14pt;page-break-after:avoid}'
+    + '</style>';
+
+  var sitCount = CT.situations.length > 1
+    ? (isFrench()
+        ? (sitIdx + 1) + ' sur ' + CT.situations.length + ' situations'
+        : (sitIdx + 1) + ' / ' + CT.situations.length + ' haala')
+    : '';
+
+  var dColSrc = isFrench() ? 'Fran\u00e7ais \ud83c\uddeb\ud83c\uddf7'    : 'Afaan Oromoo \ud83c\uddea\ud83c\uddf9';
+  var dColTgt = isFrench() ? 'Afaan Oromoo \ud83c\uddea\ud83c\uddf9'  : 'Fran\u00e7ais \ud83c\uddeb\ud83c\uddf7';
+  var locLabel = isFrench() ? 'Dubbataa' : 'Locuteur';
+
+  var html = '<!DOCTYPE html><html lang="' + (isFrench() ? 'om' : 'fr') + '"><head>'
+    + '<meta charset="UTF-8">'
+    + '<title>Taphad\'Meuh \u2014 ' + title.main + '</title>'
+    + css
+    + '</head><body>'
+    + _printDocHeader(
+        CT.emoji + ' ' + title.main + ' \u2014 ' + title.sub,
+        isFrench() ? 'Module Dialogue \u2014 Apprendre le Fran\u00e7ais' : 'Module Dialogue \u2014 Afaan Oromoo Barachuu',
+        isFrench() ? 'Niveau 2 \u2014 Dialogue' : 'Sadarkaa 2 \u2014 Dubbii',
+        sitCount,
+        primary, accent
+      )
+    + '<div class="sit-meta">' + sitBadge + sit.title + '</div>'
+    + '<div class="scene-icon">' + sit.img + '</div>'
+    + noteHTML
+    + '<h2>' + (isFrench() ? '\ud83d\udcac Maree / Dialogue' : '\ud83d\udcac Dialogue') + '</h2>'
+    + '<table class="dtable">'
+    + '<thead><tr>'
+    + '<th style="width:54pt">' + locLabel + '</th>'
+    + '<th>' + dColSrc + '</th>'
+    + '<th>' + dColTgt + '</th>'
+    + '</tr></thead>'
+    + '<tbody>' + bubblesHTML + '</tbody>'
+    + '</table>'
+    + vocabHTML
+    + _printDocFooter()
+    + '</body></html>';
+
+  _openPrintWindow(html);
 }
