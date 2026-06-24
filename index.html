@@ -217,79 +217,68 @@
       <button class="btn-export-pdf" id="homeExportBtn" onclick="_exportGuide()">📄 Télécharger le guide</button>
     </div>
 
-    <footer id="homeFooter">
-      © Juin 2026 – Développé par Sébastien Godet · Assisté par IA Claude Sonnet 4.6 et Gemini 3.5 Flash<br>
-      sebastien.godet16@gmail.com ·
-      <a href="https://www.linkedin.com/in/s%C3%A9bastien-godet-142ba6145" target="_blank">LinkedIn</a> ·
-      <a href="#" onclick="showCredits()">Remerciements</a> ·
-      <a href="#" onclick="showOnboardingGuide()">Aide / Gargaarsa</a>
-    </footer>
-
   </div><!-- /#home -->
 
 
   <!-- ════════════════════════════════════════════════════════════════
-       ÉCRAN 2 — LISTE DES MODULES  (#sections)
-       ────────────────────────────────────────────────────────────────
-       Header : retour + titre + progression (gauche) + drapeau (droite).
-       Niveaux 1 et 2 en mode déroulant (<details> natif), ouverts par défaut.
-       Les grilles #grid1 et #grid2 sont générées dynamiquement par app.js.
+       ÉCRAN 2a — NIVEAU 1 MODULES  (#sections-level1)
        ════════════════════════════════════════════════════════════════ -->
-  <div id="sections" class="screen">
-
-    <!-- ── Header sticky ── -->
+  <div id="sections-level1" class="screen">
     <div class="sections-header">
-
-      <!-- Ligne gauche : retour + titre + progression + étoiles -->
       <div class="sections-header-left">
-        <button class="back-btn" onclick="showScreen('home')" id="sectionsBackBtn"></button>
         <h2 id="sectionsTitle"></h2>
         <div class="progress-bar-wrap">
           <div class="progress-bar" id="globalProgress" style="width:0%"></div>
         </div>
         <div class="progress-label" id="progressLabel"></div>
-        <!-- Étoiles récupérées depuis l'ancien Home -->
         <div class="sections-stars" id="sectionsStars"></div>
       </div>
-
-      <!-- Drapeau en haut à droite -->
       <div class="sections-flag" id="sectionsFlagRight"></div>
-
-    </div><!-- /.sections-header -->
-
+    </div>
+    <div class="level-tab-bar">
+      <button class="level-tab active" id="lvlTab1" onclick="showScreen('sections-level1')">
+        <span id="level1Badge" class="level-badge"></span>
+        <span id="level1Label"></span>
+      </button>
+      <button class="level-tab" id="lvlTab2" onclick="showScreen('sections-level2')">
+        <span id="level2BadgeA" class="level-badge l2"></span>
+        <span id="level2LabelA"></span>
+      </button>
+    </div>
     <div class="sections-body">
+      <div class="themes-grid" id="grid1"></div>
+    </div>
+  </div><!-- /#sections-level1 -->
 
-      <!-- NIVEAU 1 — déroulant, ouvert par défaut -->
-      <details class="level-details" id="level1Details" open>
-        <summary class="level-summary">
-          <span class="level-badge" id="level1Badge"></span>
-          <span id="level1Label"></span>
-          <span class="level-chevron">▼</span>
-        </summary>
-        <div class="themes-grid" id="grid1"></div>
-      </details>
-
-      <!-- NIVEAU 2 — déroulant, ouvert par défaut -->
-      <details class="level-details" id="level2Details" open>
-        <summary class="level-summary">
-          <span class="level-badge l2" id="level2Badge"></span>
-          <span id="level2Label"></span>
-          <span class="level-chevron">▼</span>
-        </summary>
-        <div class="themes-grid" id="grid2"></div>
-      </details>
-
-    </div><!-- /.sections-body -->
-
-    <footer id="sectionsFooter">
-      © Juin 2026 – Développé par Sébastien Godet · Assisté par IA Claude Sonnet 4.6 et Gemini 3.5 Flash<br>
-      sebastien.godet16@gmail.com ·
-      <a href="https://www.linkedin.com/in/s%C3%A9bastien-godet-142ba6145" target="_blank">LinkedIn</a> ·
-      <a href="#" onclick="showCredits()">Remerciements</a> ·
-      <a href="#" onclick="showOnboardingGuide()">Aide / Gargaarsa</a>
-    </footer>
-
-  </div><!-- /#sections -->
+  <!-- ════════════════════════════════════════════════════════════════
+       ÉCRAN 2b — NIVEAU 2 MODULES  (#sections-level2)
+       ════════════════════════════════════════════════════════════════ -->
+  <div id="sections-level2" class="screen">
+    <div class="sections-header">
+      <div class="sections-header-left">
+        <h2 id="sectionsTitle2"></h2>
+        <div class="progress-bar-wrap">
+          <div class="progress-bar" id="globalProgress2" style="width:0%"></div>
+        </div>
+        <div class="progress-label" id="progressLabel2"></div>
+        <div class="sections-stars" id="sectionsStars2"></div>
+      </div>
+      <div class="sections-flag" id="sectionsFlagRight2"></div>
+    </div>
+    <div class="level-tab-bar">
+      <button class="level-tab" id="lvlTab1b" onclick="showScreen('sections-level1','back')">
+        <span class="level-badge" id="level1BadgeB"></span>
+        <span id="level1LabelB"></span>
+      </button>
+      <button class="level-tab active" id="lvlTab2b" onclick="showScreen('sections-level2')">
+        <span class="level-badge l2" id="level2BadgeB"></span>
+        <span id="level2LabelB"></span>
+      </button>
+    </div>
+    <div class="sections-body">
+      <div class="themes-grid" id="grid2"></div>
+    </div>
+  </div><!-- /#sections-level2 -->
 
 
   <!-- ════════════════════════════════════════════════════════════════
@@ -303,18 +292,16 @@
 
     <div class="lesson-header">
       <!-- Retour vers la liste des sections -->
-      <button class="back-btn" onclick="showScreen('sections')" id="lessonBackBtn">←</button>
+      <button class="back-btn" id="lessonBackBtn" onclick="lessonGoBack()">←</button>
 
-      <!--
-        Emoji du thème courant — injecté par app.js.
-        OPTIMISATION : les styles inline (font-size, margin-right) ont été
-        déplacés dans style.css sous le sélecteur #lessonEmoji
-        pour centraliser la mise en forme.
-      -->
       <span id="lessonEmoji"></span>
-
-      <!-- Titre du thème courant — injecté par app.js -->
       <h3 id="lessonTitle"></h3>
+
+      <!-- Navigation prev / next dans le niveau -->
+      <div class="lesson-nav-arrows">
+        <button class="lesson-nav-btn" id="lessonPrevBtn" onclick="lessonNav(-1)" title="Module précédent">‹</button>
+        <button class="lesson-nav-btn" id="lessonNextBtn" onclick="lessonNav(1)"  title="Module suivant">›</button>
+      </div>
     </div><!-- /.lesson-header -->
 
     <div class="lesson-body" id="lessonBody">
@@ -443,6 +430,29 @@
 
   </div><!-- /#onboarding-modal -->
 
+
+  <!-- ════════════════════════════════════════════════════════════════
+       BARRE DE NAVIGATION BASSE  (#bottom-nav)
+       Cachée sur l'écran lanceur ; visible dès que l'app est initialisée.
+       ════════════════════════════════════════════════════════════════ -->
+  <nav id="bottom-nav" class="bottom-nav" aria-label="Navigation principale">
+    <button class="nav-btn" id="navBtnModules" onclick="navGoModules()" aria-label="Modules">
+      <span class="nav-icon">📚</span>
+      <span class="nav-label" id="navLabelModules">Modules</span>
+    </button>
+    <button class="nav-btn" id="navBtnGuide" onclick="showOnboardingGuide()" aria-label="Guide">
+      <span class="nav-icon">❓</span>
+      <span class="nav-label" id="navLabelGuide">Guide</span>
+    </button>
+    <button class="nav-btn" id="navBtnLang" onclick="showScreen('app-launcher','back')" aria-label="Changer de langue">
+      <span class="nav-icon" id="navLangFlag">🌐</span>
+      <span class="nav-label" id="navLabelLang">Langue</span>
+    </button>
+    <button class="nav-btn" id="navBtnCredits" onclick="showCredits()" aria-label="Remerciements">
+      <span class="nav-icon">💌</span>
+      <span class="nav-label" id="navLabelCredits">Merci</span>
+    </button>
+  </nav>
 
 </div><!-- /.app -->
 

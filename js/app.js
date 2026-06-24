@@ -299,7 +299,7 @@ function _setUI(t) {
 
   /* Le bouton "Démarrer" sur l'écran home ouvre l'écran sections */
   var btn = document.getElementById('homeStartBtn');
-  if (btn) btn.onclick = function() { showScreen('sections'); };
+  if (btn) btn.onclick = function() { showScreen('sections-level1'); };
 
   /* Mettre à jour les footers selon la langue du parcours */
   _setFooters();
@@ -674,7 +674,7 @@ function resetTheme(id) {
 
   done = done.filter(function(d) { return d.id !== id; });
   saveDone();
-  renderSections();
+  renderSections(_currentThemeLevel || 1);
   renderHome();
 }
 
@@ -834,39 +834,208 @@ function _clearQuizSession() {
    ============================================================ */
 
 /**
- * Active un écran et masque tous les autres.
- * Déclenche automatiquement le rendu de 'home' et 'sections'.
+ * Active un écran et masque tous les autres,
+ * avec une animation de slide directionnelle.
+ *
+ * ORDRE DES ÉCRANS (profondeur de navigation) :
+ *   0: app-launcher → 1: home → 2: sections → 3: lesson
+ * Aller vers un écran plus profond → slide de droite à gauche (forward)
+ * Revenir vers un écran moins profond → slide de gauche à droite (back)
+ *
  * @param {'home'|'sections'|'lesson'} id - ID de l'élément HTML de l'écran
+ * @param {'forward'|'back'|'none'} [dir] - Direction forcée (optionnel)
  */
-function showScreen(id) {
-  /* Masquer tous les écrans */
+
+/* Ordre des écrans pour déterminer la direction */
+var _SCREEN_ORDER = ['app-launcher', 'home', 'sections-level1', 'sections-level2', 'lesson'];
+
+/* Flag anti-doublon : empêche de déclencher showScreen pendant une animation */
+var _screenTransitionLock = false;
+
+function showScreen(id, dir) {
+  /* Trouver l'écran actuellement actif */
+  var currentScreen = null;
   document.querySelectorAll('.screen').forEach(function(s) {
-    s.classList.remove('active');
+    if (s.classList.contains('active') ||
+        s.classList.contains('slide-in-right') ||
+        s.classList.contains('slide-in-left')) {
+      currentScreen = s;
+    }
   });
 
-  /* Remonter en haut de l'écran à chaque navigation */
+  var nextScreen = document.getElementById(id);
+  if (!nextScreen) return;
+
+  /* Remonter en haut dès maintenant */
   window.scrollTo(0, 0);
 
-  /* Bouton retour de l'écran home → relance le launcher */
+  /* ── Configurer le bouton retour de home → launcher ── */
   if (id === 'home') {
     var backBtn = document.getElementById('homeBackBtn');
     if (backBtn) {
       backBtn.onclick = function() {
-        document.querySelectorAll('.screen').forEach(function(s) {
-          s.classList.remove('active');
-        });
-        document.getElementById('app-launcher').classList.add('active');
+        showScreen('app-launcher', 'back');
       };
     }
   }
 
-  /* Activer l'écran demandé */
-  document.getElementById(id).classList.add('active');
+  /* ── Déclencher le rendu des écrans dynamiques avant l'animation ── */
+  if (id === 'home')              renderHome();
+  if (id === 'sections-level1')   renderSections(1);
+  if (id === 'sections-level2')   renderSections(2);
 
-  /* Déclenchement du rendu des écrans à contenu dynamique */
-  if (id === 'home')     renderHome();
-  if (id === 'sections') renderSections();
+  /* ── Mettre à jour la nav bar ── */
+  _updateBottomNav(id);
+
+  /* ── Pas d'animation si même écran ou pas d'écran source ── */
+  if (!currentScreen || currentScreen === nextScreen) {
+    document.querySelectorAll('.screen').forEach(function(s) {
+      s.classList.remove('active','slide-in-right','slide-out-left',
+                          'slide-in-left','slide-out-right');
+    });
+    nextScreen.classList.add('active');
+    return;
+  }
+
+  /* ── Déterminer la direction selon l'ordre des écrans ── */
+  if (!dir) {
+    var currentId = currentScreen.id;
+    var iCurrent  = _SCREEN_ORDER.indexOf(currentId);
+    var iNext     = _SCREEN_ORDER.indexOf(id);
+    dir = (iNext > iCurrent) ? 'forward' : 'back';
+  }
+
+  /* ── Nettoyer toute animation résiduelle ── */
+  var ANIM_CLASSES = ['active','slide-in-right','slide-out-left',
+                       'slide-in-left','slide-out-right'];
+  document.querySelectorAll('.screen').forEach(function(s) {
+    s.classList.remove.apply(s.classList, ANIM_CLASSES);
+  });
+
+  /* ── Appliquer les classes d'animation ── */
+  var inClass, outClass;
+  if (dir === 'forward') {
+    inClass  = 'slide-in-right';
+    outClass = 'slide-out-left';
+  } else {
+    inClass  = 'slide-in-left';
+    outClass = 'slide-out-right';
+  }
+
+  currentScreen.classList.add(outClass);
+  nextScreen.classList.add(inClass);
+
+  /* ── Finaliser après la durée de l'animation (280ms) ── */
+  var DURATION = 280;
+  setTimeout(function() {
+    document.querySelectorAll('.screen').forEach(function(s) {
+      s.classList.remove.apply(s.classList, ANIM_CLASSES);
+    });
+    nextScreen.classList.add('active');
+  }, DURATION);
 }
+
+
+/* ============================================================
+   5b. NAVIGATION BASSE — helpers
+   ============================================================ */
+
+/** Niveau du thème ouvert (1 ou 2) — mémorisé pour retour et flèches */
+var _currentThemeLevel = 1;
+
+/**
+ * Met à jour l'état actif de la nav bar selon l'écran courant.
+ * @param {string} screenId
+ */
+function _updateBottomNav(screenId) {
+  var nav = document.getElementById('bottom-nav');
+  if (!nav) return;
+
+  /* Cacher la nav sur le launcher */
+  if (screenId === 'app-launcher') {
+    nav.classList.remove('visible');
+    return;
+  }
+  nav.classList.add('visible');
+
+  /* Mettre à jour les libellés bilingues de la nav */
+  _setText('navLabelModules', L('Modules', 'Kutaalee'));
+  _setText('navLabelGuide',   L('Guide',   'Gargaarsa'));
+  _setText('navLabelLang',    L('Langue',  'Afaan'));
+  _setText('navLabelCredits', L('Merci',   'Galata'));
+
+  var langFlag = document.getElementById('navLangFlag');
+  if (langFlag) langFlag.textContent = L('🇫🇷', '🇪🇹');
+
+  /* Activer le bon bouton */
+  ['navBtnModules','navBtnGuide','navBtnLang','navBtnCredits'].forEach(function(id) {
+    var el = document.getElementById(id);
+    if (el) el.classList.remove('active');
+  });
+  if (screenId === 'sections-level1' || screenId === 'sections-level2') {
+    var mb = document.getElementById('navBtnModules');
+    if (mb) mb.classList.add('active');
+  }
+  if (screenId === 'home') {
+    var gb = document.getElementById('navBtnGuide');
+    if (gb) gb.classList.add('active');
+  }
+}
+
+/**
+ * Bouton Modules dans la nav bar :
+ * va sur l'écran du niveau mémorisé (ou niveau 1 par défaut).
+ */
+function navGoModules() {
+  var target = (_currentThemeLevel === 2) ? 'sections-level2' : 'sections-level1';
+  /* Direction : depuis lesson = back, sinon forward */
+  var current = null;
+  document.querySelectorAll('.screen').forEach(function(s) {
+    if (s.classList.contains('active')) current = s.id;
+  });
+  var dir = (current === 'lesson') ? 'back' : undefined;
+  renderSections(_currentThemeLevel);
+  showScreen(target, dir);
+}
+
+/**
+ * Bouton retour de l'écran leçon → retourne au bon écran de niveau.
+ */
+function lessonGoBack() {
+  var target = (_currentThemeLevel === 2) ? 'sections-level2' : 'sections-level1';
+  renderSections(_currentThemeLevel);
+  showScreen(target, 'back');
+}
+
+/**
+ * Navigation prev/next entre modules du même niveau.
+ * @param {number} delta - +1 (suivant) ou -1 (précédent)
+ */
+function lessonNav(delta) {
+  if (!CT || !ALL_THEMES.length) return;
+  var levelThemes = ALL_THEMES.filter(function(t) { return t.level === CT.level; });
+  var idx = levelThemes.findIndex(function(t) { return t.id === CT.id; });
+  var newIdx = idx + delta;
+  if (newIdx < 0 || newIdx >= levelThemes.length) return;
+  /* Pas d'animation pour les changements de module : dir = 'none' sera ignoré,
+     on utilise la direction naturelle selon delta */
+  openTheme(levelThemes[newIdx].id, delta > 0 ? 'forward-within' : 'back-within');
+}
+
+/**
+ * Met à jour l'état disabled des boutons prev/next de lesson.
+ */
+function _updateLessonNavArrows() {
+  if (!CT) return;
+  var levelThemes = ALL_THEMES.filter(function(t) { return t.level === CT.level; });
+  var idx = levelThemes.findIndex(function(t) { return t.id === CT.id; });
+  var prev = document.getElementById('lessonPrevBtn');
+  var next = document.getElementById('lessonNextBtn');
+  if (prev) prev.disabled = (idx <= 0);
+  if (next) next.disabled = (idx >= levelThemes.length - 1);
+}
+
+
 
 
 /* ============================================================
@@ -922,40 +1091,67 @@ function renderHome() {
 /**
  * Reconstruit la grille des thèmes et met à jour la progression globale.
  */
-function renderSections() {
+/**
+ * Rend la grille de modules.
+ * @param {1|2} [activeLevel=1] - Niveau affiché (sections-level1 ou sections-level2)
+ */
+function renderSections(activeLevel) {
   if (!ALL_THEMES.length) return;
+  if (!activeLevel) activeLevel = 1;
 
   var p = _getProgress();
 
-  document.getElementById('globalProgress').style.width = p.pct + '%';
-  document.getElementById('progressLabel').innerHTML =
-    '<span class="progress-label-text">'
-    + p.n + ' / ' + p.total + ' ' + L('modules', 'kutaalee') + ' — ' + p.pct + '%'
-    + '</span>'
-    + '<button class="btn-reset-prog" onclick="confirmResetProgress()"'
-    + ' title="' + L('Tartiiba guutuu haqi', 'Réinitialiser toute la progression') + '"'
-    + ' aria-label="' + L('Tartiiba guutuu haqi', 'Réinitialiser toute la progression') + '"'
-    + '>🔄</button>';
+  /* ── Libellés de niveau bilingues ── */
+  var lbl1 = L('Niveau 1 — Vocabulaire',     'Sadarkaa 1 — Jechoota');
+  var lbl2 = L('Niveau 2 — Phrases simples', 'Sadarkaa 2 — Himoota salphaa');
 
-  /* ── Étoiles dans le header sections (récupérées depuis l'ancien Home) ── */
-  var starsEl = document.getElementById('sectionsStars');
-  if (starsEl) {
-    starsEl.innerHTML =
+  /* ── Helper : remplir les éléments d'un header de sections ── */
+  function _fillHeader(suffix) {
+    var s = suffix || '';
+    _setText('sectionsTitle' + s,   L('📚 Modules', '📚 Moojuulota'));
+    var gp = document.getElementById('globalProgress' + s);
+    if (gp) gp.style.width = p.pct + '%';
+
+    var pl = document.getElementById('progressLabel' + s);
+    if (pl) pl.innerHTML =
+      '<span class="progress-label-text">'
+      + p.n + ' / ' + p.total + ' ' + L('modules', 'kutaalee') + ' — ' + p.pct + '%'
+      + '</span>'
+      + '<button class="btn-reset-prog" onclick="confirmResetProgress()"'
+      + ' title="' + L('Tartiiba guutuu haqi', 'Réinitialiser toute la progression') + '"'
+      + ' aria-label="' + L('Tartiiba guutuu haqi', 'Réinitialiser toute la progression') + '"'
+      + '>🔄</button>';
+
+    var se = document.getElementById('sectionsStars' + s);
+    if (se) se.innerHTML =
       '<span class="sections-stars-inner">⭐ '
       + p.starsEarned + ' / ' + p.starsMax + '</span>';
+
+    var fe = document.getElementById('sectionsFlagRight' + s);
+    if (fe) fe.textContent = L('🇫🇷', '🇪🇹');
   }
 
-  /* ── Drapeau de la langue apprise (haut droite) ── */
-  var flagEl = document.getElementById('sectionsFlagRight');
-  if (flagEl) flagEl.textContent = L('🇫🇷', '🇪🇹');
+  /* ── Remplir les deux headers ── */
+  _fillHeader('');
+  _fillHeader('2');
 
-  ['grid1', 'grid2'].forEach(function(gid) {
-    var level = (gid === 'grid1') ? 1 : 2;
-    document.getElementById(gid).innerHTML = ALL_THEMES
-      .filter(function(t) { return t.level === level; })
-      .map(function(t)    { return _buildThemeCard(t);  })
-      .join('');
+  /* ── Remplir les libellés des onglets de niveau (4 groupes : A, B, et les originaux) ── */
+  ['', 'A', 'B'].forEach(function(sfx) {
+    _setText('level1Badge' + sfx, '1');
+    _setText('level1Label' + sfx, lbl1);
+    _setText('level2Badge' + sfx, '2');
+    _setText('level2Label' + sfx, lbl2);
   });
+
+  /* ── Grilles de thèmes ── */
+  var grid1 = document.getElementById('grid1');
+  var grid2 = document.getElementById('grid2');
+  if (grid1) grid1.innerHTML = ALL_THEMES
+    .filter(function(t) { return t.level === 1; })
+    .map(function(t) { return _buildThemeCard(t); }).join('');
+  if (grid2) grid2.innerHTML = ALL_THEMES
+    .filter(function(t) { return t.level === 2; })
+    .map(function(t) { return _buildThemeCard(t); }).join('');
 }
 
 /**
@@ -1005,7 +1201,7 @@ function _buildThemeCard(t) {
  * Réinitialise toutes les variables de session.
  * @param {string} id - Identifiant du thème
  */
-function openTheme(id) {
+function openTheme(id, _navHint) {
   var found = ALL_THEMES.find(function(t) { return t.id === id; });
   if (!found) {
     /* Thème introuvable : probablement une typo d'id dans data-fr.js / data-or.js.
@@ -1036,7 +1232,16 @@ function openTheme(id) {
   }
   document.getElementById('lessonTitle').textContent = lessonTitle;
 
-  showScreen('lesson');
+  /* Mémoriser le niveau du thème ouvert pour le retour et les flèches */
+  _currentThemeLevel = CT.level;
+  /* Si même écran lesson, juste rafraîchir sans re-animer */
+  var _alreadyInLesson = document.getElementById('lesson').classList.contains('active');
+  if (_alreadyInLesson) {
+    _updateLessonNavArrows();
+  } else {
+    showScreen('lesson');
+    _updateLessonNavArrows();
+  }
 
   /* ── Construction des onglets selon le type de thème ── */
   var tabs;
@@ -1387,9 +1592,9 @@ function renderQuiz10() {
       + '<div style="font-size:1rem;margin:6px 0;color:' + (isSuccess ? 'var(--c-success)' : 'var(--c-error)') + '">' + r.sub + '</div>'
       + '<div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:14px">'
       + '<button class="retry-btn" style="background:#888" onclick="q10Step=0;q10Score=0;q10Answered=false;_q10Questions=null;renderQuiz10()">' + r.retry + '</button>'
-      + (isSuccess ? '<button class="retry-btn" onclick="renderSections();showScreen(\'sections\')">' + r.finish + '</button>' : '')
+      + (isSuccess ? '<button class="retry-btn" onclick="renderSections(_currentThemeLevel);lessonGoBack()">' + r.finish + '</button>' : '')
       + '</div></div>';
-    renderSections();
+    renderSections(_currentThemeLevel || 1);
     return;
   }
 
@@ -2219,9 +2424,9 @@ function renderDialogQuiz() {
       + '<div style="font-size:.9rem;margin-top:6px;color:' + (isSuccess ? 'var(--c-success)' : 'var(--c-error)') + '">' + r.sub + '</div>'
       + '<div style="display:flex;gap:8px;justify-content:center;margin-top:14px;flex-wrap:wrap">'
       + '<button class="retry-btn" style="background:#888" onclick="dqStep=0;dqScore=0;dqAnswered=false;renderDialogQuiz()">' + r.retry + '</button>'
-      + (isSuccess ? '<button class="retry-btn" onclick="renderSections();showScreen(\'sections\')">' + r.finish + '</button>' : '')
+      + (isSuccess ? '<button class="retry-btn" onclick="renderSections(_currentThemeLevel);lessonGoBack()">' + r.finish + '</button>' : '')
       + '</div></div>';
-    renderSections();
+    renderSections(_currentThemeLevel || 1);
     return;
   }
 
@@ -2886,7 +3091,7 @@ function _buildHomeGuide() {
   var btn = document.getElementById('homeStartBtn');
   if (btn) {
     btn.textContent = L('▶ Commencer', '▶ Jalqabi');
-    btn.onclick = function() { showScreen('sections'); };
+    btn.onclick = function() { showScreen('sections-level1'); };
   }
 
   /* ── Bouton Fermer (✕) en haut à droite ── */
@@ -2895,7 +3100,7 @@ function _buildHomeGuide() {
     closeBtn.textContent = L('Fermer ✕', 'Cufuu ✕');
     closeBtn.setAttribute('aria-label', L('Fermer le guide', 'Gargaarsa cufuu'));
     /* Fermer = passer directement aux modules (sans toucher au flag localStorage) */
-    closeBtn.onclick = function() { showScreen('sections'); };
+    closeBtn.onclick = function() { showScreen('sections-level1'); };
   }
 }
 
@@ -2904,7 +3109,7 @@ function _maybeShowOnboarding() {
   try {
     if (localStorage.getItem(key)) {
       /* Flag posé → passer directement aux modules */
-      showScreen('sections');
+      showScreen('sections-level1');
       return;
     }
   } catch(e) {}

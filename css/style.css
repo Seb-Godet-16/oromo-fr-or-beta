@@ -77,13 +77,95 @@ body{
 }
 
 /*
-  Système d'écrans :
-  • .screen      → caché par défaut (display:none)
-  • .screen.active → affiché en colonne flex
-  La classe "active" est posée/retirée par showScreen() dans app.js.
+  Système d'écrans avec transitions de navigation :
+  • .screen          → position absolue, invisible, hors du flux
+  • .screen.active   → visible, en place (translate 0)
+  • .screen.slide-in-right  → entre depuis la droite (forward)
+  • .screen.slide-out-left  → sort vers la gauche (forward)
+  • .screen.slide-in-left   → entre depuis la gauche (back)
+  • .screen.slide-out-right → sort vers la droite (back)
+
+  Le conteneur .app passe en position relative pour ancrer
+  les écrans absolus. La hauteur est portée par l'écran .active.
+
+  prefers-reduced-motion : toutes les animations sont désactivées,
+  on revient au comportement display:none/flex classique.
 */
-.screen{display:none;min-height:100vh;flex-direction:column}
-.screen.active{display:flex}
+
+/* Conteneur : position relative pour ancrer les .screen absolus */
+.app{position:relative}
+
+/* Écrans : cachés et prêts à animer */
+.screen{
+  display:none;
+  min-height:100vh;
+  flex-direction:column;
+  position:absolute;
+  top:0; left:0; right:0;
+  will-change:transform,opacity;
+}
+
+/* L'écran actif occupe le flux normal (position relative) */
+.screen.active{
+  display:flex;
+  position:relative;
+}
+
+/* ── Keyframes : aller (forward) ──────────────────────── */
+@keyframes slideInRight{
+  from{transform:translateX(100%);opacity:0}
+  to  {transform:translateX(0);   opacity:1}
+}
+@keyframes slideOutLeft{
+  from{transform:translateX(0);    opacity:1}
+  to  {transform:translateX(-30%); opacity:0}
+}
+
+/* ── Keyframes : retour (back) ────────────────────────── */
+@keyframes slideInLeft{
+  from{transform:translateX(-30%);opacity:0}
+  to  {transform:translateX(0);   opacity:1}
+}
+@keyframes slideOutRight{
+  from{transform:translateX(0);   opacity:1}
+  to  {transform:translateX(100%);opacity:0}
+}
+
+/* ── Classes d'animation appliquées par showScreen() ─── */
+.screen.slide-in-right{
+  display:flex;
+  position:absolute;
+  animation:slideInRight .28s cubic-bezier(.4,0,.2,1) both;
+  z-index:2;
+}
+.screen.slide-out-left{
+  display:flex;
+  position:absolute;
+  animation:slideOutLeft .28s cubic-bezier(.4,0,.2,1) both;
+  z-index:1;
+}
+.screen.slide-in-left{
+  display:flex;
+  position:absolute;
+  animation:slideInLeft .28s cubic-bezier(.4,0,.2,1) both;
+  z-index:2;
+}
+.screen.slide-out-right{
+  display:flex;
+  position:absolute;
+  animation:slideOutRight .28s cubic-bezier(.4,0,.2,1) both;
+  z-index:1;
+}
+
+/* ── Respect de prefers-reduced-motion ───────────────── */
+@media (prefers-reduced-motion: reduce){
+  .screen.slide-in-right,
+  .screen.slide-out-left,
+  .screen.slide-in-left,
+  .screen.slide-out-right{
+    animation:none;
+  }
+}
 
 
 /* ══════════════════════════════════════════════════════════════════
@@ -569,7 +651,7 @@ html.theme-oromo body{background:#f4f9f4}
 }
 
 /* Corps scrollable — les niveaux sont maintenant des <details> */
-.sections-body{padding:0 0 10px}
+.sections-body{padding:12px 14px 0}
 
 /* Badge coloré (dans .level-summary) */
 .level-badge{
@@ -2452,6 +2534,14 @@ footer a:hover{text-decoration:underline}
   }
 
   .screen{min-height:0}
+  /* Sur desktop, les écrans animés doivent remplir le conteneur .app */
+  .screen.slide-in-right,
+  .screen.slide-out-left,
+  .screen.slide-in-left,
+  .screen.slide-out-right{
+    top:0; left:0; right:0; bottom:0;
+    min-height:0;
+  }
 
   /* Guide home */
   #home{
@@ -2664,4 +2754,29 @@ footer a:hover{text-decoration:underline}
 /* Masquer les boutons d'export à l'impression (ils seraient dans le print) */
 @media print{
   .btn-export-pdf,.lesson-export-bar{display:none!important}
+}
+/* ════════════════════════════════════════════════════════════════
+   §20e — GRILLE DE THÈMES DANS LES ÉCRANS LEVEL  (sans <details>)
+   ════════════════════════════════════════════════════════════════ */
+
+/* La grille est maintenant directement dans .sections-body */
+#sections-level1 .sections-body .themes-grid,
+#sections-level2 .sections-body .themes-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+  padding:0;           /* padding porté par .sections-body */
+}
+
+/* Padding bottom sections-level pour laisser place à la nav bar */
+#sections-level1 .sections-body,
+#sections-level2 .sections-body{
+  padding:12px 14px 80px;
+}
+
+@media (min-width:520px){
+  #sections-level1 .sections-body .themes-grid,
+  #sections-level2 .sections-body .themes-grid{
+    grid-template-columns:1fr 1fr 1fr 1fr;
+  }
 }

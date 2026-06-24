@@ -74,11 +74,39 @@
   ],
   "screenshots": [
     {
-      "src": "icons/icon-512x512.png",
-      "sizes": "512x512",
+      "src": "img/Ecran Accueil - 933x1829.png",
+      "sizes": "933x1829",
       "type": "image/png",
       "form_factor": "narrow",
-      "label": "Écran de lancement — choix de la langue"
+      "label": "Écran d'accueil de Taphad'Meuh - Sélection de la langue"
+    },
+    {
+      "src": "img/Modules 933x1829.png",
+      "sizes": "933x1829",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Liste des modules d'apprentissage par thèmes"
+    },
+    {
+      "src": "img/Flashcard français recto 933x1829.png",
+      "sizes": "933x1829",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Carte Mémoire (Recto) — Expression en Français"
+    },
+    {
+      "src": "img/Flashcard oromo verso 933x1829.png",
+      "sizes": "933x1829",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Carte Mémoire (Verso) — Traduction et prononciation en Afaan Oromoo"
+    },
+    {
+      "src": "img/Guide Explicatif 933x1829.png",
+      "sizes": "933x1829",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Guide explicatif des fonctionnalités de l'application"
     }
   ],
   "prefer_related_applications": false
