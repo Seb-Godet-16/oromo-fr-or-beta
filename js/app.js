@@ -257,7 +257,7 @@ function initApp(mode) {
 
     _setUI({
       homeTitle      : L('Apprendre le Français',  'Afaan Oromoo barachuu'),
-      homeStartBtn   : L('▶ Jalqabi',              '▶ Commencer'),
+      homeStartBtn   : L('▶ Commencer',              '▶ Jalqabi'),
       sectionsBackBtn: L('← Retour',               '← Gara duubaatti'),
       sectionsTitle  : L('📚 Modules',              '📚 Moojuulota'),
       lessonBackBtn  : L('← Modules',              '← Moojuulota'),
