@@ -884,6 +884,9 @@ function showScreen(id, dir) {
   if (id === 'sections-level1')   renderSections(1);
   if (id === 'sections-level2')   renderSections(2);
 
+  /* ── Synchroniser les onglets Niveau 1 / 2 ── */
+  _updateLevelTabs(id);
+
   /* ── Mettre à jour la nav bar ── */
   _updateBottomNav(id);
 
@@ -942,6 +945,29 @@ function showScreen(id, dir) {
 
 /** Niveau du thème ouvert (1 ou 2) — mémorisé pour retour et flèches */
 var _currentThemeLevel = 1;
+
+/**
+ * Synchronise l'état actif des onglets Niveau 1 / 2
+ * sur les deux paires de boutons (level-tab) selon l'écran affiché.
+ * @param {string} screenId
+ */
+function _updateLevelTabs(screenId) {
+  var isL1 = (screenId === 'sections-level1');
+  var isL2 = (screenId === 'sections-level2');
+  if (!isL1 && !isL2) return;
+
+  /* Onglets dans sections-level1 */
+  var t1a = document.getElementById('lvlTab1');
+  var t2a = document.getElementById('lvlTab2');
+  if (t1a) t1a.classList.toggle('active', isL1);
+  if (t2a) t2a.classList.toggle('active', isL2);
+
+  /* Onglets dans sections-level2 */
+  var t1b = document.getElementById('lvlTab1b');
+  var t2b = document.getElementById('lvlTab2b');
+  if (t1b) t1b.classList.toggle('active', isL1);
+  if (t2b) t2b.classList.toggle('active', isL2);
+}
 
 /**
  * Met à jour l'état actif de la nav bar selon l'écran courant.

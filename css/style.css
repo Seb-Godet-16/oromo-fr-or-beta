@@ -502,13 +502,13 @@ html.theme-oromo body{background:#f4f9f4}
   text-align: center;
   padding: 14px 12px;
   font-size: .68rem;
-  color: #aaa;
+  color: #7D6B69;
   background: transparent;
   line-height: 1.7;
   z-index: 1;
 }
-.launcher-footer a{ color: #888; text-decoration: none; font-weight: 600 }
-.launcher-footer a:hover{ text-decoration: underline }
+.launcher-footer a{ color: #7D6B69; text-decoration: none; font-weight: 600 }
+.launcher-footer a:hover{ text-decoration: underline; color: #4A3E3D }
 
 /* ══════════════════════════════════════════════════════════════════
    §6 — ÉCRAN 1 : HOME / GUIDE  (#home)
@@ -606,6 +606,7 @@ html.theme-oromo body{background:#f4f9f4}
    ══════════════════════════════════════════════════════════════════
    Fond plat + header redesigné (§23).
    ══════════════════════════════════════════════════════════════════ */
+/* #sections-level1/2 layout moved to §28 — keeping this for legacy compat */
 #sections{background:var(--c-bg);overflow-y:auto}
 
 /* Barre de progression dans l'en-tête */
@@ -653,17 +654,7 @@ html.theme-oromo body{background:#f4f9f4}
 /* Corps scrollable — les niveaux sont maintenant des <details> */
 .sections-body{padding:12px 14px 0}
 
-/* Badge coloré (dans .level-summary) */
-.level-badge{
-  background:var(--c-primary);
-  color:#fff;
-  border-radius:50px;
-  padding:2px 9px;
-  font-size:.68rem;
-  font-weight:800;
-  flex-shrink:0;
-}
-.level-badge.l2{background:var(--c-primary-dark)}
+/* .level-badge and .level-tab styles now in §27 */
 
 /* Grille 2 colonnes des cartes-thèmes (défaut mobile) */
 .themes-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
@@ -736,7 +727,7 @@ html.theme-oromo body{background:#f4f9f4}
    ══════════════════════════════════════════════════════════════════
    En-tête en dégradé + corps scrollable avec onglets.
    ══════════════════════════════════════════════════════════════════ */
-#lesson{background:var(--c-bg)}
+/* #lesson layout moved to §28 — no-scroll fix */
 
 .lesson-header{
   background:var(--c-grad-lesson);
@@ -759,7 +750,7 @@ html.theme-oromo body{background:#f4f9f4}
   flex-shrink:0;
 }
 
-.lesson-body{padding:14px}
+/* .lesson-body layout moved to §28 */
 
 /* ── Bouton retour (commun à #sections et #lesson) ──────────────── */
 /*
@@ -2174,12 +2165,13 @@ footer a:hover{text-decoration:underline}
     radial-gradient(circle at 80% 80%, rgba(237,41,57,0.2) 0%, transparent 60%);
   background-blend-mode:overlay;
   align-items:stretch;
-  justify-content:flex-start;
+  justify-content:space-between;
   padding:0 0 80px;
   text-align:center;
   position:relative;
   overflow-y:auto;
   overflow-x:hidden;
+  min-height:100vh;
 }
 
 /* ── En-tête coloré du Guide ── */
@@ -2720,6 +2712,21 @@ footer a:hover{text-decoration:underline}
   margin-top:10px;
   width:100%;
   justify-content:center;
+  background:rgba(255,255,255,.18);
+  border-color:rgba(255,255,255,.55);
+  color:var(--c-home-title);
+  border-radius:50px;
+  backdrop-filter:blur(4px);
+}
+#homeExportBtn:hover,#homeExportBtn:focus-visible{
+  background:rgba(255,255,255,.35);
+  color:var(--c-home-title);
+  box-shadow:0 2px 8px rgba(0,0,0,.15);
+  outline:none;
+}
+#homeExportBtn:active{
+  background:rgba(255,255,255,.45);
+  color:var(--c-home-title);
 }
 
 /* Barre d'export sur l'écran Leçon */
@@ -2755,6 +2762,231 @@ footer a:hover{text-decoration:underline}
 @media print{
   .btn-export-pdf,.lesson-export-bar{display:none!important}
 }
+
+/* ════════════════════════════════════════════════════════════════
+   §26 — BARRE DE NAVIGATION BASSE  (#bottom-nav)
+   ════════════════════════════════════════════════════════════════
+   Absente du style.css jusqu'ici — les classes sont définies dans
+   le HTML mais les règles manquaient.
+   Position fixed en bas de l'app, visible dès qu'un mode est actif.
+   ════════════════════════════════════════════════════════════════ */
+
+.bottom-nav{
+  position:fixed;
+  bottom:0;
+  left:50%;
+  transform:translateX(-50%);
+  width:100%;
+  max-width:480px;
+  display:flex;
+  align-items:stretch;
+  background:#fff;
+  border-top:1.5px solid rgba(0,0,0,.09);
+  box-shadow:0 -2px 16px rgba(0,0,0,.10);
+  z-index:1000;
+  padding-bottom:env(safe-area-inset-bottom, 0px);
+  opacity:0;
+  pointer-events:none;
+  transform:translateX(-50%) translateY(8px);
+  transition:opacity .2s ease, transform .2s ease;
+}
+.bottom-nav.visible{
+  opacity:1;
+  pointer-events:auto;
+  transform:translateX(-50%) translateY(0);
+}
+
+/* Bouton individuel de la nav */
+.nav-btn{
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:3px;
+  padding:8px 4px 10px;
+  background:none;
+  border:none;
+  cursor:pointer;
+  color:#aaa;
+  transition:color .15s, background .15s;
+  position:relative;
+  min-height:52px;
+}
+.nav-btn:active{
+  background:rgba(0,0,0,.04);
+}
+
+/* Icône emoji */
+.nav-icon{
+  font-size:1.35rem;
+  line-height:1;
+  display:block;
+  transition:transform .15s;
+}
+.nav-btn:active .nav-icon{
+  transform:scale(.88);
+}
+
+/* Label texte */
+.nav-label{
+  font-size:.62rem;
+  font-weight:600;
+  letter-spacing:.01em;
+  line-height:1;
+  display:block;
+}
+
+/* Bouton actif : couleur thème + indicateur trait en haut */
+.nav-btn.active{
+  color:var(--c-primary);
+}
+.nav-btn.active::before{
+  content:'';
+  position:absolute;
+  top:0;
+  left:20%;
+  right:20%;
+  height:3px;
+  border-radius:0 0 3px 3px;
+  background:var(--c-primary);
+}
+.nav-btn.active .nav-icon{
+  transform:scale(1.12);
+}
+
+/* Responsive desktop */
+@media (min-width:600px){
+  .bottom-nav{max-width:600px;}
+}
+@media (min-width:900px){
+  .bottom-nav{max-width:520px; border-radius:0 0 32px 32px; bottom:0;}
+}
+
+/* Mode sombre */
+@media(prefers-color-scheme:dark){
+  .bottom-nav{background:#1f1f28;border-top-color:rgba(255,255,255,.08);}
+  .nav-btn{color:#666;}
+  .nav-btn.active{color:var(--c-primary);}
+}
+
+
+/* ════════════════════════════════════════════════════════════════
+   §27 — ONGLETS NIVEAU 1 / 2  (.level-tab-bar / .level-tab)
+   ════════════════════════════════════════════════════════════════
+   Barre collante sous le header des écrans #sections-level1/2.
+   Le tab actif se distingue nettement : fond plein + bordure
+   inférieure colorée + texte blanc, les autres sont discrets.
+   ════════════════════════════════════════════════════════════════ */
+
+.level-tab-bar{
+  display:flex;
+  gap:0;
+  background:rgba(0,0,0,.15);
+  position:sticky;
+  top:0;
+  z-index:10;
+  border-bottom:1.5px solid rgba(255,255,255,.15);
+}
+
+.level-tab{
+  flex:1;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:7px;
+  padding:11px 8px;
+  background:transparent;
+  border:none;
+  color:rgba(255,255,255,.6);
+  font-size:.8rem;
+  font-weight:700;
+  cursor:pointer;
+  transition:background .15s, color .15s;
+  position:relative;
+  letter-spacing:.01em;
+}
+.level-tab:active{
+  background:rgba(0,0,0,.12);
+}
+
+/* Onglet actif : fond blanc semi-transparent + texte blanc vif + trait en bas */
+.level-tab.active{
+  color:#fff;
+  background:rgba(255,255,255,.18);
+}
+/* Trait de soulignement de l'onglet actif */
+.level-tab.active::after{
+  content:'';
+  position:absolute;
+  bottom:0;
+  left:10%;
+  right:10%;
+  height:3px;
+  border-radius:3px 3px 0 0;
+  background:#fff;
+}
+
+/* Badge numéro (1 / 2) */
+.level-badge{
+  background:rgba(255,255,255,.25);
+  color:#fff;
+  border-radius:50px;
+  padding:2px 8px;
+  font-size:.68rem;
+  font-weight:800;
+  flex-shrink:0;
+  transition:background .15s;
+}
+.level-tab.active .level-badge{
+  background:rgba(255,255,255,.45);
+}
+.level-badge.l2{background:rgba(255,255,255,.2)}
+.level-tab.active .level-badge.l2{background:rgba(255,255,255,.45)}
+
+/* Mode sombre */
+@media(prefers-color-scheme:dark){
+  .level-tab-bar{background:rgba(0,0,0,.3);}
+  .level-tab.active{background:rgba(255,255,255,.1);}
+}
+
+
+/* ════════════════════════════════════════════════════════════════
+   §28 — ÉCRANS SECTIONS LEVEL : NO-SCROLL QUAND PEU D'ÉLÉMENTS
+   ════════════════════════════════════════════════════════════════
+   Les écrans #sections-level1 et #sections-level2 utilisent
+   flex column. La .sections-body est scrollable si nécessaire,
+   mais n'impose pas de scroll quand le contenu rentre dans l'écran.
+   ════════════════════════════════════════════════════════════════ */
+
+#sections-level1,
+#sections-level2{
+  background:var(--c-bg);
+  display:flex;
+  flex-direction:column;
+  min-height:100vh;
+}
+
+/* Le body des sections prend tout l'espace restant mais scroll si besoin */
+#sections-level1 .sections-body,
+#sections-level2 .sections-body{
+  flex:1;
+  overflow-y:auto;
+  padding:12px 14px 80px;
+}
+
+/* Écran leçon : idem */
+#lesson{
+  background:var(--c-bg);
+  display:flex;
+  flex-direction:column;
+  min-height:100vh;
+}
+.lesson-body{
+  flex:1;
+  overflow-y:auto;
+  padding:14px;
+}
 /* ════════════════════════════════════════════════════════════════
    §20e — GRILLE DE THÈMES DANS LES ÉCRANS LEVEL  (sans <details>)
    ════════════════════════════════════════════════════════════════ */
@@ -2768,11 +3000,7 @@ footer a:hover{text-decoration:underline}
   padding:0;           /* padding porté par .sections-body */
 }
 
-/* Padding bottom sections-level pour laisser place à la nav bar */
-#sections-level1 .sections-body,
-#sections-level2 .sections-body{
-  padding:12px 14px 80px;
-}
+/* sections-body layout now in §28 */
 
 @media (min-width:520px){
   #sections-level1 .sections-body .themes-grid,
