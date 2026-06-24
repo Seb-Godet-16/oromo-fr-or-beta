@@ -3043,7 +3043,9 @@ footer a:hover{text-decoration:underline}
 #sections-level1,
 #sections-level2{
   background:var(--c-bg);
-  display:flex;
+  /* display géré par .screen / .screen.active — ne pas forcer flex ici
+     (un sélecteur ID a une spécificité plus haute que .screen et
+     écraserait display:none, rendant ces écrans toujours visibles) */
   flex-direction:column;
   min-height:100vh;
 }
@@ -3059,7 +3061,7 @@ footer a:hover{text-decoration:underline}
 /* Écran leçon : idem */
 #lesson{
   background:var(--c-bg);
-  display:flex;
+  /* display géré par .screen / .screen.active — ne pas forcer flex ici */
   flex-direction:column;
   min-height:100vh;
 }
