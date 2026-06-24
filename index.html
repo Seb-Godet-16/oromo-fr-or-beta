@@ -420,11 +420,11 @@
        ════════════════════════════════════════════════════════════════ -->
   <div id="custom-confirm-modal" class="modal-hidden">
     <div class="modal-content">
-      <h3>⚠️ Tout effacer ?</h3>
-      <p>Cette action est irréversible. Tu vas perdre toute ta progression, tes scores et tes paramètres.</p>
+      <h3 id="modal-confirm-title"></h3>
+      <p  id="modal-confirm-msg"></p>
       <div class="modal-actions">
-        <button id="modal-confirm-cancel" onclick="closeConfirmModal()">Annuler</button>
-        <button id="modal-confirm-validate" onclick="executeResetProgress()">Oui, effacer</button>
+        <button id="modal-confirm-cancel"   onclick="closeConfirmModal()"></button>
+        <button id="modal-confirm-validate"                              ></button>
       </div>
     </div>
   </div>

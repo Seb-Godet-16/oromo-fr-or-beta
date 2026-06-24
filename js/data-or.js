@@ -3,6 +3,7 @@
  * ║  Language App 🇫🇷🇪🇹  —  js/data-or.js                         ║
  * ║  Auteur   : Sébastien Godet                                     ║
  * ║  Assisté  : Claude Sonnet 4.6 · Gemini 3.5 Flash               ║
+ * ║  Modernisé ES2020 (const pour les tableaux de données)           ║
  * ║  Version  : Juin 2026                                           ║
  * ╠══════════════════════════════════════════════════════════════════╣
  * ║  RÔLE DE CE FICHIER                                             ║
@@ -27,7 +28,7 @@
    les menus de l'application s'affichent alors en Afaan Oromoo.
    ══════════════════════════════════════════════════════════════════ */
 
-var LEVEL1_THEMES_OR = [
+const LEVEL1_THEMES_OR = [
 
   {
     id: 'alpha', level: 1, emoji: '🔤',
@@ -672,7 +673,7 @@ var LEVEL1_THEMES_OR = [
    16 modules, structure identique à LEVEL2_THEMES_FR (§2).
    ══════════════════════════════════════════════════════════════════ */
 
-var LEVEL2_THEMES_OR = [
+const LEVEL2_THEMES_OR = [
 
   {
     id: 'salut2', level: 2, emoji: '👋',
@@ -1331,4 +1332,4 @@ var LEVEL2_THEMES_OR = [
    Tableau fusionné — consommé directement par app.js
    ══════════════════════════════════════════════════════════════════ */
 
-var ALL_THEMES_OR = LEVEL1_THEMES_OR.concat(LEVEL2_THEMES_OR);
+const ALL_THEMES_OR = LEVEL1_THEMES_OR.concat(LEVEL2_THEMES_OR);

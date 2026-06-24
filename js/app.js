@@ -2,6 +2,7 @@
    Taphad'Meuh 🐄  —  Moteur applicatif unifié
    Français ↔ Afaan Oromoo
    © Juin 2026 – Sébastien Godet · IA Claude
+   Modernisé ES2020 : let/const, fonctions fléchées, for…of
    ============================================================
    ARCHITECTURE (5 fichiers) :
      ├─ index.html   → Structure HTML + launcher
@@ -11,7 +12,7 @@
      └─ app.js       → Ce fichier : logique applicative complète
 
    SECTIONS DE CE FICHIER :
-     1.  Variables d'état globales
+     1.  Variables d'état globales (let/const)
      2.  Point d'entrée — initApp(mode)
      3.  Synthèse vocale + prononciation Oromo (cascade de voix)
      3b. Retour haptique — _vibrateFeedback()
@@ -48,29 +49,29 @@
    ============================================================ */
 
 /* ── Configuration du mode actif ── */
-var currentMode = '';       // 'learn_french' | 'learn_oromo'
-var voiceLang   = 'fr-FR';  // Langue de la synthèse vocale (mise à jour par initApp)
-var ALL_THEMES  = [];       // Tableau des thèmes actifs, rempli par initApp() depuis data-fr.js ou data-or.js
-var STORAGE_KEY = '';       // Clé localStorage séparée par mode (deux progressions indépendantes)
+let currentMode = '';       // 'learn_french' | 'learn_oromo'
+let voiceLang   = 'fr-FR';  // Langue de la synthèse vocale (mise à jour par initApp)
+let ALL_THEMES  = [];       // Tableau des thèmes actifs, rempli par initApp() depuis data-fr.js ou data-or.js
+let STORAGE_KEY = '';       // Clé localStorage séparée par mode (deux progressions indépendantes)
 
 /* ── Session en cours (réinitialisées à chaque ouverture de thème) ── */
-var CT           = null;    // Current Theme : objet thème actuellement ouvert
-var fcIdx        = 0;       // Cartes Flash : index de la carte affichée
+let CT           = null;    // Current Theme : objet thème actuellement ouvert
+let fcIdx        = 0;       // Cartes Flash : index de la carte affichée
 
-var dqStep       = 0;       // Quiz Dialogue : numéro de la question
-var dqScore      = 0;       // Quiz Dialogue : score (bonnes réponses)
-var dqAnswered   = false;   // Quiz Dialogue : évite le double-clic
+let dqStep       = 0;       // Quiz Dialogue : numéro de la question
+let dqScore      = 0;       // Quiz Dialogue : score (bonnes réponses)
+let dqAnswered   = false;   // Quiz Dialogue : évite le double-clic
 
-var sitIdx       = 0;       // Dialogue : index de la situation affichée
+let sitIdx       = 0;       // Dialogue : index de la situation affichée
 
-var q10Step      = 0;       // Quiz 10 questions : numéro de la question
-var q10Score     = 0;       // Quiz 10 questions : score
-var q10Answered  = false;   // Quiz 10 questions : évite le double-clic
-var _q10Questions = null;   // Cache des questions générées pour le quiz en cours
+let q10Step      = 0;       // Quiz 10 questions : numéro de la question
+let q10Score     = 0;       // Quiz 10 questions : score
+let q10Answered  = false;   // Quiz 10 questions : évite le double-clic
+let _q10Questions = null;   // Cache des questions générées pour le quiz en cours
                             // (évite de re-mélanger si l'utilisateur revient sur l'onglet)
 
 /* ── Progression persistante ── */
-var done = [];              // Tableau d'objets { id, stars } sauvegardé dans localStorage
+let done = [];              // Tableau d'objets { id, stars } sauvegardé dans localStorage
 
 
 /* ============================================================
@@ -127,9 +128,9 @@ function langKeys() {
  * @returns {{ main: string, sub: string }}
  */
 function _themeTitle(t) {
-  var isAlpha = (t.id === 'alpha' || t.type === 'alpha');
-  var main = isAlpha ? L("L'Alphabet", 'Qubeewwan') : t.name;
-  var sub  = isAlpha ? L('Qubeewwan', "L'Alphabet") : t.sub;
+  let isAlpha = (t.id === 'alpha' || t.type === 'alpha');
+  let main = isAlpha ? L("L'Alphabet", 'Qubeewwan') : t.name;
+  let sub  = isAlpha ? L('Qubeewwan', "L'Alphabet") : t.sub;
   return { main: main, sub: sub };
 }
 
@@ -165,7 +166,7 @@ function _spokenKey(card) {
  * Évite de réinjecter le même <script> si l'utilisateur revient
  * sur le launcher et rechoisit le même mode.
  */
-var _loadedDataFiles = {};
+let _loadedDataFiles = {};
 
 /**
  * Injecte dynamiquement un script de données et appelle le callback
@@ -182,18 +183,18 @@ function _loadDataScript(filename, callback) {
     return;
   }
 
-  var script    = document.createElement('script');
+  let script    = document.createElement('script');
   script.src    = 'js/' + filename;
   script.async  = false;   /* false = ordre d'exécution garanti dans le DOM */
 
-  script.onload = function() {
+  script.onload = () => {
     _loadedDataFiles[filename] = true;
     callback();
   };
 
-  script.onerror = function() {
+  script.onerror = () => {
     /* Affiche un message d'erreur non bloquant si le fichier est introuvable */
-    _showToast('⚠️ Erreur : impossible de charger ' + filename);
+    _showToast('⚠️ Dogoggora / Erreur : impossible de charger ' + filename);
   };
 
   document.head.appendChild(script);
@@ -219,7 +220,7 @@ function initApp(mode) {
     voiceLang   = 'fr-FR';
     STORAGE_KEY = 'pe_om_fr_done_v1';
     /* Synchroniser la meta theme-color avec la couleur française */
-    var tcMeta = document.getElementById('meta-theme-color');
+    let tcMeta = document.getElementById('meta-theme-color');
     if (tcMeta) tcMeta.setAttribute('content', '#002395');
   } else {
     document.documentElement.className = 'theme-oromo';
@@ -231,7 +232,7 @@ function initApp(mode) {
     voiceLang   = 'om-ET';
     STORAGE_KEY = 'pe_fr_om_done_v1';
     /* Synchroniser la meta theme-color avec la couleur oromo */
-    var tcMeta = document.getElementById('meta-theme-color');
+    let tcMeta = document.getElementById('meta-theme-color');
     if (tcMeta) tcMeta.setAttribute('content', '#009A44');
   }
 
@@ -242,7 +243,7 @@ function initApp(mode) {
   _showLoadingSpinner();
 
   /* ── Déterminer le fichier de données à charger ── */
-  var dataFile = (mode === 'learn_french') ? 'data-fr.js' : 'data-or.js';
+  let dataFile = (mode === 'learn_french') ? 'data-fr.js' : 'data-or.js';
 
   _loadDataScript(dataFile, function() {
     /* Callback : données disponibles en mémoire → finaliser l'initialisation */
@@ -299,7 +300,7 @@ function _setUI(t) {
   _setText('level2Label',     t.level2Label);
 
   /* Le bouton "Démarrer" sur l'écran home ouvre l'écran sections */
-  var btn = document.getElementById('homeStartBtn');
+  let btn = document.getElementById('homeStartBtn');
   if (btn) btn.onclick = function() { showScreen('sections-level1'); };
 
   /* Mettre à jour les footers selon la langue du parcours */
@@ -313,7 +314,7 @@ function _setUI(t) {
  * @param {string} val
  */
 function _setText(id, val) {
-  var el = document.getElementById(id);
+  const el = document.getElementById(id);
   if (el) el.textContent = val;
 }
 
@@ -324,23 +325,23 @@ function _setText(id, val) {
  */
 function _setFooters() {
   /* Textes bilingues des liens footer */
-  var lblCredits = L('Remerciements',   'Galateeffannaa');
-  var lblHelp    = L('Aide',            'Gargaarsa');
-  var lblCopy    = L(
+  let lblCredits = L('Remerciements',   'Galateeffannaa');
+  let lblHelp    = L('Aide',            'Gargaarsa');
+  let lblCopy    = L(
     '© Juin 2026 – Développé par Sébastien Godet · Assisté par IA Claude Sonnet 4.6 et Gemini 3.5 Flash',
     '© Waxabajjii 2026 – Kan Sébastien Godet tolche · AI Claude Sonnet 4.6 fi Gemini 3.5 Flash gargaaramee'
   );
 
-  var html =
+  let html =
     lblCopy + '<br>' +
     'sebastien.godet16 [at] gmail [dot] com · ' +
     '<a href="https://www.linkedin.com/in/s%C3%A9bastien-godet-142ba6145" target="_blank">LinkedIn</a> · ' +
     '<a href="#" onclick="showCredits()">' + lblCredits + '</a> · ' +
     '<a href="#" onclick="showOnboardingGuide()">' + lblHelp + '</a>';
 
-  var ids = ['homeFooter', 'sectionsFooter'];
-  for (var i = 0; i < ids.length; i++) {
-    var el = document.getElementById(ids[i]);
+  let ids = ['homeFooter', 'sectionsFooter'];
+  for (const id of ids) {
+    const el = document.getElementById(id);
     if (el) el.innerHTML = html;
   }
 }
@@ -357,10 +358,10 @@ function _setFooters() {
    ============================================================ */
 
 /* Cache de la voix Oromo résolue (undefined = pas encore cherché, null = aucune trouvée) */
-var _oromoVoice = undefined;
+let _oromoVoice = undefined;
 
 /* Drapeau pour ne notifier l'utilisateur qu'une seule fois de la voix sélectionnée */
-var _hasNotifiedVoice = false;
+let _hasNotifiedVoice = false;
 
 /**
  * Affiche une notification discrète et non bloquante en haut de l'écran.
@@ -374,21 +375,21 @@ var _hasNotifiedVoice = false;
 function _showToast(msg, duration) {
   duration = duration || 4000;
 
-  var toast = document.createElement('div');
+  const toast = document.createElement('div');
   toast.className = 'app-toast';
   toast.textContent = msg;
   document.body.appendChild(toast);
 
   /* L'ajout de la classe doit être différé d'une frame pour que la
      transition CSS d'entrée (opacité + translation) soit bien jouée. */
-  requestAnimationFrame(function() {
-    requestAnimationFrame(function() { toast.classList.add('visible'); });
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => { toast.classList.add('visible'); });
   });
 
-  setTimeout(function() {
+  setTimeout(() => {
     toast.classList.remove('visible');
     /* Laisser la transition de sortie se terminer avant de retirer le nœud */
-    setTimeout(function() { toast.remove(); }, 300);
+    setTimeout(() => { toast.remove(); }, 300);
   }, duration);
 }
 
@@ -409,11 +410,11 @@ function _resolveOromoVoice(callback) {
    * @returns {boolean} true si des voix étaient disponibles
    */
   function search() {
-    var voices = speechSynthesis.getVoices();
+    let voices = speechSynthesis.getVoices();
     if (!voices || voices.length === 0) return false;
 
     /* Priorités de voix : de la plus proche à la plus éloignée phonétiquement */
-    var priorities = [
+    let priorities = [
       { lang: 'om-ET', name: 'Oromo' },
       { lang: 'so-SO', name: 'Somali' },
       { lang: 'am-ET', name: 'Amharique' },
@@ -423,12 +424,12 @@ function _resolveOromoVoice(callback) {
       { lang: 'it-IT', name: 'Phonétique (Optimisé Italien)' }
     ];
 
-    var foundVoice = null;
-    var foundLabel = 'Voix par défaut';
+    let foundVoice = null;
+    let foundLabel = 'Voix par défaut';
 
-    for (var i = 0; i < priorities.length; i++) {
-      var target = priorities[i];
-      var match = voices.find(function(v) {
+    for (let i = 0; i < priorities.length; i++) {
+      let target = priorities[i];
+      let match = voices.find((v) => {
         return v.lang.toLowerCase().indexOf(target.lang.split('-')[0].toLowerCase()) !== -1;
       });
       if (match) {
@@ -475,18 +476,18 @@ function speak(txt) {
 
     _resolveOromoVoice(function(voice) {
       speechSynthesis.cancel();
-      var parts = txt.split('/').map(function(p) { return p.trim(); }).filter(Boolean);
+      let parts = txt.split('/').map((p) => p.trim()).filter(Boolean);
 
       function speakPart(i) {
         if (i >= parts.length) return;
-        var u = new SpeechSynthesisUtterance(parts[i]);
+        let u = new SpeechSynthesisUtterance(parts[i]);
         if (voice) {
           u.voice = voice;
           u.lang  = voice.lang;
         }
         u.rate  = 0.85;  // Légèrement ralenti pour faciliter la compréhension
         u.onend = function() {
-          if (i + 1 < parts.length) setTimeout(function() { speakPart(i + 1); }, 2000);
+          if (i + 1 < parts.length) setTimeout(() => { speakPart(i + 1); }, 2000);
         };
         speechSynthesis.speak(u);
       }
@@ -509,16 +510,16 @@ function speak(txt) {
  */
 function _doSpeak(txt, voiceObj, rate) {
   speechSynthesis.cancel();
-  var parts = txt.split('/').map(function(p) { return p.trim(); }).filter(Boolean);
+  let parts = txt.split('/').map((p) => p.trim()).filter(Boolean);
 
   function speakPart(i) {
     if (i >= parts.length) return;
-    var u  = new SpeechSynthesisUtterance(parts[i]);
+    let u  = new SpeechSynthesisUtterance(parts[i]);
     u.lang = voiceLang;
     u.rate = rate;
     if (voiceObj) u.voice = voiceObj;
     u.onend = function() {
-      if (i + 1 < parts.length) setTimeout(function() { speakPart(i + 1); }, 2000);
+      if (i + 1 < parts.length) setTimeout(() => { speakPart(i + 1); }, 2000);
     };
     speechSynthesis.speak(u);
   }
@@ -577,34 +578,34 @@ function _launchConfetti(isThreeStars) {
   if (typeof document.documentElement.style.setProperty !== 'function') return;
 
   /* Palette selon le thème actif */
-  var isFr   = document.documentElement.classList.contains('theme-french');
-  var colors = isFr
+  let isFr   = document.documentElement.classList.contains('theme-french');
+  let colors = isFr
     ? ['#002395', '#ffffff', '#ED2939', '#FFD700', '#4A6FE3', '#FF6B7A']  /* FR */
     : ['#009A44', '#FED141', '#EF2B2D', '#ffffff', '#52C87A', '#FFE566']; /* OR */
 
   /* Créer l'overlay */
-  var overlay = document.createElement('div');
+  let overlay = document.createElement('div');
   overlay.className = 'confetti-overlay';
   document.body.appendChild(overlay);
 
-  var COUNT = 22;
-  for (var i = 0; i < COUNT; i++) {
-    var p = document.createElement('div');
+  let COUNT = 22;
+  for (let i = 0; i < COUNT; i++) {
+    let p = document.createElement('div');
     p.className = 'conf-p';
 
     /* Position X : répartie en "zones" pour éviter les regroupements */
-    var zone  = (i / COUNT) * 100;
-    var jitter = (Math.random() - 0.5) * 14;
-    var cx   = Math.max(2, Math.min(98, zone + jitter));
+    let zone  = (i / COUNT) * 100;
+    let jitter = (Math.random() - 0.5) * 14;
+    let cx   = Math.max(2, Math.min(98, zone + jitter));
 
     /* Couleur cyclique dans la palette */
-    var color = colors[i % colors.length];
+    let color = colors[i % colors.length];
 
     /* Scale aléatoire entre 0.7 et 1.5 */
-    var scale = (0.7 + Math.random() * 0.8).toFixed(2);
+    let scale = (0.7 + Math.random() * 0.8).toFixed(2);
 
     /* Délai échelonné : les 22 particules partent sur ~0.6 s */
-    var delay = (i * 0.028).toFixed(3) + 's';
+    let delay = (i * 0.028).toFixed(3) + 's';
 
     p.style.setProperty('--cx',  cx + '%');
     p.style.setProperty('--cr',  color);
@@ -616,7 +617,7 @@ function _launchConfetti(isThreeStars) {
 
   /* Nettoyer l'overlay après la fin de la dernière animation
      (délai max ~0.6s + durée animation ~1.4s + marge) */
-  setTimeout(function() {
+  setTimeout(() => {
     if (overlay && overlay.parentNode) overlay.parentNode.removeChild(overlay);
   }, 2400);
 }
@@ -651,7 +652,7 @@ function _launchConfetti(isThreeStars) {
    ============================================================ */
 
 if (window.speechSynthesis) {
-  document.addEventListener('visibilitychange', function() {
+  document.addEventListener('visibilitychange', () => {
     if (document.hidden) {
       speechSynthesis.cancel();
     }
@@ -691,25 +692,63 @@ function saveDone() {
 }
 
 /**
- * Étape 1 : Ouvre la modale de confirmation personnalisée.
- * Déclenchée par le bouton "Réinitialiser" dans le guide / l'aide.
- * Évite l'utilisation de la boîte grise native window.confirm().
+ * Ouvre la modale de confirmation personnalisée (générique).
+ * Injecte le titre, le message et le callback de validation,
+ * puis affiche la modale. Remplace window.confirm() partout.
+ *
+ * @param {Object} opts
+ * @param {string}   opts.title       - Titre du <h3> (ex. "⚠️ Réinitialiser ?")
+ * @param {string}   opts.msg         - Corps du <p>
+ * @param {string}   opts.labelOk     - Libellé du bouton de validation
+ * @param {string}   opts.labelCancel - Libellé du bouton d'annulation
+ * @param {Function} opts.onConfirm   - Callback exécuté si l'utilisateur valide
  */
-function confirmResetProgress() {
-  var modal = document.getElementById('custom-confirm-modal');
-  if (modal) {
-    modal.classList.remove('modal-hidden');
-  }
+function _openConfirmModal(opts) {
+  const modal     = document.getElementById('custom-confirm-modal');
+  const btnOk     = document.getElementById('modal-confirm-validate');
+  const btnCancel = document.getElementById('modal-confirm-cancel');
+  if (!modal || !btnOk || !btnCancel) return;
+
+  /* Injecter le contenu dynamique */
+  document.getElementById('modal-confirm-title').textContent = opts.title;
+  document.getElementById('modal-confirm-msg').textContent   = opts.msg;
+  btnCancel.textContent = opts.labelCancel;
+
+  /* Câbler le callback : cloner le bouton pour effacer tout listener précédent */
+  const freshBtn = btnOk.cloneNode(true);
+  freshBtn.textContent = opts.labelOk;
+  btnOk.parentNode.replaceChild(freshBtn, btnOk);
+  freshBtn.addEventListener('click', () => {
+    closeConfirmModal();
+    opts.onConfirm();
+  });
+
+  modal.classList.remove('modal-hidden');
 }
 
 /**
- * Étape 2 : Ferme la modale si l'utilisateur clique sur "Annuler".
+ * Ouvre la modale pour réinitialiser TOUTE la progression du mode actif.
+ * Déclenchée par le bouton "Réinitialiser" dans le guide / l'aide.
+ */
+function confirmResetProgress() {
+  _openConfirmModal({
+    title       : L('⚠️ Hunda haqi ?',       '⚠️ Tout effacer ?'),
+    msg         : L(
+      "Tartiiba, qabxii fi filannoowwan kee hundi ni dhaban. Kun deebi'uu hin danda'u.",
+      "Cette action est irréversible. Tu vas perdre toute ta progression, tes scores et tes paramètres."
+    ),
+    labelOk     : L('Eeyyee, haqadhu',        'Oui, effacer'),
+    labelCancel : L('Dhiisi',                  'Annuler'),
+    onConfirm   : executeResetProgress,
+  });
+}
+
+/**
+ * Ferme la modale (bouton Annuler ou après validation).
  */
 function closeConfirmModal() {
-  var modal = document.getElementById('custom-confirm-modal');
-  if (modal) {
-    modal.classList.add('modal-hidden');
-  }
+  const modal = document.getElementById('custom-confirm-modal');
+  if (modal) modal.classList.add('modal-hidden');
 }
 
 /**
@@ -721,7 +760,7 @@ function executeResetProgress() {
   closeConfirmModal();
 
   // 2. Détermination du mode actuel pour cibler l'onboarding à réinitialiser
-  var isOromoInterface = (STORAGE_KEY === 'pe_om_fr_done_v1');
+  let isOromoInterface = (STORAGE_KEY === 'pe_om_fr_done_v1');
 
   // 3. On supprime proprement la progression du mode actif
   localStorage.removeItem(STORAGE_KEY); 
@@ -743,7 +782,7 @@ function executeResetProgress() {
   );
 
   // 7. Rechargement propre de la page après un léger délai pour appliquer les changements
-  setTimeout(function() {
+  setTimeout(() => {
     window.location.reload();
   }, 1200);
 }
@@ -764,10 +803,10 @@ function _calcStars(pct) {
  * Enregistre (ou améliore) la progression d'un thème.
  */
 function markDone(id, pct) {
-  var newStars = _calcStars(pct);
+  const newStars = _calcStars(pct);
   if (newStars === 0) return;
 
-  var existing = done.find(function(d) { return d.id === id; });
+  let existing = done.find((d) => d.id === id);
   if (existing) {
     if (newStars <= existing.stars) return; 
     existing.stars = newStars;
@@ -782,16 +821,21 @@ function markDone(id, pct) {
  * @param {string} id - Identifiant du thème à réinitialiser
  */
 function resetTheme(id) {
-  var msg = L(
-    'Dhugumaan tartiiba kutaa kana haquuf barbaaddaa ? ⭐ Urjiilee argatte ni dhaban.',
-    'Voulez-vous vraiment réinitialiser ce module ? Vos ⭐ étoiles seront perdues.'
-  );
-  if (!window.confirm(msg)) return;
-
-  done = done.filter(function(d) { return d.id !== id; });
-  saveDone();
-  renderSections(_currentThemeLevel || 1);
-  renderHome();
+  _openConfirmModal({
+    title       : L('⚠️ Kutaa kana haqi ?',    '⚠️ Réinitialiser ce module ?'),
+    msg         : L(
+      "Urjiilee ⭐ argatte ni dhaban. Kun deebi'uu hin danda'u.",
+      'Tes ⭐ étoiles pour ce module seront perdues. Cette action est irréversible.'
+    ),
+    labelOk     : L('Eeyyee, haqadhu',          'Oui, réinitialiser'),
+    labelCancel : L('Dhiisi',                    'Annuler'),
+    onConfirm   : () => {
+      done = done.filter((d) => d.id !== id);
+      saveDone();
+      renderSections(_currentThemeLevel || 1);
+      renderHome();
+    },
+  });
 }
 
 /**
@@ -799,7 +843,7 @@ function resetTheme(id) {
  * @returns {boolean} true si le thème a été complété (≥ 1 étoile)
  */
 function isDone(id) {
-  return done.some(function(d) { return d.id === id; });
+  return done.some((d) => d.id === id);
 }
 
 /**
@@ -807,7 +851,7 @@ function isDone(id) {
  * @returns {0|1|2|3} Nombre d'étoiles obtenues pour ce thème
  */
 function getThemeStars(id) {
-  var found = done.find(function(d) { return d.id === id; });
+  let found = done.find((d) => d.id === id);
   return found ? found.stars : 0;
 }
 
@@ -838,7 +882,7 @@ function getThemeStars(id) {
    ============================================================ */
 
 /** Clé sessionStorage unique pour la session quiz en cours. */
-var SESSION_KEY = 'quiz_session';
+const SESSION_KEY = 'quiz_session';
 
 /**
  * Sauvegarde l'état courant du quiz dans sessionStorage.
@@ -846,7 +890,7 @@ var SESSION_KEY = 'quiz_session';
  */
 function _saveQuizSession(quizType) {
   try {
-    var state = {
+    let state = {
       mode     : currentMode,
       themeId  : CT ? CT.id : null,
       quizType : quizType,
@@ -865,10 +909,10 @@ function _saveQuizSession(quizType) {
  */
 function _restoreQuizSession() {
   try {
-    var raw = sessionStorage.getItem(SESSION_KEY);
+    let raw = sessionStorage.getItem(SESSION_KEY);
     if (!raw) return false;
 
-    var state = JSON.parse(raw);
+    let state = JSON.parse(raw);
 
     /* Vérifications de cohérence : même mode, même thème, session non terminée */
     if (!state
@@ -934,12 +978,12 @@ function _clearQuizSession() {
  */
 
 /* Ordre des écrans pour déterminer la direction */
-var _SCREEN_ORDER = ['app-launcher', 'home', 'sections-level1', 'sections-level2', 'lesson'];
+const _SCREEN_ORDER = ['app-launcher', 'home', 'sections-level1', 'sections-level2', 'lesson'];
 
 function showScreen(id, dir) {
   /* Trouver l'écran actuellement actif */
-  var currentScreen = null;
-  document.querySelectorAll('.screen').forEach(function(s) {
+  let currentScreen = null;
+  document.querySelectorAll('.screen').forEach((s) => {
     if (s.classList.contains('active') ||
         s.classList.contains('slide-in-right') ||
         s.classList.contains('slide-in-left')) {
@@ -947,7 +991,7 @@ function showScreen(id, dir) {
     }
   });
 
-  var nextScreen = document.getElementById(id);
+  let nextScreen = document.getElementById(id);
   if (!nextScreen) return;
 
   /* Remonter en haut dès maintenant */
@@ -966,7 +1010,7 @@ function showScreen(id, dir) {
 
   /* ── Pas d'animation si même écran ou pas d'écran source ── */
   if (!currentScreen || currentScreen === nextScreen) {
-    document.querySelectorAll('.screen').forEach(function(s) {
+    document.querySelectorAll('.screen').forEach((s) => {
       s.classList.remove('active','slide-in-right','slide-out-left',
                           'slide-in-left','slide-out-right');
     });
@@ -976,21 +1020,21 @@ function showScreen(id, dir) {
 
   /* ── Déterminer la direction selon l'ordre des écrans ── */
   if (!dir) {
-    var currentId = currentScreen.id;
-    var iCurrent  = _SCREEN_ORDER.indexOf(currentId);
-    var iNext     = _SCREEN_ORDER.indexOf(id);
+    let currentId = currentScreen.id;
+    let iCurrent  = _SCREEN_ORDER.indexOf(currentId);
+    let iNext     = _SCREEN_ORDER.indexOf(id);
     dir = (iNext > iCurrent) ? 'forward' : 'back';
   }
 
   /* ── Nettoyer toute animation résiduelle ── */
-  var ANIM_CLASSES = ['active','slide-in-right','slide-out-left',
+  let ANIM_CLASSES = ['active','slide-in-right','slide-out-left',
                        'slide-in-left','slide-out-right'];
-  document.querySelectorAll('.screen').forEach(function(s) {
+  document.querySelectorAll('.screen').forEach((s) => {
     s.classList.remove.apply(s.classList, ANIM_CLASSES);
   });
 
   /* ── Appliquer les classes d'animation ── */
-  var inClass, outClass;
+  let inClass, outClass;
   if (dir === 'forward') {
     inClass  = 'slide-in-right';
     outClass = 'slide-out-left';
@@ -1003,9 +1047,9 @@ function showScreen(id, dir) {
   nextScreen.classList.add(inClass);
 
   /* ── Finaliser après la durée de l'animation (280ms) ── */
-  var DURATION = 280;
-  setTimeout(function() {
-    document.querySelectorAll('.screen').forEach(function(s) {
+  let DURATION = 280;
+  setTimeout(() => {
+    document.querySelectorAll('.screen').forEach((s) => {
       s.classList.remove.apply(s.classList, ANIM_CLASSES);
     });
     nextScreen.classList.add('active');
@@ -1018,7 +1062,7 @@ function showScreen(id, dir) {
    ============================================================ */
 
 /** Niveau du thème ouvert (1 ou 2) — mémorisé pour retour et flèches */
-var _currentThemeLevel = 1;
+let _currentThemeLevel = 1;
 
 /**
  * Synchronise l'état actif des onglets Niveau 1 / 2
@@ -1026,19 +1070,19 @@ var _currentThemeLevel = 1;
  * @param {string} screenId
  */
 function _updateLevelTabs(screenId) {
-  var isL1 = (screenId === 'sections-level1');
-  var isL2 = (screenId === 'sections-level2');
+  let isL1 = (screenId === 'sections-level1');
+  let isL2 = (screenId === 'sections-level2');
   if (!isL1 && !isL2) return;
 
   /* Onglets dans sections-level1 */
-  var t1a = document.getElementById('lvlTab1');
-  var t2a = document.getElementById('lvlTab2');
+  let t1a = document.getElementById('lvlTab1');
+  let t2a = document.getElementById('lvlTab2');
   if (t1a) t1a.classList.toggle('active', isL1);
   if (t2a) t2a.classList.toggle('active', isL2);
 
   /* Onglets dans sections-level2 */
-  var t1b = document.getElementById('lvlTab1b');
-  var t2b = document.getElementById('lvlTab2b');
+  let t1b = document.getElementById('lvlTab1b');
+  let t2b = document.getElementById('lvlTab2b');
   if (t1b) t1b.classList.toggle('active', isL1);
   if (t2b) t2b.classList.toggle('active', isL2);
 }
@@ -1048,7 +1092,7 @@ function _updateLevelTabs(screenId) {
  * @param {string} screenId
  */
 function _updateBottomNav(screenId) {
-  var nav = document.getElementById('bottom-nav');
+  let nav = document.getElementById('bottom-nav');
   if (!nav) return;
 
   /* Cacher la nav sur le launcher */
@@ -1064,20 +1108,20 @@ function _updateBottomNav(screenId) {
   _setText('navLabelLang',    L('Langue',  'Afaan'));
   _setText('navLabelCredits', L('Merci',   'Galata'));
 
-  var langFlag = document.getElementById('navLangFlag');
+  let langFlag = document.getElementById('navLangFlag');
   if (langFlag) langFlag.textContent = L('🇫🇷', '🇪🇹');
 
   /* Activer le bon bouton */
-  ['navBtnModules','navBtnGuide','navBtnLang','navBtnCredits'].forEach(function(id) {
-    var el = document.getElementById(id);
+  ['navBtnModules','navBtnGuide','navBtnLang','navBtnCredits'].forEach((id) => {
+    let el = document.getElementById(id);
     if (el) el.classList.remove('active');
   });
   if (screenId === 'sections-level1' || screenId === 'sections-level2') {
-    var mb = document.getElementById('navBtnModules');
+    let mb = document.getElementById('navBtnModules');
     if (mb) mb.classList.add('active');
   }
   if (screenId === 'home') {
-    var gb = document.getElementById('navBtnGuide');
+    let gb = document.getElementById('navBtnGuide');
     if (gb) gb.classList.add('active');
   }
 }
@@ -1087,13 +1131,13 @@ function _updateBottomNav(screenId) {
  * va sur l'écran du niveau mémorisé (ou niveau 1 par défaut).
  */
 function navGoModules() {
-  var target = (_currentThemeLevel === 2) ? 'sections-level2' : 'sections-level1';
+  let target = (_currentThemeLevel === 2) ? 'sections-level2' : 'sections-level1';
   /* Direction : depuis lesson = back, sinon forward */
-  var current = null;
-  document.querySelectorAll('.screen').forEach(function(s) {
+  let current = null;
+  document.querySelectorAll('.screen').forEach((s) => {
     if (s.classList.contains('active')) current = s.id;
   });
-  var dir = (current === 'lesson') ? 'back' : undefined;
+  let dir = (current === 'lesson') ? 'back' : undefined;
   renderSections(_currentThemeLevel);
   showScreen(target, dir);
 }
@@ -1102,7 +1146,7 @@ function navGoModules() {
  * Bouton retour de l'écran leçon → retourne au bon écran de niveau.
  */
 function lessonGoBack() {
-  var target = (_currentThemeLevel === 2) ? 'sections-level2' : 'sections-level1';
+  let target = (_currentThemeLevel === 2) ? 'sections-level2' : 'sections-level1';
   renderSections(_currentThemeLevel);
   showScreen(target, 'back');
 }
@@ -1113,13 +1157,11 @@ function lessonGoBack() {
  */
 function lessonNav(delta) {
   if (!CT || !ALL_THEMES.length) return;
-  var levelThemes = ALL_THEMES.filter(function(t) { return t.level === CT.level; });
-  var idx = levelThemes.findIndex(function(t) { return t.id === CT.id; });
-  var newIdx = idx + delta;
+  let levelThemes = ALL_THEMES.filter((t) => t.level === CT.level);
+  let idx = levelThemes.findIndex((t) => t.id === CT.id);
+  let newIdx = idx + delta;
   if (newIdx < 0 || newIdx >= levelThemes.length) return;
-  /* Pas d'animation pour les changements de module : dir = 'none' sera ignoré,
-     on utilise la direction naturelle selon delta */
-  openTheme(levelThemes[newIdx].id, delta > 0 ? 'forward-within' : 'back-within');
+  openTheme(levelThemes[newIdx].id, delta > 0 ? 'forward' : 'back');
 }
 
 /**
@@ -1127,10 +1169,10 @@ function lessonNav(delta) {
  */
 function _updateLessonNavArrows() {
   if (!CT) return;
-  var levelThemes = ALL_THEMES.filter(function(t) { return t.level === CT.level; });
-  var idx = levelThemes.findIndex(function(t) { return t.id === CT.id; });
-  var prev = document.getElementById('lessonPrevBtn');
-  var next = document.getElementById('lessonNextBtn');
+  let levelThemes = ALL_THEMES.filter((t) => t.level === CT.level);
+  let idx = levelThemes.findIndex((t) => t.id === CT.id);
+  let prev = document.getElementById('lessonPrevBtn');
+  let next = document.getElementById('lessonNextBtn');
   if (prev) prev.disabled = (idx <= 0);
   if (next) next.disabled = (idx >= levelThemes.length - 1);
 }
@@ -1154,8 +1196,8 @@ function _updateLessonNavArrows() {
  *             starsEarned: number, starsMax: number }}
  */
 function _getProgress() {
-  var total = ALL_THEMES.length;
-  var n     = done.length;
+  let total = ALL_THEMES.length;
+  let n     = done.length;
   return {
     total      : total,
     n          : n,
@@ -1171,10 +1213,10 @@ function renderHome() {
      On garde la fonction pour compatibilité avec les appels existants. */
   if (!ALL_THEMES.length) return;
 
-  var p   = _getProgress();
+  let p   = _getProgress();
 
   /* ── Bouton Commencer / Continuer ── */
-  var btn = document.getElementById('homeStartBtn');
+  let btn = document.getElementById('homeStartBtn');
   if (btn) {
     btn.textContent = p.n > 0
       ? L('▶ Continuer', '▶ Itti fufi')
@@ -1182,7 +1224,7 @@ function renderHome() {
   }
 
   /* ── Cercle SVG de progression ── */
-  var wrap = document.getElementById('homeProgressCircleWrap');
+  let wrap = document.getElementById('homeProgressCircleWrap');
   if (wrap) {
     if (p.n === 0) {
       /* Première visite : on cache le cercle */
@@ -1191,17 +1233,17 @@ function renderHome() {
       wrap.style.display = 'flex';
 
       /* Circumférence pour r=50 : 2π×50 = 314.159… */
-      var CIRC    = 314.16;
-      var offset  = CIRC - (CIRC * p.pct / 100);
+      let CIRC    = 314.16;
+      let offset  = CIRC - (CIRC * p.pct / 100);
 
-      var arc     = document.getElementById('hpcArc');
-      var pctTxt  = document.getElementById('hpcPct');
-      var subTxt  = document.getElementById('hpcSub');
-      var titleEl = document.getElementById('hpcTitle');
-      var descEl  = document.getElementById('hpcDesc');
+      let arc     = document.getElementById('hpcArc');
+      let pctTxt  = document.getElementById('hpcPct');
+      let subTxt  = document.getElementById('hpcSub');
+      let titleEl = document.getElementById('hpcTitle');
+      let descEl  = document.getElementById('hpcDesc');
 
       /* Léger délai pour déclencher la transition CSS après display:flex */
-      setTimeout(function() {
+      setTimeout(() => {
         if (arc) arc.style.strokeDashoffset = offset;
       }, 50);
 
@@ -1209,7 +1251,7 @@ function renderHome() {
       if (subTxt)  subTxt.textContent  = '⭐ ' + p.starsEarned + ' / ' + p.starsMax;
 
       /* Textes accessibles (aria) */
-      var a11yLabel = L(
+      let a11yLabel = L(
         'Ida\'ata Guutuu: modules ' + p.n + ' / ' + p.total + ' — ' + p.pct + '% — urjii ' + p.starsEarned + ' / ' + p.starsMax,
         'Progression globale : ' + p.n + ' / ' + p.total + ' modules — ' + p.pct + '% — ' + p.starsEarned + ' étoiles / ' + p.starsMax
       );
@@ -1235,20 +1277,20 @@ function renderSections(activeLevel) {
   if (!ALL_THEMES.length) return;
   if (!activeLevel) activeLevel = 1;
 
-  var p = _getProgress();
+  let p = _getProgress();
 
   /* ── Libellés de niveau bilingues ── */
-  var lbl1 = L('Niveau 1 — Vocabulaire',     'Sadarkaa 1 — Jechoota');
-  var lbl2 = L('Niveau 2 — Phrases simples', 'Sadarkaa 2 — Himoota salphaa');
+  let lbl1 = L('Niveau 1 — Vocabulaire',     'Sadarkaa 1 — Jechoota');
+  let lbl2 = L('Niveau 2 — Phrases simples', 'Sadarkaa 2 — Himoota salphaa');
 
   /* ── Helper : remplir les éléments d'un header de sections ── */
   function _fillHeader(suffix) {
-    var s = suffix || '';
+    let s = suffix || '';
     _setText('sectionsTitle' + s,   L('📚 Modules', '📚 Moojuulota'));
-    var gp = document.getElementById('globalProgress' + s);
+    let gp = document.getElementById('globalProgress' + s);
     if (gp) gp.style.width = p.pct + '%';
 
-    var pl = document.getElementById('progressLabel' + s);
+    let pl = document.getElementById('progressLabel' + s);
     if (pl) pl.innerHTML =
       '<span class="progress-label-text">'
       + p.n + ' / ' + p.total + ' ' + L('modules', 'kutaalee') + ' — ' + p.pct + '%'
@@ -1258,12 +1300,12 @@ function renderSections(activeLevel) {
       + ' aria-label="' + L('Tartiiba guutuu haqi', 'Réinitialiser toute la progression') + '"'
       + '>🔄</button>';
 
-    var se = document.getElementById('sectionsStars' + s);
+    let se = document.getElementById('sectionsStars' + s);
     if (se) se.innerHTML =
       '<span class="sections-stars-inner">⭐ '
       + p.starsEarned + ' / ' + p.starsMax + '</span>';
 
-    var fe = document.getElementById('sectionsFlagRight' + s);
+    let fe = document.getElementById('sectionsFlagRight' + s);
     if (fe) fe.textContent = L('🇫🇷', '🇪🇹');
   }
 
@@ -1272,7 +1314,7 @@ function renderSections(activeLevel) {
   _fillHeader('2');
 
   /* ── Remplir les libellés des onglets de niveau (4 groupes : A, B, et les originaux) ── */
-  ['', 'A', 'B'].forEach(function(sfx) {
+  ['', 'A', 'B'].forEach((sfx) => {
     _setText('level1Badge' + sfx, '1');
     _setText('level1Label' + sfx, lbl1);
     _setText('level2Badge' + sfx, '2');
@@ -1280,14 +1322,14 @@ function renderSections(activeLevel) {
   });
 
   /* ── Grilles de thèmes ── */
-  var grid1 = document.getElementById('grid1');
-  var grid2 = document.getElementById('grid2');
+  let grid1 = document.getElementById('grid1');
+  let grid2 = document.getElementById('grid2');
   if (grid1) grid1.innerHTML = ALL_THEMES
-    .filter(function(t) { return t.level === 1; })
-    .map(function(t) { return _buildThemeCard(t); }).join('');
+    .filter((t) => t.level === 1)
+    .map((t) => _buildThemeCard(t)).join('');
   if (grid2) grid2.innerHTML = ALL_THEMES
-    .filter(function(t) { return t.level === 2; })
-    .map(function(t) { return _buildThemeCard(t); }).join('');
+    .filter((t) => t.level === 2)
+    .map((t) => _buildThemeCard(t)).join('');
 }
 
 /**
@@ -1296,20 +1338,20 @@ function renderSections(activeLevel) {
  * @returns {string} HTML de la carte
  */
 function _buildThemeCard(t) {
-  var title     = _themeTitle(t);
-  var mainTitle = title.main
+  let title     = _themeTitle(t);
+  let mainTitle = title.main
     ? title.main.charAt(0).toUpperCase() + title.main.slice(1)
     : '';
 
-  var resetBtn = isDone(t.id)
+  let resetBtn = isDone(t.id)
     ? '<button class="btn-reset-theme" '
       + 'onclick="event.stopPropagation();resetTheme(\'' + t.id + '\')">'
       + L('🔄 Irra deebiʼi', '🔄 Recommencer')
       + '</button>'
     : '';
 
-  var currentStars = getThemeStars(t.id);
-  var starsStr = Array.from({ length: 3 }, function(_, i) {
+  let currentStars = getThemeStars(t.id);
+  let starsStr = Array.from({ length: 3 }, function(_, i) {
     return i < currentStars ? '⭐' : '☆';
   }).join('');
 
@@ -1337,8 +1379,8 @@ function _buildThemeCard(t) {
  * Réinitialise toutes les variables de session.
  * @param {string} id - Identifiant du thème
  */
-function openTheme(id, _navHint) {
-  var found = ALL_THEMES.find(function(t) { return t.id === id; });
+function openTheme(id, dir) {
+  let found = ALL_THEMES.find((t) => t.id === id);
   if (!found) {
     /* Thème introuvable : probablement une typo d'id dans data-fr.js / data-or.js.
        On affiche un message visible plutôt qu'un écran blanc silencieux. */
@@ -1355,8 +1397,8 @@ function openTheme(id, _navHint) {
 
   document.getElementById('lessonEmoji').textContent = CT.emoji;
 
-  var title = _themeTitle(CT);
-  var lessonTitle = L(
+  let title = _themeTitle(CT);
+  let lessonTitle = L(
     title.main + ' — ' + title.sub,
     title.main + ' — ' + title.sub
   );
@@ -1369,7 +1411,7 @@ function openTheme(id, _navHint) {
   document.getElementById('lessonTitle').textContent = lessonTitle;
 
   /* ── Badge niveau cliquable dans le header leçon ── */
-  var badge = document.getElementById('lessonLevelBadge');
+  let badge = document.getElementById('lessonLevelBadge');
   if (badge) {
     badge.textContent = L(
       CT.level === 1 ? 'Niv. 1' : 'Niv. 2',
@@ -1377,7 +1419,7 @@ function openTheme(id, _navHint) {
     );
     /* Le clic du badge ramène à la liste du bon niveau */
     badge.onclick = function() {
-      var target = CT.level === 2 ? 'sections-level2' : 'sections-level1';
+      let target = CT.level === 2 ? 'sections-level2' : 'sections-level1';
       renderSections(CT.level);
       showScreen(target, 'back');
     };
@@ -1385,17 +1427,18 @@ function openTheme(id, _navHint) {
 
   /* Mémoriser le niveau du thème ouvert pour le retour et les flèches */
   _currentThemeLevel = CT.level;
-  /* Si même écran lesson, juste rafraîchir sans re-animer */
-  var _alreadyInLesson = document.getElementById('lesson').classList.contains('active');
+  /* Si déjà sur l'écran lesson (navigation prev/next), rafraîchir sans transition.
+     Sinon, animer avec la direction fournie par l'appelant (ou 'forward' par défaut). */
+  const _alreadyInLesson = document.getElementById('lesson').classList.contains('active');
   if (_alreadyInLesson) {
     _updateLessonNavArrows();
   } else {
-    showScreen('lesson');
+    showScreen('lesson', dir || 'forward');
     _updateLessonNavArrows();
   }
 
   /* ── Construction des onglets selon le type de thème ── */
-  var tabs;
+  let tabs;
   if (CT.type === 'dialog') {
     tabs = [
       { k: 'dialog', lbl: L('💬 Maree',    '💬 Dialogue')   },
@@ -1416,7 +1459,7 @@ function openTheme(id, _navHint) {
     ];
   }
 
-  document.getElementById('lessonTabs').innerHTML = tabs.map(function(t, i) {
+  document.getElementById('lessonTabs').innerHTML = tabs.map((t, i) => {
     return '<button class="tab' + (i === 0 ? ' active' : '') + '" data-tab="' + t.k + '" onclick="switchTab(\'' + t.k + '\')">' + t.lbl + '</button>';
   }).join('');
 
@@ -1424,8 +1467,8 @@ function openTheme(id, _navHint) {
   /* ── Bouton d'export PDF : afficher le bon selon le type de thème ──
      Visibilité gérée via .is-hidden (définie dans style.css §25)
      plutôt que par style.display inline, pour respecter le système CSS. */
-  var btnVocab = document.getElementById('lessonExportVocab');
-  var btnSit   = document.getElementById('lessonExportSit');
+  let btnVocab = document.getElementById('lessonExportVocab');
+  let btnSit   = document.getElementById('lessonExportSit');
   if (btnVocab && btnSit) {
     if (CT.type === 'dialog') {
       btnVocab.classList.add('is-hidden');
@@ -1446,7 +1489,7 @@ function openTheme(id, _navHint) {
  * @param {'flash'|'quiz10'|'dialog'|'vocab'|'dquiz'|'repeat'} tab
  */
 function switchTab(tab) {
-  document.querySelectorAll('#lessonTabs .tab').forEach(function(b) {
+  document.querySelectorAll('#lessonTabs .tab').forEach((b) => {
     b.classList.toggle('active', b.dataset.tab === tab);
   });
 
@@ -1473,9 +1516,9 @@ function switchTab(tab) {
  * Affiche la carte flash courante (ou la grille alphabétique si type 'alpha').
  */
 function renderFlash() {
-  var words = CT.words;
-  var card  = words[fcIdx];
-  var keys  = langKeys(); // Contient keys.src ('fr' ou 'om') et keys.tgt ('om' ou 'fr')
+  let words = CT.words;
+  let card  = words[fcIdx];
+  let keys  = langKeys(); // Contient keys.src ('fr' ou 'om') et keys.tgt ('om' ou 'fr')
 
   /* ── Mode Alphabet : grille de lettres cliquables ── */
   if (CT.type === 'alpha') {
@@ -1483,10 +1526,10 @@ function renderFlash() {
       '<div class="section-label">'
       + L('Qubee dhaggeeffachuuf irratti cuqaasi !', 'Cliquez sur une lettre pour l\'écouter !')
       + '</div>'
-      + '<div class="alpha-grid">' + words.map(function(c, i) {
-          var bigLetter   = c[keys.src];
-          var smallName   = c[keys.tgt];
-          var listenHint  = L('Dhaggeeffachuuf cuqaasi : ', 'Écouter la lettre ') + bigLetter;
+      + '<div class="alpha-grid">' + words.map((c, i) => {
+          let bigLetter   = c[keys.src];
+          let smallName   = c[keys.tgt];
+          let listenHint  = L('Dhaggeeffachuuf cuqaasi : ', 'Écouter la lettre ') + bigLetter;
           return '<div class="alpha-card" role="button" tabindex="0" '
             + 'aria-label="' + _escAttr(listenHint) + '" '
             + 'onclick="pickAlpha(' + i + ')">'
@@ -1500,24 +1543,24 @@ function renderFlash() {
   }
 
   /* ── Mode Cartes Flash standard ── */
-  var emFront = card.em ? '<div class="fc-front-emoji">' + card.em + '</div>' : '';
-  var emBack  = card.em ? '<div class="fc-back-emoji">'  + card.em + '</div>' : '';
-  var hasConj = card.conj && card.conj.et && card.conj.fr;
-  var frontContent, backContent;
+  let emFront = card.em ? '<div class="fc-front-emoji">' + card.em + '</div>' : '';
+  let emBack  = card.em ? '<div class="fc-back-emoji">'  + card.em + '</div>' : '';
+  let hasConj = card.conj && card.conj.et && card.conj.fr;
+  let frontContent, backContent;
 
   if (hasConj) {
     frontContent = emFront
       + '<div class="fc-front-word" lang="' + keys.src + '">' + card[keys.src] + '</div>'
-      + '<div class="fc-conj" lang="' + keys.src + '">' + card.conj[keys.src].map(function(l) {
+      + '<div class="fc-conj" lang="' + keys.src + '">' + card.conj[keys.src].map((l) => {
           return '<div class="fc-conj-line">' + l + '</div>';
         }).join('') + '</div>';
     backContent = emBack
       + '<div class="fc-back-word" lang="' + keys.tgt + '">' + card[keys.tgt] + '</div>'
-      + '<div class="fc-conj" lang="' + keys.tgt + '">' + card.conj[keys.tgt].map(function(l) {
+      + '<div class="fc-conj" lang="' + keys.tgt + '">' + card.conj[keys.tgt].map((l) => {
           return '<div class="fc-conj-line">' + l + '</div>';
         }).join('') + '</div>';
   } else {
-    var flipHint = L('Hiika isaa Afaan Oromootin arguuf cuqaasi', 'Cliquez pour voir la traduction en français');
+    let flipHint = L('Hiika isaa Afaan Oromootin arguuf cuqaasi', 'Cliquez pour voir la traduction en français');
     frontContent = emFront
       + '<div class="fc-front-word" lang="' + keys.src + '">' + card[keys.src] + '</div>'
       + '<div class="fc-front-hint">👆 ' + flipHint + '</div>';
@@ -1525,14 +1568,14 @@ function renderFlash() {
       + '<div class="fc-back-word" lang="' + keys.tgt + '">' + card[keys.tgt] + '</div>';
   }
 
-  var sectionLabel = L(
+  let sectionLabel = L(
     'Fuuldura : Français 🇫🇷 — Duuba : Afaan Oromoo 🇪🇹 · Kaardicha garagalchi !',
     'Recto : Afaan Oromoo 🇪🇹 — Verso : Français 🇫🇷 · Cliquez pour retourner !'
   );
-  var flipAria  = L('Garagalchi kaardicha', 'Retourner la carte');
-  var prevLabel = L('← Kan duraa',          '← Précédent');
-  var nextLabel = L('Kan itti aanu →',       'Suivant →');
-  var audioBtn  = L('🔊 Sagalee dhaggeeffadhu', '🔊 Écouter la prononciation');
+  let flipAria  = L('Garagalchi kaardicha', 'Retourner la carte');
+  let prevLabel = L('← Kan duraa',          '← Précédent');
+  let nextLabel = L('Kan itti aanu →',       'Suivant →');
+  let audioBtn  = L('🔊 Sagalee dhaggeeffadhu', '🔊 Écouter la prononciation');
 
   document.getElementById('tabContent').innerHTML =
     '<div class="section-label">' + sectionLabel + '</div>'
@@ -1557,7 +1600,7 @@ function renderFlash() {
  * @returns {string} HTML du panneau de détail
  */
 function buildAlphaDetail(c) {
-  var keys = langKeys();
+  let keys = langKeys();
   return '<div class="alpha-detail-letter" lang="' + keys.src + '">' + c[keys.src] + '</div>'
     + '<div class="alpha-detail-name" lang="' + keys.tgt + '">' + c[keys.tgt] + '</div>'
     + '<button class="alpha-detail-btn" onclick="speak(\'' + esc(c[keys.src]) + '\')">'
@@ -1571,9 +1614,9 @@ function buildAlphaDetail(c) {
  */
 function pickAlpha(i) {
   fcIdx = i;
-  var card = CT.words[i];
+  let card = CT.words[i];
   speak(_spokenKey(card));
-  var d = document.getElementById('alphaDetail');
+  let d = document.getElementById('alphaDetail');
   if (d) d.innerHTML = buildAlphaDetail(card);
 }
 
@@ -1581,7 +1624,7 @@ function pickAlpha(i) {
  * Retourne la carte flash (animation CSS via la classe 'flipped').
  */
 function flipCard() {
-  var fc = document.getElementById('fc');
+  let fc = document.getElementById('fc');
   if (!fc) return;
   fc.classList.toggle('flipped');
 }
@@ -1592,7 +1635,7 @@ function flipCard() {
 function nextCard() {
   fcIdx = (fcIdx + 1) % CT.words.length;
   renderFlash();
-  setTimeout(function() { speak(_spokenKey(CT.words[fcIdx])); }, 300);
+  setTimeout(() => { speak(_spokenKey(CT.words[fcIdx])); }, 300);
 }
 
 /**
@@ -1627,7 +1670,7 @@ function isAlphaQuiz() {
  * @returns {3|5|8|10}
  */
 function getQuizTotal(theme) {
-  var n = (theme.words || []).length;
+  let n = (theme.words || []).length;
   if (n < 10)  return 3;
   if (n < 15)  return 5;
   if (n <= 27) return 8;
@@ -1640,10 +1683,10 @@ function getQuizTotal(theme) {
  * @returns {Array} Copie mélangée
  */
 function _shuffle(arr) {
-  var a = arr.slice();
-  for (var i = a.length - 1; i > 0; i--) {
-    var j   = Math.floor(Math.random() * (i + 1));
-    var tmp = a[i]; a[i] = a[j]; a[j] = tmp;
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--) {
+    const j   = Math.floor(Math.random() * (i + 1));
+    const tmp = a[i]; a[i] = a[j]; a[j] = tmp;
   }
   return a;
 }
@@ -1665,25 +1708,25 @@ function _wordLabel(word, lang) {
  * @returns {Array} Tableau de questions { q, opts, ans, audio }
  */
 function _generateQuiz(theme, total) {
-  var words = theme.words || [];
+  let words = theme.words || [];
   if (words.length < 2) return [];
 
-  var keys     = langKeys();
-  var shuffled = _shuffle(words);
-  var selected = shuffled.slice(0, Math.min(total, shuffled.length));
-  var qLabel   = L('Afaan Oromootti akkamitti jedhamaa ?', 'Comment dit-on en français ?');
+  let keys     = langKeys();
+  let shuffled = _shuffle(words);
+  let selected = shuffled.slice(0, Math.min(total, shuffled.length));
+  let qLabel   = L('Afaan Oromootti akkamitti jedhamaa ?', 'Comment dit-on en français ?');
 
-  return selected.map(function(correctWord) {
-    var qText    = _wordLabel(correctWord, keys.src);
-    var aCorrect = _wordLabel(correctWord, keys.tgt);
+  return selected.map((correctWord) => {
+    let qText    = _wordLabel(correctWord, keys.src);
+    let aCorrect = _wordLabel(correctWord, keys.tgt);
 
-    var pool        = words.filter(function(w) { return w !== correctWord; });
-    var distractors = _shuffle(pool).slice(0, 3).map(function(w) {
+    let pool        = words.filter((w) => w !== correctWord);
+    let distractors = _shuffle(pool).slice(0, 3).map((w) => {
       return _wordLabel(w, keys.tgt);
     });
 
-    var opts   = distractors.slice(0, 3);
-    var ansPos = Math.floor(Math.random() * 4);
+    let opts   = distractors.slice(0, 3);
+    let ansPos = Math.floor(Math.random() * 4);
     opts.splice(ansPos, 0, aCorrect);
 
     return {
@@ -1712,9 +1755,14 @@ function getQuizQuestions(theme) {
 function renderQuiz10() {
   if (!_q10Questions) {
     _q10Questions = getQuizQuestions(CT);
+    /* Persister immédiatement les questions générées dans sessionStorage.
+       Ainsi, même si _restoreQuizSession() échoue à la prochaine visite
+       (storage corrompu ou onglet rechargé avant la 1ʳᵉ réponse),
+       la session aura quand même été sauvegardée avec les bonnes questions. */
+    _saveQuizSession('q10');
   }
-  var qs    = _q10Questions;
-  var total = qs.length;
+  let qs    = _q10Questions;
+  let total = qs.length;
 
   if (!qs || !total) {
     document.getElementById('tabContent').innerHTML =
@@ -1727,22 +1775,22 @@ function renderQuiz10() {
   /* ── Écran de résultats ── */
   if (q10Step >= total) {
     _clearQuizSession();   /* quiz terminé : on nettoie la session */
-    var pct         = Math.round(q10Score / total * 100);
-    var earnedStars = _calcStars(pct);
+    let pct         = Math.round(q10Score / total * 100);
+    let earnedStars = _calcStars(pct);
 
     /* ── Confetti : uniquement si on atteint 3 étoiles pour la première fois
        (ou si le module était à 1 ou 2 étoiles et passe maintenant à 3).
        On lit le score AVANT markDone() pour comparer. ── */
-    var _prevStars  = getThemeStars(CT.id);
+    let _prevStars  = getThemeStars(CT.id);
     if (earnedStars > 0) markDone(CT.id, pct);
     if (earnedStars === 3 && _prevStars < 3) {
       setTimeout(_launchConfetti, 300); /* léger délai pour laisser le DOM se mettre à jour */
     }
 
-    var r         = _quizResultStrings(pct, 'q10');
-    var isSuccess = earnedStars > 0;
+    let r         = _quizResultStrings(pct, 'q10');
+    let isSuccess = earnedStars > 0;
 
-    var endStars = Array.from({ length: 3 }, function(_, i) {
+    let endStars = Array.from({ length: 3 }, function(_, i) {
       return i < earnedStars ? '⭐' : '☆';
     }).join('');
 
@@ -1759,12 +1807,12 @@ function renderQuiz10() {
     return;
   }
 
-  var q = qs[q10Step];
+  let q = qs[q10Step];
 
   /* ── Quiz Alphabet ── */
   if (isAlphaQuiz()) {
-    var qLabel = L('Gaaffii ', 'Question ') + (q10Step + 1) + '/' + total;
-    var opts = q.opts.map(function(o, i) {
+    let qLabel = L('Gaaffii ', 'Question ') + (q10Step + 1) + '/' + total;
+    let opts = q.opts.map((o, i) => {
       return '<button class="quiz-opt" id="q10o' + i + '" onclick="checkQ10(' + i + ',' + q.ans + ')" '
         + 'style="font-size:1.4rem;font-weight:900;letter-spacing:2px">' + o + '</button>';
     }).join('');
@@ -1781,14 +1829,14 @@ function renderQuiz10() {
       + '<div class="quiz-options" style="grid-template-columns:1fr 1fr;gap:12px">' + opts + '</div>'
       + '<div class="quiz-feedback" id="q10fb"></div>'
       + '</div>';
-    setTimeout(function() { playAlphaAudio(q.audio); }, 400);
+    setTimeout(() => { playAlphaAudio(q.audio); }, 400);
     q10Answered = false;
     return;
   }
 
   /* ── Quiz standard ── */
-  var qStdLabel = L('Gaaffii ', 'Question ') + (q10Step + 1) + '/' + total;
-  var stdOpts = q.opts.map(function(o, i) {
+  let qStdLabel = L('Gaaffii ', 'Question ') + (q10Step + 1) + '/' + total;
+  let stdOpts = q.opts.map((o, i) => {
     return '<button class="quiz-opt" id="q10o' + i + '" onclick="checkQ10(' + i + ',' + q.ans + ')">' + o + '</button>';
   }).join('');
 
@@ -1807,10 +1855,10 @@ function renderQuiz10() {
  */
 function playAlphaAudio(letter) {
   speak(letter);
-  var btn = document.getElementById('playAudioBtn');
+  let btn = document.getElementById('playAudioBtn');
   if (btn) {
     btn.style.transform = 'scale(0.9)';
-    setTimeout(function() { btn.style.transform = 'scale(1)'; }, 200);
+    setTimeout(() => { btn.style.transform = 'scale(1)'; }, 200);
   }
 }
 
@@ -1823,9 +1871,9 @@ function checkQ10(chosen, correct) {
   if (q10Answered) return;
   q10Answered = true;
 
-  var qs = _q10Questions || getQuizQuestions(CT);
+  let qs = _q10Questions || getQuizQuestions(CT);
 
-  document.querySelectorAll('[id^=q10o]').forEach(function(b, i) {
+  document.querySelectorAll('[id^=q10o]').forEach((b, i) => {
     b.classList.add('disabled');
     if (i === correct)                           b.classList.add('correct');
     else if (i === chosen && chosen !== correct) b.classList.add('wrong');
@@ -1833,24 +1881,24 @@ function checkQ10(chosen, correct) {
 
   if (chosen === correct) { q10Score++; _vibrateFeedback('correct'); } else { _vibrateFeedback('wrong'); }
 
-  var correctWord = qs[q10Step].opts[correct];
-  var fb  = document.getElementById('q10fb');
+  let correctWord = qs[q10Step].opts[correct];
+  let fb  = document.getElementById('q10fb');
   fb.textContent = (chosen === correct)
     ? L('✅ Sirrii dha! Baga gammadde!', '✅ Correct ! Félicitations !')
     : L('❌ Dogoggora. Deebiin sirriin: ', '❌ Mauvaise réponse. La solution était : ') + correctWord;
   fb.style.color = (chosen === correct) ? 'var(--c-success)' : 'var(--c-error)';
 
   if (isAlphaQuiz()) {
-    if (chosen !== correct) setTimeout(function() { speak(qs[q10Step].audio); }, 300);
+    if (chosen !== correct) setTimeout(() => { speak(qs[q10Step].audio); }, 300);
   } else {
     if (CT.words) {
-      var match = CT.words.find(function(w) { return w.et === correctWord || w.fr === correctWord; });
+      let match = CT.words.find((w) => w.et === correctWord || w.fr === correctWord);
       if (match) speak(_spokenKey(match));
     }
   }
 
   _saveQuizSession('q10');
-  setTimeout(function() { q10Step++; renderQuiz10(); }, 1600);
+  setTimeout(() => { q10Step++; renderQuiz10(); }, 1600);
 }
 
 
@@ -1865,15 +1913,15 @@ function checkQ10(chosen, correct) {
  * Affiche le dialogue de la situation courante.
  */
 function renderDialog() {
-  var sits    = CT.situations;
-  var sitBtns = sits.map(function(s, i) {
+  let sits    = CT.situations;
+  let sitBtns = sits.map((s, i) => {
     return '<button class="sit-btn' + (i === sitIdx ? ' active' : '') + '" onclick="pickSit(' + i + ')">' + s.label + '</button>';
   }).join('');
-  var sit = sits[sitIdx];
+  let sit = sits[sitIdx];
 
-  var keys = langKeys(); // Contient keys.src ('fr' ou 'om') et keys.tgt ('om' ou 'fr')
-  var bubbles = sit.dialogue.map(function(ln, i) {
-    var listenTip = L('Dhaggeeffadhu', 'Écouter');
+  let keys = langKeys(); // Contient keys.src ('fr' ou 'om') et keys.tgt ('om' ou 'fr')
+  let bubbles = sit.dialogue.map((ln, i) => {
+    let listenTip = L('Dhaggeeffadhu', 'Écouter');
     return '<div class="bubble ' + ln.side + '" style="opacity:0;transition:opacity .3s ' + (i * 0.08) + 's" id="bl' + i + '">'
       + '<div class="speaker-name">' + ln.s + '</div>'
       + '<div class="msg-row">'
@@ -1896,8 +1944,8 @@ function renderDialog() {
     + '</button>'
     + '</div>';
 
-  setTimeout(function() {
-    document.querySelectorAll('[id^=bl]').forEach(function(b) { b.style.opacity = '1'; });
+  setTimeout(() => {
+    document.querySelectorAll('[id^=bl]').forEach((b) => { b.style.opacity = '1'; });
   }, 80);
 }
 
@@ -1922,16 +1970,16 @@ function pickSit(i) {
  * Affiche les chips de vocabulaire du thème de dialogue courant.
  */
 function renderVocab() {
-  var keys = langKeys();
-  var chips = CT.vocab.map(function(v) {
-    var parts    = v.split('=');
-    var et       = parts[0].trim();
-    var fr       = parts[1] ? parts[1].trim() : '';
+  let keys = langKeys();
+  let chips = CT.vocab.map((v) => {
+    let parts    = v.split('=');
+    let et       = parts[0].trim();
+    let fr       = parts[1] ? parts[1].trim() : '';
     /* On reconstruit un mini-objet { fr, et } pour réutiliser langKeys */
-    var word     = { fr: fr, et: et };
-    var mainWord = word[keys.src];
-    var subWord  = word[keys.tgt];
-    var listenTip = L('Dhaggeeffadhu : ', 'Écouter : ') + mainWord;
+    let word     = { fr: fr, et: et };
+    let mainWord = word[keys.src];
+    let subWord  = word[keys.tgt];
+    let listenTip = L('Dhaggeeffadhu : ', 'Écouter : ') + mainWord;
 
     return '<span class="vocab-chip" role="button" tabindex="0" '
       + 'aria-label="' + _escAttr(listenTip) + '" onclick="speak(\'' + esc(mainWord) + '\')">'
@@ -1978,19 +2026,19 @@ function renderVocab() {
    ============================================================ */
 
 /* ── Variables d'état de l'onglet Répète ── */
-var _repeatIdx        = 0;       // Index du mot courant dans la liste
-var _repeatWords      = [];      // Liste des mots de la session
-var _repeatScore      = 0;       // Bonnes réponses sur la session
-var _repeatTotal      = 0;       // Total de mots dans la session
-var _repeatRecognizer = null;    // Instance SpeechRecognition en cours
-var _repeatLangUsed   = null;    // Langue réellement utilisée pour la reco
-var _repeatLangLabel  = null;    // Libellé lisible de cette langue
+let _repeatIdx        = 0;       // Index du mot courant dans la liste
+let _repeatWords      = [];      // Liste des mots de la session
+let _repeatScore      = 0;       // Bonnes réponses sur la session
+let _repeatTotal      = 0;       // Total de mots dans la session
+let _repeatRecognizer = null;    // Instance SpeechRecognition en cours
+let _repeatLangUsed   = null;    // Langue réellement utilisée pour la reco
+let _repeatLangLabel  = null;    // Libellé lisible de cette langue
 
 /**
  * Cascade de langues de reconnaissance pour l'Oromo.
  * Classées de la plus pertinente à la moins pertinente.
  */
-var REPEAT_OROMO_LANGS = [
+const REPEAT_OROMO_LANGS = [
   { lang: 'om-ET', label: 'Oromo (om-ET)' },
   { lang: 'so-SO', label: 'Somali (so-SO)' },
   { lang: 'am-ET', label: 'Amharique (am-ET)' },
@@ -2046,28 +2094,28 @@ function _levenshtein(a, b) {
   if (a.length === 0) return b.length;
   if (b.length === 0) return a.length;
   /* Garantir que b est la chaîne la plus courte (économie mémoire) */
-  if (a.length < b.length) { var tmp = a; a = b; b = tmp; }
-  var prev = [];
-  var curr = [];
-  for (var j = 0; j <= b.length; j++) prev[j] = j;
-  for (var i = 1; i <= a.length; i++) {
+  if (a.length < b.length) { const tmp = a; a = b; b = tmp; }
+  let prev = [];
+  let curr = [];
+  for (let j = 0; j <= b.length; j++) prev[j] = j;
+  for (let i = 1; i <= a.length; i++) {
     curr[0] = i;
-    for (var k = 1; k <= b.length; k++) {
-      var cost = (a[i - 1] === b[k - 1]) ? 0 : 1;
+    for (let k = 1; k <= b.length; k++) {
+      let cost = (a[i - 1] === b[k - 1]) ? 0 : 1;
       curr[k] = Math.min(
         curr[k - 1] + 1,        /* insertion */
         prev[k]     + 1,        /* suppression */
         prev[k - 1] + cost      /* substitution */
       );
     }
-    var swap = prev; prev = curr; curr = swap;
+    let swap = prev; prev = curr; curr = swap;
   }
   return prev[b.length];
 }
 
 function _matchRepeat(transcript, expected) {
-  var t = _normalizeRepeat(transcript);
-  var e = _normalizeRepeat(expected);
+  let t = _normalizeRepeat(transcript);
+  let e = _normalizeRepeat(expected);
 
   /* Correspondance exacte ou le mot attendu est contenu dans la transcription */
   if (t === e || t.indexOf(e) !== -1) return true;
@@ -2084,15 +2132,15 @@ function _matchRepeat(transcript, expected) {
     On teste aussi chaque mot de la transcription séparément, ce qui absorbe
     les mots parasites que le STT ajoute souvent en début ou fin de phrase.
   */
-  var threshold = Math.floor(e.length * 0.25);
+  let threshold = Math.floor(e.length * 0.25);
   if (threshold < 1) threshold = 1;
 
   /* Test sur la transcription entière d'abord */
   if (_levenshtein(t, e) <= threshold) return true;
 
   /* Test mot par mot dans la transcription (absorbe les "euh", "et", etc.) */
-  var words = t.split(/\s+/);
-  for (var i = 0; i < words.length; i++) {
+  let words = t.split(/\s+/);
+  for (let i = 0; i < words.length; i++) {
     if (_levenshtein(words[i], e) <= threshold) return true;
   }
 
@@ -2106,10 +2154,10 @@ function _matchRepeat(transcript, expected) {
  * @returns {SpeechRecognition|null}
  */
 function _makeRecognizer(lang) {
-  var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  let SR = window.SpeechRecognition || window.webkitSpeechRecognition;
   if (!SR) return null;
   try {
-    var r = new SR();
+    let r = new SR();
     r.lang          = lang;
     r.continuous    = false;
     r.interimResults = false;
@@ -2126,25 +2174,25 @@ function _makeRecognizer(lang) {
  *   hint  = traduction (langue cible)
  */
 function _buildRepeatWords() {
-  var keys = langKeys();
-  var list = [];
+  let keys = langKeys();
+  let list = [];
 
   if (CT.type === 'dialog') {
     /* Thème dialogue : on prend le vocabulaire clé (CT.vocab) */
-    (CT.vocab || []).forEach(function(v) {
-      var parts = v.split('=');
-      var et = parts[0] ? parts[0].trim() : '';
-      var fr = parts[1] ? parts[1].trim() : '';
-      var word = { fr: fr, et: et };
-      var mainWord = word[keys.src];
-      var hintWord = word[keys.tgt];
+    (CT.vocab || []).forEach((v) => {
+      let parts = v.split('=');
+      let et = parts[0] ? parts[0].trim() : '';
+      let fr = parts[1] ? parts[1].trim() : '';
+      let word = { fr: fr, et: et };
+      let mainWord = word[keys.src];
+      let hintWord = word[keys.tgt];
       if (mainWord) list.push({ word: mainWord, hint: hintWord });
     });
   } else {
     /* Thème vocabulaire standard : CT.words */
-    (CT.words || []).forEach(function(w) {
-      var mainWord = w[keys.src];
-      var hintWord = w[keys.tgt];
+    (CT.words || []).forEach((w) => {
+      let mainWord = w[keys.src];
+      let hintWord = w[keys.tgt];
       if (mainWord) list.push({ word: mainWord, hint: hintWord, em: w.em || '' });
     });
   }
@@ -2163,7 +2211,7 @@ function renderRepeat() {
   _repeatScore = 0;
   _repeatTotal = _repeatWords.length;
 
-  var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  let SR = window.SpeechRecognition || window.webkitSpeechRecognition;
 
   /* ── SpeechRecognition non supporté ── */
   if (!SR) {
@@ -2194,8 +2242,8 @@ function renderRepeat() {
       }
       _repeatLangUsed  = lang;
       _repeatLangLabel = label;
-      var isNative = (lang === 'om-ET');
-      var altMsg = isNative ? null : (
+      let isNative = (lang === 'om-ET');
+      let altMsg = isNative ? null : (
         '⚠️ Pas de reconnaissance Oromo native. Utilisation de : <strong>' + label + '</strong><br>'
         + '<small>La reconnaissance sera approximative. Parlez lentement et clairement.</small>'
       );
@@ -2211,22 +2259,22 @@ function renderRepeat() {
  * @param {Function} callback
  */
 function _resolveRepeatLangOromo(callback) {
-  var idx = 0;
+  let idx = 0;
 
   function tryNext() {
     if (idx >= REPEAT_OROMO_LANGS.length) {
       callback(null, null);
       return;
     }
-    var candidate = REPEAT_OROMO_LANGS[idx];
+    let candidate = REPEAT_OROMO_LANGS[idx];
     idx++;
 
-    var r = _makeRecognizer(candidate.lang);
+    let r = _makeRecognizer(candidate.lang);
     if (!r) { tryNext(); return; }
 
     /* On teste avec un timeout : si start() ne déclenche pas d'erreur
        en 400ms, on considère la langue comme acceptée par le navigateur. */
-    var resolved = false;
+    let resolved = false;
 
     r.onerror = function(e) {
       if (resolved) return;
@@ -2250,7 +2298,7 @@ function _resolveRepeatLangOromo(callback) {
     };
 
     /* Fallback timeout : si rien ne se passe en 600ms, on accepte */
-    setTimeout(function() {
+    setTimeout(() => {
       if (resolved) return;
       resolved = true;
       try { r.abort(); } catch(_) {}
@@ -2291,11 +2339,11 @@ function _renderRepeatUI(altLangMsg) {
     return;
   }
 
-  var altBanner = altLangMsg
+  let altBanner = altLangMsg
     ? '<div class="repeat-alt-lang">' + altLangMsg + '</div>'
     : '';
 
-  var langInfo = '<div class="repeat-lang-info">🌐 '
+  let langInfo = '<div class="repeat-lang-info">🌐 '
     + L('Af-dubbii : ', 'Reconnaissance : ')
     + '<strong>' + _repeatLangLabel + '</strong></div>';
 
@@ -2319,9 +2367,9 @@ function _renderRepeatCard() {
     return;
   }
 
-  var item    = _repeatWords[_repeatIdx];
-  var counter = (_repeatIdx + 1) + ' / ' + _repeatTotal;
-  var emoji   = item.em ? '<div class="repeat-card-emoji">' + item.em + '</div>' : '';
+  let item    = _repeatWords[_repeatIdx];
+  let counter = (_repeatIdx + 1) + ' / ' + _repeatTotal;
+  let emoji   = item.em ? '<div class="repeat-card-emoji">' + item.em + '</div>' : '';
 
   /* Carte mot */
   document.getElementById('repeat-card').innerHTML =
@@ -2334,9 +2382,9 @@ function _renderRepeatCard() {
   document.getElementById('repeat-feedback').innerHTML = '';
 
   /* Contrôles */
-  var listenLbl = L('🔊 Dhaggeeffadhu', '🔊 Écouter');
-  var micLbl    = L('🎙️ Dubbadhu',      '🎙️ Parler');
-  var skipLbl   = L('⏭ Irra darbii',   '⏭ Passer');
+  let listenLbl = L('🔊 Dhaggeeffadhu', '🔊 Écouter');
+  let micLbl    = L('🎙️ Dubbadhu',      '🎙️ Parler');
+  let skipLbl   = L('⏭ Irra darbii',   '⏭ Passer');
 
   document.getElementById('repeat-controls').innerHTML =
     '<button class="repeat-btn repeat-btn--listen" onclick="repeatListen()">' + listenLbl + '</button>'
@@ -2344,14 +2392,14 @@ function _renderRepeatCard() {
     + '<button class="repeat-btn repeat-btn--skip"   onclick="repeatSkip()">' + skipLbl + '</button>';
 
   /* Barre de progression */
-  var pct = Math.round(_repeatIdx / _repeatTotal * 100);
+  let pct = Math.round(_repeatIdx / _repeatTotal * 100);
   document.getElementById('repeat-progress').innerHTML =
     '<div class="repeat-progress-bar"><div class="repeat-progress-fill" style="width:' + pct + '%"></div></div>'
     + '<div class="repeat-progress-label">' + _repeatScore + ' ✅ / ' + _repeatIdx + ' ' + L('yaaliitiin', 'tentatives') + '</div>';
 
   /* Lecture automatique à l'affichage de la première carte */
   if (_repeatIdx === 0) {
-    setTimeout(function() { repeatListen(); }, 400);
+    setTimeout(() => { repeatListen(); }, 400);
   }
 }
 
@@ -2359,17 +2407,17 @@ function _renderRepeatCard() {
  * Lit le mot courant à voix haute (TTS).
  */
 function repeatListen() {
-  var item = _repeatWords[_repeatIdx];
+  let item = _repeatWords[_repeatIdx];
   if (!item) return;
   speak(item.word);
 
   /* Animation du bouton écoute */
-  var btn = document.getElementById('repeat-controls');
+  let btn = document.getElementById('repeat-controls');
   if (btn) {
-    var listenBtn = btn.querySelector('.repeat-btn--listen');
+    let listenBtn = btn.querySelector('.repeat-btn--listen');
     if (listenBtn) {
       listenBtn.classList.add('repeat-btn--pulse');
-      setTimeout(function() { listenBtn.classList.remove('repeat-btn--pulse'); }, 600);
+      setTimeout(() => { listenBtn.classList.remove('repeat-btn--pulse'); }, 600);
     }
   }
 }
@@ -2380,17 +2428,17 @@ function repeatListen() {
 function repeatRecord() {
   _stopRepeat();
 
-  var item = _repeatWords[_repeatIdx];
+  let item = _repeatWords[_repeatIdx];
   if (!item) return;
 
-  var micBtn = document.getElementById('repeat-mic-btn');
+  let micBtn = document.getElementById('repeat-mic-btn');
   if (micBtn) {
     micBtn.textContent = L('⏺ Sagalee dhageessuu...', '⏺ Écoute en cours...');
     micBtn.classList.add('repeat-btn--recording');
     micBtn.disabled = true;
   }
 
-  var fbEl = document.getElementById('repeat-feedback');
+  let fbEl = document.getElementById('repeat-feedback');
   if (fbEl) {
     fbEl.className = 'repeat-feedback repeat-feedback--listening';
     fbEl.textContent = L('🎙️ Dubbadhu...', '🎙️ Parlez maintenant...');
@@ -2406,8 +2454,8 @@ function repeatRecord() {
   }
 
   _repeatRecognizer.onresult = function(e) {
-    var transcripts = [];
-    for (var i = 0; i < e.results[0].length; i++) {
+    let transcripts = [];
+    for (let i = 0; i < e.results[0].length; i++) {
       transcripts.push(e.results[0][i].transcript);
     }
     _handleRepeatResult(transcripts, item.word);
@@ -2415,7 +2463,7 @@ function repeatRecord() {
 
   _repeatRecognizer.onerror = function(e) {
     _resetMicBtn();
-    var fbEl2 = document.getElementById('repeat-feedback');
+    let fbEl2 = document.getElementById('repeat-feedback');
     if (!fbEl2) return;
 
     if (e.error === 'not-allowed' || e.error === 'permission-denied') {
@@ -2447,7 +2495,7 @@ function repeatRecord() {
     _repeatRecognizer.start();
   } catch(e) {
     _resetMicBtn();
-    var fbElCatch = document.getElementById('repeat-feedback');
+    let fbElCatch = document.getElementById('repeat-feedback');
     if (fbElCatch) {
       fbElCatch.className = 'repeat-feedback repeat-feedback--error';
       fbElCatch.textContent = L('Maaykiroofoona jalqabuu dadhabeera.', 'Impossible de démarrer le microphone.');
@@ -2459,7 +2507,7 @@ function repeatRecord() {
  * Remet le bouton micro dans son état initial.
  */
 function _resetMicBtn() {
-  var micBtn = document.getElementById('repeat-mic-btn');
+  let micBtn = document.getElementById('repeat-mic-btn');
   if (micBtn) {
     micBtn.textContent = L('🎙️ Dubbadhu', '🎙️ Parler');
     micBtn.classList.remove('repeat-btn--recording');
@@ -2474,10 +2522,10 @@ function _resetMicBtn() {
  * @param {string}   expected     - Mot attendu
  */
 function _handleRepeatResult(transcripts, expected) {
-  var matched = transcripts.some(function(t) { return _matchRepeat(t, expected); });
-  var best    = transcripts[0] || '';
+  let matched = transcripts.some((t) => _matchRepeat(t, expected));
+  let best    = transcripts[0] || '';
 
-  var fbEl = document.getElementById('repeat-feedback');
+  let fbEl = document.getElementById('repeat-feedback');
   if (!fbEl) return;
 
   if (matched) {
@@ -2492,7 +2540,7 @@ function _handleRepeatResult(transcripts, expected) {
           + '<em>' + best + '</em></div>' : '');
 
     /* Passe au mot suivant automatiquement après 1,5 s */
-    setTimeout(function() {
+    setTimeout(() => {
       _repeatIdx++;
       _renderRepeatCard();
     }, 1500);
@@ -2523,8 +2571,8 @@ function repeatSkip() {
  * Affiche l'écran de résultats à la fin de la session Répète.
  */
 function _renderRepeatResult() {
-  var pct  = _repeatTotal > 0 ? Math.round(_repeatScore / _repeatTotal * 100) : 0;
-  var emoji = pct === 100 ? '🎉🎉🎉' : pct >= 75 ? '⭐⭐' : pct >= 50 ? '⭐' : '😅';
+  let pct  = _repeatTotal > 0 ? Math.round(_repeatScore / _repeatTotal * 100) : 0;
+  let emoji = pct === 100 ? '🎉🎉🎉' : pct >= 75 ? '⭐⭐' : pct >= 50 ? '⭐' : '😅';
 
   document.getElementById('repeat-card').innerHTML = '';
   document.getElementById('repeat-feedback').innerHTML = '';
@@ -2561,24 +2609,24 @@ function _renderRepeatResult() {
  * Affiche la question courante du quiz dialogue (ou l'écran de résultats).
  */
 function renderDialogQuiz() {
-  var qs    = CT.quiz;
-  var total = qs.length;
+  let qs    = CT.quiz;
+  let total = qs.length;
 
   /* ── Écran de résultats ── */
   if (dqStep >= total) {
     _clearQuizSession();   /* quiz terminé : on nettoie la session */
-    var pct         = Math.round(dqScore / total * 100);
-    var earnedStars = _calcStars(pct);
-    var _prevStarsD = getThemeStars(CT.id);
+    let pct         = Math.round(dqScore / total * 100);
+    let earnedStars = _calcStars(pct);
+    let _prevStarsD = getThemeStars(CT.id);
     if (earnedStars > 0) markDone(CT.id, pct);
     if (earnedStars === 3 && _prevStarsD < 3) {
       setTimeout(_launchConfetti, 300);
     }
 
-    var r         = _quizResultStrings(pct, 'dq');
-    var isSuccess = earnedStars > 0;
+    let r         = _quizResultStrings(pct, 'dq');
+    let isSuccess = earnedStars > 0;
 
-    var endStars = Array.from({ length: 3 }, function(_, i) {
+    let endStars = Array.from({ length: 3 }, function(_, i) {
       return i < earnedStars ? '⭐' : '☆';
     }).join('');
 
@@ -2596,10 +2644,10 @@ function renderDialogQuiz() {
   }
 
   /* ── Question courante ── */
-  var q      = qs[dqStep];
-  var qLabel = L('Gaaffii ', 'Question ') + (dqStep + 1) + '/' + total;
+  let q      = qs[dqStep];
+  let qLabel = L('Gaaffii ', 'Question ') + (dqStep + 1) + '/' + total;
 
-  var opts = q.opts.map(function(o, i) {
+  let opts = q.opts.map((o, i) => {
     return '<button class="quiz-opt" id="dqo' + i + '" onclick="checkDQ(' + i + ',' + q.ans + ')">' + o + '</button>';
   }).join('');
 
@@ -2621,7 +2669,7 @@ function checkDQ(chosen, correct) {
   if (dqAnswered) return;
   dqAnswered = true;
 
-  document.querySelectorAll('[id^=dqo]').forEach(function(b, i) {
+  document.querySelectorAll('[id^=dqo]').forEach((b, i) => {
     b.classList.add('disabled');
     if (i === correct)                           b.classList.add('correct');
     else if (i === chosen && chosen !== correct) b.classList.add('wrong');
@@ -2629,14 +2677,14 @@ function checkDQ(chosen, correct) {
 
   if (chosen === correct) { dqScore++; _vibrateFeedback('correct'); } else { _vibrateFeedback('wrong'); }
 
-  var fb = document.getElementById('dqfb');
+  let fb = document.getElementById('dqfb');
   fb.textContent = (chosen === correct)
     ? L('✅ Deebii sirrii dha!', '✅ Bonne réponse !')
     : L('❌ Deebistee yaali!',   '❌ Essayer de nouveau !');
   fb.style.color = (chosen === correct) ? 'var(--c-success)' : 'var(--c-error)';
 
   _saveQuizSession('dq');
-  setTimeout(function() { dqStep++; renderDialogQuiz(); }, 1500);
+  setTimeout(() => { dqStep++; renderDialogQuiz(); }, 1500);
 }
 
 
@@ -2651,10 +2699,10 @@ function checkDQ(chosen, correct) {
  * @returns {{ title: string, sub: string, retry: string, finish: string }}
  */
 function _quizResultStrings(pct, type) {
-  var stars     = _calcStars(pct);
-  var isSuccess = stars > 0;
+  let stars     = _calcStars(pct);
+  let isSuccess = stars > 0;
 
-  var title = L('Quiz xumurameera!', 'Quiz terminé !');
+  let title = L('Quiz xumurameera!', 'Quiz terminé !');
   if      (stars === 3) title = L('Baayʼee gaari da! 🌟🌟🌟', 'Parfait ! 🌟🌟🌟');
   else if (stars === 2) title = L('Gari da! ⭐⭐',             'Très bien ! ⭐⭐');
   else if (stars === 1) title = L('Ni dandaʼama! ⭐',          'Bien ! ⭐');
@@ -2721,8 +2769,8 @@ function _escAttr(s) {
    ============================================================ */
 
 /** Clés localStorage des flags d'onboarding (une par mode) */
-var _OB_KEY_FR = 'tm_onboarded_fr';
-var _OB_KEY_OR = 'tm_onboarded_or';
+const _OB_KEY_FR = 'tm_onboarded_fr';
+const _OB_KEY_OR = 'tm_onboarded_or';
 
 /* ============================================================
    ÉCRAN 2 — GUIDE / HOME (remplace l'ancien écran Home)
@@ -2744,7 +2792,7 @@ var _OB_KEY_OR = 'tm_onboarded_or';
  * Appelée par initApp() et showOnboardingGuide().
  */
 function _buildHomeGuide() {
-  var isFr = isFrench();
+  let isFr = isFrench();
   /*
    * CONVENTION DE LANGUE DU GUIDE :
    * isFr = true  → mode learn_french → apprenant OROMOPHONE → guide en OROMO
@@ -2755,35 +2803,35 @@ function _buildHomeGuide() {
    */
 
   /* ── Flags dans l'en-tête ── */
-  var flagsEl = document.getElementById('homeGuideFlagsRow');
+  let flagsEl = document.getElementById('homeGuideFlagsRow');
   if (flagsEl) flagsEl.textContent = isFr ? '🇪🇹 → 🇫🇷' : '🇫🇷 → 🇪🇹';
 
   /* ── Titre & sous-titre ── */
-  var titleEl = document.getElementById('homeTitle');
+  let titleEl = document.getElementById('homeTitle');
   if (titleEl) titleEl.textContent = isFr
     ? 'Afaan Faransaayii barachuu 🇫🇷'   /* oromophone apprend le français */
     : "Apprendre l'Oromo 🇪🇹";            /* francophone apprend l'oromo */
 
-  var subEl = document.getElementById('homeGuideSubtitle');
+  let subEl = document.getElementById('homeGuideSubtitle');
   if (subEl) subEl.textContent = isFr
     ? "App bilisaa — calqalbaa irraa jalqabuuf ta'e · Application gratuite pour débutants"
     : 'App gratuite — idéale pour débuter depuis zéro · Bilisaa, duruma irraa';
 
   /* ── Badges de fonctionnalités ── */
-  var badgesEl = document.getElementById('homeGuideBadges');
+  let badgesEl = document.getElementById('homeGuideBadges');
   if (badgesEl) {
-    var badges = isFr
+    let badges = isFr
       /* Badges en oromo (pour l'apprenant oromophone) */
       ? ['\u2705 Bilisaa', '\ud83d\udea7 Galmee malee', '\ud83d\udcf1 Bilbila & Kompiyuutara', '\ud83d\udd0a Sagalee', '\ud83c\udfa4 Irra deeb\u02bci', '\ud83d\udcf2 Interneetii malee']
       /* Badges en français (pour l'apprenant francophone) */
       : ['\u2705 100% Gratuit', '\ud83d\udea7 Sans inscription', '\ud83d\udcf1 Mobile & Bureau', '\ud83d\udd0a Audio inclus', '\ud83c\udfa4 Répétition orale', '\ud83d\udcf2 Hors-ligne'];
-    badgesEl.innerHTML = badges.map(function(b) {
+    badgesEl.innerHTML = badges.map((b) => {
       return '<span class="hg-badge">' + b + '</span>';
     }).join('');
   }
 
   /* ── Accordéons ── */
-  var sections = [
+  let sections = [
     {
       icon : '🗺️',
       title: isFr ? 'Appiin keessa akkamiin deemna' : "Comment ça marche",
@@ -3203,9 +3251,9 @@ function _buildHomeGuide() {
     }
   ];
 
-  var bodyEl = document.getElementById('homeGuideBody');
+  let bodyEl = document.getElementById('homeGuideBody');
   if (bodyEl) {
-    bodyEl.innerHTML = sections.map(function(s) {
+    bodyEl.innerHTML = sections.map((s) => {
       return '<details class="hg-section">'
         + '<summary class="hg-summary">'
         + '<span class="hg-icon">' + s.icon + '</span>'
@@ -3218,23 +3266,23 @@ function _buildHomeGuide() {
   }
 
   /* ── Checkbox "Ne plus afficher" — libellé dans la langue maternelle ── */
-  var noshowLabel = isFr
+  let noshowLabel = isFr
     ? "Ka'umsa irratti gargaarsa kana hin agarsiifin"  /* oromo */
     : 'Ne plus afficher ce guide au démarrage';         /* français */
 
   /* Checkbox du bas */
-  var noshowText = document.getElementById('homeNoshowText');
+  let noshowText = document.getElementById('homeNoshowText');
   if (noshowText) noshowText.textContent = noshowLabel;
 
   /* Checkbox de la topbar */
-  var topbarNoshowText = document.getElementById('homeTopbarNoshowText');
+  let topbarNoshowText = document.getElementById('homeTopbarNoshowText');
   if (topbarNoshowText) topbarNoshowText.textContent = noshowLabel;
 
   /* Synchroniser l'état des deux checkboxes avec localStorage */
-  var chk       = document.getElementById('homeNoshowChk');
-  var chkTopbar = document.getElementById('homeTopbarNoshowChk');
-  var key = (currentMode === 'learn_french') ? _OB_KEY_FR : _OB_KEY_OR;
-  var checked = false;
+  let chk       = document.getElementById('homeNoshowChk');
+  let chkTopbar = document.getElementById('homeTopbarNoshowChk');
+  let key = (currentMode === 'learn_french') ? _OB_KEY_FR : _OB_KEY_OR;
+  let checked = false;
   try { checked = !!localStorage.getItem(key); } catch(e) {}
   if (chk)       chk.checked       = checked;
   if (chkTopbar) chkTopbar.checked = checked;
@@ -3252,14 +3300,14 @@ function _buildHomeGuide() {
   if (chkTopbar) chkTopbar.onchange = function() { _syncNoshow(chkTopbar.checked); };
 
   /* ── Bouton Commencer / Continuer ── */
-  var btn = document.getElementById('homeStartBtn');
+  let btn = document.getElementById('homeStartBtn');
   if (btn) {
     btn.textContent = L('▶ Commencer', '▶ Jalqabi');
     btn.onclick = function() { showScreen('sections-level1'); };
   }
 
   /* ── Bouton Fermer (✕) en haut à droite ── */
-  var closeBtn = document.getElementById('homeCloseBtn');
+  let closeBtn = document.getElementById('homeCloseBtn');
   if (closeBtn) {
     closeBtn.textContent = L('Fermer ✕', 'Cufuu ✕');
     closeBtn.setAttribute('aria-label', L('Fermer le guide', 'Gargaarsa cufuu'));
@@ -3269,7 +3317,7 @@ function _buildHomeGuide() {
 }
 
 function _maybeShowOnboarding() {
-  var key = (currentMode === 'learn_french') ? _OB_KEY_FR : _OB_KEY_OR;
+  let key = (currentMode === 'learn_french') ? _OB_KEY_FR : _OB_KEY_OR;
   try {
     if (localStorage.getItem(key)) {
       /* Flag posé → passer directement aux modules */
@@ -3284,15 +3332,15 @@ function _maybeShowOnboarding() {
  * Ferme la modale onboarding legacy (gardée pour compatibilité).
  */
 function _closeOnboarding() {
-  var overlay = document.getElementById('onboarding-modal');
+  let overlay = document.getElementById('onboarding-modal');
   if (!overlay) return;
   overlay.classList.remove('ob-visible');
-  var key = (currentMode === 'learn_french') ? _OB_KEY_FR : _OB_KEY_OR;
+  let key = (currentMode === 'learn_french') ? _OB_KEY_FR : _OB_KEY_OR;
   try { localStorage.setItem(key, '1'); } catch(e) {}
   /* Synchroniser les deux checkboxes sur l'écran home */
-  var chk = document.getElementById('homeNoshowChk');
+  let chk = document.getElementById('homeNoshowChk');
   if (chk) chk.checked = true;
-  var chkTopbar = document.getElementById('homeTopbarNoshowChk');
+  let chkTopbar = document.getElementById('homeTopbarNoshowChk');
   if (chkTopbar) chkTopbar.checked = true;
 }
 
@@ -3303,10 +3351,10 @@ function _closeOnboarding() {
 function showOnboardingGuide() {
   showScreen('home');
   /* Re-synchroniser les deux checkboxes car le flag peut avoir changé */
-  var chk = document.getElementById('homeNoshowChk');
-  var chkTopbar = document.getElementById('homeTopbarNoshowChk');
-  var key = (currentMode === 'learn_french') ? _OB_KEY_FR : _OB_KEY_OR;
-  var checked = false;
+  let chk = document.getElementById('homeNoshowChk');
+  let chkTopbar = document.getElementById('homeTopbarNoshowChk');
+  let key = (currentMode === 'learn_french') ? _OB_KEY_FR : _OB_KEY_OR;
+  let checked = false;
   try { checked = !!localStorage.getItem(key); } catch(e) {}
   if (chk)       chk.checked       = checked;
   if (chkTopbar) chkTopbar.checked = checked;
@@ -3318,9 +3366,9 @@ function showOnboardingGuide() {
 
 function showCredits() {
   /* Mise à jour bilingue du contenu selon le mode actif */
-  var titleEl = document.getElementById('credits-modal-title');
-  var bodyEl  = document.getElementById('credits-modal-body');
-  var closeEl = document.getElementById('credits-modal-close');
+  let titleEl = document.getElementById('credits-modal-title');
+  let bodyEl  = document.getElementById('credits-modal-body');
+  let closeEl = document.getElementById('credits-modal-close');
 
   if (titleEl) titleEl.textContent = L('Remerciements', 'Galateeffannaa');
   if (closeEl) closeEl.textContent = L('Fermer', 'Cufuu');
@@ -3347,7 +3395,7 @@ function showCredits() {
         + '<p>Merci à mes <strong>parents</strong> pour leur relecture attentive et leurs conseils.</p>';
   }
 
-  var modal = document.getElementById('credits-modal');
+  let modal = document.getElementById('credits-modal');
   if (modal) modal.style.display = 'flex';
 }
 
@@ -3356,8 +3404,8 @@ function showCredits() {
    15. INITIALISATION DU LAUNCHER
    ============================================================ */
 
-document.querySelectorAll('.lang-card[data-lang]').forEach(function(card) {
-  card.addEventListener('click', function() {
+document.querySelectorAll('.lang-card[data-lang]').forEach((card) => {
+  card.addEventListener('click', () => {
     initApp(card.getAttribute('data-lang'));
   });
 });
@@ -3366,9 +3414,9 @@ document.querySelectorAll('.lang-card[data-lang]').forEach(function(card) {
 /* ============================================================
    16. ACCESSIBILITÉ CLAVIER — ÉLÉMENTS "BOUTON" NON NATIFS
    ============================================================ */
-document.addEventListener('keydown', function(e) {
+document.addEventListener('keydown', e => {
   if (e.key !== 'Enter' && e.key !== ' ') return;
-  var target = e.target.closest('[role="button"]');
+  const target = e.target.closest('[role="button"]');
   if (!target) return;
   e.preventDefault();
   target.click();
@@ -3390,7 +3438,7 @@ document.addEventListener('keydown', function(e) {
  */
 function _showLoadingSpinner() {
   if (document.getElementById('app-loading')) return; /* déjà visible */
-  var el = document.createElement('div');
+  let el = document.createElement('div');
   el.id        = 'app-loading';
   el.className = 'app-loading';
   el.setAttribute('role', 'status');
@@ -3404,8 +3452,8 @@ function _showLoadingSpinner() {
     + '</div>';
   document.body.appendChild(el);
   /* Forcer un reflow pour que la transition CSS d'entrée soit jouée */
-  requestAnimationFrame(function() {
-    requestAnimationFrame(function() { el.classList.add('app-loading--visible'); });
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => { el.classList.add('app-loading--visible'); });
   });
 }
 
@@ -3413,10 +3461,10 @@ function _showLoadingSpinner() {
  * Retire le spinner de chargement avec une transition de sortie.
  */
 function _hideLoadingSpinner() {
-  var el = document.getElementById('app-loading');
+  let el = document.getElementById('app-loading');
   if (!el) return;
   el.classList.remove('app-loading--visible');
-  setTimeout(function() { if (el.parentNode) el.parentNode.removeChild(el); }, 300);
+  setTimeout(() => { if (el.parentNode) el.parentNode.removeChild(el); }, 300);
 }
 /* ============================================================
    15. ENREGISTREMENT DU SERVICE WORKER (PWA / Hors-ligne)
@@ -3432,7 +3480,7 @@ if ('serviceWorker' in navigator) {
    * (rare mais possible sur certains navigateurs mobiles).
    * Le flag garantit qu'on ne recharge qu'une seule fois par session.
    */
-  var _reloading = false;
+  let _reloading = false;
 
   /*
    * RECHARGEMENT AUTOMATIQUE À LA PRISE DE CONTRÔLE DU NOUVEAU SW
@@ -3450,13 +3498,13 @@ if ('serviceWorker' in navigator) {
    * et repart sur la version fraîche. Aucune action requise de sa part.
    * Aucun message à lire, aucun bouton à taper.
    */
-  navigator.serviceWorker.addEventListener('controllerchange', function() {
+  navigator.serviceWorker.addEventListener('controllerchange', () => {
     if (_reloading) return;
     _reloading = true;
     window.location.reload();
   });
 
-  window.addEventListener('load', function() {
+  window.addEventListener('load', () => {
     navigator.serviceWorker.register('./sw.js')
       .catch(function(err) {
         /* Échec silencieux : l'app fonctionne quand même en ligne */
@@ -3479,24 +3527,87 @@ if ('serviceWorker' in navigator) {
    ============================================================ */
 
 /* ── Utilitaire commun : ouvre une fenetre print et la ferme apres ── */
+/**
+ * Ouvre une fenêtre d'impression avec le contenu HTML fourni.
+ *
+ * STRATÉGIE DOUBLE :
+ *   • Cas normal        : window.open() + window.print() (tous navigateurs desktop/Android)
+ *   • iOS PWA standalone : window.open() est bloqué par Safari en mode standalone.
+ *     Fallback → Blob HTML + <a download> qui déclenche un téléchargement direct du
+ *     fichier .html, que l'utilisateur peut ouvrir dans Safari pour imprimer.
+ *
+ * Détection iOS standalone : navigator.standalone === true (propriété non-standard
+ * Apple, disponible sur tous les Safari iOS depuis iOS 2.1).
+ *
+ * @param {string} htmlContent - Document HTML complet à imprimer / télécharger
+ */
 function _openPrintWindow(htmlContent) {
-  var win = window.open('', '_blank', 'width=800,height=600');
+  /* ── Détection iOS PWA standalone ── */
+  const isIosPwaStandalone = (navigator.standalone === true);
+
+  if (isIosPwaStandalone) {
+    _downloadAsHtml(htmlContent);
+    return;
+  }
+
+  /* ── Chemin normal : popup + print ── */
+  const win = window.open('', '_blank', 'width=800,height=600');
   if (!win) {
-    _showToast(L('\u26a0\ufe0f Autoriser les fenetres pop-up pour exporter le PDF.',
-                 '\u26a0\ufe0f Hayyama pop-up kennaa PDF baasuuf.'), 5000);
+    /* Popup bloqué (hors iOS standalone) : proposer le téléchargement HTML */
+    _showToast(L(
+      '⚠️ Pop-up bloqué — téléchargement du fichier HTML à la place.',
+      '⚠️ Pop-up dhaabame — faayilii HTML buufama.'
+    ), 5000);
+    _downloadAsHtml(htmlContent);
     return;
   }
   win.document.open();
   win.document.write(htmlContent);
   win.document.close();
   win.focus();
-  win.addEventListener('load', function() {
-    setTimeout(function() {
+  win.addEventListener('load', () => {
+    setTimeout(() => {
       win.print();
-      win.addEventListener('afterprint', function() { win.close(); });
-      setTimeout(function() { try { win.close(); } catch(e) {} }, 30000);
+      win.addEventListener('afterprint', () => { win.close(); });
+      setTimeout(() => { try { win.close(); } catch(e) {} }, 30000);
     }, 250);
   });
+}
+
+/**
+ * Fallback export : génère un Blob HTML et déclenche un téléchargement via <a download>.
+ * Utilisé sur iOS Safari PWA standalone (window.open bloqué) et quand les popups
+ * sont bloqués sur les autres navigateurs.
+ *
+ * L'utilisateur reçoit un fichier .html qu'il peut ouvrir dans son navigateur
+ * pour imprimer ou convertir en PDF via la boîte de dialogue d'impression.
+ *
+ * @param {string} htmlContent - Document HTML complet
+ */
+function _downloadAsHtml(htmlContent) {
+  try {
+    const blob = new Blob([htmlContent], { type: 'text/html;charset=utf-8' });
+    const url  = URL.createObjectURL(blob);
+    const a    = document.createElement('a');
+    a.href     = url;
+    a.download = 'taphadmeuh-export.html';
+    document.body.appendChild(a);
+    a.click();
+    /* Nettoyer le lien et libérer l'URL objet après le déclenchement */
+    setTimeout(() => {
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }, 1000);
+    _showToast(L(
+      '📄 Fichier HTML téléchargé — ouvrez-le dans Safari pour imprimer.',
+      '📄 Faayilii HTML buufame — maxxansuuf Safari keessatti bani.'
+    ), 6000);
+  } catch(e) {
+    _showToast(L(
+      '⚠️ Export impossible sur cet appareil.',
+      "⚠️ Meeshaa kana irratti erguu hin danda'amu."
+    ), 5000);
+  }
 }
 
 /* ── CSS de base partage par les trois exports ── */
@@ -3550,33 +3661,33 @@ function _printDocFooter() {
    ============================================================ */
 
 function _exportGuide() {
-  var isFr = isFrench();
-  var primary = isFr ? '#002395' : '#009A44';
-  var accent  = isFr ? '#ED2939' : '#EF2B2D';
-  var flag    = isFr ? '\ud83c\uddeb\ud83c\uddf7' : '\ud83c\uddea\ud83c\uddf9';
-  var langPair = isFr ? 'Fran\u00e7ais \u2194 Afaan Oromoo' : 'Afaan Oromoo \u2194 Fran\u00e7ais';
-  var modeLabel = isFr ? 'Mode : Apprendre le Fran\u00e7ais' : 'Mode : Afaan Oromoo Barachuu';
+  let isFr = isFrench();
+  let primary = isFr ? '#002395' : '#009A44';
+  let accent  = isFr ? '#ED2939' : '#EF2B2D';
+  let flag    = isFr ? '\ud83c\uddeb\ud83c\uddf7' : '\ud83c\uddea\ud83c\uddf9';
+  let langPair = isFr ? 'Fran\u00e7ais \u2194 Afaan Oromoo' : 'Afaan Oromoo \u2194 Fran\u00e7ais';
+  let modeLabel = isFr ? 'Mode : Apprendre le Fran\u00e7ais' : 'Mode : Afaan Oromoo Barachuu';
 
-  var bodyEl = document.getElementById('homeGuideBody');
-  var sectionsHTML = '';
+  let bodyEl = document.getElementById('homeGuideBody');
+  let sectionsHTML = '';
 
   if (bodyEl) {
-    var details = bodyEl.querySelectorAll('details.hg-section');
-    details.forEach(function(det) {
-      var summaryEl = det.querySelector('.hg-summary');
-      var detailEl  = det.querySelector('.hg-detail');
+    let details = bodyEl.querySelectorAll('details.hg-section');
+    details.forEach((det) => {
+      let summaryEl = det.querySelector('.hg-summary');
+      let detailEl  = det.querySelector('.hg-detail');
       if (!summaryEl || !detailEl) return;
 
-      var icon  = summaryEl.querySelector('.hg-icon')  ? summaryEl.querySelector('.hg-icon').textContent  : '';
-      var label = summaryEl.querySelector('.hg-label') ? summaryEl.querySelector('.hg-label').textContent : '';
+      let icon  = summaryEl.querySelector('.hg-icon')  ? summaryEl.querySelector('.hg-icon').textContent  : '';
+      let label = summaryEl.querySelector('.hg-label') ? summaryEl.querySelector('.hg-label').textContent : '';
 
-      var tempDiv = document.createElement('div');
+      let tempDiv = document.createElement('div');
       tempDiv.innerHTML = detailEl.innerHTML;
-      tempDiv.querySelectorAll('a[href="#"]').forEach(function(a) {
+      tempDiv.querySelectorAll('a[href="#"]').forEach((a) => {
         a.removeAttribute('href');
         a.removeAttribute('onclick');
       });
-      var cleanBody = tempDiv.innerHTML;
+      let cleanBody = tempDiv.innerHTML;
 
       sectionsHTML +=
         '<div class="guide-section">'
@@ -3586,7 +3697,7 @@ function _exportGuide() {
     });
   }
 
-  var css = _printBaseCSS(primary, accent)
+  let css = _printBaseCSS(primary, accent)
     + '<style>'
     + '.guide-section{margin-bottom:14pt;padding-bottom:10pt;border-bottom:0.5pt solid #e0e0e0;break-inside:avoid}'
     + '.guide-section:last-child{border-bottom:none}'
@@ -3622,7 +3733,7 @@ function _exportGuide() {
     + 'h2{page-break-after:avoid}'
     + '</style>';
 
-  var html = '<!DOCTYPE html><html lang="' + (isFr ? 'om' : 'fr') + '"><head>'
+  let html = '<!DOCTYPE html><html lang="' + (isFr ? 'om' : 'fr') + '"><head>'
     + '<meta charset="UTF-8">'
     + '<title>Taphad\'Meuh \u2014 Guide</title>'
     + css
@@ -3652,25 +3763,25 @@ function _exportVocab() {
     return;
   }
 
-  var keys    = langKeys();
-  var primary = isFrench() ? '#002395' : '#009A44';
-  var accent  = isFrench() ? '#ED2939' : '#EF2B2D';
-  var flag    = isFrench() ? '\ud83c\uddeb\ud83c\uddf7' : '\ud83c\uddea\ud83c\uddf9';
-  var title   = _themeTitle(CT);
+  let keys    = langKeys();
+  let primary = isFrench() ? '#002395' : '#009A44';
+  let accent  = isFrench() ? '#ED2939' : '#EF2B2D';
+  let flag    = isFrench() ? '\ud83c\uddeb\ud83c\uddf7' : '\ud83c\uddea\ud83c\uddf9';
+  let title   = _themeTitle(CT);
 
-  var colSrc = isFrench() ? 'Fran\u00e7ais \ud83c\uddeb\ud83c\uddf7' : 'Afaan Oromoo \ud83c\uddea\ud83c\uddf9';
-  var colTgt = isFrench() ? 'Afaan Oromoo \ud83c\uddea\ud83c\uddf9' : 'Fran\u00e7ais \ud83c\uddeb\ud83c\uddf7';
+  let colSrc = isFrench() ? 'Fran\u00e7ais \ud83c\uddeb\ud83c\uddf7' : 'Afaan Oromoo \ud83c\uddea\ud83c\uddf9';
+  let colTgt = isFrench() ? 'Afaan Oromoo \ud83c\uddea\ud83c\uddf9' : 'Fran\u00e7ais \ud83c\uddeb\ud83c\uddf7';
 
-  var rows = CT.words.map(function(w, i) {
-    var mainWord = w[keys.src] || '';
-    var subWord  = w[keys.tgt] || '';
-    var em       = w.em || '';
-    var bg       = (i % 2 === 0) ? '#ffffff' : '#f8f8ff';
-    var conjHTML = '';
+  let rows = CT.words.map((w, i) => {
+    let mainWord = w[keys.src] || '';
+    let subWord  = w[keys.tgt] || '';
+    let em       = w.em || '';
+    let bg       = (i % 2 === 0) ? '#ffffff' : '#f8f8ff';
+    let conjHTML = '';
 
     if (w.conj && w.conj[keys.src] && w.conj[keys.tgt]) {
-      var conjSrc = w.conj[keys.src].join(' \xb7 ');
-      var conjTgt = w.conj[keys.tgt].join(' \xb7 ');
+      let conjSrc = w.conj[keys.src].join(' \xb7 ');
+      let conjTgt = w.conj[keys.tgt].join(' \xb7 ');
       conjHTML = '<div class="conj">'
         + '\u2514 ' + conjSrc + '<br>'
         + '\u2514 ' + conjTgt
@@ -3685,11 +3796,11 @@ function _exportVocab() {
       + '</tr>';
   }).join('');
 
-  var noteHTML = CT.note
+  let noteHTML = CT.note
     ? '<div class="vocab-note">\ud83d\udca1 ' + CT.note + '</div>'
     : '';
 
-  var css = _printBaseCSS(primary, accent)
+  let css = _printBaseCSS(primary, accent)
     + '<style>'
     + 'table{width:100%;border-collapse:collapse;margin-top:8pt;font-size:10.5pt}'
     + 'thead tr{background:' + primary + ';color:#fff}'
@@ -3706,9 +3817,9 @@ function _exportVocab() {
     + 'thead{display:table-header-group}'
     + '</style>';
 
-  var themeLabel = CT.emoji + ' ' + title.main + ' \u2014 ' + title.sub;
+  let themeLabel = CT.emoji + ' ' + title.main + ' \u2014 ' + title.sub;
 
-  var html = '<!DOCTYPE html><html lang="' + (isFrench() ? 'om' : 'fr') + '"><head>'
+  let html = '<!DOCTYPE html><html lang="' + (isFrench() ? 'om' : 'fr') + '"><head>'
     + '<meta charset="UTF-8">'
     + '<title>Taphad\'Meuh \u2014 ' + title.main + '</title>'
     + css
@@ -3748,18 +3859,18 @@ function _exportSituation() {
     return;
   }
 
-  var sit = CT.situations[sitIdx];
+  let sit = CT.situations[sitIdx];
   if (!sit) { _showToast('\u26a0\ufe0f Situation introuvable.', 3000); return; }
 
-  var keys    = langKeys();
-  var primary = isFrench() ? '#002395' : '#009A44';
-  var accent  = isFrench() ? '#ED2939' : '#EF2B2D';
-  var title   = _themeTitle(CT);
+  let keys    = langKeys();
+  let primary = isFrench() ? '#002395' : '#009A44';
+  let accent  = isFrench() ? '#ED2939' : '#EF2B2D';
+  let title   = _themeTitle(CT);
 
-  var bubblesHTML = sit.dialogue.map(function(ln) {
-    var mainText = ln[keys.src] || '';
-    var subText  = ln[keys.tgt] || '';
-    var isLeft   = (ln.side === 'left');
+  let bubblesHTML = sit.dialogue.map((ln) => {
+    let mainText = ln[keys.src] || '';
+    let subText  = ln[keys.tgt] || '';
+    let isLeft   = (ln.side === 'left');
     return '<tr class="brow ' + (isLeft ? 'bleft' : 'bright') + '">'
       + '<td class="speaker">' + ln.s + '</td>'
       + '<td class="line-src">' + mainText + '</td>'
@@ -3767,15 +3878,15 @@ function _exportSituation() {
       + '</tr>';
   }).join('');
 
-  var vocabHTML = '';
+  let vocabHTML = '';
   if (CT.vocab && CT.vocab.length > 0) {
-    var vocabRows = CT.vocab.map(function(v, i) {
-      var parts  = v.split('=');
-      var et     = parts[0] ? parts[0].trim() : '';
-      var fr     = parts[1] ? parts[1].trim() : '';
-      var src    = keys.src === 'et' ? et : fr;
-      var tgt    = keys.tgt === 'et' ? et : fr;
-      var bg     = (i % 2 === 0) ? '#ffffff' : '#f5fdf5';
+    let vocabRows = CT.vocab.map((v, i) => {
+      let parts  = v.split('=');
+      let et     = parts[0] ? parts[0].trim() : '';
+      let fr     = parts[1] ? parts[1].trim() : '';
+      let src    = keys.src === 'et' ? et : fr;
+      let tgt    = keys.tgt === 'et' ? et : fr;
+      let bg     = (i % 2 === 0) ? '#ffffff' : '#f5fdf5';
       return '<tr style="background:' + bg + '">'
         + '<td class="v-num">' + (i + 1) + '</td>'
         + '<td class="v-src"><strong>' + src + '</strong></td>'
@@ -3783,8 +3894,8 @@ function _exportSituation() {
         + '</tr>';
     }).join('');
 
-    var vColSrc = isFrench() ? 'Fran\u00e7ais \ud83c\uddeb\ud83c\uddf7'     : 'Afaan Oromoo \ud83c\uddea\ud83c\uddf9';
-    var vColTgt = isFrench() ? 'Afaan Oromoo \ud83c\uddea\ud83c\uddf9'  : 'Fran\u00e7ais \ud83c\uddeb\ud83c\uddf7';
+    let vColSrc = isFrench() ? 'Fran\u00e7ais \ud83c\uddeb\ud83c\uddf7'     : 'Afaan Oromoo \ud83c\uddea\ud83c\uddf9';
+    let vColTgt = isFrench() ? 'Afaan Oromoo \ud83c\uddea\ud83c\uddf9'  : 'Fran\u00e7ais \ud83c\uddeb\ud83c\uddf7';
 
     vocabHTML = '<h2>' + (isFrench() ? '\ud83d\udcda Jechoota murteessoo' : '\ud83d\udcda Lexique essentiel') + '</h2>'
       + '<table class="vtable">'
@@ -3797,15 +3908,15 @@ function _exportSituation() {
       + '</table>';
   }
 
-  var noteHTML = CT.note
+  let noteHTML = CT.note
     ? '<div class="sit-note">\ud83d\udca1 ' + CT.note + '</div>'
     : '';
 
-  var sitBadge = (CT.situations.length > 1)
+  let sitBadge = (CT.situations.length > 1)
     ? '<span class="badge">' + sit.label + '</span> '
     : '';
 
-  var css = _printBaseCSS(primary, accent)
+  let css = _printBaseCSS(primary, accent)
     + '<style>'
     + '.sit-meta{font-size:10.5pt;color:#333;margin:4pt 0 10pt;font-weight:500}'
     + '.scene-icon{font-size:28pt;text-align:center;margin:6pt 0 10pt}'
@@ -3831,17 +3942,17 @@ function _exportSituation() {
     + 'h2{margin-top:14pt;page-break-after:avoid}'
     + '</style>';
 
-  var sitCount = CT.situations.length > 1
+  let sitCount = CT.situations.length > 1
     ? (isFrench()
         ? (sitIdx + 1) + ' sur ' + CT.situations.length + ' situations'
         : (sitIdx + 1) + ' / ' + CT.situations.length + ' haala')
     : '';
 
-  var dColSrc = isFrench() ? 'Fran\u00e7ais \ud83c\uddeb\ud83c\uddf7'    : 'Afaan Oromoo \ud83c\uddea\ud83c\uddf9';
-  var dColTgt = isFrench() ? 'Afaan Oromoo \ud83c\uddea\ud83c\uddf9'  : 'Fran\u00e7ais \ud83c\uddeb\ud83c\uddf7';
-  var locLabel = isFrench() ? 'Dubbataa' : 'Locuteur';
+  let dColSrc = isFrench() ? 'Fran\u00e7ais \ud83c\uddeb\ud83c\uddf7'    : 'Afaan Oromoo \ud83c\uddea\ud83c\uddf9';
+  let dColTgt = isFrench() ? 'Afaan Oromoo \ud83c\uddea\ud83c\uddf9'  : 'Fran\u00e7ais \ud83c\uddeb\ud83c\uddf7';
+  let locLabel = isFrench() ? 'Dubbataa' : 'Locuteur';
 
-  var html = '<!DOCTYPE html><html lang="' + (isFrench() ? 'om' : 'fr') + '"><head>'
+  let html = '<!DOCTYPE html><html lang="' + (isFrench() ? 'om' : 'fr') + '"><head>'
     + '<meta charset="UTF-8">'
     + '<title>Taphad\'Meuh \u2014 ' + title.main + '</title>'
     + css

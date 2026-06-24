@@ -198,7 +198,7 @@ Cache name is auto-versioned by GitHub Actions (`GITHUB_RUN_NUMBER`) on every de
 
 **Sébastien Godet** — sebastien.godet16@gmail.com · [LinkedIn](https://www.linkedin.com/in/sébastien-godet-142ba6145)
 
-Built with the assistance of **Claude Sonnet 4.6** (Anthropic) and **Gemini 2.5 Flash** (Google).
+Built with the assistance of **Claude Sonnet 4.6** (Anthropic) and **Gemini 3.5 Flash** (Google).
 
 Special thanks to **Fédérico Calo** (web architecture) and **Mussa Sembro** (Oromo translations & linguistic review).
 

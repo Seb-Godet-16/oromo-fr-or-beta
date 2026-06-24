@@ -3,6 +3,7 @@
  * ║  Language App 🇫🇷🇪🇹  —  js/data-fr.js                         ║
  * ║  Auteur   : Sébastien Godet                                     ║
  * ║  Assisté  : Claude Sonnet 4.6 · Gemini 3.5 Flash               ║
+ * ║  Modernisé ES2020 (const pour les tableaux de données)           ║
  * ║  Version  : Juin 2026                                           ║
  * ╠══════════════════════════════════════════════════════════════════╣
  * ║  RÔLE DE CE FICHIER                                             ║
@@ -81,7 +82,7 @@
    champ "fr" = traduction donnée comme aide.
    ══════════════════════════════════════════════════════════════════ */
 
-var LEVEL1_THEMES_FR = [
+const LEVEL1_THEMES_FR = [
 
   {
     id: 'alpha', level: 1, emoji: '🔤',
@@ -716,7 +717,7 @@ var LEVEL1_THEMES_FR = [
    "situations"), un lexique clé ("vocab") et un quiz fixe ("quiz").
    ══════════════════════════════════════════════════════════════════ */
 
-var LEVEL2_THEMES_FR = [
+const LEVEL2_THEMES_FR = [
 
   {
     id: 'salut2', level: 2, emoji: '👋',
@@ -1376,4 +1377,4 @@ var LEVEL2_THEMES_FR = [
    Tableau fusionné — consommé directement par app.js
    ══════════════════════════════════════════════════════════════════ */
 
-var ALL_THEMES_FR = LEVEL1_THEMES_FR.concat(LEVEL2_THEMES_FR);
+const ALL_THEMES_FR = LEVEL1_THEMES_FR.concat(LEVEL2_THEMES_FR);
