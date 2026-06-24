@@ -2929,53 +2929,6 @@ function _buildHomeGuide() {
           + '<div class="ob-tip">💡 Cette appli n\'est pas un outil unique — combinez-la avec Duolingo, un cours ou des amis natifs pour progresser plus vite !</div>'
     },
     {
-      icon : '\u2696\ufe0f',
-      title: isFr ? 'Walbira qabuu — meeshaalee barachuu' : 'Comparaison — cette appli vs. les autres',
-      body : isFr
-        /* Oromo */
-        ? '<p>Meeshaa tokko qofti gahaa miti — walitti makuun saffisaan barata !</p>'
-          + '<div class="ob-compare">'
-          + '<div class="ob-compare-col">'
-          + '<div class="ob-compare-head">📱 App tana</div>'
-          + '<ul><li>💸 Bilisaa guutuu</li><li>🚫 Galmee malee</li><li>🗂️ Jechota sirna qabsiifte</li><li>🔊 Sagalee</li><li>🎤 Dubbii shaakali</li><li>📴 Interneetii malee</li></ul>'
-          + '</div>'
-          + '<div class="ob-compare-col">'
-          + '<div class="ob-compare-head">🦉 Duolingo / Babbel</div>'
-          + '<ul><li>🎮 Taphataa kan kakaasu</li><li>🌐 Afaanota baay\'ee</li><li>🎯 Karaa kan of madaaluu</li><li>👥 Hawaasa fi dorgommii</li><li>📐 Caasluga tartiibaan</li></ul>'
-          + '</div>'
-          + '<div class="ob-compare-col">'
-          + '<div class="ob-compare-head">🏫 Mana barumsaa</div>'
-          + '<ul><li>🧑🏫 Barsiisaa namaa</li><li>📋 Sirna barnootaa</li><li>🗣️ Hirmaachiisa</li><li>🎓 Ragaa beekamaa</li><li>📐 Caasluga gadi-fagoo</li></ul>'
-          + '</div>'
-          + '<div class="ob-compare-col">'
-          + '<div class="ob-compare-head">🗣️ Hiriyoota Oromoo</div>'
-          + '<ul><li>🌍 Afaan jireenya dhugaa</li><li>🎙️ Sagalee uumamaa</li><li>🛒 Jechota guyyaa guyyaa</li><li>💪 Amantaa of-keessaa</li><li>🤝 Waljijjiirraa aadaa</li></ul>'
-          + '</div>'
-          + '</div>'
-          + '<div class="ob-tip">💡 Meeshaaleen kunneen walitti makuu — app kanaan jalqabi, Duolingo yookiin barsiisaa waliin caasluga baradhu, hiriyootaan dubbii dhugaa shaakali !</div>'
-        /* Français */
-        : '<p>Pas de meilleure méthode unique — chacune a ses forces. <strong>L\'idéal, c\'est de les combiner !</strong></p>'
-          + '<div class="ob-compare">'
-          + '<div class="ob-compare-col">'
-          + '<div class="ob-compare-head">📱 Cette appli</div>'
-          + '<ul><li>💸 100% gratuit</li><li>🚫 Sans inscription</li><li>🗂️ Vocabulaire structuré</li><li>🔊 Audio intégré</li><li>🎤 Répétition orale</li><li>📴 Hors-ligne</li></ul>'
-          + '</div>'
-          + '<div class="ob-compare-col">'
-          + '<div class="ob-compare-head">🦉 Duolingo / Babbel</div>'
-          + '<ul><li>🎮 Gamification motivante</li><li>🌐 Large catalogue</li><li>🎯 Parcours adaptatif</li><li>👥 Communauté</li><li>📐 Grammaire progressive</li></ul>'
-          + '</div>'
-          + '<div class="ob-compare-col">'
-          + '<div class="ob-compare-head">🏫 École de langue</div>'
-          + '<ul><li>🧑🏫 Enseignant humain</li><li>📋 Structure pédagogique</li><li>🗣️ Pratique entre apprenants</li><li>🎓 Certification reconnue</li><li>📐 Grammaire approfondie</li></ul>'
-          + '</div>'
-          + '<div class="ob-compare-col">'
-          + '<div class="ob-compare-head">🗣️ Immersion / Amis natifs</div>'
-          + '<ul><li>🌍 Langue authentique</li><li>🎙️ Accent naturel</li><li>🛒 Vocabulaire du quotidien</li><li>💪 Confiance en soi</li><li>🤝 Échanges culturels</li></ul>'
-          + '</div>'
-          + '</div>'
-          + '<div class="ob-tip">💡 Notre conseil : utilise cette appli pour construire ta base de vocabulaire dès le premier jour — puis appuie-toi sur Duolingo ou une école pour la grammaire, et pratique avec des natifs pour la fluidité. Chaque outil renforce les autres !</div>'
-    },
-    {
       icon : '\ud83c\udccf',
       title: isFr ? 'Kaardota (Cartes Flash)' : 'Les Cartes Flash',
       body : isFr
@@ -3038,7 +2991,7 @@ function _buildHomeGuide() {
           + '<li>Haaloota hedduu (<em>Sit. 1, Sit. 2…</em>) — ongletota irraa filanna.</li>'
           + '<li>Bubbulliiwwan lama ni mullatu — 🔵 bitaa fi 🟢 mirga — nama lama gidduutti dubbii.</li>'
           + '<li>Caancala 🔊 cuqaasi — hirmaataa dubbisu dhageeffadhu.</li>'
-          + '<li>Cimdii <strong>Vocabulaire</strong> : jechota murteessoo dubbii sanaa.</li>'
+          + '<li>Cimdii <strong>Jechootaa</strong> : jechota murteessoo dubbii sanaa.</li>'
           + '<li>Cimdii <strong>Quiz</strong> : gaafii dubbii irratti of-qori.</li>'
           + '</ul>'
           + '<div class="ob-tip">💡 Dura Sadarkaa 1 xumuruun gaarii — jechonni Sadarkaa 2 keessatti ni mul\'atu !</div>'
@@ -3054,27 +3007,7 @@ function _buildHomeGuide() {
           + '<div class="ob-tip">💡 Conseil : lisez d\'abord le dialogue entier, puis écoutez-le, puis jouez le Quiz !</div>'
     },
     {
-      icon : '\ud83d\udd04',
-      title: isFr ? 'Moojuula haaromsuuu (\u2b50 haquuu)' : 'Réinitialiser un module',
-      body : isFr
-        /* Oromo */
-        ? '<p>Moojuula tokko irra deebi\'uu barbaaddaa? Urjiilee haquun <strong>jalqaba irraa jalqabuu</strong> ni dandaa\'ama.</p>'
-          + '<ul>'
-          + '<li>Fuula <strong>Moojuulota</strong> irratti moojuula filadhu.</li>'
-          + '<li>Caancala <strong>🔄 Haaromsi</strong> cuqaasi — mirkaneeffannaa ni gaafata.</li>'
-          + '<li>Urjiilee ni dhaban — garuu Quiz irra deebi\'uun urjii haaraa argachuu ni dandaa\'ama.</li>'
-          + '</ul>'
-          + '<div class="ob-tip">💡 Madaalli haaraan kan duraa caale qofti yaadatama — yeroo hunda waltajjii keessan ol ta\'a !</div>'
-        /* Français */
-        : '<p>Envie de recommencer un module à zéro ? Vous pouvez <strong>effacer vos étoiles</strong> et repartir de la base.</p>'
-          + '<ul>'
-          + '<li>Depuis l\'écran <strong>Modules</strong>, appuyez sur le thème concerné.</li>'
-          + '<li>Appuyez sur le bouton <strong>🔄 Recommencer</strong> — une confirmation vous sera demandée.</li>'
-          + '<li>Vos étoiles sont supprimées — rejouez le Quiz pour en regagner.</li>'
-          + '</ul>'
-          + '<div class="ob-tip">💡 Seul votre meilleur score est conservé — si vous rejouez et faites mieux, le compteur monte. Si vous faites moins bien, il ne bouge pas !</div>'
-    },
-    {
+      icon : '\ud83d\udd0a',
       title: isFr ? 'Sagalee qindeessuu (Synthèse Vocale)' : 'Configurer l\'audio',
       body : isFr
         /* Oromo — version concise */
@@ -3131,7 +3064,7 @@ function _buildHomeGuide() {
           + '</div>'
     },
     {
-      icon : '\ud83c\udfa4',
+      icon : '\ud83c\udfa7',
       title: isFr ? 'Sagalee Oromoo — Tartiiba Sagalee' : 'L\'audio en Oromo : la Cascade de Voix',
       body : isFr
         /* Oromo — version concise */
@@ -3212,6 +3145,27 @@ function _buildHomeGuide() {
           + "<div class=\"ob-tip\">\ud83d\udca1 Nécessite l'autorisation microphone — peut ne pas fonctionner sur tous les navigateurs.</div>"
     },
     {
+      icon : '\ud83d\udd04',
+      title: isFr ? 'Moojuula haaromsuuu (\u2b50 haquuu)' : 'Réinitialiser un module',
+      body : isFr
+        /* Oromo */
+        ? '<p>Moojuula tokko irra deebi\'uu barbaaddaa? Urjiilee haquun <strong>jalqaba irraa jalqabuu</strong> ni dandaa\'ama.</p>'
+          + '<ul>'
+          + '<li>Fuula <strong>Moojuulota</strong> irratti moojuula filadhu.</li>'
+          + '<li>Caancala <strong>🔄 Haaromsi</strong> cuqaasi — mirkaneeffannaa ni gaafata.</li>'
+          + '<li>Urjiilee ni dhaban — garuu Quiz irra deebi\'uun urjii haaraa argachuu ni dandaa\'ama.</li>'
+          + '</ul>'
+          + '<div class="ob-tip">💡 Madaalli haaraan kan duraa caale qofti yaadatama — yeroo hunda waltajjii keessan ol ta\'a !</div>'
+        /* Français */
+        : '<p>Envie de recommencer un module à zéro ? Vous pouvez <strong>effacer vos étoiles</strong> et repartir de la base.</p>'
+          + '<ul>'
+          + '<li>Depuis l\'écran <strong>Modules</strong>, appuyez sur le thème concerné.</li>'
+          + '<li>Appuyez sur le bouton <strong>🔄 Recommencer</strong> — une confirmation vous sera demandée.</li>'
+          + '<li>Vos étoiles sont supprimées — rejouez le Quiz pour en regagner.</li>'
+          + '</ul>'
+          + '<div class="ob-tip">💡 Seul votre meilleur score est conservé — si vous rejouez et faites mieux, le compteur monte. Si vous faites moins bien, il ne bouge pas !</div>'
+    },
+    {
       icon : '\ud83d\udcf2',
       title: isFr ? 'App gara meeshaa irratti buusi' : "Installer l'app (hors-ligne)",
       body : isFr
@@ -3225,6 +3179,53 @@ function _buildHomeGuide() {
           + '<li><strong>iOS / Safari</strong> : \ud83d\udd17 \u2192 <em>"Sur l\'écran d\'accueil"</em></li>'
           + '</ul>'
           + "<p>Une fois installée, l'app fonctionne <strong>entièrement hors-ligne</strong> !</p>"
+    },
+    {
+      icon : '\u2696\ufe0f',
+      title: isFr ? 'Walbira qabuu — meeshaalee barachuu' : 'Comparaison — cette appli vs. les autres',
+      body : isFr
+        /* Oromo */
+        ? '<p>Meeshaa tokko qofti gahaa miti — walitti makuun saffisaan barata !</p>'
+          + '<div class="ob-compare">'
+          + '<div class="ob-compare-col">'
+          + '<div class="ob-compare-head">📱 App tana</div>'
+          + '<ul><li>💸 Bilisaa guutuu</li><li>🚫 Galmee malee</li><li>🗂️ Jechota sirna qabsiifte</li><li>🔊 Sagalee</li><li>🎤 Dubbii shaakali</li><li>📴 Interneetii malee</li></ul>'
+          + '</div>'
+          + '<div class="ob-compare-col">'
+          + '<div class="ob-compare-head">🦉 Duolingo / Babbel</div>'
+          + '<ul><li>🎮 Taphataa kan kakaasu</li><li>🌐 Afaanota baay\'ee</li><li>🎯 Karaa kan of madaaluu</li><li>👥 Hawaasa fi dorgommii</li><li>📐 Caasluga tartiibaan</li></ul>'
+          + '</div>'
+          + '<div class="ob-compare-col">'
+          + '<div class="ob-compare-head">🏫 Mana barumsaa</div>'
+          + '<ul><li>🧑🏫 Barsiisaa namaa</li><li>📋 Sirna barnootaa</li><li>🗣️ Hirmaachiisa</li><li>🎓 Ragaa beekamaa</li><li>📐 Caasluga gadi-fagoo</li></ul>'
+          + '</div>'
+          + '<div class="ob-compare-col">'
+          + '<div class="ob-compare-head">🗣️ Hiriyoota Oromoo</div>'
+          + '<ul><li>🌍 Afaan jireenya dhugaa</li><li>🎙️ Sagalee uumamaa</li><li>🛒 Jechota guyyaa guyyaa</li><li>💪 Amantaa of-keessaa</li><li>🤝 Waljijjiirraa aadaa</li></ul>'
+          + '</div>'
+          + '</div>'
+          + '<div class="ob-tip">💡 Meeshaaleen kunneen walitti makuu — app kanaan jalqabi, Duolingo yookiin barsiisaa waliin caasluga baradhu, hiriyootaan dubbii dhugaa shaakali !</div>'
+        /* Français */
+        : '<p>Pas de meilleure méthode unique — chacune a ses forces. <strong>L\'idéal, c\'est de les combiner !</strong></p>'
+          + '<div class="ob-compare">'
+          + '<div class="ob-compare-col">'
+          + '<div class="ob-compare-head">📱 Cette appli</div>'
+          + '<ul><li>💸 100% gratuit</li><li>🚫 Sans inscription</li><li>🗂️ Vocabulaire structuré</li><li>🔊 Audio intégré</li><li>🎤 Répétition orale</li><li>📴 Hors-ligne</li></ul>'
+          + '</div>'
+          + '<div class="ob-compare-col">'
+          + '<div class="ob-compare-head">🦉 Duolingo / Babbel</div>'
+          + '<ul><li>🎮 Gamification motivante</li><li>🌐 Large catalogue</li><li>🎯 Parcours adaptatif</li><li>👥 Communauté</li><li>📐 Grammaire progressive</li></ul>'
+          + '</div>'
+          + '<div class="ob-compare-col">'
+          + '<div class="ob-compare-head">🏫 École de langue</div>'
+          + '<ul><li>🧑🏫 Enseignant humain</li><li>📋 Structure pédagogique</li><li>🗣️ Pratique entre apprenants</li><li>🎓 Certification reconnue</li><li>📐 Grammaire approfondie</li></ul>'
+          + '</div>'
+          + '<div class="ob-compare-col">'
+          + '<div class="ob-compare-head">🗣️ Immersion / Amis natifs</div>'
+          + '<ul><li>🌍 Langue authentique</li><li>🎙️ Accent naturel</li><li>🛒 Vocabulaire du quotidien</li><li>💪 Confiance en soi</li><li>🤝 Échanges culturels</li></ul>'
+          + '</div>'
+          + '</div>'
+          + '<div class="ob-tip">💡 Notre conseil : utilise cette appli pour construire ta base de vocabulaire dès le premier jour — puis appuie-toi sur Duolingo ou une école pour la grammaire, et pratique avec des natifs pour la fluidité. Chaque outil renforce les autres !</div>'
     },
     {
       icon : '\ud83d\ude4f',
