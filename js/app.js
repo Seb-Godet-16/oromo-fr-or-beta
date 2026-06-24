@@ -324,26 +324,8 @@ function _setText(id, val) {
  * - Mode learn_oromo  (apprenant oromophone → interface OR) : textes en afaan oromoo
  */
 function _setFooters() {
-  /* Textes bilingues des liens footer */
-  let lblCredits = L('Remerciements',   'Galateeffannaa');
-  let lblHelp    = L('Aide',            'Gargaarsa');
-  let lblCopy    = L(
-    '© Juin 2026 – Développé par Sébastien Godet · Assisté par IA Claude Sonnet 4.6 et Gemini 3.5 Flash',
-    '© Waxabajjii 2026 – Kan Sébastien Godet tolche · AI Claude Sonnet 4.6 fi Gemini 3.5 Flash gargaaramee'
-  );
-
-  let html =
-    lblCopy + '<br>' +
-    '<button id="btn-copy-email" class="antispam-btn" onclick="openAndCopyEmail()"><span class="antispam-email">moc.liamg@61tedog.neitsabes</span></button> · ' +
-    '<a href="https://www.linkedin.com/in/s%C3%A9bastien-godet-142ba6145" target="_blank">LinkedIn</a> · ' +
-    '<a href="#" onclick="showCredits()">' + lblCredits + '</a> · ' +
-    '<a href="#" onclick="showOnboardingGuide()">' + lblHelp + '</a>';
-
-  let ids = ['homeFooter', 'sectionsFooter'];
-  for (const id of ids) {
-    const el = document.getElementById(id);
-    if (el) el.innerHTML = html;
-  }
+  /* Les footers home et sections sont supprimés (contenu intégré dans la modale Infos via showCredits).
+     Cette fonction est conservée pour compatibilité mais ne modifie plus le DOM. */
 }
 
 
@@ -1128,17 +1110,17 @@ function _updateBottomNav(screenId) {
   }
   nav.classList.add('visible');
 
-  /* Mettre à jour les libellés bilingues de la nav */
-  _setText('navLabelModules', L('Modules', 'Kutaalee'));
-  _setText('navLabelGuide',   L('Guide',   'Gargaarsa'));
-  _setText('navLabelLang',    L('Langue',  'Afaan'));
-  _setText('navLabelCredits', L('Merci',   'Galata'));
+  /* Mettre à jour les libellés bilingues de la nav (dans la langue de l'apprenant) */
+  _setText('navLabelLang',    L('Afaan',     'Langue'));
+  _setText('navLabelGuide',   L('Gargaarsa', 'Guide'));
+  _setText('navLabelModules', L('Kutaalee',  'Modules'));
+  _setText('navLabelCredits', L('Odeeffannoo', 'Infos'));
 
   let langFlag = document.getElementById('navLangFlag');
   if (langFlag) langFlag.textContent = L('🇫🇷', '🇪🇹');
 
   /* Activer le bon bouton */
-  ['navBtnModules','navBtnGuide','navBtnLang','navBtnCredits'].forEach((id) => {
+  ['navBtnLang','navBtnGuide','navBtnModules','navBtnCredits'].forEach((id) => {
     let el = document.getElementById(id);
     if (el) el.classList.remove('active');
   });
@@ -3293,53 +3275,15 @@ function _buildHomeGuide() {
   }
 
   /* ── Checkbox "Ne plus afficher" — libellé dans la langue maternelle ── */
-  let noshowLabel = isFr
-    ? "Ka'umsa irratti gargaarsa kana hin agarsiifin"  /* oromo */
-    : 'Ne plus afficher ce guide au démarrage';         /* français */
+  /* ── Titre dans la topbar ── */
+  let topbarTitle = document.getElementById('homeTopbarTitle');
+  if (topbarTitle) topbarTitle.textContent = L('Gargaarsa', 'Guide explicatif');
 
-  /* Checkbox du bas */
-  let noshowText = document.getElementById('homeNoshowText');
-  if (noshowText) noshowText.textContent = noshowLabel;
-
-  /* Checkbox de la topbar */
-  let topbarNoshowText = document.getElementById('homeTopbarNoshowText');
-  if (topbarNoshowText) topbarNoshowText.textContent = noshowLabel;
-
-  /* Synchroniser l'état des deux checkboxes avec localStorage */
-  let chk       = document.getElementById('homeNoshowChk');
-  let chkTopbar = document.getElementById('homeTopbarNoshowChk');
-  let key = (currentMode === 'learn_french') ? _OB_KEY_FR : _OB_KEY_OR;
-  let checked = false;
-  try { checked = !!localStorage.getItem(key); } catch(e) {}
-  if (chk)       chk.checked       = checked;
-  if (chkTopbar) chkTopbar.checked = checked;
-
-  /* Garder les deux en sync entre elles + localStorage */
-  function _syncNoshow(val) {
-    try {
-      if (val) { localStorage.setItem(key, '1'); }
-      else      { localStorage.removeItem(key); }
-    } catch(e) {}
-    if (chk       && chk.checked       !== val) chk.checked       = val;
-    if (chkTopbar && chkTopbar.checked !== val) chkTopbar.checked = val;
-  }
-  if (chk)       chk.onchange       = function() { _syncNoshow(chk.checked); };
-  if (chkTopbar) chkTopbar.onchange = function() { _syncNoshow(chkTopbar.checked); };
-
-  /* ── Bouton Commencer / Continuer ── */
+  /* ── Bouton Commencer dans la topbar ── */
   let btn = document.getElementById('homeStartBtn');
   if (btn) {
     btn.textContent = L('▶ Jalqabi', '▶ Commencer');
     btn.onclick = function() { showScreen('sections-level1'); };
-  }
-
-  /* ── Bouton Fermer (✕) en haut à droite ── */
-  let closeBtn = document.getElementById('homeCloseBtn');
-  if (closeBtn) {
-    closeBtn.textContent = L('Cufuu ✕', 'Fermer ✕');
-    closeBtn.setAttribute('aria-label', L('Fermer le guide', 'Gargaarsa cufuu'));
-    /* Fermer = passer directement aux modules (sans toucher au flag localStorage) */
-    closeBtn.onclick = function() { showScreen('sections-level1'); };
   }
 
   /* ── Bouton export PDF du guide ── */
@@ -3350,15 +3294,8 @@ function _buildHomeGuide() {
 }
 
 function _maybeShowOnboarding() {
-  let key = (currentMode === 'learn_french') ? _OB_KEY_FR : _OB_KEY_OR;
-  try {
-    if (localStorage.getItem(key)) {
-      /* Flag posé → passer directement aux modules */
-      showScreen('sections-level1');
-      return;
-    }
-  } catch(e) {}
-  /* Pas de flag → rester sur l'écran Guide/Home (déjà affiché) */
+  /* Le guide est toujours affiché à l'arrivée — l'utilisateur navigue librement
+     avec la barre de navigation basse. Plus de flag "ne plus afficher". */
 }
 
 /**
@@ -3383,14 +3320,6 @@ function _closeOnboarding() {
  */
 function showOnboardingGuide() {
   showScreen('home');
-  /* Re-synchroniser les deux checkboxes car le flag peut avoir changé */
-  let chk = document.getElementById('homeNoshowChk');
-  let chkTopbar = document.getElementById('homeTopbarNoshowChk');
-  let key = (currentMode === 'learn_french') ? _OB_KEY_FR : _OB_KEY_OR;
-  let checked = false;
-  try { checked = !!localStorage.getItem(key); } catch(e) {}
-  if (chk)       chk.checked       = checked;
-  if (chkTopbar) chkTopbar.checked = checked;
 }
 
 /* ============================================================
@@ -3403,27 +3332,38 @@ function showCredits() {
   let bodyEl  = document.getElementById('credits-modal-body');
   let closeEl = document.getElementById('credits-modal-close');
 
-  if (titleEl) titleEl.textContent = L('Galateeffannaa', 'Remerciements');
+  if (titleEl) titleEl.textContent = L('Odeeffannoo', 'Infos');
   if (closeEl) closeEl.textContent = L('Cufuu', 'Fermer');
+
+  let lblCopy = L(
+    '© Waxabajjii 2026 – Kan Sébastien Godet tolche · AI Claude Sonnet 4.6 fi Gemini 3.5 Flash gargaaramee',
+    '© Juin 2026 – Développé par Sébastien Godet · Assisté par IA Claude Sonnet 4.6 et Gemini 3.5 Flash'
+  );
 
   if (bodyEl) {
     bodyEl.innerHTML = isFrench()
       /* ── Texte Oromo (interface pour l'apprenant de français) ── */
-      ? '<p>Galata guddaa <strong>Fédérico Calo</strong>'
-        + ' (<a href="https://www.linkedin.com/in/federicocalo/" target="_blank">'
-        + 'Architektii Guddisaa Web</a>) gargaarsa teknikaaf.</p>'
-        + '<p>Galata baay&#x27;een <strong>Mussa Sembro</strong>'
-        + ' (<a href="https://www.linkedin.com/in/mussa-sembro-137472174/" target="_blank">'
-        + 'Hiikkaa-Ibsituu Afaan Oromoo</a>)'
+      ? '<p class="credits-copy">' + lblCopy + '</p>'
+        + '<p><button class="antispam-btn credits-email" onclick="openAndCopyEmail()"><span class="antispam-email">moc.liamg@61tedog.neitsabes</span></button>'
+        + ' · <a href="https://www.linkedin.com/in/s%C3%A9bastien-godet-142ba6145" target="_blank" rel="noopener">LinkedIn</a></p>'
+        + '<hr class="credits-sep">'
+        + '<p>Galata guddaa <strong>Fédérico Calo</strong>'
+        + ' (<a href="https://www.linkedin.com/in/federicocalo/" target="_blank" rel="noopener">Architektii Guddisaa Web</a>)'
+        + ' gargaarsa teknikaaf.</p>'
+        + '<p>Galata baay\'een <strong>Mussa Sembro</strong>'
+        + ' (<a href="https://www.linkedin.com/in/mussa-sembro-137472174/" target="_blank" rel="noopener">Hiikkaa-Ibsituu Afaan Oromoo</a>)'
         + ' — hiikaa, sirreessaa fi gorsa afaanii.</p>'
-        + '<p><strong>Maatii koo</strong> — irra deebi&#x27;ee dubbisuu fi gorsaaf.</p>'
+        + '<p><strong>Maatii koo</strong> — irra deebi\'ee dubbisuu fi gorsaaf.</p>'
       /* ── Texte français (interface pour l'apprenant d'Oromo) ── */
-      : '<p>Un grand merci à <strong>Fédérico Calo</strong>'
-        + ' (<a href="https://www.linkedin.com/in/federicocalo/" target="_blank">'
-        + 'Architecte Développeur Web</a>) pour son aide technique.</p>'
+      : '<p class="credits-copy">' + lblCopy + '</p>'
+        + '<p><button class="antispam-btn credits-email" onclick="openAndCopyEmail()"><span class="antispam-email">moc.liamg@61tedog.neitsabes</span></button>'
+        + ' · <a href="https://www.linkedin.com/in/s%C3%A9bastien-godet-142ba6145" target="_blank" rel="noopener">LinkedIn</a></p>'
+        + '<hr class="credits-sep">'
+        + '<p>Un grand merci à <strong>Fédérico Calo</strong>'
+        + ' (<a href="https://www.linkedin.com/in/federicocalo/" target="_blank" rel="noopener">Architecte Développeur Web</a>)'
+        + ' pour son aide technique.</p>'
         + '<p>Merci beaucoup à <strong>Mussa Sembro</strong>'
-        + ' (<a href="https://www.linkedin.com/in/mussa-sembro-137472174/" target="_blank">'
-        + 'Traducteur-Interprète en Oromo</a>)'
+        + ' (<a href="https://www.linkedin.com/in/mussa-sembro-137472174/" target="_blank" rel="noopener">Traducteur-Interprète en Oromo</a>)'
         + ' pour son travail de traduction, ses corrections et ses précieux conseils linguistiques.</p>'
         + '<p>Merci à mes <strong>parents</strong> pour leur relecture attentive et leurs conseils.</p>';
   }

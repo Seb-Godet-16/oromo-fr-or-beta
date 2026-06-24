@@ -572,47 +572,41 @@ html.theme-oromo body{background:#f4f9f4}
   display:flex;
   align-items:center;
   justify-content:space-between;
-  padding:10px 14px;
-  background:rgba(20,20,32,.82);
+  padding:0 14px;
+  background:rgba(20,20,32,.88);
   backdrop-filter:blur(8px);
-  border-bottom:1px solid rgba(255,255,255,.10);
+  border-bottom:1px solid rgba(255,255,255,.12);
   min-height:48px;
   flex-shrink:0;
+  gap:10px;
 }
 
-/* Checkbox "Ne plus afficher" dans la topbar */
-.topbar-noshow-label{
-  display:inline-flex;
-  align-items:center;
-  gap:8px;
-  font-size:.78rem;
-  font-weight:600;
-  color:rgba(255,255,255,.88);
-  cursor:pointer;
-  user-select:none;
-}
-.topbar-noshow-label input[type="checkbox"]{
-  width:16px;height:16px;
-  accent-color:var(--c-primary);
-  cursor:pointer;
-  flex-shrink:0;
+/* Titre "Guide explicatif" / "Gargaarsa" à gauche */
+.home-topbar-title{
+  font-size:.82rem;
+  font-weight:700;
+  color:rgba(255,255,255,.92);
+  letter-spacing:.01em;
+  flex:1;
 }
 
-/* Bouton ✕ Fermer dans la topbar */
-.home-close-btn{
-  background:rgba(255,255,255,.18);
-  border:1.5px solid rgba(255,255,255,.25);
+/* Bouton Commencer dans la topbar */
+.btn-start-topbar{
+  background:var(--c-primary);
+  border:none;
   border-radius:50px;
-  padding:7px 16px;
-  font-size:.8rem;
+  padding:7px 18px;
+  font-size:.78rem;
   font-weight:700;
   color:#fff;
   cursor:pointer;
   white-space:nowrap;
-  min-height:36px;
+  min-height:34px;
+  transition:opacity .15s, transform .1s;
+  flex-shrink:0;
 }
-.home-close-btn:hover{background:rgba(255,255,255,.28)}
-.home-close-btn:active{background:rgba(255,255,255,.4)}
+.btn-start-topbar:hover{opacity:.88}
+.btn-start-topbar:active{transform:scale(.96)}
 
 
 /* ══════════════════════════════════════════════════════════════════
@@ -1453,7 +1447,27 @@ html.theme-french .btn-reset-theme:hover{
   font-weight:bold;
   cursor:pointer;
 }
-.modal-content button:hover{background:#0056b3}
+/* Séparateur dans la modale Infos */
+.credits-sep{
+  border:none;
+  border-top:1px solid rgba(0,0,0,.1);
+  margin:12px 0;
+}
+/* Ligne copyright dans la modale Infos */
+.credits-copy{
+  font-size:.75rem;
+  color:#888;
+  line-height:1.5;
+}
+/* Email dans la modale Infos */
+.credits-email{
+  font-size:.82rem;
+}
+/* Mode sombre */
+@media(prefers-color-scheme:dark){
+  .credits-sep{border-top-color:rgba(255,255,255,.12);}
+  .credits-copy{color:#aaa;}
+}
 
 
 /* ══════════════════════════════════════════════════════════════════
@@ -2415,43 +2429,12 @@ footer a:hover{text-decoration:underline}
   .ob-flow{ background:rgba(255,255,255,.06); }
 }
 
-/* ── Checkbox "Ne plus afficher" ── */
-.home-guide-noshow{
-  margin:14px 14px 0;
-  position:relative;
-  z-index:1;
-}
-
-.noshow-label{
-  display:inline-flex;
-  align-items:center;
-  gap:8px;
-  background:rgba(255,255,255,.75);
-  backdrop-filter:blur(4px);
-  border-radius:50px;
-  padding:9px 18px;
-  cursor:pointer;
-  font-size:.8rem;
-  font-weight:600;
-  color:var(--c-home-title);
-  border:1.5px solid rgba(255,255,255,.6);
-}
-.noshow-label input[type="checkbox"]{
-  width:16px;height:16px;
-  accent-color:var(--c-primary);
-  cursor:pointer;
-  flex-shrink:0;
-}
-
-/* ── Bouton CTA principal ── */
+/* ── Zone export PDF uniquement (le bouton Commencer est dans la topbar) ── */
 .home-guide-cta{
-  margin:16px 14px 0;
+  margin:12px 14px 4px;
   position:relative;
   z-index:1;
-}
-.home-guide-cta .btn-primary{
-  width:100%;
-  max-width:380px;
+  text-align:center;
 }
 
 /* ════════════════════════════════════════════════════════════════
@@ -2987,11 +2970,11 @@ footer a:hover{text-decoration:underline}
 .level-tab-bar{
   display:flex;
   gap:0;
-  background:rgba(0,0,0,.15);
+  background:rgba(0,0,0,.25);
   position:sticky;
   top:0;
   z-index:10;
-  border-bottom:1.5px solid rgba(255,255,255,.15);
+  border-bottom:2px solid rgba(255,255,255,.2);
 }
 
 .level-tab{
@@ -3003,9 +2986,9 @@ footer a:hover{text-decoration:underline}
   padding:11px 8px;
   background:transparent;
   border:none;
-  color:rgba(255,255,255,.6);
+  color:rgba(255,255,255,.45);
   font-size:.8rem;
-  font-weight:700;
+  font-weight:600;
   cursor:pointer;
   transition:background .15s, color .15s;
   position:relative;
@@ -3015,24 +2998,24 @@ footer a:hover{text-decoration:underline}
   background:rgba(0,0,0,.12);
 }
 
-/* Onglet actif : fond blanc semi-transparent + texte blanc vif + trait en bas */
+/* Onglet actif : fond blanc fort + texte blanc vif + trait épais en bas */
 .level-tab.active{
   color:#fff;
-  background:rgba(255,255,255,.18);
+  font-weight:800;
+  background:rgba(255,255,255,.28);
 }
 /* Trait de soulignement de l'onglet actif */
 .level-tab.active::after{
   content:'';
   position:absolute;
-  bottom:0;
-  left:10%;
-  right:10%;
+  bottom:-2px;
+  left:0;
+  right:0;
   height:3px;
-  border-radius:3px 3px 0 0;
   background:#fff;
 }
 
-/* Badge numéro (1 / 2) */
+/* Badge numéro (supprimé du HTML mais conservé en CSS pour compat) */
 .level-badge{
   background:rgba(255,255,255,.25);
   color:#fff;
@@ -3044,15 +3027,16 @@ footer a:hover{text-decoration:underline}
   transition:background .15s;
 }
 .level-tab.active .level-badge{
-  background:rgba(255,255,255,.45);
+  background:rgba(255,255,255,.55);
 }
 .level-badge.l2{background:rgba(255,255,255,.2)}
-.level-tab.active .level-badge.l2{background:rgba(255,255,255,.45)}
+.level-tab.active .level-badge.l2{background:rgba(255,255,255,.55)}
 
 /* Mode sombre */
 @media(prefers-color-scheme:dark){
-  .level-tab-bar{background:rgba(0,0,0,.3);}
-  .level-tab.active{background:rgba(255,255,255,.1);}
+  .level-tab-bar{background:rgba(0,0,0,.4);}
+  .level-tab{color:rgba(255,255,255,.38);}
+  .level-tab.active{background:rgba(255,255,255,.14);color:#fff;}
 }
 
 

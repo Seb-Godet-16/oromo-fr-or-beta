@@ -176,13 +176,10 @@
        ════════════════════════════════════════════════════════════════ -->
   <div id="home" class="screen">
 
-    <!-- Barre fixe en haut : checkbox "Ne plus afficher" (gauche) + bouton Fermer (droite) -->
+    <!-- Titre fixe en haut -->
     <div class="home-topbar">
-      <label class="topbar-noshow-label" id="homeTopbarNoshowLabel">
-        <input type="checkbox" id="homeTopbarNoshowChk">
-        <span id="homeTopbarNoshowText"></span>
-      </label>
-      <button class="home-close-btn" id="homeCloseBtn" aria-label="Fermer"></button>
+      <span class="home-topbar-title" id="homeTopbarTitle"></span>
+      <button class="btn-start-topbar" id="homeStartBtn" onclick="showScreen('sections-level1')"></button>
     </div>
 
     <!-- En-tête coloré selon le mode -->
@@ -194,55 +191,27 @@
       <!-- Badges fonctionnalités -->
       <div class="home-guide-badges" id="homeGuideBadges"></div>
 
-      <!--
-        Cercle de progression global — rendu SVG par renderHome() dans app.js.
-        Caché (display:none) quand progression = 0 (première visite).
-        Visible dès qu'au moins 1 module est validé.
-        L'id homeProgressCircle est requis par renderHome().
-      -->
       <div class="home-progress-circle-wrap" id="homeProgressCircleWrap" style="display:none">
         <svg class="home-progress-circle" viewBox="0 0 120 120"
              width="120" height="120"
              role="img" aria-labelledby="hpcTitle" aria-describedby="hpcDesc">
           <title id="hpcTitle"></title>
           <desc id="hpcDesc"></desc>
-          <!-- Piste de fond -->
           <circle class="hpc-track" cx="60" cy="60" r="50"/>
-          <!-- Arc de progression — stroke-dashoffset animé par JS -->
           <circle class="hpc-fill"  cx="60" cy="60" r="50" id="hpcArc"/>
-          <!-- Texte central : pourcentage -->
           <text class="hpc-pct"  x="60" y="56" id="hpcPct">0%</text>
-          <!-- Texte central : étoiles -->
           <text class="hpc-sub"  x="60" y="74" id="hpcSub">⭐ 0</text>
         </svg>
         </div>
     </div><!-- /.home-guide-header -->
     <div class="home-guide-body" id="homeGuideBody"></div>
 
-    <!-- Checkbox "Ne plus afficher" -->
-    <div class="home-guide-noshow">
-      <label class="noshow-label" id="homeNoshowLabel">
-        <input type="checkbox" id="homeNoshowChk">
-        <span id="homeNoshowText"></span>
-      </label>
-    </div>
-
-    <!-- Bouton principal "Commencer" -->
+    <!--
+      Bouton export PDF du guide — déclenche _exportGuide() dans app.js.
+    -->
     <div class="home-guide-cta">
-      <button class="btn-primary" id="homeStartBtn"></button>
-      <!--
-        Bouton export PDF du guide — déclenche _exportGuide() dans app.js.
-        Placé sous le bouton Commencer pour ne pas perturber le parcours principal.
-        Le libellé est mis à jour dynamiquement par _buildHomeGuide() via id="homeExportBtn".
-      -->
       <button class="btn-export-pdf" id="homeExportBtn" onclick="_exportGuide()"></button>
     </div>
-
-    <!--
-      Footer de l'écran home — rempli dynamiquement par _setFooters() dans app.js.
-      Contient : copyright bilingue, email, LinkedIn, Remerciements, Aide.
-    -->
-    <footer class="screen-footer" id="homeFooter"></footer>
 
   </div><!-- /#home -->
 
@@ -264,21 +233,15 @@
     </div>
     <div class="level-tab-bar">
       <button class="level-tab active" id="lvlTab1" onclick="showScreen('sections-level1')">
-        <span id="level1Badge" class="level-badge"></span>
         <span id="level1Label"></span>
       </button>
       <button class="level-tab" id="lvlTab2" onclick="showScreen('sections-level2')">
-        <span id="level2Badge" class="level-badge l2"></span>
         <span id="level2Label"></span>
       </button>
     </div>
     <div class="sections-body">
       <div class="themes-grid" id="grid1"></div>
     </div>
-    <!--
-      Footer de l'écran sections — rempli dynamiquement par _setFooters() dans app.js.
-    -->
-    <footer class="screen-footer" id="sectionsFooter"></footer>
   </div><!-- /#sections-level1 -->
 
   <!-- ════════════════════════════════════════════════════════════════
@@ -298,11 +261,9 @@
     </div>
     <div class="level-tab-bar">
       <button class="level-tab" id="lvlTab1b" onclick="showScreen('sections-level1','back')">
-        <span class="level-badge" id="level1BadgeB"></span>
         <span id="level1LabelB"></span>
       </button>
       <button class="level-tab active" id="lvlTab2b" onclick="showScreen('sections-level2')">
-        <span class="level-badge l2" id="level2BadgeB"></span>
         <span id="level2LabelB"></span>
       </button>
     </div>
@@ -435,21 +396,21 @@
        Cachée sur l'écran lanceur ; visible dès que l'app est initialisée.
        ════════════════════════════════════════════════════════════════ -->
   <nav id="bottom-nav" class="bottom-nav" aria-label="Navigation principale">
-    <button class="nav-btn" id="navBtnModules" onclick="navGoModules()" aria-label="Modules">
-      <span class="nav-icon">📚</span>
-      <span class="nav-label" id="navLabelModules">Modules</span>
+    <button class="nav-btn" id="navBtnLang" onclick="showScreen('app-launcher','back')" aria-label="Changer de langue">
+      <span class="nav-icon" id="navLangFlag">🌐</span>
+      <span class="nav-label" id="navLabelLang">Langue</span>
     </button>
     <button class="nav-btn" id="navBtnGuide" onclick="showOnboardingGuide()" aria-label="Guide">
       <span class="nav-icon">❓</span>
       <span class="nav-label" id="navLabelGuide">Guide</span>
     </button>
-    <button class="nav-btn" id="navBtnLang" onclick="showScreen('app-launcher','back')" aria-label="Changer de langue">
-      <span class="nav-icon" id="navLangFlag">🌐</span>
-      <span class="nav-label" id="navLabelLang">Langue</span>
+    <button class="nav-btn" id="navBtnModules" onclick="navGoModules()" aria-label="Modules">
+      <span class="nav-icon">📚</span>
+      <span class="nav-label" id="navLabelModules">Modules</span>
     </button>
-    <button class="nav-btn" id="navBtnCredits" onclick="showCredits()" aria-label="Remerciements">
+    <button class="nav-btn" id="navBtnCredits" onclick="showCredits()" aria-label="Infos">
       <span class="nav-icon">💌</span>
-      <span class="nav-label" id="navLabelCredits">Merci</span>
+      <span class="nav-label" id="navLabelCredits">Infos</span>
     </button>
   </nav>
 
