@@ -3282,7 +3282,7 @@ function _buildHomeGuide() {
   /* ── Bouton Commencer dans la topbar ── */
   let btn = document.getElementById('homeStartBtn');
   if (btn) {
-    btn.textContent = L('▶ Jalqabi', '▶ Commencer');
+    btn.textContent = L('▶ Commencer', '▶ Jalqabi');
     btn.onclick = function() { showScreen('sections-level1'); };
   }
 
