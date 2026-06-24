@@ -1210,18 +1210,6 @@ html.theme-french .btn-reset-theme:hover{
 }
 .retry-btn:active{background:var(--c-primary-dark)}
 
-/* Variante secondaire du bouton Réessayer (fond neutre, dark-mode safe) */
-.retry-btn--secondary{
-  background:var(--c-border, #888);
-  color:#fff;
-}
-.retry-btn--secondary:active{background:var(--c-border-dark, #666)}
-
-/* ── Classes sémantiques résultats quiz (remplacent les styles inline dans app.js) ── */
-.quiz-result-actions{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:14px}
-.quiz-result-title{color:var(--c-primary)}
-.quiz-result-sub{font-size:.85rem;color:var(--c-text-soft,#666);margin:8px 0}
-
 /*
   Variante du quiz pour les dialogues (options en colonne pleine
   largeur, texte aligné à gauche pour les phrases longues).
@@ -2273,7 +2261,7 @@ footer a:hover{text-decoration:underline}
   background-blend-mode:overlay;
   align-items:stretch;
   justify-content:space-between;
-  padding:0 0 calc(80px + env(safe-area-inset-bottom, 0px));
+  padding:0 0 80px;
   text-align:center;
   position:relative;
   overflow-y:auto;
@@ -3104,8 +3092,7 @@ footer a:hover{text-decoration:underline}
 .lesson-body{
   flex:1;
   overflow-y:auto;
-  /* padding-bottom réservé à la bottom-nav (52px) + safe-area iOS */
-  padding:14px 14px calc(80px + env(safe-area-inset-bottom, 0px));
+  padding:14px;
 }
 /* ════════════════════════════════════════════════════════════════
    §20e — GRILLE DE THÈMES DANS LES ÉCRANS LEVEL  (sans <details>)
@@ -3375,3 +3362,29 @@ footer a:hover{text-decoration:underline}
     opacity: 1;
   }
 }
+
+/* ══════════════════════════════════════════════════════════════════
+   ANTISPAM — Adresse e-mail affichée à l'envers dans le HTML,
+   remise visuellement à l'endroit par CSS (direction RTL).
+   Les scanners lisent le code source (à l'envers = illisible) ;
+   l'utilisateur voit l'adresse à l'endroit sans aucun effort.
+   ══════════════════════════════════════════════════════════════════ */
+.antispam-email{
+  direction:rtl;
+  unicode-bidi:bidi-override;
+  display:inline-block;
+}
+
+/* Bouton email antispam : visuellement neutre, s'intègre dans le texte du footer */
+.antispam-btn{
+  background:none;
+  border:none;
+  padding:0;
+  margin:0;
+  font:inherit;
+  color:inherit;
+  cursor:pointer;
+  text-decoration:underline;
+  text-underline-offset:2px;
+}
+.antispam-btn:hover{opacity:.75}

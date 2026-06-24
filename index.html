@@ -152,7 +152,7 @@
     <!-- Pied de page propre à cet écran (classe spécifique pour le style) -->
     <footer class="launcher-footer">
       © Juin 2026 – Développé par Sébastien Godet · Assisté par IA Claude Sonnet 4.6 et Gemini 3.5 Flash<br>
-      sebastien.godet16 [at] gmail [dot] com ·
+      <button id="btn-copy-email" class="antispam-btn" onclick="openAndCopyEmail()"><span class="antispam-email">moc.liamg@61tedog.neitsabes</span></button> ·
       <a href="https://www.linkedin.com/in/s%C3%A9bastien-godet-142ba6145" target="_blank">LinkedIn</a> ·
       <!--
         showCredits() est défini dans app.js ; il affiche la modale
@@ -402,7 +402,7 @@
 
       <!-- Fermeture de la modale : remet display à "none" -->
       <button id="credits-modal-close"
-              onclick="closeCreditsModal()">
+              onclick="document.getElementById('credits-modal').style.display='none'">
       </button>
 
     </div><!-- /.modal-content -->

@@ -334,7 +334,7 @@ function _setFooters() {
 
   let html =
     lblCopy + '<br>' +
-    'sebastien.godet16 [at] gmail [dot] com · ' +
+    '<button id="btn-copy-email" class="antispam-btn" onclick="openAndCopyEmail()"><span class="antispam-email">moc.liamg@61tedog.neitsabes</span></button> · ' +
     '<a href="https://www.linkedin.com/in/s%C3%A9bastien-godet-142ba6145" target="_blank">LinkedIn</a> · ' +
     '<a href="#" onclick="showCredits()">' + lblCredits + '</a> · ' +
     '<a href="#" onclick="showOnboardingGuide()">' + lblHelp + '</a>';
@@ -752,11 +752,29 @@ function closeConfirmModal() {
 }
 
 /**
- * Ferme la modale des remerciements.
+ * Antispam e-mail — double verrouillage :
+ *   1. Dans le HTML, l'adresse est écrite à l'envers dans un <span class="antispam-email">.
+ *      Le CSS (direction:rtl) la remet à l'endroit visuellement sans toucher au code source.
+ *   2. Au clic, l'adresse est reconstituée en mémoire vive (jamais dans le DOM à l'endroit)
+ *      pour ouvrir le client mail ET copier l'adresse dans le presse-papier.
  */
-function closeCreditsModal() {
-  const modal = document.getElementById('credits-modal');
-  if (modal) modal.style.display = 'none';
+function openAndCopyEmail() {
+  const user   = 'sebastien.godet16';
+  const domain = 'gmail.com';
+  const full   = user + '@' + domain;
+
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(full).then(() => {
+      const btn = document.getElementById('btn-copy-email');
+      if (btn) {
+        const orig = btn.innerHTML;
+        btn.innerText = L('Waraabameera! ✅', 'Copié ! ✅');
+        setTimeout(() => { btn.innerHTML = orig; }, 2000);
+      }
+    }).catch(() => {});
+  }
+
+  window.location.href = 'mailto:' + full;
 }
 
 /**
@@ -1804,11 +1822,11 @@ function renderQuiz10() {
 
     document.getElementById('tabContent').innerHTML = '<div class="result-box">'
       + '<div style="font-size:2rem; margin-bottom:5px;">' + (earnedStars === 3 ? '🌟🌟🌟' : endStars) + '</div>'
-      + '<h3 class="quiz-result-title">' + r.title + '</h3>'
+      + '<h3>' + r.title + '</h3>'
       + '<div class="score-num">' + q10Score + '/' + total + '</div>'
-      + '<div class="quiz-result-sub" style="color:' + (isSuccess ? 'var(--c-success)' : 'var(--c-error)') + '">' + r.sub + '</div>'
-      + '<div class="quiz-result-actions">'
-      + '<button class="retry-btn retry-btn--secondary" onclick="q10Step=0;q10Score=0;q10Answered=false;_q10Questions=null;renderQuiz10()">' + r.retry + '</button>'
+      + '<div style="font-size:1rem;margin:6px 0;color:' + (isSuccess ? 'var(--c-success)' : 'var(--c-error)') + '">' + r.sub + '</div>'
+      + '<div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:14px">'
+      + '<button class="retry-btn" style="background:#888" onclick="q10Step=0;q10Score=0;q10Answered=false;_q10Questions=null;renderQuiz10()">' + r.retry + '</button>'
       + (isSuccess ? '<button class="retry-btn" onclick="renderSections(_currentThemeLevel);lessonGoBack()">' + r.finish + '</button>' : '')
       + '</div></div>';
     renderSections(_currentThemeLevel || 1);
@@ -2588,15 +2606,15 @@ function _renderRepeatResult() {
   document.getElementById('repeat-controls').innerHTML =
     '<div class="result-box">'
     + '<div style="font-size:2rem;margin-bottom:8px">' + emoji + '</div>'
-    + '<h3 class="quiz-result-title">'
+    + '<h3 style="color:var(--c-primary)">'
     + L('Shaakallii xumurameera!', 'Exercice terminé !')
     + '</h3>'
     + '<div class="score-num">' + _repeatScore + ' / ' + _repeatTotal + '</div>'
-    + '<div class="quiz-result-sub">'
+    + '<div style="font-size:.85rem;color:#666;margin:8px 0">'
     + pct + '% ' + L('si\'aa sirriin dubbachiiste', 'de réussite')
     + '</div>'
-    + '<div class="quiz-result-actions">'
-    + '<button class="retry-btn retry-btn--secondary" onclick="renderRepeat()">'
+    + '<div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:14px">'
+    + '<button class="retry-btn" style="background:#888" onclick="renderRepeat()">'
     + L('🔄 Irra deebi\'i', '🔄 Recommencer')
     + '</button>'
     + '<button class="retry-btn" onclick="switchTab(\'flash\')">'
@@ -2640,11 +2658,11 @@ function renderDialogQuiz() {
 
     document.getElementById('tabContent').innerHTML = '<div class="result-box">'
       + '<div style="font-size:2rem; margin-bottom:5px;">' + (earnedStars === 3 ? '🎉🎉🎉' : endStars) + '</div>'
-      + '<h3 class="quiz-result-title">' + r.title + '</h3>'
+      + '<h3>' + r.title + '</h3>'
       + '<div class="score-num">' + dqScore + '/' + total + '</div>'
-      + '<div class="quiz-result-sub" style="color:' + (isSuccess ? 'var(--c-success)' : 'var(--c-error)') + '">' + r.sub + '</div>'
-      + '<div class="quiz-result-actions">'
-      + '<button class="retry-btn retry-btn--secondary" onclick="dqStep=0;dqScore=0;dqAnswered=false;renderDialogQuiz()">' + r.retry + '</button>'
+      + '<div style="font-size:.9rem;margin-top:6px;color:' + (isSuccess ? 'var(--c-success)' : 'var(--c-error)') + '">' + r.sub + '</div>'
+      + '<div style="display:flex;gap:8px;justify-content:center;margin-top:14px;flex-wrap:wrap">'
+      + '<button class="retry-btn" style="background:#888" onclick="dqStep=0;dqScore=0;dqAnswered=false;renderDialogQuiz()">' + r.retry + '</button>'
       + (isSuccess ? '<button class="retry-btn" onclick="renderSections(_currentThemeLevel);lessonGoBack()">' + r.finish + '</button>' : '')
       + '</div></div>';
     renderSections(_currentThemeLevel || 1);
@@ -3235,7 +3253,7 @@ function _buildHomeGuide() {
         /* Oromo — version concise */
         ? '<p>\ud83d\ude4b <strong>Sébastien Godet</strong> — hojii jijjiirraa keessa jira (Gestionna Pirojektii Agile & Data).</p>'
           + '<p>Appiin Taphad\'Meuh kun hidha Oromoo fi Faransaayii jabeessuuf — <strong>bilisaa, galmee malee, iddoo kamittiyyuu</strong>.</p>'
-          + '<p>\ud83d\udce7 <a href="mailto:sebastien.godet16@gmail.com">sebastien.godet16 [at] gmail [dot] com</a> · '
+          + '<p>\ud83d\udce7 <button class="antispam-btn" onclick="openAndCopyEmail()"><span class="antispam-email">moc.liamg@61tedog.neitsabes</span></button> · '
           + '<a href="https://www.linkedin.com/in/s%C3%A9bastien-godet-142ba6145" target="_blank" rel="noopener">LinkedIn</a></p>'
         /* Français — version complète */
         : '<div class="ob-bio-card">'
@@ -3252,7 +3270,7 @@ function _buildHomeGuide() {
           + '<div class="ob-bio-contact-title">\ud83d\udcac Une suggestion, une coquille, une idée ?</div>'
           + '<p>Cette appli est faite pour toi — chaque retour compte vraiment !</p>'
           + '<div class="ob-bio-links">'
-          + '<a class="ob-bio-btn" href="mailto:sebastien.godet16@gmail.com">\u2709\ufe0f Envoyer un e-mail (sebastien.godet16 [at] gmail [dot] com)</a>'
+          + '<button class="ob-bio-btn antispam-btn" onclick="openAndCopyEmail()">\u2709\ufe0f <span class="antispam-email">moc.liamg@61tedog.neitsabes</span></button>'
           + '<a class="ob-bio-btn" href="https://www.linkedin.com/in/s%C3%A9bastien-godet-142ba6145" target="_blank" rel="noopener">\ud83d\udcbc Message LinkedIn</a>'
           + '</div>'
           + '</div>'
@@ -3665,7 +3683,7 @@ function _printDocHeader(titleLine1, titleLine2, meta1, meta2, primaryColor, acc
 function _printDocFooter() {
   return '<div class="print-footer">'
     + 'Taphad\'Meuh \u2014 Application bilingue Fran\u00e7ais \u2194 Afaan Oromoo \xb7 D\u00e9velopp\u00e9 par S\u00e9bastien Godet \xb7 '
-    + 'sebastien.godet16 [at] gmail [dot] com \xb7 linkedin.com/in/s\u00e9bastien-godet-142ba6145'
+    + '<span class="antispam-email">moc.liamg@61tedog.neitsabes</span> \xb7 linkedin.com/in/s\u00e9bastien-godet-142ba6145'
     + '</div>';
 }
 
