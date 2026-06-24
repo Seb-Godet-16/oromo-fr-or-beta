@@ -2822,8 +2822,8 @@ function _buildHomeGuide() {
 
   let subEl = document.getElementById('homeGuideSubtitle');
   if (subEl) subEl.textContent = isFr
-    ? "App bilisaa — calqalbaa irraa jalqabuuf ta'e · Application gratuite pour débutants"
-    : 'App gratuite — idéale pour débuter depuis zéro · Bilisaa, duruma irraa';
+    ? "App bilisaa — calqalbaa irraa jalqabuuf ta'e"
+    : 'App gratuite — idéale pour débuter depuis zéro';
 
   /* ── Badges de fonctionnalités ── */
   let badgesEl = document.getElementById('homeGuideBadges');
@@ -2912,7 +2912,7 @@ function _buildHomeGuide() {
     },
     {
       icon : '\ud83c\udccf',
-      title: isFr ? 'Kaardota (Cartes Flash)' : 'Les Cartes Flash',
+      title: isFr ? 'Kaardota' : 'Les Cartes Flash',
       body : isFr
         ? '<p>Kaardni tokko jecha Faransaayii agarsiisa. <strong>Cuqaasi</strong> sagalee dhageeffachuu fi hiika Oromoo argachuuf.</p>'
           + '<ul>'
@@ -2944,7 +2944,7 @@ function _buildHomeGuide() {
     },
     {
       icon : '\ud83d\udcd6',
-      title: isFr ? 'Jechootaa (Vocabulaire)' : 'L\'onglet Vocabulaire',
+      title: isFr ? 'Jechootaa' : 'L\'onglet Vocabulaire',
       body : isFr
         /* Oromo */
         ? '<p>Cimdii <strong>Jechootaa</strong> — jechota moojuulaa tarree keessatti agarsiisa, yeroo hundaa ilaaluuf.</p>'
@@ -2990,7 +2990,7 @@ function _buildHomeGuide() {
     },
     {
       icon : '\ud83d\udd0a',
-      title: isFr ? 'Sagalee qindeessuu (Synthèse Vocale)' : 'Configurer l\'audio',
+      title: isFr ? 'Sagalee qindeessuu' : 'Configurer l\'audio',
       body : isFr
         /* Oromo — version concise */
         ? '<p>Sagalee sirriitti dhageeffachuun barachuu keessatti barbaachisaa dha. Appiin kun <strong>sagalee browser yookiin bilbila kee</strong> (Web Speech API) fayyadama.</p>'
