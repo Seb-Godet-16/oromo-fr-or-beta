@@ -2963,7 +2963,7 @@ footer a:hover{text-decoration:underline}
    §27 — ONGLETS NIVEAU 1 / 2  (.level-tab-bar / .level-tab)
    ════════════════════════════════════════════════════════════════
    Barre collante sous le header des écrans #sections-level1/2.
-   Le tab actif se distingue nettement : fond plein + bordure
+   Le tab actif se distingue nettement : fond FONCÉ + bordure
    inférieure colorée + texte blanc, les autres sont discrets.
    ════════════════════════════════════════════════════════════════ */
 
@@ -2998,11 +2998,11 @@ footer a:hover{text-decoration:underline}
   background:rgba(0,0,0,.12);
 }
 
-/* Onglet actif : fond blanc fort + texte blanc vif + trait épais en bas */
+/* Onglet actif : fond noir translucide pour foncer + texte blanc vif + trait épais en bas */
 .level-tab.active{
   color:#fff;
   font-weight:800;
-  background:rgba(255,255,255,.28);
+  background:rgba(0, 0, 0, 0.35); /* Foncé en mode clair */
 }
 /* Trait de soulignement de l'onglet actif */
 .level-tab.active::after{
@@ -3036,7 +3036,10 @@ footer a:hover{text-decoration:underline}
 @media(prefers-color-scheme:dark){
   .level-tab-bar{background:rgba(0,0,0,.4);}
   .level-tab{color:rgba(255,255,255,.38);}
-  .level-tab.active{background:rgba(255,255,255,.14);color:#fff;}
+  .level-tab.active{
+    background:rgba(0, 0, 0, 0.55); /* Encore plus foncé en mode sombre */
+    color:#fff;
+  }
 }
 
 
