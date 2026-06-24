@@ -59,6 +59,7 @@ var fcIdx        = 0;       // Cartes Flash : index de la carte affichée
 
 var dqStep       = 0;       // Quiz Dialogue : numéro de la question
 var dqScore      = 0;       // Quiz Dialogue : score (bonnes réponses)
+var dqAnswered   = false;   // Quiz Dialogue : évite le double-clic
 
 var sitIdx       = 0;       // Dialogue : index de la situation affichée
 
@@ -327,7 +328,7 @@ function _setFooters() {
   var lblHelp    = L('Aide',            'Gargaarsa');
   var lblCopy    = L(
     '© Juin 2026 – Développé par Sébastien Godet · Assisté par IA Claude Sonnet 4.6 et Gemini 3.5 Flash',
-    '© Adoolessa 2026 – Kan Sébastien Godet tolche · AI Claude Sonnet 4.6 fi Gemini 3.5 Flash gargaaramee'
+    '© Waxabajjii 2026 – Kan Sébastien Godet tolche · AI Claude Sonnet 4.6 fi Gemini 3.5 Flash gargaaramee'
   );
 
   var html =
@@ -549,6 +550,79 @@ function _vibrateFeedback(type) {
 
 
 /* ============================================================
+   3b2. CONFETTI — Animation de félicitations ⭐⭐⭐
+   ============================================================
+   Déclenchée uniquement quand un module atteint 100% (3 étoiles)
+   pour la première fois ou lorsqu'il passe de 1/2 à 3 étoiles.
+
+   Technique : 22 div .conf-p sont créés dynamiquement, reçoivent
+   des propriétés CSS personnalisées aléatoires (position X, couleur,
+   taille, délai), puis l'overlay est supprimé du DOM après 2,4 s
+   (durée maximale de l'animation + marge) pour ne laisser aucun
+   résidu visuel.
+
+   Les couleurs s'adaptent automatiquement au thème actif :
+     • theme-french → palette tricolore FR (bleu, blanc, rouge)
+     • theme-oromo  → palette tricolore ET (vert, or, rouge)
+   ============================================================ */
+
+/**
+ * Lance l'animation confetti sur l'écran entier.
+ * Crée un overlay fixe, y injecte les particules, puis nettoie.
+ * @param {boolean} [isThreeStars=true] - Intensité (réservé pour évolution)
+ */
+function _launchConfetti(isThreeStars) {
+  /* Vérifier que l'API CSS custom properties est disponible
+     (guard pour très vieux navigateurs) */
+  if (typeof document.documentElement.style.setProperty !== 'function') return;
+
+  /* Palette selon le thème actif */
+  var isFr   = document.documentElement.classList.contains('theme-french');
+  var colors = isFr
+    ? ['#002395', '#ffffff', '#ED2939', '#FFD700', '#4A6FE3', '#FF6B7A']  /* FR */
+    : ['#009A44', '#FED141', '#EF2B2D', '#ffffff', '#52C87A', '#FFE566']; /* OR */
+
+  /* Créer l'overlay */
+  var overlay = document.createElement('div');
+  overlay.className = 'confetti-overlay';
+  document.body.appendChild(overlay);
+
+  var COUNT = 22;
+  for (var i = 0; i < COUNT; i++) {
+    var p = document.createElement('div');
+    p.className = 'conf-p';
+
+    /* Position X : répartie en "zones" pour éviter les regroupements */
+    var zone  = (i / COUNT) * 100;
+    var jitter = (Math.random() - 0.5) * 14;
+    var cx   = Math.max(2, Math.min(98, zone + jitter));
+
+    /* Couleur cyclique dans la palette */
+    var color = colors[i % colors.length];
+
+    /* Scale aléatoire entre 0.7 et 1.5 */
+    var scale = (0.7 + Math.random() * 0.8).toFixed(2);
+
+    /* Délai échelonné : les 22 particules partent sur ~0.6 s */
+    var delay = (i * 0.028).toFixed(3) + 's';
+
+    p.style.setProperty('--cx',  cx + '%');
+    p.style.setProperty('--cr',  color);
+    p.style.setProperty('--cs',  scale);
+    p.style.setProperty('--cd',  delay);
+
+    overlay.appendChild(p);
+  }
+
+  /* Nettoyer l'overlay après la fin de la dernière animation
+     (délai max ~0.6s + durée animation ~1.4s + marge) */
+  setTimeout(function() {
+    if (overlay && overlay.parentNode) overlay.parentNode.removeChild(overlay);
+  }, 2400);
+}
+
+
+/* ============================================================
    3c. INTERRUPTION AUDIO — visibilitychange / focus
    ============================================================
    Problème : speak() et _doSpeak() enchaînent les parties d'un
@@ -617,6 +691,39 @@ function saveDone() {
 }
 
 /**
+ * Gère la double confirmation bilingue, efface la progression
+ * ET réinitialise le guide de démarrage (onboarding) du mode actif.
+ */
+function confirmResetProgress() {
+    var isOromoInterface = (STORAGE_KEY === 'pe_om_fr_done_v1');
+
+    var msg1 = isOromoInterface 
+        ? "⚠️ Giddu-gala milkaa'ina keessanii guutummaatti haquu ni barbaadduraa? Urjiileen keessan ni haqamu."
+        : "⚠️ Êtes-vous sûr de vouloir réinitialiser TOUTE votre progression dans ce mode ? Vos étoiles seront définitivement effacées.";
+        
+    var msg2 = isOromoInterface
+        ? "Dhuguma haquu ni barbaadduraa? Action kana duubatti deebisuun hin danda'amu."
+        : "Confirmation de sécurité : Voulez-vous vraiment TOUT effacer ? Cette action est irréversible.";
+
+    if (window.confirm(msg1)) {
+        if (window.confirm(msg2)) {
+            // 1. On supprime proprement la progression du mode actif
+            localStorage.removeItem(STORAGE_KEY); 
+            
+            // 2. On supprime l'onboarding du mode actif pour réafficher le guide
+            if (isOromoInterface) {
+                localStorage.removeItem(_OB_KEY_FR); // Mode "Apprendre le Français"
+            } else {
+                localStorage.removeItem(_OB_KEY_OR); // Mode "Apprendre l'Oromo"
+            }
+            
+            // Rechargement immédiat de la page
+            window.location.reload();
+        }
+    }
+}
+
+/**
  * Calcule le nombre d'étoiles en fonction d'un pourcentage de réussite.
  * @param {number} pct - Pourcentage (0–100)
  * @returns {0|1|2|3}
@@ -630,24 +737,14 @@ function _calcStars(pct) {
 
 /**
  * Enregistre (ou améliore) la progression d'un thème.
- * REGLE DE NON-RETROGRADATION (formalisee) :
- *   Le nombre d'etoiles d'un theme ne peut qu'augmenter.
- *   Un nouveau score inferieur au meilleur score existant
- *   est ignore silencieusement — jamais ecrase.
- *   Cela garantit que l'utilisateur conserve toujours son
- *   meilleur resultat, meme s'il rejoue et obtient moins bien.
- * Ne fait rien si le score est insuffisant pour obtenir au moins 1 etoile.
- * @param {string} id  - Identifiant du theme
- * @param {number} pct - Pourcentage de reussite (0-100)
  */
 function markDone(id, pct) {
   var newStars = _calcStars(pct);
-  if (newStars === 0) return;   // En dessous de 50% : on ne memorise pas
+  if (newStars === 0) return;
 
   var existing = done.find(function(d) { return d.id === id; });
   if (existing) {
-    /* GARDE ANTI-RETROGRADATION : on n'ecrase que si le nouveau score est strictement superieur */
-    if (newStars <= existing.stars) return;  // meilleur score deja en memoire -> on ne touche a rien
+    if (newStars <= existing.stars) return; 
     existing.stars = newStars;
   } else {
     done.push({ id: id, stars: newStars });
@@ -660,12 +757,6 @@ function markDone(id, pct) {
  * @param {string} id - Identifiant du thème à réinitialiser
  */
 function resetTheme(id) {
-  /*
-    UX — Confirmation avant effacement de la progression.
-    Un utilisateur peut toucher "Recommencer" par erreur sur mobile.
-    On utilise window.confirm() (natif, accessible, sans dépendance).
-    Le message est bilingue selon le mode actif.
-  */
   var msg = L(
     'Dhugumaan tartiiba kutaa kana haquuf barbaaddaa ? ⭐ Urjiilee argatte ni dhaban.',
     'Voulez-vous vraiment réinitialiser ce module ? Vos ⭐ étoiles seront perdues.'
@@ -676,35 +767,6 @@ function resetTheme(id) {
   saveDone();
   renderSections(_currentThemeLevel || 1);
   renderHome();
-}
-
-/**
- * Réinitialisation complète de la progression — double confirmation native.
- *
- * Deux confirm() successifs pour éviter les suppressions accidentelles :
- *   1er : avertissement général bilingue
- *   2e  : confirmation irréversible
- * Si les deux sont validés → localStorage.clear() + rechargement de page.
- *
- * Bilingue via L() : premier argument = mode learn_french (interface oromo,
- * apprenant oromophone), second argument = mode learn_oromo (interface française,
- * apprenant francophone).
- */
-function confirmResetProgress() {
-  var msg1 = L(
-    'Dhugumaan tartiiba GUUTUU haquuf barbaaddaa?\nUrjiilee kee hundi ni dhaban.',
-    '⚠️ Êtes-vous sûr de vouloir réinitialiser TOUTE votre progression ?\nVos étoiles seront définitivement effacées.'
-  );
-  if (!window.confirm(msg1)) return;
-
-  var msg2 = L(
-    '⚠️ Dhugaan mirkaneessi — kun deebi\'uu hin danda\'u.\nTartiiba GUUTUU haquuf "OK" tuqi.',
-    '⚠️ Dernière confirmation — cette action est irréversible.\nCliquez OK pour effacer TOUTE la progression.'
-  );
-  if (!window.confirm(msg2)) return;
-
-  localStorage.clear();
-  window.location.reload();
 }
 
 /**
@@ -849,9 +911,6 @@ function _clearQuizSession() {
 /* Ordre des écrans pour déterminer la direction */
 var _SCREEN_ORDER = ['app-launcher', 'home', 'sections-level1', 'sections-level2', 'lesson'];
 
-/* Flag anti-doublon : empêche de déclencher showScreen pendant une animation */
-var _screenTransitionLock = false;
-
 function showScreen(id, dir) {
   /* Trouver l'écran actuellement actif */
   var currentScreen = null;
@@ -868,16 +927,6 @@ function showScreen(id, dir) {
 
   /* Remonter en haut dès maintenant */
   window.scrollTo(0, 0);
-
-  /* ── Configurer le bouton retour de home → launcher ── */
-  if (id === 'home') {
-    var backBtn = document.getElementById('homeBackBtn');
-    if (backBtn) {
-      backBtn.onclick = function() {
-        showScreen('app-launcher', 'back');
-      };
-    }
-  }
 
   /* ── Déclencher le rendu des écrans dynamiques avant l'animation ── */
   if (id === 'home')              renderHome();
@@ -1096,13 +1145,52 @@ function renderHome() {
      (le contenu est injecté une fois par _buildHomeGuide() dans initApp).
      On garde la fonction pour compatibilité avec les appels existants. */
   if (!ALL_THEMES.length) return;
-  /* Mise à jour du bouton Commencer selon si déjà commencé */
+
   var p   = _getProgress();
+
+  /* ── Bouton Commencer / Continuer ── */
   var btn = document.getElementById('homeStartBtn');
   if (btn) {
     btn.textContent = p.n > 0
       ? L('▶ Continuer', '▶ Itti fufi')
       : L('▶ Commencer', '▶ Jalqabi');
+  }
+
+  /* ── Cercle SVG de progression ── */
+  var wrap = document.getElementById('homeProgressCircleWrap');
+  if (wrap) {
+    if (p.n === 0) {
+      /* Première visite : on cache le cercle */
+      wrap.style.display = 'none';
+    } else {
+      wrap.style.display = 'flex';
+
+      /* Circumférence pour r=50 : 2π×50 = 314.159… */
+      var CIRC    = 314.16;
+      var offset  = CIRC - (CIRC * p.pct / 100);
+
+      var arc     = document.getElementById('hpcArc');
+      var pctTxt  = document.getElementById('hpcPct');
+      var subTxt  = document.getElementById('hpcSub');
+      var titleEl = document.getElementById('hpcTitle');
+      var descEl  = document.getElementById('hpcDesc');
+
+      /* Léger délai pour déclencher la transition CSS après display:flex */
+      setTimeout(function() {
+        if (arc) arc.style.strokeDashoffset = offset;
+      }, 50);
+
+      if (pctTxt)  pctTxt.textContent  = p.pct + '%';
+      if (subTxt)  subTxt.textContent  = '⭐ ' + p.starsEarned + ' / ' + p.starsMax;
+
+      /* Textes accessibles (aria) */
+      var a11yLabel = L(
+        'Ida\'ata Guutuu: modules ' + p.n + ' / ' + p.total + ' — ' + p.pct + '% — urjii ' + p.starsEarned + ' / ' + p.starsMax,
+        'Progression globale : ' + p.n + ' / ' + p.total + ' modules — ' + p.pct + '% — ' + p.starsEarned + ' étoiles / ' + p.starsMax
+      );
+      if (titleEl) titleEl.textContent = a11yLabel;
+      if (descEl)  descEl.textContent  = a11yLabel;
+    }
   }
 }
 
@@ -1114,9 +1202,6 @@ function renderHome() {
    de thèmes et la progression globale.
    ============================================================ */
 
-/**
- * Reconstruit la grille des thèmes et met à jour la progression globale.
- */
 /**
  * Rend la grille de modules.
  * @param {1|2} [activeLevel=1] - Niveau affiché (sections-level1 ou sections-level2)
@@ -1617,7 +1702,15 @@ function renderQuiz10() {
     _clearQuizSession();   /* quiz terminé : on nettoie la session */
     var pct         = Math.round(q10Score / total * 100);
     var earnedStars = _calcStars(pct);
+
+    /* ── Confetti : uniquement si on atteint 3 étoiles pour la première fois
+       (ou si le module était à 1 ou 2 étoiles et passe maintenant à 3).
+       On lit le score AVANT markDone() pour comparer. ── */
+    var _prevStars  = getThemeStars(CT.id);
     if (earnedStars > 0) markDone(CT.id, pct);
+    if (earnedStars === 3 && _prevStars < 3) {
+      setTimeout(_launchConfetti, 300); /* léger délai pour laisser le DOM se mettre à jour */
+    }
 
     var r         = _quizResultStrings(pct, 'q10');
     var isSuccess = earnedStars > 0;
@@ -2449,7 +2542,11 @@ function renderDialogQuiz() {
     _clearQuizSession();   /* quiz terminé : on nettoie la session */
     var pct         = Math.round(dqScore / total * 100);
     var earnedStars = _calcStars(pct);
+    var _prevStarsD = getThemeStars(CT.id);
     if (earnedStars > 0) markDone(CT.id, pct);
+    if (earnedStars === 3 && _prevStarsD < 3) {
+      setTimeout(_launchConfetti, 300);
+    }
 
     var r         = _quizResultStrings(pct, 'dq');
     var isSuccess = earnedStars > 0;
@@ -2588,10 +2685,9 @@ function _escAttr(s) {
    voit le guide pour chaque mode la première fois.
 
    ARCHITECTURE :
-     _maybeShowOnboarding()  → point d'entrée appelé par initApp()
-     _buildOnboardingContent() → injecte les textes selon le mode
-     _closeOnboarding()      → ferme + marque vu dans localStorage
-     showOnboardingGuide()   → fonction publique (lien "Relire")
+     _maybeShowOnboarding() → point d'entrée appelé par initApp()
+     _closeOnboarding()     → ferme + marque vu dans localStorage
+     showOnboardingGuide()  → fonction publique (lien "Relire")
 
    ACCORDÉONS : utilise <details>/<summary> natifs — zéro JS pour
    l'ouverture/fermeture, juste du CSS (voir §19 de style.css).
@@ -3188,211 +3284,6 @@ function showOnboardingGuide() {
   if (chk)       chk.checked       = checked;
   if (chkTopbar) chkTopbar.checked = checked;
 }
-
-/**
- * Construit et injecte le contenu de la modale selon le mode actif.
- * Textes entièrement bilingues : langue principale + langue secondaire
- * en italique pour que les deux types d'apprenants se repèrent.
- */
-function _buildOnboardingContent() {
-  var isFr = isFrench();
-
-  /* ── Textes de l'en-tête ── */
-  var title    = isFr
-    ? 'Baga nagaan dhufte Taphad\'Meuh !'   /* oromophone apprend le français → titre en oromo */
-    : 'Bienvenue dans Taphad\'Meuh !';       /* francophone apprend l'oromo   → titre en français */
-  var subtitle = isFr
-    ? 'Afaan Faransaayii tarkaanfiin baradhu · Apprenez le Français pas à pas'   /* oromo en premier */
-    : 'Commencez l\'Oromo dès aujourd\'hui · Afaan Oromoo harʼa jalqabi';          /* français en premier */
-
-  /* ── Texte du bouton CTA ── */
-  var startLabel = isFr
-    ? '▶ Jalqabi waltajjii kana !'   /* oromophone */
-    : '▶ Commencer l\'aventure !';   /* francophone */
-
-  /* ── Texte du hint "relire" ── */
-  var rereadHint = isFr
-    ? 'Gargaarsa kana booda irra deebʼanii <a onclick="showOnboardingGuide()">Gargaarsa</a> jedhu cuqaasuun dubbisuu dandeessu.'   /* oromo */
-    : 'Vous pourrez relire ce guide depuis le lien <a onclick="showOnboardingGuide()">Aide</a> en bas de chaque page.';              /* français */
-
-  /* ── Définition des sections accordéon ── */
-  var sections = [
-    {
-      icon : '🗺️',
-      title: isFr ? 'Appiin keessa akkamiin deemna'    : 'Comment naviguer dans l\'app',
-      sub  : isFr ? 'Comment naviguer dans l\'app'     : 'Appiin keessa akkamiin deemna',
-      body : isFr
-        /* oromophone → oromo */
-        ? '<ul>'
-          + '<li><strong>Fuula duraa</strong> : daashboordii keessan — tartiiba guutuu fi urjii argattan agarsiisa.</li>'
-          + '<li><strong>Moojuulota (📚)</strong> : jechoota sadarkaa 1 (thèmes 32) + himoota sadarkaa 2 (dialogues 16).</li>'
-          + '<li><strong>Moojuula tokko tokkoon</strong> keessa: <em>Kaardota, Jechootaa, Quiz, Dubbii, Irra deebʼi</em>.</li>'
-          + '<li>Fuula <strong>←</strong> irra deebiʼuuf fayyadami.</li>'
-          + '</ul>'
-          + '<div class="ob-tip">💡 Sadarkaa 1 irraa jalqabi — booda sadarkaa 2 salphaa ta\'a !</div>'
-        /* francophone → français */
-        : '<ul>'
-          + '<li><strong>Écran d\'accueil</strong> : votre tableau de bord — progression globale et étoiles gagnées.</li>'
-          + '<li><strong>Modules (📚)</strong> : 32 thèmes de vocabulaire (Niveau 1) + 16 dialogues de situation (Niveau 2).</li>'
-          + '<li><strong>Dans chaque module</strong>, plusieurs onglets : <em>Cartes, Vocabulaire, Quiz, Dialogue, Répète</em>.</li>'
-          + '<li>Le bouton <strong>←</strong> remonte toujours d\'un niveau.</li>'
-          + '</ul>'
-          + '<div class="ob-tip">💡 Commencez par le Niveau 1 — les dialogues du Niveau 2 seront plus faciles ensuite !</div>'
-    },
-    {
-      icon : '🃏',
-      title: isFr ? 'Kaardota (Cartes Flash)'  : 'Les Cartes Flash',
-      sub  : isFr ? 'Les Cartes Flash'          : 'Kaardota (Cartes Flash)',
-      body : isFr
-        /* oromophone → oromo */
-        ? '<p>Kaardni tokko jecha Oromoo agarsiisa. <strong>Cuqaasi</strong> sagalee dhageeffachuu fi hiika Faransaayii argachuuf.</p>'
-          + '<ul>'
-          + '<li>Caancala <strong>🔊</strong> : sagalee dhageeffadhu.</li>'
-          + '<li>Caancalota <strong>‹ ›</strong> : kaardii itti aanu yookiin kan darbee ilaali.</li>'
-          + '<li>Kaardiin <strong>garagalti</strong> hiika agarsisuuf.</li>'
-          + '</ul>'
-          + '<div class="ob-tip">💡 Dura sagalee dhageeffadhu, booda Quiz gali !</div>'
-        /* francophone → français */
-        : '<p>Chaque carte montre un mot en Oromo. <strong>Tapez dessus</strong> pour voir la traduction française et entendre la prononciation.</p>'
-          + '<ul>'
-          + '<li>Bouton <strong>🔊</strong> : écouter le mot prononcé.</li>'
-          + '<li>Boutons <strong>‹ ›</strong> : passer à la carte suivante ou précédente.</li>'
-          + '<li>La carte se <strong>retourne</strong> pour révéler la traduction.</li>'
-          + '</ul>'
-          + '<div class="ob-tip">💡 Écoutez plusieurs fois avant de passer au Quiz !</div>'
-    },
-    {
-      icon : '🎯',
-      title: isFr ? 'Quiz fi Urjiin ⭐'           : 'Le Quiz et les Étoiles ⭐',
-      sub  : isFr ? 'Le Quiz et les Étoiles ⭐'  : 'Quiz fi Urjiin ⭐',
-      body : isFr
-        /* oromophone → oromo */
-        ? '<p>Kaardota booda, <strong>Quiz gaafii 10</strong> waliin of-qori. Deebii sirrii 4 keessaa tokko filadhu.</p>'
-          + '<ul>'
-          + '<li><strong>⭐</strong> : ≥ 50% sirrii → kutaan darbe !</li>'
-          + '<li><strong>⭐⭐</strong> : ≥ 75% — Baayʼee gaari !</li>'
-          + '<li><strong>⭐⭐⭐</strong> : 100% — Baayʼee bareedaa ! 🎉</li>'
-          + '</ul>'
-          + '<p>Urjiilee <strong>hir\'atan hin beekani</strong> : madaala keessan gaarii ta\'e qofti yaadatama.</p>'
-          + '<div class="ob-tip">💡 Kutaa darbuuf xiqqaate ⭐ (50%) barbaachisa.</div>'
-        /* francophone → français */
-        : '<p>Après les cartes, testez-vous avec le <strong>Quiz 10 questions</strong>. Choisissez la bonne réponse parmi 4 options.</p>'
-          + '<ul>'
-          + '<li><strong>⭐</strong> : ≥ 50% de bonnes réponses → module validé !</li>'
-          + '<li><strong>⭐⭐</strong> : ≥ 75% — Très bien !</li>'
-          + '<li><strong>⭐⭐⭐</strong> : 100% — Parfait ! 🎉</li>'
-          + '</ul>'
-          + '<p>Les étoiles ne <strong>diminuent jamais</strong> : seul votre meilleur score est conservé.</p>'
-          + '<div class="ob-tip">💡 Il faut au moins ⭐ (50%) pour valider un module et débloquer la barre de progression.</div>'
-    },
-    {
-      icon : '🔊',
-      title: isFr ? 'Sagalee (Synthèse Vocale)'  : 'La Synthèse Vocale',
-      sub  : isFr ? 'La Synthèse Vocale'          : 'Sagalee (Synthèse Vocale)',
-      body : isFr
-        /* oromophone → oromo */
-        ? '<p>Jecha tokko tokko <strong>dhageeffachuu</strong> ni dandʼama — caancala 🔊 cuqaasi. Sagaleen Oromoo sagalee jechoota Oromoo dhiyeessuf fayyadama.</p>'
-          + '<p>Sagaleen sirrii ta\'uu ishee garanteessuu hin danda\'amu, garuu sagalee Afaan Oromootti dhiyoo kan argame fayyadamna.</p>'
-          + '<div class="ob-tip">💡 Caancalli 🔊 hin hojjenne yoo taʼe: suursagalee meeshaa kee ilaali, Chrome yookiin Firefox fayyadami.</div>'
-        /* francophone → français */
-        : '<p>Chaque mot peut être <strong>écouté</strong> en cliquant sur le bouton 🔊. La prononciation de l\'Oromo est lue par votre navigateur.</p>'
-          + '<div class="ob-tip">💡 Si le bouton 🔊 ne fonctionne pas, vérifiez que le son de votre appareil est activé et que votre navigateur supporte la synthèse vocale (Chrome et Firefox recommandés).</div>'
-    },
-    {
-      icon : '🎙️',
-      title: isFr ? 'Onglet Irra deebʼi'      : 'L\'onglet Répète',
-      sub  : isFr ? 'L\'onglet Répète'         : 'Onglet Irra deebʼi',
-      body : isFr
-        /* oromophone → oromo */
-        ? '<p>Onglet <strong>Irra deebʼi</strong> qoʼannaa sagalee gargaaruuf maaykiroofoonii meeshaa kee fayyadama :</p>'
-          + '<ul>'
-          + '<li><strong>🔊 Dhageeffadhu</strong> cuqaasi — jecha dhaggeeffadhu.</li>'
-          + '<li><strong>🎙️ Dubbadhu</strong> cuqaasi — jecha dubbadhuu.</li>'
-          + '<li>Appiin sagalee kee madaalu, deebii ariifataa kenni.</li>'
-          + '</ul>'
-          + '<div class="ob-tip">💡 Hojii kanaaf hayyama maaykiroofoonii barbaachisa. Browser mara irratti hin hojjetu.</div>'
-        /* francophone → français */
-        : '<p>L\'onglet <strong>Répète</strong> utilise le microphone de votre appareil pour vous faire pratiquer la prononciation :</p>'
-          + '<ul>'
-          + '<li>Appuyez sur <strong>🔊 Écouter</strong> pour entendre le mot.</li>'
-          + '<li>Appuyez sur <strong>🎙️ Parler</strong> et prononcez le mot.</li>'
-          + '<li>L\'app compare votre prononciation et donne un retour immédiat.</li>'
-          + '</ul>'
-          + '<div class="ob-tip">💡 Cette fonctionnalité nécessite l\'autorisation d\'accès au microphone. Elle peut ne pas être disponible sur tous les navigateurs.</div>'
-    },
-    {
-      icon : '📱',
-      title: isFr ? 'App gara meeshaa irratti buusi'  : 'Installer l\'app (hors-ligne)',
-      sub  : isFr ? 'Installer l\'app (hors-ligne)'   : 'App gara meeshaa irratti buusi',
-      body : isFr
-        /* oromophone → oromo */
-        ? '<p>Taphad\'Meuh bilbila kee irratti <strong>app dhugaa ta\'ee</strong> buusuun danda\'ama, store malee :</p>'
-          + '<ul>'
-          + '<li><strong>Android / Chrome</strong> : ⋮ cuqaasi booda <em>"Fuula jalqabarratti ida\'i"</em>.</li>'
-          + '<li><strong>iOS / Safari</strong> : 🔗 cuqaasi booda <em>"Fuula jalqabarratti"</em>.</li>'
-          + '</ul>'
-          + '<p>Erga buufamee booda, interneetii malee <strong>hojjeta</strong> — barachuu iddoo kamittiyyuu !</p>'
-        /* francophone → français */
-        : '<p>Taphad\'Meuh peut être <strong>installée sur votre téléphone</strong> comme une vraie app, sans passer par un store :</p>'
-          + '<ul>'
-          + '<li><strong>Android / Chrome</strong> : touchez le menu ⋮ puis <em>"Ajouter à l\'écran d\'accueil"</em>.</li>'
-          + '<li><strong>iOS / Safari</strong> : touchez 🔗 puis <em>"Sur l\'écran d\'accueil"</em>.</li>'
-          + '</ul>'
-          + '<p>Une fois installée, l\'app fonctionne <strong>entièrement hors-ligne</strong> — idéal pour apprendre sans connexion !</p>'
-    }
-  ];
-
-  /* ── Injection du titre et sous-titre ── */
-  var titleEl = document.getElementById('ob-title');
-  var subEl   = titleEl ? titleEl.nextElementSibling : null;
-  if (titleEl) titleEl.textContent = title;
-  if (subEl)   subEl.textContent   = subtitle;
-
-  /* ── Injection des accordéons dans #ob-body ── */
-  var body = document.getElementById('ob-body');
-  if (body) {
-    body.innerHTML = sections.map(function(s) {
-      return '<details class="ob-section">'
-        + '<summary>'
-        + '<span class="ob-icon">' + s.icon + '</span>'
-        + '<span class="ob-section-label">'
-        + s.title
-        + '<span class="ob-section-sub">' + s.sub + '</span>'
-        + '</span>'
-        + '</summary>'
-        + '<div class="ob-detail">' + s.body + '</div>'
-        + '</details>';
-    }).join('');
-  }
-
-  /* ── Bouton CTA ── */
-  var startBtn = document.getElementById('ob-start-btn');
-  if (startBtn) {
-    startBtn.textContent = startLabel;
-    startBtn.onclick     = _closeOnboarding;
-  }
-
-  /* ── Hint de relecture ── */
-  var hint = document.getElementById('ob-reread-hint');
-  if (hint) hint.innerHTML = rereadHint;
-
-  /* ── Fermeture au clic sur le fond (overlay) ── */
-  var overlay = document.getElementById('onboarding-modal');
-  if (overlay) {
-    overlay.onclick = function(e) {
-      /* Ferme uniquement si le clic est sur le fond, pas sur le panneau */
-      if (e.target === overlay) _closeOnboarding();
-    };
-  }
-
-  /* ── Fermeture au clavier Échap ── */
-  document._obKeyHandler = document._obKeyHandler || function(e) {
-    if (e.key === 'Escape') _closeOnboarding();
-  };
-  document.removeEventListener('keydown', document._obKeyHandler);
-  document.addEventListener('keydown', document._obKeyHandler);
-}
-
 
 /* ============================================================
    CRÉDITS

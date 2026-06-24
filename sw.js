@@ -71,7 +71,13 @@ var PRECACHE_URLS = [
   './icons/icon-192x192-maskable.png',
   './icons/icon-384x384.png',
   './icons/icon-512x512.png',
-  './icons/icon-512x512-maskable.png'
+  './icons/icon-512x512-maskable.png',
+  /* Screenshots déclarés dans manifest.json — pré-cachés pour cohérence hors-ligne */
+  './img/Ecran Accueil - 933x1829.png',
+  './img/Modules 933x1829.png',
+  './img/Flashcard français recto 933x1829.png',
+  './img/Flashcard oromo verso 933x1829.png',
+  './img/Guide Explicatif 933x1829.png'
 ];
 
 /* Préfixes d'URLs considérées comme "externes" → stratégie Network First */
@@ -307,36 +313,98 @@ function _offlineFallback(request) {
    Utilisé si une icône PNG du dossier /icons/ est absente du cache.
    ────────────────────────────────────────────────────────────────── */
 function _respondSvgIcon() {
+  /*
+   * Icône de secours Taphad'Meuh — SVG 512×512
+   * ─────────────────────────────────────────────
+   * Fidèle à l'identité visuelle : fond partagé FR (gauche) / OR (droite),
+   * silhouette de vache stylisée (visage + cornes + taches) en blanc opaque,
+   * texte "T'M" en bas comme signature.
+   *
+   * Géométrie vache :
+   *   - Tête ovale  : ellipse cx=256 cy=230 rx=95 ry=85
+   *   - Deux cornes : arcs Bézier vers le haut
+   *   - Museau      : ellipse plus petite, légèrement plus basse
+   *   - Narines     : deux petits cercles
+   *   - Yeux        : deux cercles remplis blanc + pupilles foncées
+   *   - Taches      : ellipses irrégulières en blanc semi-transparent
+   *   - Oreilles    : demi-cercles latéraux
+   */
   var svg = [
-    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512" role="img" aria-label="Taphad\'Meuh icône">',
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512" role="img" aria-label="Taphad\'Meuh — icône vache bicolore">',
     '  <defs>',
     '    <linearGradient id="gFR" x1="0" y1="0" x2="0" y2="1">',
     '      <stop offset="0%"   stop-color="#002395"/>',
-    '      <stop offset="45%"  stop-color="#ffffff"/>',
-    '      <stop offset="100%" stop-color="#ED2939"/>',
+    '      <stop offset="50%"  stop-color="#1a3a9e"/>',
+    '      <stop offset="100%" stop-color="#003cbf"/>',
     '    </linearGradient>',
     '    <linearGradient id="gOR" x1="0" y1="0" x2="0" y2="1">',
-    '      <stop offset="0%"   stop-color="#009A44"/>',
-    '      <stop offset="50%"  stop-color="#FED141"/>',
-    '      <stop offset="100%" stop-color="#EF2B2D"/>',
+    '      <stop offset="0%"   stop-color="#007a36"/>',
+    '      <stop offset="50%"  stop-color="#009A44"/>',
+    '      <stop offset="100%" stop-color="#00b84f"/>',
     '    </linearGradient>',
     '    <clipPath id="rnd"><rect width="512" height="512" rx="96" ry="96"/></clipPath>',
     '  </defs>',
-    '  <!-- Fond : dégradé coupé diagonalement FR (gauche) / OR (droite) -->',
+
+    '  <!-- Fond bicolore FR|OR -->',
     '  <g clip-path="url(#rnd)">',
     '    <rect width="512" height="512" fill="url(#gFR)"/>',
-    '    <polygon points="256,0 512,0 512,512" fill="url(#gOR)" opacity="0.9"/>',
+    '    <!-- Triangle OR sur le côté droit -->',
+    '    <polygon points="280,0 512,0 512,512 280,512" fill="url(#gOR)" opacity="0.92"/>',
+    '    <!-- Bande centrale blanche séparatrice -->',
+    '    <rect x="268" y="0" width="10" height="512" fill="rgba(255,255,255,.18)"/>',
     '  </g>',
-    '  <!-- Globe centré -->',
-    '  <circle cx="256" cy="220" r="110" fill="none" stroke="#fff" stroke-width="14" opacity="0.9"/>',
-    '  <ellipse cx="256" cy="220" rx="52" ry="110" fill="none" stroke="#fff" stroke-width="10" opacity="0.7"/>',
-    '  <line x1="146" y1="220" x2="366" y2="220" stroke="#fff" stroke-width="10" opacity="0.7"/>',
-    '  <line x1="164" y1="170" x2="348" y2="170" stroke="#fff" stroke-width="8"  opacity="0.5"/>',
-    '  <line x1="164" y1="270" x2="348" y2="270" stroke="#fff" stroke-width="8"  opacity="0.5"/>',
-    '  <!-- Nom court -->',
-    '  <text x="256" y="410" font-family="system-ui,sans-serif" font-size="72"',
+
+    '  <!-- ══ Vache stylisée ══ -->',
+
+    '  <!-- Oreilles -->',
+    '  <ellipse cx="152" cy="208" rx="32" ry="22" fill="rgba(255,255,255,.85)" transform="rotate(-20,152,208)"/>',
+    '  <ellipse cx="152" cy="208" rx="18" ry="12" fill="rgba(255,180,180,.6)"  transform="rotate(-20,152,208)"/>',
+    '  <ellipse cx="360" cy="208" rx="32" ry="22" fill="rgba(255,255,255,.85)" transform="rotate(20,360,208)"/>',
+    '  <ellipse cx="360" cy="208" rx="18" ry="12" fill="rgba(255,180,180,.6)"  transform="rotate(20,360,208)"/>',
+
+    '  <!-- Cornes -->',
+    '  <path d="M185 170 Q160 100 195 72" fill="none" stroke="rgba(255,255,255,.9)" stroke-width="16" stroke-linecap="round"/>',
+    '  <path d="M327 170 Q352 100 317 72" fill="none" stroke="rgba(255,255,255,.9)" stroke-width="16" stroke-linecap="round"/>',
+
+    '  <!-- Taches de vache (Holstein) sur la tête -->',
+    '  <ellipse cx="218" cy="195" rx="28" ry="20" fill="rgba(255,255,255,.22)" transform="rotate(-15,218,195)"/>',
+    '  <ellipse cx="300" cy="185" rx="22" ry="16" fill="rgba(255,255,255,.18)" transform="rotate(10,300,185)"/>',
+    '  <ellipse cx="255" cy="250" rx="18" ry="13" fill="rgba(255,255,255,.15)"/>',
+
+    '  <!-- Tête ovale -->',
+    '  <ellipse cx="256" cy="228" rx="96" ry="86" fill="rgba(255,255,255,.88)"/>',
+
+    '  <!-- Museau -->',
+    '  <ellipse cx="256" cy="284" rx="58" ry="38" fill="rgba(255,220,210,.95)"/>',
+
+    '  <!-- Narines -->',
+    '  <ellipse cx="234" cy="290" rx="10" ry="7"  fill="rgba(160,80,80,.55)"/>',
+    '  <ellipse cx="278" cy="290" rx="10" ry="7"  fill="rgba(160,80,80,.55)"/>',
+
+    '  <!-- Yeux -->',
+    '  <circle cx="218" cy="210" r="18" fill="#1a1a1a"/>',
+    '  <circle cx="294" cy="210" r="18" fill="#1a1a1a"/>',
+    '  <circle cx="224" cy="205" r="7"  fill="#fff"/>',
+    '  <circle cx="300" cy="205" r="7"  fill="#fff"/>',
+    '  <!-- Reflets dans les yeux -->',
+    '  <circle cx="227" cy="203" r="3"  fill="rgba(255,255,255,.9)"/>',
+    '  <circle cx="303" cy="203" r="3"  fill="rgba(255,255,255,.9)"/>',
+
+    '  <!-- Signature T\'M en bas -->',
+    '  <text x="256" y="430" font-family="system-ui,sans-serif" font-size="64"',
     '        font-weight="900" fill="#fff" text-anchor="middle"',
-    '        letter-spacing="-2" opacity="0.95">T\'M</text>',
+    '        letter-spacing="-1" opacity="0.96">T\'M</text>',
+
+    '  <!-- Petits drapeaux 🇫🇷🇪🇹 symboliques — rectangles colorés -->',
+    '  <!-- FR : bleu blanc rouge -->',
+    '  <rect x="148" y="455" width="12" height="22" fill="#002395" rx="1"/>',
+    '  <rect x="160" y="455" width="12" height="22" fill="#fff"    rx="0"/>',
+    '  <rect x="172" y="455" width="12" height="22" fill="#ED2939" rx="1"/>',
+    '  <!-- ET : vert jaune rouge -->',
+    '  <rect x="328" y="455" width="12" height="22" fill="#009A44" rx="1"/>',
+    '  <rect x="340" y="455" width="12" height="22" fill="#FED141" rx="0"/>',
+    '  <rect x="352" y="455" width="12" height="22" fill="#EF2B2D" rx="1"/>',
+
     '</svg>'
   ].join('\n');
 

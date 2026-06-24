@@ -712,11 +712,11 @@ html.theme-oromo body{background:#f4f9f4}
   background:#009A44;
   color:#fff;
 }
-.theme-french .btn-reset-theme{
+html.theme-french .btn-reset-theme{
   border-color:var(--c-primary);
   color:var(--c-primary);
 }
-.theme-french .btn-reset-theme:hover{
+html.theme-french .btn-reset-theme:hover{
   background:var(--c-primary);
   color:#fff;
 }
@@ -776,6 +776,48 @@ html.theme-oromo body{background:#f4f9f4}
   display:flex;
   align-items:center;
 }
+/* ── Flèches ‹ › de navigation entre modules dans le header leçon ── */
+/*
+  .lesson-nav-arrows : conteneur flex en bout de header, aligné à droite.
+  .lesson-nav-btn    : bouton pill blanc semi-transparent, cohérent avec
+                       .lesson-level-badge et .back-btn sur le même fond
+                       dégradé. État :disabled → opacité réduite, non cliquable.
+*/
+.lesson-nav-arrows{
+  display:flex;
+  gap:4px;
+  flex-shrink:0;
+  margin-left:auto;
+}
+.lesson-nav-btn{
+  background:rgba(255,255,255,.18);
+  border:1.5px solid rgba(255,255,255,.4);
+  border-radius:50%;
+  color:#fff;
+  font-size:1.1rem;
+  font-weight:700;
+  width:30px;
+  height:30px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  line-height:1;
+  transition:background .15s, transform .1s;
+  padding:0;
+}
+.lesson-nav-btn:hover:not(:disabled){
+  background:rgba(255,255,255,.32);
+}
+.lesson-nav-btn:active:not(:disabled){
+  background:rgba(255,255,255,.5);
+  transform:scale(.9);
+}
+.lesson-nav-btn:disabled{
+  opacity:.3;
+  cursor:default;
+}
+
 .lesson-level-badge:hover{
   background:rgba(255,255,255,.35);
 }
@@ -1969,6 +2011,13 @@ footer a:hover{text-decoration:underline}
   line-height:1;
   flex-shrink:0;
 }
+/* Conteneur texte dans la carte bio (nom + rôle) — manquait en CSS */
+.ob-bio-info{
+  display:flex;
+  flex-direction:column;
+  gap:2px;
+  min-width:0;
+}
 .ob-bio-name{
   font-weight:700;
   font-size:.95rem;
@@ -3039,4 +3088,137 @@ footer a:hover{text-decoration:underline}
   #sections-level2 .sections-body .themes-grid{
     grid-template-columns:1fr 1fr 1fr 1fr;
   }
+}
+/* ════════════════════════════════════════════════════════════════
+   §CONFETTI — Animation de félicitations ⭐⭐⭐ (100%)
+   ════════════════════════════════════════════════════════════════
+   Overlay positionné en fixed sur tout l'écran.
+   20 particules .conf-p sont générées par JS (_launchConfetti).
+   Chaque particule reçoit :
+     • --cx : position X de départ (% aléatoire)
+     • --cr : couleur aléatoire dans la palette FR ou OR
+     • --cs : scale finale aléatoire (taille)
+     • --cd : délai (stagger)
+   @keyframes conf-fall : chute + rotation + fondu.
+   @media prefers-reduced-motion : animation désactivée,
+   on affiche juste un flash d'opacité pour respecter
+   l'accessibilité sans supprimer le feedback.
+   ════════════════════════════════════════════════════════════════ */
+
+.confetti-overlay {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;   /* ne bloque aucune interaction */
+  z-index: 9999;
+  overflow: hidden;
+}
+
+.conf-p {
+  position: absolute;
+  top: -12px;
+  left: var(--cx, 50%);
+  width: 9px;
+  height: 9px;
+  border-radius: 2px;
+  background: var(--cr, #FFD700);
+  transform: rotate(0deg) scale(1);
+  opacity: 1;
+  animation: conf-fall var(--cd, 1.4s) ease-in forwards;
+}
+
+/* Quelques particules rondes pour la variété */
+.conf-p:nth-child(3n) { border-radius: 50%; }
+/* Quelques particules rectangulaires */
+.conf-p:nth-child(5n) { width: 12px; height: 5px; border-radius: 1px; }
+
+@keyframes conf-fall {
+  0%   { transform: translateY(0)    rotate(0deg)   scale(var(--cs,1)); opacity: 1; }
+  70%  { opacity: 1; }
+  100% { transform: translateY(105vh) rotate(720deg) scale(var(--cs,1)); opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .conf-p { animation: none; opacity: 0; }
+  /* Flash rapide sur l'overlay à la place */
+  .confetti-overlay { animation: conf-flash .4s ease-out forwards; }
+  @keyframes conf-flash {
+    0%   { background: rgba(255,215,0,.25); }
+    100% { background: transparent; }
+  }
+}
+
+/* ════════════════════════════════════════════════════════════════
+   §PROGRESS-CIRCLE — Cercle SVG de progression sur l'écran Home
+   ════════════════════════════════════════════════════════════════
+   Le cercle SVG est inline dans index.html ; le JS (renderHome)
+   pilote stroke-dashoffset et les textes au chargement et après
+   chaque quiz.
+
+   r = 50 → circonférence = 2π×50 ≈ 314.16 px.
+   stroke-dashoffset : 314.16  = 0% rempli.
+                       0       = 100% rempli.
+
+   La transition CSS sur .hpc-fill produit l'animation d'arc
+   sans JS supplémentaire.
+
+   @media prefers-reduced-motion : transition désactivée, valeur
+   appliquée instantanément (reste accessible : la valeur textuelle
+   % est toujours lue par les lecteurs d'écran via aria).
+   ════════════════════════════════════════════════════════════════ */
+
+.home-progress-circle-wrap {
+  display: flex;
+  justify-content: center;
+  margin: 10px auto 4px;
+}
+
+.home-progress-circle {
+  overflow: visible;
+  filter: drop-shadow(0 2px 6px rgba(0,0,0,.12));
+}
+
+/* Piste de fond (gris clair) */
+.hpc-track {
+  fill: none;
+  stroke: rgba(255,255,255,.25);
+  stroke-width: 10;
+}
+
+/* Arc de progression */
+.hpc-fill {
+  fill: none;
+  stroke: #fff;
+  stroke-width: 10;
+  stroke-linecap: round;
+  /* Départ à 12h (haut) — rotate -90° autour du centre */
+  transform-origin: 60px 60px;
+  transform: rotate(-90deg);
+  stroke-dasharray: 314.16;
+  stroke-dashoffset: 314.16;   /* JS écrase cette valeur */
+  transition: stroke-dashoffset 1.1s cubic-bezier(.4,0,.2,1);
+  opacity: .92;
+}
+
+/* Texte pourcentage */
+.hpc-pct {
+  font-family: system-ui, -apple-system, sans-serif;
+  font-size: 22px;
+  font-weight: 800;
+  fill: #fff;
+  text-anchor: middle;
+  dominant-baseline: auto;
+  letter-spacing: -.5px;
+}
+
+/* Texte étoiles */
+.hpc-sub {
+  font-family: system-ui, -apple-system, sans-serif;
+  font-size: 11px;
+  fill: rgba(255,255,255,.85);
+  text-anchor: middle;
+  dominant-baseline: auto;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hpc-fill { transition: none; }
 }

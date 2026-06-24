@@ -193,9 +193,30 @@
 
       <!-- Badges fonctionnalités -->
       <div class="home-guide-badges" id="homeGuideBadges"></div>
-    </div>
 
-    <!-- Corps : accordéons d'aide — injectés par app.js -->
+      <!--
+        Cercle de progression global — rendu SVG par renderHome() dans app.js.
+        Caché (display:none) quand progression = 0 (première visite).
+        Visible dès qu'au moins 1 module est validé.
+        L'id homeProgressCircle est requis par renderHome().
+      -->
+      <div class="home-progress-circle-wrap" id="homeProgressCircleWrap" style="display:none">
+        <svg class="home-progress-circle" viewBox="0 0 120 120"
+             width="120" height="120"
+             role="img" aria-labelledby="hpcTitle" aria-describedby="hpcDesc">
+          <title id="hpcTitle"></title>
+          <desc id="hpcDesc"></desc>
+          <!-- Piste de fond -->
+          <circle class="hpc-track" cx="60" cy="60" r="50"/>
+          <!-- Arc de progression — stroke-dashoffset animé par JS -->
+          <circle class="hpc-fill"  cx="60" cy="60" r="50" id="hpcArc"/>
+          <!-- Texte central : pourcentage -->
+          <text class="hpc-pct"  x="60" y="56" id="hpcPct">0%</text>
+          <!-- Texte central : étoiles -->
+          <text class="hpc-sub"  x="60" y="74" id="hpcSub">⭐ 0</text>
+        </svg>
+        </div>
+    </div><!-- /.home-guide-header -->
     <div class="home-guide-body" id="homeGuideBody"></div>
 
     <!-- Checkbox "Ne plus afficher" -->
@@ -216,6 +237,12 @@
       -->
       <button class="btn-export-pdf" id="homeExportBtn" onclick="_exportGuide()">📄 Télécharger le guide</button>
     </div>
+
+    <!--
+      Footer de l'écran home — rempli dynamiquement par _setFooters() dans app.js.
+      Contient : copyright bilingue, email, LinkedIn, Remerciements, Aide.
+    -->
+    <footer class="screen-footer" id="homeFooter"></footer>
 
   </div><!-- /#home -->
 
@@ -248,6 +275,10 @@
     <div class="sections-body">
       <div class="themes-grid" id="grid1"></div>
     </div>
+    <!--
+      Footer de l'écran sections — rempli dynamiquement par _setFooters() dans app.js.
+    -->
+    <footer class="screen-footer" id="sectionsFooter"></footer>
   </div><!-- /#sections-level1 -->
 
   <!-- ════════════════════════════════════════════════════════════════
@@ -360,78 +391,25 @@
 
     <div class="modal-content">
 
-      <h3>Remerciements</h3>
+      <!--
+        Contenu injecté dynamiquement par showCredits() dans app.js.
+        Les IDs suivants sont requis pour le rendu bilingue :
+          • credits-modal-title : titre ("Remerciements" / "Galateeffannaa")
+          • credits-modal-body  : corps HTML bilingue (texte + liens)
+          • credits-modal-close : libellé du bouton de fermeture ("Fermer" / "Cufuu")
+      -->
+      <h3 id="credits-modal-title"></h3>
 
-      <p>
-        Un grand merci à <strong>Fédérico Calo</strong>
-        (<a href="https://www.linkedin.com/in/federicocalo/" target="_blank">
-          Architecte Développeur Web</a>)
-        pour son aide technique.<br><br>
-        Merci beaucoup également à <strong>Mussa Sembro</strong>
-        (<a href="https://www.linkedin.com/in/mussa-sembro-137472174/" target="_blank">
-          Traducteur-Interprète en Oromo</a>)
-        et à mes parents pour leur travail de relecture, leurs corrections
-        sur les traductions et leurs conseils sur l'ergonomie de l'application.
-      </p>
+      <div id="credits-modal-body"></div>
 
       <!-- Fermeture de la modale : remet display à "none" -->
-      <button onclick="document.getElementById('credits-modal').style.display='none'">
-        Fermer
+      <button id="credits-modal-close"
+              onclick="document.getElementById('credits-modal').style.display='none'">
       </button>
 
     </div><!-- /.modal-content -->
 
   </div><!-- /#credits-modal -->
-
-
-  <!-- ════════════════════════════════════════════════════════════════
-       MODALE — GUIDE UTILISATEUR  (#onboarding-modal)
-       ────────────────────────────────────────────────────────────────
-       Affiché automatiquement à la PREMIÈRE visite de chaque mode
-       (flag localStorage 'tm_onboarded_fr' / 'tm_onboarded_or').
-       Le contenu (texte, titre, langue) est injecté par app.js via
-       _buildOnboardingContent() selon le mode actif.
-
-       STRUCTURE :
-         .ob-overlay        Fond semi-transparent (ferme au clic outside)
-         .ob-sheet          Panneau blanc scrollable centré
-           .ob-header       Bandeau dégradé (emoji + titre bilingue)
-           .ob-body         Corps : sections accordéon (<details>)
-           .ob-footer       Bouton "Commencer" + lien relecture
-       ════════════════════════════════════════════════════════════════ -->
-  <div id="onboarding-modal" class="ob-overlay" aria-modal="true" role="dialog" aria-labelledby="ob-title">
-
-    <div class="ob-sheet">
-
-      <!-- En-tête dégradé (identité visuelle de l'app) -->
-      <div class="ob-header">
-        <div class="ob-header-emoji" aria-hidden="true">🐄</div>
-        <h2 class="ob-title" id="ob-title">
-          <!-- Titre injecté par app.js -->
-        </h2>
-        <p class="ob-subtitle">
-          <!-- Sous-titre injecté par app.js -->
-        </p>
-      </div>
-
-      <!-- Corps : accordéons d'aide -->
-      <div class="ob-body" id="ob-body">
-        <!-- Sections injectées dynamiquement par _buildOnboardingContent() -->
-      </div>
-
-      <!-- Pied de page : CTA principal + lien de relecture -->
-      <div class="ob-footer">
-        <button class="ob-start-btn" id="ob-start-btn">
-          <!-- Libellé injecté par app.js -->
-        </button>
-        <p class="ob-reread-hint" id="ob-reread-hint">
-          <!-- Hint "relire plus tard" injecté par app.js -->
-        </p>
-      </div>
-
-    </div><!-- /.ob-sheet -->
-
-  </div><!-- /#onboarding-modal -->
 
 
   <!-- ════════════════════════════════════════════════════════════════
