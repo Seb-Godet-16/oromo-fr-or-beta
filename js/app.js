@@ -15,8 +15,10 @@
      2.  Point d'entrée — initApp(mode)
      3.  Synthèse vocale + prononciation Oromo (cascade de voix)
      3b. Retour haptique — _vibrateFeedback()
+     3c. Interruption audio — visibilitychange / focus
      4.  Persistance de la progression (système d'étoiles ⭐)
      4b. Restauration de session quiz (sessionStorage)
+     4c. Réinitialisation complète — confirmResetProgress()
      5.  Navigation entre écrans
      6.  Écran Home — rendu de la barre de progression
      7.  Écran Sections — grille des thèmes
@@ -547,6 +549,43 @@ function _vibrateFeedback(type) {
 
 
 /* ============================================================
+   3c. INTERRUPTION AUDIO — visibilitychange / focus
+   ============================================================
+   Problème : speak() et _doSpeak() enchaînent les parties d'un
+   texte via u.onend → setTimeout → speakPart(i+1).
+   Si l'app passe en arrière-plan (appel entrant, changement
+   d'onglet, verrouillage écran) entre deux parties, le
+   setTimeout continue de tourner et relance
+   speechSynthesis.speak() sur une page cachée — comportement
+   indéfini selon le navigateur : boucle silencieuse, audio
+   résiduel, ou crash TTS.
+
+   Solution : un unique écouteur visibilitychange sur document.
+   Dès que document.hidden passe à true, on appelle
+   speechSynthesis.cancel(). Cela :
+     • Coupe immédiatement la partie en cours.
+     • Invalide les setTimeout pendants : quand ils se déclenchent,
+       speakPart() appelle speechSynthesis.speak() mais le moteur
+       est déjà annulé — la lecture ne reprend pas.
+     • N'impacte pas la reprise : quand l'utilisateur revient sur
+       l'app, il devra re-cliquer pour relancer manuellement
+       (comportement cohérent avec le design actuel).
+
+   On vérifie la présence de window.speechSynthesis avant de
+   brancher l'écouteur pour ne pas planter sur les vieux
+   navigateurs ou en SSR.
+   ============================================================ */
+
+if (window.speechSynthesis) {
+  document.addEventListener('visibilitychange', function() {
+    if (document.hidden) {
+      speechSynthesis.cancel();
+    }
+  });
+}
+
+
+/* ============================================================
    4. PERSISTANCE DE LA PROGRESSION (SYSTÈME D'ÉTOILES ⭐)
    ============================================================
    Chaque thème complété est sauvegardé sous la forme :
@@ -637,6 +676,35 @@ function resetTheme(id) {
   saveDone();
   renderSections();
   renderHome();
+}
+
+/**
+ * Réinitialisation complète de la progression — double confirmation native.
+ *
+ * Deux confirm() successifs pour éviter les suppressions accidentelles :
+ *   1er : avertissement général bilingue
+ *   2e  : confirmation irréversible
+ * Si les deux sont validés → localStorage.clear() + rechargement de page.
+ *
+ * Bilingue via L() : premier argument = mode learn_french (interface oromo,
+ * apprenant oromophone), second argument = mode learn_oromo (interface française,
+ * apprenant francophone).
+ */
+function confirmResetProgress() {
+  var msg1 = L(
+    'Dhugumaan tartiiba GUUTUU haquuf barbaaddaa?\nUrjiilee kee hundi ni dhaban.',
+    '⚠️ Êtes-vous sûr de vouloir réinitialiser TOUTE votre progression ?\nVos étoiles seront définitivement effacées.'
+  );
+  if (!window.confirm(msg1)) return;
+
+  var msg2 = L(
+    '⚠️ Dhugaan mirkaneessi — kun deebi\'uu hin danda\'u.\nTartiiba GUUTUU haquuf "OK" tuqi.',
+    '⚠️ Dernière confirmation — cette action est irréversible.\nCliquez OK pour effacer TOUTE la progression.'
+  );
+  if (!window.confirm(msg2)) return;
+
+  localStorage.clear();
+  window.location.reload();
 }
 
 /**
@@ -860,8 +928,14 @@ function renderSections() {
   var p = _getProgress();
 
   document.getElementById('globalProgress').style.width = p.pct + '%';
-  document.getElementById('progressLabel').textContent =
-    p.n + ' / ' + p.total + ' ' + L('modules', 'kutaalee') + ' — ' + p.pct + '%';
+  document.getElementById('progressLabel').innerHTML =
+    '<span class="progress-label-text">'
+    + p.n + ' / ' + p.total + ' ' + L('modules', 'kutaalee') + ' — ' + p.pct + '%'
+    + '</span>'
+    + '<button class="btn-reset-prog" onclick="confirmResetProgress()"'
+    + ' title="' + L('Tartiiba guutuu haqi', 'Réinitialiser toute la progression') + '"'
+    + ' aria-label="' + L('Tartiiba guutuu haqi', 'Réinitialiser toute la progression') + '"'
+    + '>🔄</button>';
 
   /* ── Étoiles dans le header sections (récupérées depuis l'ancien Home) ── */
   var starsEl = document.getElementById('sectionsStars');

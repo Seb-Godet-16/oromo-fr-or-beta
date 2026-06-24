@@ -529,7 +529,44 @@ html.theme-oromo body{background:#f4f9f4}
 /* Barre de progression dans l'en-tête */
 .progress-bar-wrap{background:rgba(255,255,255,.3);border-radius:20px;height:8px;margin:4px 0}
 .progress-bar{background:#fff;height:8px;border-radius:20px;transition:width .4s}
-.progress-label{font-size:.73rem;opacity:.9;margin-top:2px}
+.progress-label{
+  font-size:.73rem;
+  opacity:.9;
+  margin-top:2px;
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+}
+
+/* Texte de la ligne "X / N modules — X%" */
+.progress-label-text{
+  line-height:1;
+}
+
+/* Bouton réinitialisation complète de la progression */
+.btn-reset-prog{
+  background:transparent;
+  border:none;
+  padding:0 2px;
+  margin:0;
+  cursor:pointer;
+  font-size:.9rem;          /* emoji légèrement plus grand que le texte */
+  line-height:1;
+  opacity:.75;
+  transition:transform .35s ease, opacity .15s;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  flex-shrink:0;
+}
+.btn-reset-prog:hover{
+  opacity:1;
+  transform:rotate(-180deg);
+}
+.btn-reset-prog:active{
+  transform:rotate(-180deg) scale(.82);
+  transition:transform .1s ease;
+}
 
 /* Corps scrollable — les niveaux sont maintenant des <details> */
 .sections-body{padding:0 0 10px}
