@@ -2755,9 +2755,19 @@ footer a:hover{text-decoration:underline}
 /* ══════════════════════════════════════════════════════════════════
    §25 — BOUTONS D'EXPORT PDF
    ══════════════════════════════════════════════════════════════════
-   .btn-export-pdf  : bouton discret sous le contenu principal
+   .btn-export-pdf    : bouton discret sous le contenu principal
    .lesson-export-bar : conteneur centré sous le lesson-body
+
+   VISIBILITÉ :
+   Les boutons #lessonExportVocab et #lessonExportSit portent la
+   classe .is-hidden par défaut (définie ici). app.js retire cette
+   classe sur le bon bouton via classList.remove('is-hidden') et
+   la remet sur l'autre via classList.add('is-hidden').
+   Aucun style="display:…" inline n'est nécessaire.
    ══════════════════════════════════════════════════════════════════ */
+
+/* Classe utilitaire — masque un élément sans inline style */
+.is-hidden{display:none!important}
 
 /* Bouton export générique */
 .btn-export-pdf{

@@ -333,7 +333,7 @@ function _setFooters() {
 
   var html =
     lblCopy + '<br>' +
-    'sebastien.godet16@gmail.com · ' +
+    'sebastien.godet16 [at] gmail [dot] com · ' +
     '<a href="https://www.linkedin.com/in/s%C3%A9bastien-godet-142ba6145" target="_blank">LinkedIn</a> · ' +
     '<a href="#" onclick="showCredits()">' + lblCredits + '</a> · ' +
     '<a href="#" onclick="showOnboardingGuide()">' + lblHelp + '</a>';
@@ -1396,17 +1396,19 @@ function openTheme(id, _navHint) {
   }).join('');
 
 
-  /* ── Bouton d'export PDF : afficher le bon selon le type de thème ── */
+  /* ── Bouton d'export PDF : afficher le bon selon le type de thème ──
+     Visibilité gérée via .is-hidden (définie dans style.css §25)
+     plutôt que par style.display inline, pour respecter le système CSS. */
   var btnVocab = document.getElementById('lessonExportVocab');
   var btnSit   = document.getElementById('lessonExportSit');
   if (btnVocab && btnSit) {
     if (CT.type === 'dialog') {
-      btnVocab.style.display = 'none';
-      btnSit.style.display   = 'flex';
+      btnVocab.classList.add('is-hidden');
+      btnSit.classList.remove('is-hidden');
       btnSit.textContent = L('\ud83d\udcc4 Galmee haala kana buusi', '\ud83d\udcc4 Télécharger cette situation');
     } else {
-      btnSit.style.display   = 'none';
-      btnVocab.style.display = 'flex';
+      btnSit.classList.add('is-hidden');
+      btnVocab.classList.remove('is-hidden');
       btnVocab.textContent = L('\ud83d\udcc4 Moojuula kana buusi', '\ud83d\udcc4 Télécharger ce module');
     }
   }
@@ -3152,7 +3154,7 @@ function _buildHomeGuide() {
         /* Oromo — version concise */
         ? '<p>\ud83d\ude4b <strong>Sébastien Godet</strong> — hojii jijjiirraa keessa jira (Gestionna Pirojektii Agile & Data).</p>'
           + '<p>Appiin Taphad\'Meuh kun hidha Oromoo fi Faransaayii jabeessuuf — <strong>bilisaa, galmee malee, iddoo kamittiyyuu</strong>.</p>'
-          + '<p>\ud83d\udce7 <a href="mailto:sebastien.godet16@gmail.com">sebastien.godet16@gmail.com</a> · '
+          + '<p>\ud83d\udce7 <a href="mailto:sebastien.godet16@gmail.com">sebastien.godet16 [at] gmail [dot] com</a> · '
           + '<a href="https://www.linkedin.com/in/s%C3%A9bastien-godet-142ba6145" target="_blank" rel="noopener">LinkedIn</a></p>'
         /* Français — version complète */
         : '<div class="ob-bio-card">'
@@ -3169,7 +3171,7 @@ function _buildHomeGuide() {
           + '<div class="ob-bio-contact-title">\ud83d\udcac Une suggestion, une coquille, une idée ?</div>'
           + '<p>Cette appli est faite pour toi — chaque retour compte vraiment !</p>'
           + '<div class="ob-bio-links">'
-          + '<a class="ob-bio-btn" href="mailto:sebastien.godet16@gmail.com">\u2709\ufe0f Envoyer un e-mail</a>'
+          + '<a class="ob-bio-btn" href="mailto:sebastien.godet16@gmail.com">\u2709\ufe0f Envoyer un e-mail (sebastien.godet16 [at] gmail [dot] com)</a>'
           + '<a class="ob-bio-btn" href="https://www.linkedin.com/in/s%C3%A9bastien-godet-142ba6145" target="_blank" rel="noopener">\ud83d\udcbc Message LinkedIn</a>'
           + '</div>'
           + '</div>'
@@ -3513,7 +3515,7 @@ function _printDocHeader(titleLine1, titleLine2, meta1, meta2, primaryColor, acc
 function _printDocFooter() {
   return '<div class="print-footer">'
     + 'Taphad\'Meuh \u2014 Application bilingue Fran\u00e7ais \u2194 Afaan Oromoo \xb7 D\u00e9velopp\u00e9 par S\u00e9bastien Godet \xb7 '
-    + 'sebastien.godet16@gmail.com \xb7 linkedin.com/in/s\u00e9bastien-godet-142ba6145'
+    + 'sebastien.godet16 [at] gmail [dot] com \xb7 linkedin.com/in/s\u00e9bastien-godet-142ba6145'
     + '</div>';
 }
 

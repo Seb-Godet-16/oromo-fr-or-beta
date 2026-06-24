@@ -152,7 +152,7 @@
     <!-- Pied de page propre à cet écran (classe spécifique pour le style) -->
     <footer class="launcher-footer">
       © Juin 2026 – Développé par Sébastien Godet · Assisté par IA Claude Sonnet 4.6 et Gemini 3.5 Flash<br>
-      sebastien.godet16@gmail.com ·
+      sebastien.godet16 [at] gmail [dot] com ·
       <a href="https://www.linkedin.com/in/s%C3%A9bastien-godet-142ba6145" target="_blank">LinkedIn</a> ·
       <!--
         showCredits() est défini dans app.js ; il affiche la modale
@@ -353,18 +353,16 @@
       Barre d'export PDF — affichée sous le contenu de la leçon.
       • #lessonExportVocab  : visible uniquement sur les thèmes Niveau 1 (vocabulaire)
       • #lessonExportSit    : visible uniquement sur les thèmes Niveau 2 (dialogue)
-      La visibilité est gérée par app.js via openTheme() :
-        Niveau 1 → display:'flex' sur #lessonExportVocab, 'none' sur #lessonExportSit
+      La visibilité est gérée par app.js via openTheme() en ajoutant /
+      retirant la classe .is-hidden (définie dans style.css §25) :
+        Niveau 1 → .is-hidden retiré sur #lessonExportVocab, ajouté sur #lessonExportSit
         Niveau 2 → inverse
-      Les deux boutons sont cachés par défaut (display:none) et seul le
-      bon bouton est rendu visible selon le type du thème ouvert.
+      Les deux boutons portent .is-hidden par défaut (aucun style inline).
     -->
     <div class="lesson-export-bar">
-      <button class="btn-export-pdf" id="lessonExportVocab"
-              style="display:none"
+      <button class="btn-export-pdf is-hidden" id="lessonExportVocab"
               onclick="_exportVocab()">📄 Télécharger ce module</button>
-      <button class="btn-export-pdf" id="lessonExportSit"
-              style="display:none"
+      <button class="btn-export-pdf is-hidden" id="lessonExportSit"
               onclick="_exportSituation()">📄 Télécharger cette situation</button>
     </div>
 
