@@ -1228,7 +1228,7 @@ function renderHome() {
   if (btn) {
     btn.textContent = p.n > 0
       ? L('▶ Continuer', '▶ Itti fufi')
-      : L('▶ Commencer', '▶ Jalqabi');
+      : L('▶ Jalqabi', '▶ Commencer');
   }
 
   /* ── Cercle SVG de progression ── */
