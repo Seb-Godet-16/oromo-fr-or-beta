@@ -752,7 +752,39 @@ html.theme-oromo body{background:#f4f9f4}
 
 /* .lesson-body layout moved to §28 */
 
-/* ── Bouton retour (commun à #sections et #lesson) ──────────────── */
+/* ── Badge niveau cliquable dans le header de leçon ─────────────── */
+/*
+  Pastille "Niv. 1" / "Niv. 2" affichée entre le bouton ← et l'emoji
+  du thème. Cliquable → retour à la liste du niveau correspondant.
+  Style pill blanc semi-transparent sur fond de header coloré,
+  cohérent avec les badges du header sections.
+*/
+.lesson-level-badge{
+  background:rgba(255,255,255,.22);
+  border:1.5px solid rgba(255,255,255,.45);
+  border-radius:50px;
+  color:#fff;
+  font-size:.65rem;
+  font-weight:800;
+  padding:3px 10px;
+  cursor:pointer;
+  white-space:nowrap;
+  flex-shrink:0;
+  letter-spacing:.03em;
+  transition:background .15s, transform .1s;
+  min-height:28px;
+  display:flex;
+  align-items:center;
+}
+.lesson-level-badge:hover{
+  background:rgba(255,255,255,.35);
+}
+.lesson-level-badge:active{
+  background:rgba(255,255,255,.5);
+  transform:scale(.94);
+}
+
+
 /*
   !important nécessaires ici car .back-btn apparaît dans des
   contextes à spécificité variable (en-têtes colorés, home).

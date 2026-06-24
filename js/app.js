@@ -1258,6 +1258,21 @@ function openTheme(id, _navHint) {
   }
   document.getElementById('lessonTitle').textContent = lessonTitle;
 
+  /* ── Badge niveau cliquable dans le header leçon ── */
+  var badge = document.getElementById('lessonLevelBadge');
+  if (badge) {
+    badge.textContent = L(
+      CT.level === 1 ? 'Niv. 1' : 'Niv. 2',
+      CT.level === 1 ? 'Sad. 1' : 'Sad. 2'
+    );
+    /* Le clic du badge ramène à la liste du bon niveau */
+    badge.onclick = function() {
+      var target = CT.level === 2 ? 'sections-level2' : 'sections-level1';
+      renderSections(CT.level);
+      showScreen(target, 'back');
+    };
+  }
+
   /* Mémoriser le niveau du thème ouvert pour le retour et les flèches */
   _currentThemeLevel = CT.level;
   /* Si même écran lesson, juste rafraîchir sans re-animer */
@@ -3493,25 +3508,38 @@ function _hideLoadingSpinner() {
    la stratégie Cache First / Network First (voir sw.js).
    ============================================================ */
 if ('serviceWorker' in navigator) {
+  /*
+   * FLAG ANTI-BOUCLE
+   * controllerchange peut théoriquement se déclencher plusieurs fois
+   * (rare mais possible sur certains navigateurs mobiles).
+   * Le flag garantit qu'on ne recharge qu'une seule fois par session.
+   */
+  var _reloading = false;
+
+  /*
+   * RECHARGEMENT AUTOMATIQUE À LA PRISE DE CONTRÔLE DU NOUVEAU SW
+   * ---------------------------------------------------------------
+   * Cycle de vie :
+   *   1. sw.js change de CACHE_NAME (nouveau déploiement)
+   *   2. Le navigateur installe le nouveau SW en arrière-plan (install)
+   *   3. skipWaiting() dans sw.js lui ordonne de prendre le contrôle
+   *      immédiatement sans attendre la fermeture des onglets
+   *   4. clients.claim() dans sw.js étend ce contrôle à cet onglet
+   *   5. → 'controllerchange' se déclenche ici
+   *   6. location.reload() : l'onglet recharge depuis le nouveau cache
+   *
+   * Résultat : l'utilisateur voit un flash de rechargement (~200 ms)
+   * et repart sur la version fraîche. Aucune action requise de sa part.
+   * Aucun message à lire, aucun bouton à taper.
+   */
+  navigator.serviceWorker.addEventListener('controllerchange', function() {
+    if (_reloading) return;
+    _reloading = true;
+    window.location.reload();
+  });
+
   window.addEventListener('load', function() {
     navigator.serviceWorker.register('./sw.js')
-      .then(function(reg) {
-        /* SW enregistré — mise à jour silencieuse si une nouvelle version existe */
-        reg.addEventListener('updatefound', function() {
-          var newSW = reg.installing;
-          if (!newSW) return;
-          newSW.addEventListener('statechange', function() {
-            if (newSW.state === 'installed' && navigator.serviceWorker.controller) {
-              /* Nouvelle version disponible : toast discret, sans forcer le rechargement */
-              _showToast(
-                L('🔄 Haala haaraan jira — Fuula haaromsuun argatta.',
-                  '🔄 Mise à jour disponible — Rechargez pour en bénéficier.'),
-                6000
-              );
-            }
-          });
-        });
-      })
       .catch(function(err) {
         /* Échec silencieux : l'app fonctionne quand même en ligne */
         console.warn('[SW] Enregistrement échoué :', err);
