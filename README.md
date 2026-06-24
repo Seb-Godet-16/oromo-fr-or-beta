@@ -1,3 +1,4 @@
+[README.md](https://github.com/user-attachments/files/29271238/README.md)
 # 🐄 Taphad'Meuh — Français ↔ Afaan Oromoo
 
 > **FR** Application bilingue d'apprentissage · **EN** Bilingual learning app · **OR** Appii barachuu afaan lama · **AM** መተግበሪያ ሁለት ቋንቋ
