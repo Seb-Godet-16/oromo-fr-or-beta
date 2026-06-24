@@ -3234,3 +3234,117 @@ footer a:hover{text-decoration:underline}
 @media (prefers-reduced-motion: reduce) {
   .hpc-fill { transition: none; }
 }
+
+/* ==========================================================================
+   X. MODALE DE CONFIRMATION DE SUPPRESSION PERSONNALISÉE
+   ========================================================================== */
+
+/* Conteneur d'arrière-plan (Overlay) */
+#custom-confirm-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.45); /* Assombrit délicatement le fond */
+  backdrop-filter: blur(5px);           /* Floute l'arrière-plan de l'app */
+  -webkit-backdrop-filter: blur(5px);   /* Support pour anciens iOS Safari */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 3000;                        /* Reste au-dessus de la bottom-nav */
+  padding: 16px;
+  box-sizing: border-box;
+}
+
+/* Boîte blanche de dialogue centrale */
+#custom-confirm-modal .modal-content {
+  background-color: var(--bg-card, #ffffff);
+  padding: 24px;
+  border-radius: 16px;
+  width: 100%;
+  max-width: 340px;                     /* Format idéal sur smartphone */
+  text-align: center;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+  animation: modalScaleIn 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Titre d'avertissement */
+#custom-confirm-modal h3 {
+  color: #d32f2f;                       /* Rouge alerte bien contrasté */
+  font-family: var(--font-main), sans-serif;
+  margin-top: 0;
+  margin-bottom: 12px;
+  font-size: 1.3em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+/* Texte descriptif */
+#custom-confirm-modal p {
+  font-family: var(--font-main), sans-serif;
+  font-size: 0.95em;
+  color: #555555;
+  line-height: 1.5;
+  margin-bottom: 24px;
+}
+
+/* Zone des deux boutons */
+.modal-actions {
+  display: flex;
+  gap: 12px;
+}
+
+/* Style de base des boutons de la modale */
+.modal-actions button {
+  flex: 1;
+  padding: 12px;
+  border: none;
+  border-radius: 10px;
+  font-family: var(--font-main), sans-serif;
+  font-weight: bold;
+  font-size: 0.95em;
+  cursor: pointer;
+  transition: transform 0.1s ease, filter 0.1s ease;
+}
+
+.modal-actions button:active {
+  transform: scale(0.97);                /* Effet de clic dynamique tactile */
+}
+
+/* Bouton d'annulation (Neutre) */
+#modal-confirm-cancel {
+  background-color: #e0e0e0;
+  color: #333333;
+}
+#modal-confirm-cancel:hover {
+  filter: brightness(0.95);
+}
+
+/* Bouton d'action destructive (Effacer) */
+#modal-confirm-validate {
+  background-color: #d32f2f;
+  color: #ffffff;
+}
+#modal-confirm-validate:hover {
+  filter: brightness(0.9);
+}
+
+/* Classe utilitaire d'affichage */
+.modal-hidden {
+  display: none !important;
+}
+
+/* Animation fluide d'apparition */
+@keyframes modalScaleIn {
+  from {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}

@@ -665,7 +665,7 @@ if (window.speechSynthesis) {
    Chaque thème complété est sauvegardé sous la forme :
      { id: 'theme_id', stars: 1|2|3 }
    Les étoiles ne peuvent qu'augmenter (on conserve le meilleur score).
-   Seuils : 50%→⭐  75%→⭐⭐  100%→⭐⭐⭐
+   Seuils : 50%→⭐   75%→⭐⭐   100%→⭐⭐⭐
    ============================================================ */
 
 /**
@@ -691,36 +691,61 @@ function saveDone() {
 }
 
 /**
- * Gère la double confirmation bilingue, efface la progression
- * ET réinitialise le guide de démarrage (onboarding) du mode actif.
+ * Étape 1 : Ouvre la modale de confirmation personnalisée.
+ * Déclenchée par le bouton "Réinitialiser" dans le guide / l'aide.
+ * Évite l'utilisation de la boîte grise native window.confirm().
  */
 function confirmResetProgress() {
-    var isOromoInterface = (STORAGE_KEY === 'pe_om_fr_done_v1');
+  var modal = document.getElementById('custom-confirm-modal');
+  if (modal) {
+    modal.classList.remove('modal-hidden');
+  }
+}
 
-    var msg1 = isOromoInterface 
-        ? "⚠️ Giddu-gala milkaa'ina keessanii guutummaatti haquu ni barbaadduraa? Urjiileen keessan ni haqamu."
-        : "⚠️ Êtes-vous sûr de vouloir réinitialiser TOUTE votre progression dans ce mode ? Vos étoiles seront définitivement effacées.";
-        
-    var msg2 = isOromoInterface
-        ? "Dhuguma haquu ni barbaadduraa? Action kana duubatti deebisuun hin danda'amu."
-        : "Confirmation de sécurité : Voulez-vous vraiment TOUT effacer ? Cette action est irréversible.";
+/**
+ * Étape 2 : Ferme la modale si l'utilisateur clique sur "Annuler".
+ */
+function closeConfirmModal() {
+  var modal = document.getElementById('custom-confirm-modal');
+  if (modal) {
+    modal.classList.add('modal-hidden');
+  }
+}
 
-    if (window.confirm(msg1)) {
-        if (window.confirm(msg2)) {
-            // 1. On supprime proprement la progression du mode actif
-            localStorage.removeItem(STORAGE_KEY); 
-            
-            // 2. On supprime l'onboarding du mode actif pour réafficher le guide
-            if (isOromoInterface) {
-                localStorage.removeItem(_OB_KEY_FR); // Mode "Apprendre le Français"
-            } else {
-                localStorage.removeItem(_OB_KEY_OR); // Mode "Apprendre l'Oromo"
-            }
-            
-            // Rechargement immédiat de la page
-            window.location.reload();
-        }
-    }
+/**
+ * Étape 3 : Exécute le nettoyage complet si l'utilisateur valide l'action.
+ * Supprime la progression, l'onboarding et rafraîchit proprement la page.
+ */
+function executeResetProgress() {
+  // 1. Fermer immédiatement la modale visuelle
+  closeConfirmModal();
+
+  // 2. Détermination du mode actuel pour cibler l'onboarding à réinitialiser
+  var isOromoInterface = (STORAGE_KEY === 'pe_om_fr_done_v1');
+
+  // 3. On supprime proprement la progression du mode actif
+  localStorage.removeItem(STORAGE_KEY); 
+  
+  // 4. On supprime l'onboarding du mode actif pour réafficher le guide au redémarrage
+  if (isOromoInterface) {
+    localStorage.removeItem(_OB_KEY_FR); // Mode "Apprendre le Français"
+  } else {
+    localStorage.removeItem(_OB_KEY_OR); // Mode "Apprendre l'Oromo"
+  }
+
+  // 5. Déclenchement d'un retour haptique de confirmation (vibration tactile)
+  _vibrateFeedback(150);
+
+  // 6. Notification de succès via le système de Toast bilingue de l'application
+  _showToast(isOromoInterface 
+    ? '🔄 Appilikeeshiniin deebifameera!'
+    : '🔄 Application réinitialisée avec succès !' 
+  );
+
+  // 7. Rechargement propre de la page après un léger délai pour appliquer les changements
+  setTimeout(function() {
+    window.location.reload();
+  }, 1200);
 }
 
 /**
