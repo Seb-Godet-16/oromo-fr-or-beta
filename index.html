@@ -235,7 +235,7 @@
         Placé sous le bouton Commencer pour ne pas perturber le parcours principal.
         Le libellé est mis à jour dynamiquement par _buildHomeGuide() via id="homeExportBtn".
       -->
-      <button class="btn-export-pdf" id="homeExportBtn" onclick="_exportGuide()">📄 Télécharger le guide</button>
+      <button class="btn-export-pdf" id="homeExportBtn" onclick="_exportGuide()"></button>
     </div>
 
     <!--
@@ -268,8 +268,8 @@
         <span id="level1Label"></span>
       </button>
       <button class="level-tab" id="lvlTab2" onclick="showScreen('sections-level2')">
-        <span id="level2BadgeA" class="level-badge l2"></span>
-        <span id="level2LabelA"></span>
+        <span id="level2Badge" class="level-badge l2"></span>
+        <span id="level2Label"></span>
       </button>
     </div>
     <div class="sections-body">
@@ -402,7 +402,7 @@
 
       <!-- Fermeture de la modale : remet display à "none" -->
       <button id="credits-modal-close"
-              onclick="document.getElementById('credits-modal').style.display='none'">
+              onclick="closeCreditsModal()">
       </button>
 
     </div><!-- /.modal-content -->

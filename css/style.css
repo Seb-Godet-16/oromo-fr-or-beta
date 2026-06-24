@@ -22,24 +22,35 @@
  * ║  rendu visuel.                                                  ║
  * ╠══════════════════════════════════════════════════════════════════╣
  * ║  PLAN DU FICHIER                                                ║
- * ║   §1  Reset & base                          ligne ~  55         ║
- * ║   §2  Variables de thème (:root / fallback) ligne ~  75        ║
- * ║   §3  Thème Français (html.theme-french)    ligne ~ 115        ║
- * ║   §4  Thème Oromo (html.theme-oromo)        ligne ~ 155        ║
- * ║   §5  Écran 0 — Lanceur                     ligne ~ 195        ║
- * ║   §6  Écran 1 — Accueil #home               ligne ~ 280        ║
- * ║   §7  Écran 2 — Sections                    ligne ~ 345        ║
- * ║   §8  Écran 3 — Leçon                       ligne ~ 395        ║
- * ║   §9  Composants : Flashcards               ligne ~ 425        ║
- * ║   §10 Composants : Alphabet                 ligne ~ 495        ║
- * ║   §11 Composants : Quiz                     ligne ~ 530        ║
- * ║   §12 Composants : Dialogues / Situations   ligne ~ 590        ║
- * ║   §13 Composants : Vocabulaire              ligne ~ 640        ║
- * ║   §14 Modale Remerciements                  ligne ~ 680        ║
- * ║   §15 Footer commun                         ligne ~ 720        ║
- * ║   §16 Toast notification                    ligne ~ 745        ║
- * ║   §17 Onglet Répète                         ligne ~ 785        ║
- * ║   §18 Focus clavier                         ligne ~ 970        ║
+ * ║   §1   Reset & base                          ligne ~   55       ║
+ * ║   §2   Variables de thème (:root / fallback) ligne ~   75       ║
+ * ║   §3   Thème Français (html.theme-french)    ligne ~  115       ║
+ * ║   §4   Thème Oromo (html.theme-oromo)        ligne ~  155       ║
+ * ║   §5   Écran 0 — Lanceur                     ligne ~  195       ║
+ * ║   §6   Écran 1 — Accueil #home               ligne ~  280       ║
+ * ║   §7   Écran 2 — Sections                    ligne ~  345       ║
+ * ║   §8   Écran 3 — Leçon                       ligne ~  395       ║
+ * ║   §9   Composants : Flashcards               ligne ~  425       ║
+ * ║   §10  Composants : Alphabet                 ligne ~  495       ║
+ * ║   §11  Composants : Quiz                     ligne ~  530       ║
+ * ║   §12  Composants : Dialogues / Situations   ligne ~  590       ║
+ * ║   §13  Composants : Vocabulaire              ligne ~  640       ║
+ * ║   §14  Modale Remerciements                  ligne ~  680       ║
+ * ║   §15  Footer commun                         ligne ~  720       ║
+ * ║   §16  Toast notification                    ligne ~  745       ║
+ * ║   §17  Onglet Répète                         ligne ~  785       ║
+ * ║   §18  Focus clavier                         ligne ~  970       ║
+ * ║   §19  Guide utilisateur (.ob-*)             ligne ~ 1000       ║
+ * ║   §20  Spinner de chargement                 ligne ~ 2198       ║
+ * ║   §20e Grille thèmes écrans level            ligne ~ 3084       ║
+ * ║   §22  Écran Home redesigné                  ligne ~ 2235       ║
+ * ║   §23  Écran Sections redesigné              ligne ~ 2444       ║
+ * ║   §24  Responsive : tablette & desktop       ligne ~ 2555       ║
+ * ║   §24b Mode sombre                           ligne ~ 2645       ║
+ * ║   §25  Boutons d'export PDF                  ligne ~ 2756       ║
+ * ║   §26  Barre de navigation basse             ligne ~ 2858       ║
+ * ║   §27  Onglets niveau 1 / 2                  ligne ~ 2966       ║
+ * ║   §28  Écrans sections level (no-scroll)     ligne ~ 3046       ║
  * ╚══════════════════════════════════════════════════════════════════╝
  */
 
@@ -225,6 +236,9 @@ body{
   --c-success:#009A44;   /* feedback correct (quiz, répète)           */
   --c-error:#c0392b;     /* feedback incorrect                        */
   --c-star:#f1c40f;      /* étoiles ⭐ (progression, résultats)       */
+
+  /* ── Police principale — utilisée par la modale de confirmation ── */
+  --font-main:'Segoe UI', system-ui, sans-serif;
 }
 
 
@@ -1196,6 +1210,18 @@ html.theme-french .btn-reset-theme:hover{
 }
 .retry-btn:active{background:var(--c-primary-dark)}
 
+/* Variante secondaire du bouton Réessayer (fond neutre, dark-mode safe) */
+.retry-btn--secondary{
+  background:var(--c-border, #888);
+  color:#fff;
+}
+.retry-btn--secondary:active{background:var(--c-border-dark, #666)}
+
+/* ── Classes sémantiques résultats quiz (remplacent les styles inline dans app.js) ── */
+.quiz-result-actions{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:14px}
+.quiz-result-title{color:var(--c-primary)}
+.quiz-result-sub{font-size:.85rem;color:var(--c-text-soft,#666);margin:8px 0}
+
 /*
   Variante du quiz pour les dialogues (options en colonne pleine
   largeur, texte aligné à gauche pour les phrases longues).
@@ -1373,7 +1399,7 @@ html.theme-french .btn-reset-theme:hover{
   Dans les listes de vocabulaire, le mot source est en gras
   et la traduction en clair, séparés visuellement par la taille.
 */
-.vocab-item-es{font-weight:700;font-size:.82rem;color:var(--c-primary)}
+.vocab-item-et{font-weight:700;font-size:.82rem;color:var(--c-primary)}
 .vocab-item-fr{font-weight:400;font-size:.72rem;color:#555;margin-left:4px}
 
 
@@ -2247,7 +2273,7 @@ footer a:hover{text-decoration:underline}
   background-blend-mode:overlay;
   align-items:stretch;
   justify-content:space-between;
-  padding:0 0 80px;
+  padding:0 0 calc(80px + env(safe-area-inset-bottom, 0px));
   text-align:center;
   position:relative;
   overflow-y:auto;
@@ -2642,7 +2668,7 @@ footer a:hover{text-decoration:underline}
 }
 
 /* ════════════════════════════════════════════════════════════════
-   §21 — MODE SOMBRE  @media (prefers-color-scheme: dark)
+   §24b — MODE SOMBRE  @media (prefers-color-scheme: dark)
    ════════════════════════════════════════════════════════════════
    Ajuste uniquement les surfaces de fond et les couleurs de texte
    neutres. Les couleurs primaires (bleu FR, vert OR) restent
@@ -3078,7 +3104,8 @@ footer a:hover{text-decoration:underline}
 .lesson-body{
   flex:1;
   overflow-y:auto;
-  padding:14px;
+  /* padding-bottom réservé à la bottom-nav (52px) + safe-area iOS */
+  padding:14px 14px calc(80px + env(safe-area-inset-bottom, 0px));
 }
 /* ════════════════════════════════════════════════════════════════
    §20e — GRILLE DE THÈMES DANS LES ÉCRANS LEVEL  (sans <details>)

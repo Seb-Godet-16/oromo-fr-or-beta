@@ -40,7 +40,7 @@ Taphad'Meuh/
 │   └── style.css           ← All styles — dual theme system (theme-french / theme-oromo)
 │
 ├── js/
-│   ├── app.js              ← Full application engine (~3 100 lines, 20 sections)
+│   ├── app.js              ← Full application engine (~3 983 lines, 21 sections)
 │   ├── data-fr.js          ← Dataset — "Learn French" mode (48 themes, ~1 350 lines)
 │   └── data-or.js          ← Dataset — "Learn Oromo" mode  (48 themes, ~1 350 lines)
 │

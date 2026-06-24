@@ -1,7 +1,7 @@
 /* ============================================================
    Taphad'Meuh 🐄  —  Moteur applicatif unifié
    Français ↔ Afaan Oromoo
-   © Juin 2026 – Sébastien Godet · IA Claude
+   © Juin 2026 – Sébastien Godet · Claude Sonnet 4.6 · Gemini 3.5 Flash 
    Modernisé ES2020 : let/const, fonctions fléchées, for…of
    ============================================================
    ARCHITECTURE (5 fichiers) :
@@ -752,6 +752,14 @@ function closeConfirmModal() {
 }
 
 /**
+ * Ferme la modale des remerciements.
+ */
+function closeCreditsModal() {
+  const modal = document.getElementById('credits-modal');
+  if (modal) modal.style.display = 'none';
+}
+
+/**
  * Étape 3 : Exécute le nettoyage complet si l'utilisateur valide l'action.
  * Supprime la progression, l'onboarding et rafraîchit proprement la page.
  */
@@ -773,7 +781,7 @@ function executeResetProgress() {
   }
 
   // 5. Déclenchement d'un retour haptique de confirmation (vibration tactile)
-  _vibrateFeedback(150);
+  _vibrateFeedback('correct');
 
   // 6. Notification de succès via le système de Toast bilingue de l'application
   _showToast(isOromoInterface 
@@ -1518,7 +1526,7 @@ function switchTab(tab) {
 function renderFlash() {
   let words = CT.words;
   let card  = words[fcIdx];
-  let keys  = langKeys(); // Contient keys.src ('fr' ou 'om') et keys.tgt ('om' ou 'fr')
+  let keys  = langKeys(); // Contient keys.src ('fr' ou 'et') et keys.tgt ('et' ou 'fr')
 
   /* ── Mode Alphabet : grille de lettres cliquables ── */
   if (CT.type === 'alpha') {
@@ -1796,11 +1804,11 @@ function renderQuiz10() {
 
     document.getElementById('tabContent').innerHTML = '<div class="result-box">'
       + '<div style="font-size:2rem; margin-bottom:5px;">' + (earnedStars === 3 ? '🌟🌟🌟' : endStars) + '</div>'
-      + '<h3>' + r.title + '</h3>'
+      + '<h3 class="quiz-result-title">' + r.title + '</h3>'
       + '<div class="score-num">' + q10Score + '/' + total + '</div>'
-      + '<div style="font-size:1rem;margin:6px 0;color:' + (isSuccess ? 'var(--c-success)' : 'var(--c-error)') + '">' + r.sub + '</div>'
-      + '<div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:14px">'
-      + '<button class="retry-btn" style="background:#888" onclick="q10Step=0;q10Score=0;q10Answered=false;_q10Questions=null;renderQuiz10()">' + r.retry + '</button>'
+      + '<div class="quiz-result-sub" style="color:' + (isSuccess ? 'var(--c-success)' : 'var(--c-error)') + '">' + r.sub + '</div>'
+      + '<div class="quiz-result-actions">'
+      + '<button class="retry-btn retry-btn--secondary" onclick="q10Step=0;q10Score=0;q10Answered=false;_q10Questions=null;renderQuiz10()">' + r.retry + '</button>'
       + (isSuccess ? '<button class="retry-btn" onclick="renderSections(_currentThemeLevel);lessonGoBack()">' + r.finish + '</button>' : '')
       + '</div></div>';
     renderSections(_currentThemeLevel || 1);
@@ -1919,7 +1927,7 @@ function renderDialog() {
   }).join('');
   let sit = sits[sitIdx];
 
-  let keys = langKeys(); // Contient keys.src ('fr' ou 'om') et keys.tgt ('om' ou 'fr')
+  let keys = langKeys(); // Contient keys.src ('fr' ou 'et') et keys.tgt ('et' ou 'fr')
   let bubbles = sit.dialogue.map((ln, i) => {
     let listenTip = L('Dhaggeeffadhu', 'Écouter');
     return '<div class="bubble ' + ln.side + '" style="opacity:0;transition:opacity .3s ' + (i * 0.08) + 's" id="bl' + i + '">'
@@ -2580,15 +2588,15 @@ function _renderRepeatResult() {
   document.getElementById('repeat-controls').innerHTML =
     '<div class="result-box">'
     + '<div style="font-size:2rem;margin-bottom:8px">' + emoji + '</div>'
-    + '<h3 style="color:var(--c-primary)">'
+    + '<h3 class="quiz-result-title">'
     + L('Shaakallii xumurameera!', 'Exercice terminé !')
     + '</h3>'
     + '<div class="score-num">' + _repeatScore + ' / ' + _repeatTotal + '</div>'
-    + '<div style="font-size:.85rem;color:#666;margin:8px 0">'
+    + '<div class="quiz-result-sub">'
     + pct + '% ' + L('si\'aa sirriin dubbachiiste', 'de réussite')
     + '</div>'
-    + '<div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:14px">'
-    + '<button class="retry-btn" style="background:#888" onclick="renderRepeat()">'
+    + '<div class="quiz-result-actions">'
+    + '<button class="retry-btn retry-btn--secondary" onclick="renderRepeat()">'
     + L('🔄 Irra deebi\'i', '🔄 Recommencer')
     + '</button>'
     + '<button class="retry-btn" onclick="switchTab(\'flash\')">'
@@ -2632,11 +2640,11 @@ function renderDialogQuiz() {
 
     document.getElementById('tabContent').innerHTML = '<div class="result-box">'
       + '<div style="font-size:2rem; margin-bottom:5px;">' + (earnedStars === 3 ? '🎉🎉🎉' : endStars) + '</div>'
-      + '<h3>' + r.title + '</h3>'
+      + '<h3 class="quiz-result-title">' + r.title + '</h3>'
       + '<div class="score-num">' + dqScore + '/' + total + '</div>'
-      + '<div style="font-size:.9rem;margin-top:6px;color:' + (isSuccess ? 'var(--c-success)' : 'var(--c-error)') + '">' + r.sub + '</div>'
-      + '<div style="display:flex;gap:8px;justify-content:center;margin-top:14px;flex-wrap:wrap">'
-      + '<button class="retry-btn" style="background:#888" onclick="dqStep=0;dqScore=0;dqAnswered=false;renderDialogQuiz()">' + r.retry + '</button>'
+      + '<div class="quiz-result-sub" style="color:' + (isSuccess ? 'var(--c-success)' : 'var(--c-error)') + '">' + r.sub + '</div>'
+      + '<div class="quiz-result-actions">'
+      + '<button class="retry-btn retry-btn--secondary" onclick="dqStep=0;dqScore=0;dqAnswered=false;renderDialogQuiz()">' + r.retry + '</button>'
       + (isSuccess ? '<button class="retry-btn" onclick="renderSections(_currentThemeLevel);lessonGoBack()">' + r.finish + '</button>' : '')
       + '</div></div>';
     renderSections(_currentThemeLevel || 1);
@@ -2986,7 +2994,7 @@ function _buildHomeGuide() {
       title: isFr ? 'Jechootaa (Vocabulaire)' : 'L\'onglet Vocabulaire',
       body : isFr
         /* Oromo */
-        ? '<p>Onglet <strong>Jechootaa</strong> — jechota moojuulaa tarree keessatti agarsiisa, yeroo hundaa ilaaluuf.</p>'
+        ? '<p>Cimdii <strong>Jechootaa</strong> — jechota moojuulaa tarree keessatti agarsiisa, yeroo hundaa ilaaluuf.</p>'
           + '<ul>'
           + '<li>Jecha tokko irratti cuqaasi — sagalee dhageeffatta.</li>'
           + '<li>Jechoonni Oromoo fi Faransaayii waliin ni mul\'atu.</li>'
@@ -3012,8 +3020,8 @@ function _buildHomeGuide() {
           + '<li>Haaloota hedduu (<em>Sit. 1, Sit. 2…</em>) — ongletota irraa filanna.</li>'
           + '<li>Bubbulliiwwan lama ni mullatu — 🔵 bitaa fi 🟢 mirga — nama lama gidduutti dubbii.</li>'
           + '<li>Caancala 🔊 cuqaasi — hirmaataa dubbisu dhageeffadhu.</li>'
-          + '<li>Onglet <strong>Vocabulaire</strong> : jechota murteessoo dubbii sanaa.</li>'
-          + '<li>Onglet <strong>Quiz</strong> : gaafii dubbii irratti of-qori.</li>'
+          + '<li>Cimdii <strong>Vocabulaire</strong> : jechota murteessoo dubbii sanaa.</li>'
+          + '<li>Cimdii <strong>Quiz</strong> : gaafii dubbii irratti of-qori.</li>'
           + '</ul>'
           + '<div class="ob-tip">💡 Dura Sadarkaa 1 xumuruun gaarii — jechonni Sadarkaa 2 keessatti ni mul\'atu !</div>'
         /* Français */
@@ -3169,10 +3177,10 @@ function _buildHomeGuide() {
     },
     {
       icon : '\ud83c\udfa4',
-      title: isFr ? 'Onglet Irra deeb\u02bci' : "L'onglet Répète",
+      title: isFr ? 'Cimdii Irra deeb\u02bci' : "L'onglet Répète",
       sub  : isFr ? "L'onglet Répète"         : 'Onglet Irra deebʼi',
       body : isFr
-        ? '<p>Onglet <strong>Irra deeb\u02bci</strong> sagalee shaakaaluuf maaykiroofoonii meeshaa kee fayyadama :</p>'
+        ? '<p>Cimdii <strong>Irra deeb\u02bci</strong> sagalee shaakaaluuf maaykiroofoonii meeshaa kee fayyadama :</p>'
           + '<ul>'
           + '<li><strong>\ud83d\udd0a Dhageeffadhu</strong> — jecha dhaggeeffadhu.</li>'
           + '<li><strong>\ud83c\udfa4 Dubbadhu</strong> — jecha dubbadhuu.</li>'
@@ -3302,17 +3310,23 @@ function _buildHomeGuide() {
   /* ── Bouton Commencer / Continuer ── */
   let btn = document.getElementById('homeStartBtn');
   if (btn) {
-    btn.textContent = L('▶ Commencer', '▶ Jalqabi');
+    btn.textContent = L('▶ Jalqabi', '▶ Commencer');
     btn.onclick = function() { showScreen('sections-level1'); };
   }
 
   /* ── Bouton Fermer (✕) en haut à droite ── */
   let closeBtn = document.getElementById('homeCloseBtn');
   if (closeBtn) {
-    closeBtn.textContent = L('Fermer ✕', 'Cufuu ✕');
+    closeBtn.textContent = L('Cufuu ✕', 'Fermer ✕');
     closeBtn.setAttribute('aria-label', L('Fermer le guide', 'Gargaarsa cufuu'));
     /* Fermer = passer directement aux modules (sans toucher au flag localStorage) */
     closeBtn.onclick = function() { showScreen('sections-level1'); };
+  }
+
+  /* ── Bouton export PDF du guide ── */
+  let exportBtn = document.getElementById('homeExportBtn');
+  if (exportBtn) {
+    exportBtn.textContent = L('📄 Galmee buusi', '📄 Télécharger le guide');
   }
 }
 
@@ -3370,8 +3384,8 @@ function showCredits() {
   let bodyEl  = document.getElementById('credits-modal-body');
   let closeEl = document.getElementById('credits-modal-close');
 
-  if (titleEl) titleEl.textContent = L('Remerciements', 'Galateeffannaa');
-  if (closeEl) closeEl.textContent = L('Fermer', 'Cufuu');
+  if (titleEl) titleEl.textContent = L('Galateeffannaa', 'Remerciements');
+  if (closeEl) closeEl.textContent = L('Cufuu', 'Fermer');
 
   if (bodyEl) {
     bodyEl.innerHTML = isFrench()
@@ -3467,7 +3481,7 @@ function _hideLoadingSpinner() {
   setTimeout(() => { if (el.parentNode) el.parentNode.removeChild(el); }, 300);
 }
 /* ============================================================
-   15. ENREGISTREMENT DU SERVICE WORKER (PWA / Hors-ligne)
+   20. ENREGISTREMENT DU SERVICE WORKER (PWA / Hors-ligne)
    ============================================================
    Enregistré après le chargement complet de la page pour ne pas
    bloquer le rendu initial. Le SW gère le cache hors-ligne et
@@ -3516,17 +3530,17 @@ if ('serviceWorker' in navigator) {
 /* ============================================================
    21. EXPORTS PDF — window.print() + @media print
    ============================================================
-   Trois exports independants, 100% cote navigateur.
-   Chacun ouvre une fenetre temporaire avec un HTML complet
-   (styles inline @media print), declenche window.print(),
-   puis ferme la fenetre automatiquement.
+   Trois exports indépendants, 100% côté navigateur.
+   Chacun ouvre une fenêtre temporaire avec un HTML complet
+   (styles inline @media print), déclenche window.print(),
+   puis ferme la fenêtre automatiquement.
 
    _exportGuide()      -> Ecran Home  : guide complet toutes sections
    _exportVocab()      -> Lecon Niv.1 : tableau 2 col. dense (Oromo|FR)
    _exportSituation()  -> Lecon Niv.2 : situation courante (sitIdx)
    ============================================================ */
 
-/* ── Utilitaire commun : ouvre une fenetre print et la ferme apres ── */
+/* ── Utilitaire commun : ouvre une fenêtre print et la ferme après ── */
 /**
  * Ouvre une fenêtre d'impression avec le contenu HTML fourni.
  *
