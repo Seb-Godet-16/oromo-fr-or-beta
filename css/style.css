@@ -3185,6 +3185,7 @@ footer a:hover{text-decoration:underline}
 /* overflow:hidden UNIQUEMENT en mode cartes */
 #lesson.mode-cartes{
   overflow:hidden;
+  padding-bottom: calc(var(--bottom-nav-h, 56px) + 58px + env(safe-area-inset-bottom, 0px));
 }
 
 /* lesson-body : colonne flex, sans scroll */
@@ -3299,7 +3300,7 @@ footer a:hover{text-decoration:underline}
    indépendant du layout flex → insensible aux variations de --app-h */
 #lesson.mode-cartes .lesson-export-bar {
   position: fixed;
-  bottom: var(--bottom-nav-h, 56px);
+  bottom: calc(var(--bottom-nav-h, 56px) + env(safe-area-inset-bottom, 0px));
   left: 50%;
   transform: translateX(-50%);
   width: 100%;
