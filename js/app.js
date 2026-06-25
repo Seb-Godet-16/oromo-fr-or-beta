@@ -11,32 +11,41 @@
      ├─ data-or.js   → ALL_THEMES_OR (contenu — mode Oromo)
      └─ app.js       → Ce fichier : logique applicative complète
 
-   SECTIONS DE CE FICHIER :
-     1.  Variables d'état globales (let/const)
-     2.  Point d'entrée — initApp(mode)
-     3.  Synthèse vocale + prononciation Oromo (cascade de voix)
-     3b. Retour haptique — _vibrateFeedback()
-     3c. Interruption audio — visibilitychange / focus
-     4.  Persistance de la progression (système d'étoiles ⭐)
-     4b. Restauration de session quiz (sessionStorage)
-     4c. Réinitialisation complète — confirmResetProgress()
-     5.  Navigation entre écrans
-     6.  Écran Home — rendu de la barre de progression
-     7.  Écran Sections — grille des thèmes
-     8.  Ouverture d'un thème (écran Lesson + onglets)
-     9.  Cartes Flash — vocabulaire interactif
-    10.  Quiz 10 questions — avec étoiles progressives
-    11.  Dialogue — scènes de situation
-    12.  Vocabulaire — lexique visuel cliquable
-    13.  Quiz Dialogue — questions sur le dialogue
-    13b. Onglet Répète — reconnaissance vocale (Speech Recognition)
-    14.  Utilitaires & chaînes de résultats bilingues
-    15.  Initialisation du launcher
-    16.  Accessibilité clavier
-    17.  Guide utilisateur — Onboarding (première visite par mode)
-    18.  Crédits — showCredits()
-    19.  Spinner de chargement des données
-    20.  Enregistrement du Service Worker (PWA / Hors-ligne)
+   SECTIONS DE CE FICHIER (ordre d'apparition réel) :
+     —   Utilitaire bilingue L() / langKeys()          ligne ~   86
+     1.  Variables d'état globales (let/const)          ligne ~   52
+     2.  Point d'entrée — initApp(mode)                 ligne ~  156
+     3.  Synthèse vocale + prononciation Oromo          ligne ~  341
+     3b. Retour haptique — _vibrateFeedback()           ligne ~  522
+     3b2.Confetti — animation de félicitations ⭐⭐⭐  ligne ~  544
+     3c. Interruption audio — visibilitychange / focus  ligne ~  617
+     4.  Persistance de la progression (étoiles ⭐)     ligne ~  654
+     4b. Restauration de session quiz (sessionStorage)  ligne ~  877
+     4c. Réinitialisation — confirmResetProgress()      ligne ~  724  (dans §4)
+     5.  Navigation entre écrans                        ligne ~  976
+     5b. Navigation basse — helpers                     ligne ~ 1077
+     6.  Écran Home — barre de progression globale      ligne ~ 1200
+     7.  Écran Sections — grille des thèmes             ligne ~ 1282
+     8.  Ouverture d'un thème (écran Lesson + onglets)  ligne ~ 1387
+     9.  Cartes Flash — vocabulaire interactif          ligne ~ 1529
+    10.  Quiz 10 questions — avec étoiles progressives  ligne ~ 1678
+    11.  Dialogue — scènes de situation                 ligne ~ 1926
+    12.  Vocabulaire — lexique visuel cliquable         ligne ~ 1983
+    13b. Onglet Répète — reconnaissance vocale          ligne ~ 2028
+    13.  Quiz Dialogue — questions sur le dialogue      ligne ~ 2622
+    14.  Utilitaires & chaînes de résultats bilingues   ligne ~ 2712
+    17.  Guide utilisateur — Onboarding                 ligne ~ 2771
+    —    Écran 2 / Guide Home — _buildHomeGuide()       ligne ~ 2796
+    18.  Crédits — showCredits()                        ligne ~ 3333
+    15.  Initialisation du launcher                     ligne ~ 3384
+    16.  Accessibilité clavier                          ligne ~ 3395
+    19.  Spinner de chargement des données              ligne ~ 3407
+    21b. Viewport height fix — Android Chrome / Brave   ligne ~ 3450
+    20.  Enregistrement du Service Worker (PWA)         ligne ~ 3512
+    21.  Exports PDF — window.print() + @media print    ligne ~ 3559
+    21a. Export Guide (écran Home)                      ligne ~ 3744
+    21b. Export Vocabulaire (leçon Niveau 1)            ligne ~ 3841
+    21c. Export Situation (leçon Niveau 2 — dialogue)   ligne ~ 3937
    ============================================================ */
 
 
