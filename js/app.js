@@ -2861,7 +2861,7 @@ function _buildHomeGuide() {
           + '<span class="ob-flow-arrow">→</span>'
           + '<span class="ob-flow-step">⭐ Urjii</span>'
           + '</div>'
-          + '<p><strong>Quiz fi Urjii ⭐</strong> : Kaardota booda <strong>Quiz gaafii 10</strong>. Deebii sirrii 4 keessaa tokko filadhu.</p>'
+          + '<p><strong>Quiz fi Urjii ⭐</strong> : Kaardota booda <strong>Quiz gaafii</strong> (3–10 haala jechota irratti hundaa\'e). Deebii sirrii 4 keessaa tokko filadhu.</p>'
           + '<ul>'
           + '<li>⭐ : ≥ 50% darbe !  · ⭐⭐ : ≥ 75%  · ⭐⭐⭐ : 100% 🎉</li>'
           + '<li>Urjiilee <strong>hir\'atan hin beekani</strong> — madaala gaarii ta\'e qofti yaadatama.</li>'
@@ -2886,7 +2886,7 @@ function _buildHomeGuide() {
           + '<span class="ob-flow-arrow">→</span>'
           + '<span class="ob-flow-step">⭐ Étoiles</span>'
           + '</div>'
-          + '<p><strong>Le Quiz et les Étoiles ⭐</strong> : <strong>10 questions</strong> après les cartes. Choisissez la bonne réponse parmi 4 options.</p>'
+          + '<p><strong>Le Quiz et les Étoiles ⭐</strong> : après les cartes, un <strong>Quiz</strong> (3 à 10 questions selon la taille du module). Choisissez la bonne réponse parmi 4 options.</p>'
           + '<ul>'
           + '<li>⭐ : ≥ 50% → module validé !  · ⭐⭐ : ≥ 75%  · ⭐⭐⭐ : 100% 🎉</li>'
           + '<li>Les étoiles ne <strong>diminuent jamais</strong> — votre meilleur score est conservé.</li>'
@@ -2925,7 +2925,8 @@ function _buildHomeGuide() {
       title: isFr ? 'Sagalee' : "L'audio",
       body : isFr
         /* Oromo — version concise */
-        ? '<p>Sagalee sirriitti dhageeffachuun barachuu keessatti barbaachisaa dha. Appiin kun <strong>sagalee browser yookiin bilbila kee</strong> (Web Speech API) fayyadama.</p>'
+        ? '<h4 style="margin:0 0 .4em;font-size:.95em">🔊 Sagalee qindeessuu</h4>'
+          + '<p>Sagalee sirriitti dhageeffachuun barachuu keessatti barbaachisaa dha. Appiin kun <strong>sagalee browser yookiin bilbila kee</strong> (Web Speech API) fayyadama.</p>'
           + '<p>🤖 <strong>Android</strong> : Qindaa\'inaa → Gargaarsa → Sagalee uumamaa → Google TTS filadhu, sagalee buufadhu.</p>'
           + '<p>🍎 <strong>iPhone/iPad</strong> : Qindaa\'inaa → Gargaarsa → Sagalee dubbisuu → Sagalee → afaan filadhu, ⬇️ cuqaasi.</p>'
           + '<p>💻 <strong>Kompiyuutara</strong> : Chrome yookiin Edge fayyadami — sagalee gaarii qabdu.</p>'
@@ -2943,7 +2944,8 @@ function _buildHomeGuide() {
           + '</ul>'
           + '<div class="ob-tip">\ud83d\udca1 Hayyama maaykiroofoonii barbaachisa — browser mara irratti hin hojjetu.</div>'
         /* Français — guide complet */
-        : '<p>Bien entendre les mots, c\'est essentiel ! L\'appli utilise la <strong>synthèse vocale intégrée</strong> à votre téléphone ou navigateur (Web Speech API). Si le son est absent, robotique ou dans la mauvaise langue, suivez le guide ci-dessous.</p>'
+        : '<h4 style="margin:0 0 .4em;font-size:.95em">🔊 Configurer son audio</h4>'
+          + '<p>Bien entendre les mots, c\'est essentiel ! L\'appli utilise la <strong>synthèse vocale intégrée</strong> à votre téléphone ou navigateur (Web Speech API). Si le son est absent, robotique ou dans la mauvaise langue, suivez le guide ci-dessous.</p>'
           /* Android */
           + '<div class="ob-audio-block">'
           + '<div class="ob-audio-head">\ud83e\udd16 Android</div>'
@@ -3072,20 +3074,36 @@ function _buildHomeGuide() {
     },
     {
       icon : '\ud83d\udcf2',
-      title: isFr ? 'App gara meeshaa irratti buusi' : "Installer l'app (hors-ligne)",
+      title: isFr ? 'Galmee malee' : 'Hors ligne',
       body : isFr
-        ? '<ul>'
+        ? '<h4 style="margin:0 0 .4em;font-size:.95em">\ud83d\udcf2 App gara meeshaa irratti buusi</h4>'
+          + '<ul>'
           + '<li><strong>Android / Chrome</strong> : \u22ee cuqaasi \u2192 <em>"Fuula jalqabarratti ida\'i"</em></li>'
           + '<li><strong>iOS / Safari</strong> : \ud83d\udd17 cuqaasi \u2192 <em>"Fuula jalqabarratti"</em></li>'
           + '</ul>'
           + '<p>Erga buufamee booda, interneetii malee <strong>hojjeta</strong> — iddoo kamittiyyuu !</p>'
-          + '<p>📄 <strong>Galmee buusuuf</strong> : fuula kana ol\'aana irra caancala <em>📄 Galmee buusi</em> cuqaasi — gara meeshaa keetiitti buufatta.</p>'
-        : '<ul>'
+          + '<div class="ob-tip">\ud83d\udca1 App yeroo yeroodhaan diriirfama — browser irratti bantu, version haaraan ofumaatti buufama.</div>'
+          + '<h4 style="margin:.8em 0 .3em;font-size:.95em;border-top:1px solid var(--color-border);padding-top:.6em">\ud83d\udcc4 Galmee PDF buusuuf</h4>'
+          + '<p>Barnoota kee gara meeshaa keetiitti qusachuuf, PDFota sadii ni argatta :</p>'
+          + '<ul>'
+          + '<li><strong>\ud83d\udcd6 Gargaarsa guutuu</strong> — caancala <em>\ud83d\udcc4 Galmee buusi</em> fuula kana ol\'aana irraa.</li>'
+          + '<li><strong>\ud83d\udcda Moojuula tokko</strong> — caancala <em>\ud83d\udcc4 Moojuula kana buusi</em> fuula moojuula sanaa irraa.</li>'
+          + '<li><strong>\ud83d\udcac Haala tokko</strong> — caancala <em>\ud83d\udcc4 Haala kana buusi</em> fuula dubbii irraa.</li>'
+          + '</ul>'
+        : '<h4 style="margin:0 0 .4em;font-size:.95em">\ud83d\udcf2 Installer l\'app en hors ligne</h4>'
+          + '<ul>'
           + '<li><strong>Android / Chrome</strong> : menu \u22ee \u2192 <em>"Ajouter à l\'écran d\'accueil"</em></li>'
           + '<li><strong>iOS / Safari</strong> : \ud83d\udd17 \u2192 <em>"Sur l\'écran d\'accueil"</em></li>'
           + '</ul>'
-          + "<p>Une fois installée, l'app fonctionne <strong>entièrement hors-ligne</strong> !</p>"
-          + '<p>📄 <strong>Télécharger le guide en PDF</strong> : appuyez sur le bouton <em>📄 Télécharger le guide</em> en haut de cette page pour sauvegarder le guide complet sur votre appareil.</p>'
+          + '<p>Une fois installée, l\'app fonctionne <strong>entièrement hors ligne</strong>.</p>'
+          + '<div class="ob-tip">\ud83d\udca1 L\'app se met à jour automatiquement à chaque nouvelle version — il suffit de la rouvrir dans le navigateur pour que le cache soit rafraîchi.</div>'
+          + '<h4 style="margin:.8em 0 .3em;font-size:.95em;border-top:1px solid var(--color-border);padding-top:.6em">\ud83d\udcc4 Téléchargement en PDF</h4>'
+          + '<p>Vous pouvez sauvegarder trois types de contenus en PDF :</p>'
+          + '<ul>'
+          + '<li><strong>\ud83d\udcd6 Ce guide complet</strong> — bouton <em>\ud83d\udcc4 Télécharger le guide</em> en haut de cette page.</li>'
+          + '<li><strong>\ud83d\udcda Un module thématique</strong> — bouton <em>\ud83d\udcc4 Télécharger ce module</em> depuis la page du module.</li>'
+          + '<li><strong>\ud83d\udcac Une situation de dialogue</strong> — bouton <em>\ud83d\udcc4 Télécharger cette situation</em> depuis la page du dialogue.</li>'
+          + '</ul>'
     },
     {
       icon : '\u2696\ufe0f',
