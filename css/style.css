@@ -2852,10 +2852,12 @@ footer a:hover{text-decoration:underline}
   padding:10px 16px 14px;
   border-top:1px solid rgba(0,0,0,.08);
   background:var(--c-bg);
-  /* Toujours visible en bas de l'écran leçon */
-  position:sticky;
-  bottom:56px; /* au-dessus de la bottom-nav */
-  z-index:10;
+  /* flex-shrink:0 : reste toujours visible en bas du conteneur flex #lesson,
+     QUEL QUE SOIT le mode (Cartes, Quiz, Dialogue, Vocab).
+     On abandonne position:sticky qui échoue sur Android quand le parent
+     est overflow:hidden (mode-cartes) ou quand la barre du navigateur
+     masque le bas de l'écran. */
+  flex-shrink:0;
   box-shadow:0 -4px 12px rgba(0,0,0,.07);
 }
 .lesson-export-bar .btn-export-pdf{

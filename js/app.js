@@ -3574,10 +3574,24 @@ function _openPrintWindow(htmlContent) {
     return;
   }
 
-  /* ── Chemin normal : popup + print ── */
-  const win = window.open('', '_blank', 'width=800,height=600');
+  /* ── Chemin normal : Blob URL + popup + print ──
+     On utilise une Blob URL au lieu de document.write() car sur Android
+     (Brave/Chrome), l'événement 'load' ne se déclenche pas avec document.write(),
+     ce qui empêche window.print() d'être appelé (aperçu bloqué indéfiniment).
+     Avec une Blob URL, le navigateur charge une vraie ressource et 'load' est fiable. */
+  let blobUrl;
+  try {
+    const blob = new Blob([htmlContent], { type: 'text/html;charset=utf-8' });
+    blobUrl = URL.createObjectURL(blob);
+  } catch(e) {
+    _downloadAsHtml(htmlContent);
+    return;
+  }
+
+  const win = window.open(blobUrl, '_blank', 'width=800,height=600');
   if (!win) {
-    /* Popup bloqué (hors iOS standalone) : proposer le téléchargement HTML */
+    /* Popup bloqué : proposer le téléchargement HTML */
+    URL.revokeObjectURL(blobUrl);
     _showToast(L(
       '⚠️ Pop-up bloqué — téléchargement du fichier HTML à la place.',
       '⚠️ Pop-up dhaabame — faayilii HTML buufama.'
@@ -3585,15 +3599,19 @@ function _openPrintWindow(htmlContent) {
     _downloadAsHtml(htmlContent);
     return;
   }
-  win.document.open();
-  win.document.write(htmlContent);
-  win.document.close();
-  win.focus();
+
   win.addEventListener('load', () => {
     setTimeout(() => {
       win.print();
-      win.addEventListener('afterprint', () => { win.close(); });
-      setTimeout(() => { try { win.close(); } catch(e) {} }, 30000);
+      win.addEventListener('afterprint', () => {
+        win.close();
+        URL.revokeObjectURL(blobUrl);
+      });
+      /* Sécurité : fermeture et nettoyage au bout de 30 s si afterprint ne se déclenche pas */
+      setTimeout(() => {
+        try { win.close(); } catch(e) {}
+        URL.revokeObjectURL(blobUrl);
+      }, 30000);
     }, 250);
   });
 }
