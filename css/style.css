@@ -3190,6 +3190,7 @@ footer a:hover{text-decoration:underline}
 /* lesson-body : colonne flex, sans scroll */
 #lesson.mode-cartes .lesson-body{
   overflow:hidden;
+  padding-bottom: calc(var(--bottom-nav-h, 56px) + 58px);
   display:flex;
   flex-direction:column;
   padding:6px 14px 0;
@@ -3228,7 +3229,7 @@ footer a:hover{text-decoration:underline}
   flex:1;
   min-height:0;
   overflow:hidden;
-  max-height:calc(var(--app-h, 100dvh) - 420px); /* ← était 400px */
+  max-height: calc(var(--app-h, 100dvh) - 400px);
   margin-bottom:0;
   perspective:900px;
 }
@@ -3294,12 +3295,20 @@ footer a:hover{text-decoration:underline}
   font-size:.9rem;
 }
 
-/* Bouton Télécharger : déjà flex-shrink:0 via .lesson-export-bar global */
-#lesson.mode-cartes .lesson-export-bar{
-  position:static;
-  box-shadow:none;
-  padding:6px 14px 4px;   /* 6px en haut : légère respiration sous "Écouter" */
-  border-top:none;        /* supprime le trait séparateur */
+/* Bouton Télécharger en mode cartes : fixed au-dessus de la bottom-nav,
+   indépendant du layout flex → insensible aux variations de --app-h */
+#lesson.mode-cartes .lesson-export-bar {
+  position: fixed;
+  bottom: var(--bottom-nav-h, 56px);
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 480px;
+  z-index: 500;
+  padding: 6px 14px 4px;
+  border-top: none;
+  box-shadow: none;
+  background: var(--c-bg);
 }
 /* ════════════════════════════════════════════════════════════════
    §20e — GRILLE DE THÈMES DANS LES ÉCRANS LEVEL  (sans <details>)
