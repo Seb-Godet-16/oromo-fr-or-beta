@@ -3498,14 +3498,20 @@ function _hideLoadingSpinner() {
     }, { passive: true });
   }
 
-  /* touchend : fallback pour Brave/Chrome Android où visualViewport.resize
-     ne se déclenche pas toujours quand la barre d'URL réapparaît après
-     un scroll vers le haut. On recalcule 300ms après le lâcher du doigt,
-     délai suffisant pour que le navigateur ait terminé son animation. */
+  /* touchend + scroll : fallback pour Brave/Chrome Android
+     où visualViewport.resize ne se déclenche pas toujours.
+     'scroll' sur window capture la rétraction/extension de la barre d'URL
+     y compris quand le scroll se passe à l'intérieur d'un enfant
+     (overflow-y:auto sur .fc-front avec conjugaisons longues). */
   let _touchTimer = null;
   document.addEventListener('touchend', function() {
     clearTimeout(_touchTimer);
     _touchTimer = setTimeout(setAppHeight, 300);
+  }, { passive: true });
+
+  window.addEventListener('scroll', function() {
+    clearTimeout(_touchTimer);
+    _touchTimer = setTimeout(setAppHeight, 150);
   }, { passive: true });
 })();
 

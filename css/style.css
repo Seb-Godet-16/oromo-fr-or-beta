@@ -3228,7 +3228,7 @@ footer a:hover{text-decoration:underline}
   flex:1;
   min-height:0;
   overflow:hidden;
-  max-height:calc(var(--app-h, 100dvh) - 400px);
+  max-height:calc(var(--app-h, 100dvh) - 420px); /* ← était 400px */
   margin-bottom:0;
   perspective:900px;
 }
