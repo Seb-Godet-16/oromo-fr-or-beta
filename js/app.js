@@ -3488,6 +3488,16 @@ function _hideLoadingSpinner() {
       _debTimer = setTimeout(setAppHeight, 80);
     }, { passive: true });
   }
+
+  /* touchend : fallback pour Brave/Chrome Android où visualViewport.resize
+     ne se déclenche pas toujours quand la barre d'URL réapparaît après
+     un scroll vers le haut. On recalcule 300ms après le lâcher du doigt,
+     délai suffisant pour que le navigateur ait terminé son animation. */
+  let _touchTimer = null;
+  document.addEventListener('touchend', function() {
+    clearTimeout(_touchTimer);
+    _touchTimer = setTimeout(setAppHeight, 300);
+  }, { passive: true });
 })();
 
 /* ============================================================

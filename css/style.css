@@ -3195,12 +3195,12 @@ footer a:hover{text-decoration:underline}
    Budget fixe = header(68) + tabs(52) + label(28) + fc-nav(50)
                + audio(50) + export(58) + paddings(30) + marge(124)
                = 460px
-   ↑ +60px par rapport à l'ancienne valeur (400px) pour absorber
-     la barre d'URL du navigateur (~56px sur Brave/Chrome Android)
-     qui s'ajoute au-dessus et pousse le contenu vers le bas.
-   Note : on utilise 100dvh en fallback ET comme valeur principale
-   pour profiter du "dynamic viewport" qui se recalcule quand la
-   barre d'URL se rétracte sur Android/iOS. */
+   On utilise 100dvh (dynamic viewport height) plutôt que --app-h :
+   dvh se recalcule automatiquement à chaque pixel quand la barre
+   d'URL du navigateur (Chrome/Brave Android) apparaît ou disparaît,
+   sans dépendre d'un listener JS. --app-h reste utilisé sur #lesson
+   pour fixer la hauteur totale de l'écran, mais ici le max-height
+   de la carte bénéficie du recalcul natif du navigateur. */
 #lesson.mode-cartes .fc-wrap{
   flex:1;
   min-height:0;
@@ -3254,6 +3254,7 @@ footer a:hover{text-decoration:underline}
   flex-shrink:0;
   position:static;
   box-shadow:none;
+  background:transparent;  /* supprime le fond vert qui crée un espace visuel */
   padding:4px 0 0;
   margin-top:0;
 }
@@ -3269,8 +3270,8 @@ footer a:hover{text-decoration:underline}
 #lesson.mode-cartes .lesson-export-bar{
   position:static;
   box-shadow:none;
-  padding:2px 14px 4px;
-  border-top:none;
+  padding:0 14px 4px;      /* 0 en haut : colle directement sous Écouter */
+  border-top:none;         /* supprime le trait séparateur */
 }
 /* ════════════════════════════════════════════════════════════════
    §20e — GRILLE DE THÈMES DANS LES ÉCRANS LEVEL  (sans <details>)
