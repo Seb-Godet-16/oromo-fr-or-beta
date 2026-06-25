@@ -179,7 +179,6 @@
     <!-- Titre fixe en haut -->
     <div class="home-topbar">
       <span class="home-topbar-title" id="homeTopbarTitle"></span>
-      <button class="btn-start-topbar" id="homeStartBtn" onclick="showScreen('sections-level1')"></button>
     </div>
 
     <!-- En-tête coloré selon le mode -->
@@ -191,6 +190,7 @@
       <!-- Badges fonctionnalités -->
       <div class="home-guide-badges" id="homeGuideBadges"></div>
 
+      <!-- Cercle SVG de progression (visible une fois des modules complétés) -->
       <div class="home-progress-circle-wrap" id="homeProgressCircleWrap" style="display:none">
         <svg class="home-progress-circle" viewBox="0 0 120 120"
              width="120" height="120"
@@ -202,8 +202,15 @@
           <text class="hpc-pct"  x="60" y="56" id="hpcPct">0%</text>
           <text class="hpc-sub"  x="60" y="74" id="hpcSub">⭐ 0</text>
         </svg>
-        </div>
+      </div>
+
     </div><!-- /.home-guide-header -->
+
+    <!-- Bouton Commencer — sticky entre les badges et les rubriques -->
+    <div class="home-start-sticky">
+      <button class="btn-start-main" id="homeStartBtn" onclick="showScreen('sections-level1')"></button>
+    </div>
+
     <div class="home-guide-body" id="homeGuideBody"></div>
 
     <!--

@@ -571,42 +571,23 @@ html.theme-oromo body{background:#f4f9f4}
   z-index:20;
   display:flex;
   align-items:center;
-  justify-content:space-between;
+  justify-content:center;
   padding:0 14px;
   background:rgba(20,20,32,.88);
   backdrop-filter:blur(8px);
   border-bottom:1px solid rgba(255,255,255,.12);
-  min-height:48px;
+  min-height:56px;
   flex-shrink:0;
-  gap:10px;
 }
 
-/* Titre "Guide explicatif" / "Gargaarsa" à gauche */
+/* Titre "Guide explicatif" / "Gargaarsa" — centré */
 .home-topbar-title{
-  font-size:.82rem;
+  font-size:1.1rem;
   font-weight:700;
-  color:rgba(255,255,255,.92);
+  color:rgba(255,255,255,.95);
   letter-spacing:.01em;
-  flex:1;
+  text-align:center;
 }
-
-/* Bouton Commencer dans la topbar */
-.btn-start-topbar{
-  background:var(--c-primary);
-  border:none;
-  border-radius:50px;
-  padding:7px 18px;
-  font-size:.78rem;
-  font-weight:700;
-  color:#fff;
-  cursor:pointer;
-  white-space:nowrap;
-  min-height:34px;
-  transition:opacity .15s, transform .1s;
-  flex-shrink:0;
-}
-.btn-start-topbar:hover{opacity:.88}
-.btn-start-topbar:active{transform:scale(.96)}
 
 
 /* ══════════════════════════════════════════════════════════════════
@@ -2451,7 +2432,50 @@ footer a:hover{text-decoration:underline}
   .ob-flow{ background:rgba(255,255,255,.06); }
 }
 
-/* ── Zone export PDF uniquement (le bouton Commencer est dans la topbar) ── */
+/* ── Zone CTA sticky : bouton Commencer entre badges et accordéons ── */
+.home-start-sticky{
+  position:sticky;
+  top:56px;            /* colle juste sous la topbar (min-height:56px) */
+  z-index:15;
+  padding:10px 16px 10px;
+  background:rgba(20,20,32,.75);
+  backdrop-filter:blur(10px);
+  -webkit-backdrop-filter:blur(10px);
+  border-bottom:1px solid rgba(255,255,255,.10);
+  text-align:center;
+  flex-shrink:0;
+}
+
+/* Bouton principal Commencer */
+.btn-start-main{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  background:var(--c-primary);
+  border:none;
+  border-radius:50px;
+  padding:13px 36px;
+  font-size:1.05rem;
+  font-weight:800;
+  color:#fff;
+  cursor:pointer;
+  white-space:nowrap;
+  min-height:48px;
+  width:100%;
+  max-width:340px;
+  box-shadow:0 4px 16px rgba(0,0,0,.28);
+  letter-spacing:.01em;
+  transition:opacity .15s, transform .1s, box-shadow .15s;
+}
+.btn-start-main:hover{
+  opacity:.9;
+  box-shadow:0 6px 20px rgba(0,0,0,.36);
+  transform:translateY(-1px);
+}
+.btn-start-main:active{transform:scale(.97);box-shadow:0 2px 8px rgba(0,0,0,.22)}
+
+/* ── Zone export PDF uniquement (le bouton Commencer est dans .home-start-sticky) ── */
 .home-guide-cta{
   margin:12px 14px 4px;
   position:relative;
