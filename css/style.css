@@ -3095,78 +3095,83 @@ footer a:hover{text-decoration:underline}
 }
 
 /* Écran leçon
-   STRUCTURE FLEX VERTICALE :
-     #lesson          (flex col, hauteur = --app-h calculée par JS)
-       ├─ .lesson-header     (flex-shrink:0)
-       ├─ .lesson-body       (flex:1, scroll en mode normal)
-       └─ .lesson-export-bar (flex-shrink:0, toujours visible en bas)
+   STRUCTURE FLEX VERTICALE (tous modes) :
+     #lesson                (flex col, height = --app-h via JS)
+       ├─ .lesson-header       (flex-shrink:0)
+       ├─ .lesson-body         (flex:1, overflow-y:auto)
+       └─ .lesson-export-bar   (flex-shrink:0 → toujours visible)
 
-   --app-h est écrit par setAppHeight() dans app.js via window.innerHeight,
-   ce qui est fiable sur Android Chrome/Brave quelle que soit la barre d'URL.
-   padding-bottom = --bottom-nav-h (hauteur réelle de #bottom-nav).
+   NOTE : overflow:hidden est mis UNIQUEMENT sur #lesson.mode-cartes
+   pour ne pas bloquer le scroll des onglets Dialogue/Quiz/Vocab.
+   --app-h est calculé par setAppHeight() dans app.js (window.innerHeight).
+   --bottom-nav-h est la hauteur réelle de #bottom-nav.
 */
 #lesson{
   background:var(--c-bg);
-  /* display géré par .screen / .screen.active — ne pas forcer flex ici */
   flex-direction:column;
   height:var(--app-h, 100dvh);
   max-height:var(--app-h, 100dvh);
   padding-bottom:var(--bottom-nav-h, 56px);
   box-sizing:border-box;
-  overflow:hidden; /* le scroll est géré par .lesson-body, pas par #lesson */
 }
 .lesson-body{
   flex:1;
-  overflow-y:auto;          /* scroll pour les onglets Quiz/Dialogue/Vocab */
+  overflow-y:auto;
   padding:14px;
   padding-bottom:8px;
-  min-height:0;             /* autorise flex à comprimer */
+  min-height:0;
 }
-/* La barre d'export est HORS de .lesson-body (frère dans #lesson).
-   Elle doit rester visible sans scroll — flex-shrink:0 suffit. */
+/* .lesson-export-bar est FRÈRE de .lesson-body dans #lesson (flex col).
+   flex-shrink:0 garantit qu'il reste visible en bas dans TOUS les modes,
+   y compris Dialogue, Quiz, Vocabulaire. */
 .lesson-export-bar{
   flex-shrink:0;
 }
 
-/* ── Mode Cartes : tout sur un écran, SANS scroll ──────────────────
-   VRAIE structure DOM (voir index.html) :
-     #lesson                  (flex col, height:--app-h)
-       ├─ .lesson-header         (flex-shrink:0)
-       ├─ .lesson-body           (flex:1, overflow:hidden en mode-cartes)
-       │   ├─ .tabs              (flex-shrink:0)
-       │   └─ #tabContent        (flex:1, min-height:0, flex col)
-       │       ├─ .section-label (flex-shrink:0)
-       │       ├─ .fc-wrap       (flex:1, min-height:0)  ← carte étirable
-       │       ├─ .fc-nav        (flex-shrink:0)
-       │       └─ .fc-audio-wrap (flex-shrink:0)
-       └─ .lesson-export-bar     (flex-shrink:0)  ← FRÈRE de lesson-body !
+/* ── Mode Cartes uniquement : sans scroll, tout tient à l'écran ───────
+   En mode-cartes, #lesson reçoit overflow:hidden pour bloquer tout
+   dépassement. Les autres modes (Dialogue, Quiz, Vocab) conservent
+   le comportement par défaut (overflow-y:auto sur .lesson-body).
 
-   .lesson-export-bar est injecté directement dans #lesson, pas dans
-   .lesson-body → il faut que #lesson soit le conteneur flex principal
-   et que lesson-export-bar ait flex-shrink:0 (déjà géré dans le bloc #lesson).
+   Structure en mode-cartes :
+     #lesson (overflow:hidden)
+       ├─ .lesson-header    (~68px)  flex-shrink:0
+       ├─ .lesson-body      (flex:1, overflow:hidden, flex col)
+       │   ├─ .tabs          (~46px)  flex-shrink:0
+       │   └─ #tabContent    (flex:1, flex col)
+       │       ├─ .section-label  (~24px) flex-shrink:0
+       │       ├─ .fc-wrap        (flex:1, max-height calc)
+       │       ├─ .fc-nav         (~44px) flex-shrink:0
+       │       └─ .fc-audio-wrap  (~50px) flex-shrink:0
+       └─ .lesson-export-bar (~58px) flex-shrink:0 (déjà défini)
 */
 
-/* lesson-body : colonne flex stricte, pas de scroll */
+/* overflow:hidden UNIQUEMENT en mode cartes */
+#lesson.mode-cartes{
+  overflow:hidden;
+}
+
+/* lesson-body : colonne flex, sans scroll */
 #lesson.mode-cartes .lesson-body{
   overflow:hidden;
   display:flex;
   flex-direction:column;
-  padding:8px 14px 0;
+  padding:6px 14px 0;
 }
 
-/* Barre d'onglets : compresser la marge du bas */
+/* Onglets */
 #lesson.mode-cartes .tabs{
-  margin-bottom:6px;
   flex-shrink:0;
+  margin-bottom:5px;
 }
 
-/* Étiquette RECTO/VERSO : moins de marge */
+/* Étiquette RECTO/VERSO */
 #lesson.mode-cartes .section-label{
-  margin-bottom:4px;
   flex-shrink:0;
+  margin-bottom:3px;
 }
 
-/* tabContent : colonne flex qui prend tout l'espace restant */
+/* tabContent : colonne flex, espace restant */
 #lesson.mode-cartes #tabContent{
   display:flex;
   flex-direction:column;
@@ -3174,29 +3179,33 @@ footer a:hover{text-decoration:underline}
   min-height:0;
 }
 
-/* Conteneur de la carte : s'étire pour remplir l'espace disponible */
+/* fc-wrap : s'étire MAIS plafonné par max-height calc()
+   Budget fixe = header(68) + tabs(52) + label(28) + fc-nav(50)
+               + audio(50) + export(58) + paddings(30) + marge(64)
+               = 400px */
 #lesson.mode-cartes .fc-wrap{
   flex:1;
   min-height:0;
+  max-height:calc(var(--app-h, 100dvh) - 400px);
   margin-bottom:0;
   perspective:900px;
 }
 
-/* La carte 3D prend toute la hauteur du conteneur */
+/* Carte 3D */
 #lesson.mode-cartes .fc{
   height:100%;
   min-height:0;
 }
 
-/* Les deux faces s'adaptent à la hauteur réelle */
+/* Faces : padding compact */
 #lesson.mode-cartes .fc-front,
 #lesson.mode-cartes .fc-back{
   min-height:0;
   height:100%;
-  padding:10px 16px;
+  padding:8px 16px;
 }
 
-/* Emoji : légèrement réduit */
+/* Emoji */
 #lesson.mode-cartes .fc-front-emoji,
 #lesson.mode-cartes .fc-back-emoji{
   font-size:2.2rem;
@@ -3204,36 +3213,33 @@ footer a:hover{text-decoration:underline}
   flex-shrink:0;
 }
 
-/* Mot principal : taille adaptée mobile */
+/* Mot principal */
 #lesson.mode-cartes .fc-front-word,
 #lesson.mode-cartes .fc-back-word{
   font-size:1.45rem;
 }
 
-/* Navigation Précédent / Suivant : marges réduites */
+/* Navigation */
 #lesson.mode-cartes .fc-nav{
-  margin-top:6px;
-  margin-bottom:0;
   flex-shrink:0;
-  padding:0;
+  margin-top:5px;
+  margin-bottom:0;
 }
 
-/* Boutons nav : padding vertical réduit tout en restant tappables */
 #lesson.mode-cartes .fc-nav button{
-  padding:7px 16px;
+  padding:7px 14px;
   min-height:40px;
 }
 
-/* Bouton Écouter : sorti de sticky, intégré dans le flux flex */
+/* Bouton Écouter */
 #lesson.mode-cartes .fc-audio-wrap{
+  flex-shrink:0;
   position:static;
   box-shadow:none;
-  padding:5px 0 2px;
+  padding:4px 0 2px;
   margin-top:0;
-  flex-shrink:0;
 }
 
-/* Bouton audio : hauteur réduite */
 #lesson.mode-cartes .audio-btn-big{
   margin-top:0;
   padding:9px 12px;
@@ -3241,13 +3247,12 @@ footer a:hover{text-decoration:underline}
   font-size:.9rem;
 }
 
-/* Barre d'export : sortie de sticky, intégrée dans le flux */
+/* Bouton Télécharger : déjà flex-shrink:0 via .lesson-export-bar global */
 #lesson.mode-cartes .lesson-export-bar{
   position:static;
   box-shadow:none;
-  padding:5px 0 6px;
+  padding:4px 14px 6px;
   border-top:1px solid rgba(0,0,0,.08);
-  flex-shrink:0;
 }
 /* ════════════════════════════════════════════════════════════════
    §20e — GRILLE DE THÈMES DANS LES ÉCRANS LEVEL  (sans <details>)
