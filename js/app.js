@@ -1597,7 +1597,7 @@ function renderFlash() {
     + '<span class="fc-counter">' + (fcIdx + 1) + ' / ' + words.length + '</span>'
     + '<button onclick="nextCard()">' + nextLabel + '</button>'
     + '</div>'
-    + '<div style="text-align:center;margin-top:10px;">'
+    + '<div class="fc-audio-wrap" style="text-align:center;">'
     + '<button class="audio-btn-big" onclick="speak(\'' + esc(card[keys.src]) + '\')">' + audioBtn + '</button>'
     + '</div>';
 }
@@ -2845,7 +2845,8 @@ function _buildHomeGuide() {
       title: isFr ? 'Appiin keessa akkamiin deemna' : "Comment ça marche",
       body : isFr
         /* Oromo : apprenant oromophone */
-        ? '<p>Appiin kun <strong>afaan lama</strong> — Oromoo fi Faransaayii — walitti fiduuf hojjetame. Sadarkaa lamaan irratti hojjeta :</p>'
+        ? '<p>Appiin kun <strong>tartiiba keessan</strong> tarkaanfii tarkaanfiitti, yeroo keessanitti, galmee fi kafaltii malee isin qajeelcha.</p>'
+          + '<p>Appiin kun <strong>sadarkaa lama</strong> qaba :</p>'
           + '<ul>'
           + '<li>📚 <strong>Sadarkaa 1 — Jechota (32)</strong> : Kaardota, Jechootaa, Quiz, Irra deebʼi</li>'
           + '<li>💬 <strong>Sadarkaa 2 — Dubbii (16)</strong> : Haala jireenya dhugaa keessatti fayyadamuu</li>'
@@ -2889,7 +2890,7 @@ function _buildHomeGuide() {
           + '<p><strong>Le Quiz et les Étoiles ⭐</strong> : après les cartes, un <strong>Quiz</strong> (3 à 10 questions selon la taille du module). Choisissez la bonne réponse parmi 4 options.</p>'
           + '<ul>'
           + '<li>⭐ : ≥ 50% → module validé !  · ⭐⭐ : ≥ 75%  · ⭐⭐⭐ : 100% 🎉</li>'
-          + '<li>Les étoiles ne <strong>diminuent jamais</strong> — votre meilleur score est conservé.</li>'
+          + '<li>Les étoiles ne <strong>diminuent jamais</strong> — si vous rejouez et faites mieux, le compteur monte ; si vous faites moins bien, il ne bouge pas.</li>'
           + '</ul>'
           + '<p>Ce <strong>Guide</strong> est accessible à tout moment via le bouton ❓ dans la barre de navigation en bas.</p>'
           + '<div class="ob-tip">💡 Commencez par le Niveau 1 — les dialogues du Niveau 2 seront plus faciles ensuite !</div>'
@@ -2900,12 +2901,13 @@ function _buildHomeGuide() {
       body : isFr
         /* Oromo */
         ? '<ul>'
-          + '<li>✅ <strong>Bilisaa guutuu</strong> — gatii hin kaffaltu, galmee hin barbaachisu</li>'
-          + '<li>📵 <strong>Interneetii malee</strong> — buufadhu, iddoo kamittiyyuu baradhu</li>'
+          + '<li>💸 <strong>Bilisaa guutuu</strong> — gatii hin kaffaltu, beeksisni hin jiru</li>'
+          + '<li>🚫 <strong>Galmee malee</strong> — app bani, hojjechuuf jalqabi</li>'
           + '<li>📚 <strong>Qabiyyee guddaa</strong> — jechota 32 + dubbii 16 (waliigala 48)</li>'
           + '<li>🔊 <strong>Sagalee dhaggeeffachuu</strong> — jechoota dhaggeeffachuuf caancala 🔊 cuqaasi</li>'
           + '<li>🎤 <strong>Dubbii shaakali</strong> — onglet Irra deebʼi maaykiroofoonii fayyadama</li>'
-          + '<li>⭐ <strong>Tartiiba urjii</strong> — madaala keessan kan darbee ni eegama, hir\'atu hin beeku</li>'
+          + '<li>📴 <strong>Interneetii malee</strong> — app fuula jalqabarratti buufadhu, iddoo kamittiyyuu baradhu</li>'
+          + '<li>⭐ <strong>Tartiiba urjii</strong> — madaala keessan kan darbee ni eegama ; caalmaan argatte ol ni ba\'a, gad bu\'u hin beeku</li>'
           + '</ul>'
           + '<div class="ob-tip">💡 Appiin kun meeshaa tokkicha hin taʼu — Duolingo fi barsiisaa waliin itti fayyadami !</div>'
         /* Français */
@@ -2924,18 +2926,56 @@ function _buildHomeGuide() {
       icon : '\ud83d\udd0a',
       title: isFr ? 'Sagalee' : "L'audio",
       body : isFr
-        /* Oromo — version concise */
+        /* Oromo — guide détaillé (même niveau que le mode français) */
         ? '<h4 style="margin:0 0 .4em;font-size:.95em">🔊 Sagalee qindeessuu</h4>'
-          + '<p>Sagalee sirriitti dhageeffachuun barachuu keessatti barbaachisaa dha. Appiin kun <strong>sagalee browser yookiin bilbila kee</strong> (Web Speech API) fayyadama.</p>'
-          + '<p>🤖 <strong>Android</strong> : Qindaa\'inaa → Gargaarsa → Sagalee uumamaa → Google TTS filadhu, sagalee buufadhu.</p>'
-          + '<p>🍎 <strong>iPhone/iPad</strong> : Qindaa\'inaa → Gargaarsa → Sagalee dubbisuu → Sagalee → afaan filadhu, ⬇️ cuqaasi.</p>'
-          + '<p>💻 <strong>Kompiyuutara</strong> : Chrome yookiin Edge fayyadami — sagalee gaarii qabdu.</p>'
-          + '<div class="ob-tip">💡 Sagalee dhaabbataan yoo hin hojjenne — meeshaa kee gargaarsa barbaadi yookiin support Google/Apple quunnamaa.</div>'
-          + '<h4 style="margin:.8em 0 .3em;font-size:.95em;border-top:1px solid var(--color-border);padding-top:.6em">🎧 Tartiiba Sagalee Oromoo</h4>'
-          + '<p>Afaan Oromoo qubee Latin (Qubee) fayyadama. Sagaleen Oromoo meeshaalee hedduurratti hin argamtu — kanaaf appiin kun <strong>sagalee walii galaa sirriitti dubbisu</strong> barbaacha hojjeta.</p>'
-          + '<p>Sagalee Oromoo yoo dhabame, appiin sagalee biraa filataa :<br>'
-          + '🟢 Oromoo → 🔵 Somali → 🟡 Amharic → 🟠 Swahili → 🔴 Español</p>'
-          + '<div class="ob-tip">\ud83d\udca1 Sagalee jalqaba cuqaastu yeroo, banneerri xiqqaan maal sagalee hojjetaa jiruu ni agarta.</div>'
+          + '<p>Sagalee sirriitti dhageeffachuun barachuu keessatti barbaachisaa dha. Appiin kun <strong>sagalee browser yookiin bilbila kee</strong> (Web Speech API) fayyadama. Sagaleen Faransaayii meeshaalee hedduu irratti argama — yoo hin jiraanne, gara gadii hordofi.</p>'
+          /* Android */
+          + '<div class="ob-audio-block">'
+          + '<div class="ob-audio-head">\ud83e\udd16 Android</div>'
+          + '<ol>'
+          + '<li>Banaa <strong>Qindaa\'inaa → Gargaarsa → Sagalee uumamaa</strong> (yookiin « sagalee » barbaadi).</li>'
+          + '<li><em>Injinii filatamaatti</em>, <strong>Google Text-to-Speech</strong> filadhu, Play Store irraa haaromsi.</li>'
+          + '<li>⚙️ → <em>Daataa sagalee buusi</em> → <strong>Faransaayii (Fraansi)</strong> buufadhu.</li>'
+          + '<li>Appii keessatti deebi\'i, <strong>fuula haaromsi</strong>.</li>'
+          + '</ol>'
+          + '<div class="ob-audio-tip">\ud83d\udca1 Samsung irratti : Qindaa\'inaa → Gargaarsa → TTS. Sagleeleen dabalataa sanuma irraa buufamu.</div>'
+          + '</div>'
+          /* iOS */
+          + '<div class="ob-audio-block">'
+          + '<div class="ob-audio-head">\ud83c\udf4e iPhone / iPad (iOS)</div>'
+          + '<ol>'
+          + '<li>Banaa <strong>Qindaa\'inaa → Gargaarsa → Dubbii → Sagalee</strong>.</li>'
+          + '<li>Afaan filadhu, sagalee filadhu, \u2b07\ufe0f cuqaasi — <em>Fooyya\'aa</em> buufadhu.</li>'
+          + '<li>Appii <strong>Safari</strong> keessatti bani (iOS irratti filatamaa) — \ud83d\udd0a jalqabaaf cuqaasi, iOS hayyama sagalee gaafata.</li>'
+          + '<li>Sagaleen yoo hin bane — <strong>qaaccee callisaa</strong> (cinaa irratti) mirkaneeffadhu.</li>'
+          + '</ol>'
+          + '<div class="ob-audio-tip">\ud83d\udca1 Onglet \ud83c\udfa4 Irra deeb\'i Safari iOS 14.5+ fi Chrome Android irratti qofa hojjeta — Firefox mobile irratti hin hojjetu.</div>'
+          + '</div>'
+          /* PC */
+          + '<div class="ob-audio-block">'
+          + '<div class="ob-audio-head">\ud83d\udcbb Kompiyuutara (Windows / Mac)</div>'
+          + '<ol>'
+          + '<li><strong>Chrome yookiin Edge</strong> filatamoo dha — sagalee gaarii fi dubbii beeksisuu ni deeggaruu.</li>'
+          + '<li><strong>Windows</strong> : Qindaa\'inaa → Sa\'aa fi afaan → Dubbii → Sagalee dabalata → <em>Faransaayii (Fraansi)</em> buufadhu.</li>'
+          + '<li><strong>Mac</strong> : Filannoo Sirna → Gargaarsa → Dubbii → Sagalee sirna → <em>Thomas (FR)</em> buufadhu.</li>'
+          + '<li>Buufannaa booda browser haaromsi — sagleeleen haaraan fe\'amti.</li>'
+          + '</ol>'
+          + '</div>'
+          /* Support */
+          + '<div class="ob-audio-block">'
+          + '<div class="ob-audio-head">\ud83c\udd98 Rakkoon itti fufe ?</div>'
+          + '<p>Sagaleen yoo hin hojjenne, rakkoon meeshaa keetiif addaa ta\'uu danda\'a. Gargaarsi armaan gadii si gargaaruu ni danda\'a :</p>'
+          + '<p style="margin:.4em 0">'
+          + '\ud83e\udd16 <a href="https://support.google.com/accessibility/android" target="_blank" rel="noopener">Support Google / Android</a> · '
+          + '\ud83c\udf4e <a href="https://support.apple.com" target="_blank" rel="noopener">Support Apple</a> · '
+          + '\ud83d\udcf1 <a href="https://www.samsung.com/fr/support/" target="_blank" rel="noopener">Support Samsung</a> · '
+          + '\ud83d\udcbb <a href="https://support.microsoft.com" target="_blank" rel="noopener">Support Microsoft</a>'
+          + '</p>'
+          + '<p>Meeshaalee biroo (Xiaomi, Oppo, OnePlus…) irratti, <em>« sagalee uumamaa + [maqaa bilbila kee] »</em> barbaadi.</p>'
+          + '</div>'
+          /* Voix française native */
+          + '<div class="ob-tip">\ud83d\udca1 Sagaleen Faransaayii meeshaalee hedduu irratti argama — haarawa ta\'uu baatee, gara olii deemi buufadhu. Cascade sagalee hin barbaachisu !</div>'
+          /* Onglet Répète */
           + '<h4 style="margin:.8em 0 .3em;font-size:.95em;border-top:1px solid var(--color-border);padding-top:.6em">🎤 Cimdii Irra deebʼi</h4>'
           + '<p>Cimdii <strong>Irra deeb\u02bci</strong> sagalee shaakaaluuf maaykiroofoonii meeshaa kee fayyadama :</p>'
           + '<ul>'
@@ -3062,7 +3102,6 @@ function _buildHomeGuide() {
           + '<li>Caancala sana cuqaasi — mirkaneeffannaa ni gaafata.</li>'
           + '<li>Urjiilee ni dhaban — garuu Quiz irra deebi\'uun urjii haaraa argachuu ni dandaa\'ama.</li>'
           + '</ul>'
-          + '<div class="ob-tip">💡 Madaalli haaraan kan duraa caale qofti yaadatama — yeroo hunda waltajjii keessan ol ta\'a !</div>'
         /* Français */
         : '<p>Envie de recommencer un module à zéro ? Vous pouvez <strong>effacer vos étoiles</strong> et repartir de la base.</p>'
           + '<ul>'
@@ -3070,7 +3109,6 @@ function _buildHomeGuide() {
           + '<li>Appuyez sur ce bouton — une confirmation vous sera demandée.</li>'
           + '<li>Vos étoiles sont supprimées — rejouez le Quiz pour en regagner.</li>'
           + '</ul>'
-          + '<div class="ob-tip">💡 Seul votre meilleur score est conservé — si vous rejouez et faites mieux, le compteur monte. Si vous faites moins bien, il ne bouge pas !</div>'
     },
     {
       icon : '\ud83d\udcf2',
@@ -3129,7 +3167,7 @@ function _buildHomeGuide() {
           + '<ul><li>🌍 Afaan jireenya dhugaa</li><li>🎙️ Sagalee uumamaa</li><li>🛒 Jechota guyyaa guyyaa</li><li>💪 Amantaa of-keessaa</li><li>🤝 Waljijjiirraa aadaa</li></ul>'
           + '</div>'
           + '</div>'
-          + '<div class="ob-tip">💡 Meeshaaleen kunneen walitti makuu — app kanaan jalqabi, Duolingo yookiin barsiisaa waliin caasluga baradhu, hiriyootaan dubbii dhugaa shaakali !</div>'
+          + '<div class="ob-tip">💡 Gorsa keenya : app kana jechota irratti hojjechuuf fayyadami — booda Duolingo yookiin barsiisaa caaslugaaf fayyadami, fi hiriyoota uumamaa waliin dubbii dhugaa shaakali. Meeshaaleen hunduu wal-cimsu !</div>'
         /* Français */
         : '<p>Pas de meilleure méthode unique — chacune a ses forces. <strong>L\'idéal, c\'est de les combiner !</strong></p>'
           + '<div class="ob-compare">'
@@ -3162,7 +3200,7 @@ function _buildHomeGuide() {
           + ' gargaarsa teknikaaf.</p>'
           + '<p>Galata baay\'een <strong>Mussa Sembro</strong>'
           + ' (<a href="https://www.linkedin.com/in/mussa-sembro-137472174/" target="_blank" rel="noopener">Hiikkaa-Ibsituu Afaan Oromoo</a>)'
-          + ' fi maatii kootiif — irra deebi\'ee dubbisuu, hiika sirreessuu fi gorsa ergonomii appii kennuuf.</p>'
+          + ' fi maatii kootiif — irra deebi\'ee dubbisuu, hiika sirreessuu, fi gorsa ergonomii appii kennuuf.</p>'
         /* Français */
         : '<p>Un grand merci à <strong>Fédérico Calo</strong>'
           + ' (<a href="https://www.linkedin.com/in/federicocalo/" target="_blank" rel="noopener">Architecte Développeur Web</a>)'
@@ -3176,11 +3214,25 @@ function _buildHomeGuide() {
       icon : '\ud83d\ude4b',
       title: isFr ? 'Eenyuu fi maaliif?' : 'À propos — Qui suis-je ?',
       body : isFr
-        /* Oromo — version concise */
-        ? '<p>\ud83d\ude4b <strong>Sébastien Godet</strong> — hojii jijjiirraa keessa jira (Gestionna Pirojektii Agile & Data).</p>'
-          + '<p>Appiin Taphad\'Meuh kun hidha Oromoo fi Faransaayii jabeessuuf — <strong>bilisaa, galmee malee, iddoo kamittiyyuu</strong>.</p>'
-          + '<p>\ud83d\udce7 <button class="antispam-btn" onclick="openAndCopyEmail()"><span class="antispam-email">moc.liamg@61tedog.neitsabes</span></button> · '
-          + '<a href="https://www.linkedin.com/in/s%C3%A9bastien-godet-142ba6145" target="_blank" rel="noopener">LinkedIn</a></p>'
+        /* Oromo — version complète alignée avec le mode français */
+        ? '<div class="ob-bio-card">'
+          + '<div class="ob-bio-avatar">\ud83d\ude4b</div>'
+          + '<div class="ob-bio-info">'
+          + '<div class="ob-bio-name">Sébastien Godet</div>'
+          + '<div class="ob-bio-role">Hojii jijjiirraa — Gestionna Pirojektii Agile &amp; Data</div>'
+          + '</div>'
+          + '</div>'
+          + '<p>Waggaa 10 ol geomaaketingii keessa ergan hojjadhe booda — qorannoo gabaa, xiinxala bakka buusuu — gara gestionna pirojektii jijjiiramuuf jira. Dandeettii koo garaagarummaa qaba : Scrum Master, Product Owner, Chef de Projet, Business Analyst yookiin AI Project Manager.</p>'
+          + '<p><strong>Taphad\'Meuh</strong> hawwii salphaa irraa dhalate : meeshaa bilisaa, galmee malee, dhugumaan faayidaarra oolu — Oromoota fi Faransaawiota walitti fiduuf. Karaa hojii kootiis kana — shaakala irraa barachuu, furmaata argachuu, xiyyeeffannoo kennuu.</p>'
+          + '<p>App kun network koo waliin guddata : yeroo hiriyoonni jecha haaraa natti beeksisan, nan ida\'a. Kun <strong>pirojektii jiraataa, namoota dhugaaf yaadame</strong>.</p>'
+          + '<div class="ob-bio-contact">'
+          + '<div class="ob-bio-contact-title">\ud83d\udcac Yaada, dogoggora, waanti argite ?</div>'
+          + '<p>App kun siif hojjetame — deebiin kee hundi barbaachisaa dha !</p>'
+          + '<div class="ob-bio-links">'
+          + '<button class="ob-bio-btn antispam-btn" onclick="openAndCopyEmail()">\u2709\ufe0f <span class="antispam-email">moc.liamg@61tedog.neitsabes</span></button>'
+          + '<a class="ob-bio-btn" href="https://www.linkedin.com/in/s%C3%A9bastien-godet-142ba6145" target="_blank" rel="noopener">\ud83d\udcbc Message LinkedIn</a>'
+          + '</div>'
+          + '</div>'
         /* Français — version complète */
         : '<div class="ob-bio-card">'
           + '<div class="ob-bio-avatar">\ud83d\ude4b</div>'
