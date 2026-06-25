@@ -865,22 +865,34 @@ html.theme-french .btn-reset-theme:hover{
 /*
   overflow-x:auto → les onglets scrollent horizontalement si
   leur nombre dépasse la largeur de l'écran (petits mobiles).
+
+  CORRECTIF VOCABULAIRE (Juin 2026) :
+  Avec 4 onglets sur mobile étroit, "Vocabulaire" débordait de son
+  encadré. Correctifs appliqués :
+    • white-space:normal   → le label peut passer à la ligne si besoin
+    • line-height réduit   → évite que le retour à la ligne gonfle trop
+    • padding latéral 6px  → un peu plus d'air sans dépasser la largeur
+    • font-size .72rem     → légère réduction pour les 4 onglets
+    • min-width 0          → laisse flex calculer librement (pas de plancher
+                              rigide qui forçait le débordement)
 */
-.tabs{display:flex;gap:6px;margin-bottom:14px;overflow-x:auto}
+.tabs{display:flex;gap:5px;margin-bottom:14px;overflow-x:auto}
 .tab{
   flex:1;
-  min-width:80px;
-  padding:9px 4px;
+  min-width:0;
+  padding:8px 6px;
   border-radius:10px;
   border:2px solid var(--c-primary);
   background:#fff;
   color:var(--c-primary);
   font-weight:700;
-  font-size:.74rem;
+  font-size:.72rem;
+  line-height:1.2;
   cursor:pointer;
   text-align:center;
   transition:all .15s;
-  white-space:nowrap;
+  white-space:normal;
+  word-break:keep-all;
 }
 /* Onglet actif : fond plein */
 .tab.active{background:var(--c-primary);color:#fff}

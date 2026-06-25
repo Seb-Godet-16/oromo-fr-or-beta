@@ -3439,6 +3439,58 @@ function _hideLoadingSpinner() {
   setTimeout(() => { if (el.parentNode) el.parentNode.removeChild(el); }, 300);
 }
 /* ============================================================
+   21b. VIEWPORT HEIGHT FIX — Android Chrome / Brave
+   ============================================================
+   PROBLÈME :
+     Sur Android, 100dvh inclut parfois la barre d'URL du navigateur.
+     Quand celle-ci apparaît ou disparaît, le layout ne se recalcule
+     pas toujours correctement → la carte (mode Kaardota) est coupée
+     en bas, et les boutons d'export débordent sous la bottom-nav.
+
+   SOLUTION :
+     window.innerHeight donne TOUJOURS la hauteur réelle du viewport
+     visible (sans la barre d'URL), quelle que soit son état.
+     On l'écrit dans la custom property CSS --app-h sur <html>,
+     utilisée par #lesson à la place de 100dvh.
+     On lit aussi la hauteur réelle de #bottom-nav pour --bottom-nav-h.
+
+   DÉCLENCHEURS :
+     • 'resize' fenêtre        → rotation, zoom, redimensionnement
+     • visualViewport 'resize' → barre d'URL qui apparaît/disparaît
+       (seul événement fiable sur Chrome/Brave Android)
+     • DOMContentLoaded        → valeur initiale avant tout rendu
+
+   DEBOUNCE :
+     visualViewport se déclenche à chaque pixel de scroll de la barre ;
+     un délai de 80 ms évite des repaints inutiles sans perte de réactivité.
+   ============================================================ */
+
+(function initViewportFix() {
+  function setAppHeight() {
+    const h   = window.innerHeight;
+    const nav = document.getElementById('bottom-nav');
+    const navH = nav ? nav.getBoundingClientRect().height : 56;
+    document.documentElement.style.setProperty('--app-h',        h    + 'px');
+    document.documentElement.style.setProperty('--bottom-nav-h', navH + 'px');
+  }
+
+  /* Appel immédiat — couvre le premier rendu */
+  setAppHeight();
+
+  /* Resize classique (rotation, zoom clavier virtuel) */
+  window.addEventListener('resize', setAppHeight, { passive: true });
+
+  /* visualViewport : barre d'URL Chrome/Brave qui slide */
+  if (window.visualViewport) {
+    let _debTimer = null;
+    window.visualViewport.addEventListener('resize', function() {
+      clearTimeout(_debTimer);
+      _debTimer = setTimeout(setAppHeight, 80);
+    }, { passive: true });
+  }
+})();
+
+/* ============================================================
    20. ENREGISTREMENT DU SERVICE WORKER (PWA / Hors-ligne)
    ============================================================
    Enregistré après le chargement complet de la page pour ne pas
@@ -3493,9 +3545,9 @@ if ('serviceWorker' in navigator) {
    (styles inline @media print), déclenche window.print(),
    puis ferme la fenêtre automatiquement.
 
-   _exportGuide()      -> Ecran Home  : guide complet toutes sections
-   _exportVocab()      -> Lecon Niv.1 : tableau 2 col. dense (Oromo|FR)
-   _exportSituation()  -> Lecon Niv.2 : situation courante (sitIdx)
+   _exportGuide()      → Ecran Home  : guide complet toutes sections
+   _exportVocab()      → Lecon Niv.1 : tableau 2 col. dense (Oromo|FR)
+   _exportSituation()  → Lecon Niv.2 : situation courante (sitIdx)
    ============================================================ */
 
 /* ── Utilitaire commun : ouvre une fenêtre print et la ferme après ── */
