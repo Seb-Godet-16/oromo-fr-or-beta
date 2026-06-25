@@ -3176,7 +3176,7 @@ footer a:hover{text-decoration:underline}
        │   ├─ .tabs          (~52px)  flex-shrink:0
        │   └─ #tabContent    (flex:1, flex col)
        │       ├─ .section-label  (~28px) flex-shrink:0
-       │       ├─ .fc-wrap        (flex:1, max-height calc → -460px)
+       │       ├─ .fc-wrap        (flex:1 — prend tout l'espace restant)
        │       ├─ .fc-nav         (~50px) flex-shrink:0
        │       └─ .fc-audio-wrap  (~50px) flex-shrink:0
        └─ .lesson-export-bar (~58px) flex-shrink:0 (déjà défini)
@@ -3215,24 +3215,21 @@ footer a:hover{text-decoration:underline}
   min-height:0;
 }
 
-/* fc-wrap : taille selon son contenu, plafonnée par max-height.
-   flex:0 1 auto (au lieu de flex:1) : la carte ne prend QUE la place
-   de son contenu réel → supprime l'espace vide entre "Écouter" et
-   "Télécharger" quand la carte est petite (verbes courts, etc.).
-   overflow:hidden : évite tout débordement interne si le contenu est
-   plus grand que le max-height.
-   max-height utilise --app-h (mis à jour par JS après chaque resize /
-   touchend) plutôt que 100dvh : quand la barre d'URL de Brave Android
-   réapparaît, --app-h reflète window.innerHeight réel → la dernière
-   ligne de conjugaison n'est plus coupée.
-   Budget fixe = header(68) + tabs(52) + label(28) + fc-nav(50)
-               + audio(50) + export(58) + paddings(30) + marge(124)
-               = 460px */
+/* fc-wrap : prend TOUT l'espace restant dans #tabContent (flex:1).
+   POURQUOI flex:1 ET NON flex:0 1 auto :
+   Les faces de la carte (.fc-front, .fc-back) sont en position:absolute
+   avec height:100%. En CSS, height:100% exige que le parent ait une
+   hauteur "résolue" (définie par le moteur flex via flex:1, ou par un
+   height explicite). max-height seul ne suffit PAS → les faces
+   s'effondrent à 0 px et la carte devient invisible.
+   Avec flex:1, le moteur flexbox assigne une hauteur réelle à fc-wrap ;
+   height:100% sur .fc et ses faces se résout correctement.
+   max-height supprimé : flex:1 dans un conteneur de hauteur connue
+   (--app-h) empêche naturellement tout débordement. */
 #lesson.mode-cartes .fc-wrap{
-  flex:0 1 auto;
+  flex:1;
   min-height:0;
   overflow:hidden;
-  max-height:calc(var(--app-h, 100dvh) - 460px);
   margin-bottom:0;
   perspective:900px;
 }
