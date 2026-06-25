@@ -2861,7 +2861,12 @@ function _buildHomeGuide() {
           + '<span class="ob-flow-arrow">→</span>'
           + '<span class="ob-flow-step">⭐ Urjii</span>'
           + '</div>'
-          + '<p>Fuula <strong>Gargaarsa</strong> kun jalqaba hunda ni mulʼata — "Kaʼumsa irratti hin agarsiifin" cuqaasi hanqisuuf.</p>'
+          + '<p><strong>Quiz fi Urjii ⭐</strong> : Kaardota booda <strong>Quiz gaafii 10</strong>. Deebii sirrii 4 keessaa tokko filadhu.</p>'
+          + '<ul>'
+          + '<li>⭐ : ≥ 50% darbe !  · ⭐⭐ : ≥ 75%  · ⭐⭐⭐ : 100% 🎉</li>'
+          + '<li>Urjiilee <strong>hir\'atan hin beekani</strong> — madaala gaarii ta\'e qofti yaadatama.</li>'
+          + '</ul>'
+          + '<p>Fuula <strong>Gargaarsa</strong> kun yeroo hunda caancala ❓ gara jalaa cuqaasuun ni mulʼata.</p>'
           + '<div class="ob-tip">💡 Sadarkaa 1 irraa jalqabi — booda sadarkaa 2 salphaa taʼa !</div>'
         /* Français : apprenant francophone */
         : '<p>Cette appli vous guide pas à pas pour apprendre l\'Oromo, à votre rythme, sans inscription ni abonnement.</p>'
@@ -2881,7 +2886,12 @@ function _buildHomeGuide() {
           + '<span class="ob-flow-arrow">→</span>'
           + '<span class="ob-flow-step">⭐ Étoiles</span>'
           + '</div>'
-          + '<p>Ce <strong>Guide</strong> s\'affiche à chaque visite — cochez "Ne plus afficher" pour le passer à l\'avenir.</p>'
+          + '<p><strong>Le Quiz et les Étoiles ⭐</strong> : <strong>10 questions</strong> après les cartes. Choisissez la bonne réponse parmi 4 options.</p>'
+          + '<ul>'
+          + '<li>⭐ : ≥ 50% → module validé !  · ⭐⭐ : ≥ 75%  · ⭐⭐⭐ : 100% 🎉</li>'
+          + '<li>Les étoiles ne <strong>diminuent jamais</strong> — votre meilleur score est conservé.</li>'
+          + '</ul>'
+          + '<p>Ce <strong>Guide</strong> est accessible à tout moment via le bouton ❓ dans la barre de navigation en bas.</p>'
           + '<div class="ob-tip">💡 Commencez par le Niveau 1 — les dialogues du Niveau 2 seront plus faciles ensuite !</div>'
     },
     {
@@ -2911,86 +2921,8 @@ function _buildHomeGuide() {
           + '<div class="ob-tip">💡 Cette appli n\'est pas un outil unique — combinez-la avec Duolingo, un cours ou des amis natifs pour progresser plus vite !</div>'
     },
     {
-      icon : '\ud83c\udccf',
-      title: isFr ? 'Kaardota' : 'Les Cartes Flash',
-      body : isFr
-        ? '<p>Kaardni tokko jecha Faransaayii agarsiisa. <strong>Cuqaasi</strong> sagalee dhageeffachuu fi hiika Oromoo argachuuf.</p>'
-          + '<ul>'
-          + '<li>\ud83d\udd0a : sagalee dhageeffadhu · \u2039 \u203a : kaardii itti aanu yookiin kan darbee · Kaardiin <strong>garagalti</strong>.</li>'
-          + '</ul>'
-          + '<div class="ob-tip">\ud83d\udca1 Dura sagalee dhageeffadhu, booda Quiz gali !</div>'
-        : '<p>Chaque carte montre un mot en Oromo. <strong>Tapez dessus</strong> pour voir la traduction française et entendre la prononciation.</p>'
-          + '<ul>'
-          + '<li>\ud83d\udd0a : écouter le mot · \u2039 \u203a : carte suivante/précédente · La carte se <strong>retourne</strong>.</li>'
-          + '</ul>'
-          + '<div class="ob-tip">\ud83d\udca1 Écoutez plusieurs fois avant de passer au Quiz !</div>'
-    },
-    {
-      icon : '\ud83c\udfaf',
-      title: isFr ? 'Quiz fi Urjiin \u2b50' : 'Le Quiz et les Étoiles \u2b50',
-      body : isFr
-        ? '<p>Kaardota booda <strong>Quiz gaafii 10</strong>. Deebii sirrii 4 keessaa tokko filadhu.</p>'
-          + '<ul>'
-          + '<li>\u2b50 : \u2265 50% darbe !  · \u2b50\u2b50 : \u2265 75%  · \u2b50\u2b50\u2b50 : 100% \ud83c\udf89</li>'
-          + '</ul>'
-          + '<p>Urjiilee <strong>hir\'atan hin beekani</strong> — madaala gaarii ta\'e qofti yaadatama.</p>'
-          + '<div class="ob-tip">\ud83d\udca1 Madaali keessan \u2b50 fuula Moojuulota irraa mul\'ata.</div>'
-        : '<p><strong>Quiz 10 questions</strong> après les cartes. Choisissez la bonne réponse parmi 4 options.</p>'
-          + '<ul>'
-          + '<li>\u2b50 : \u2265 50% \u2192 module validé !  · \u2b50\u2b50 : \u2265 75%  · \u2b50\u2b50\u2b50 : 100% \ud83c\udf89</li>'
-          + '</ul>'
-          + '<p>Les étoiles ne <strong>diminuent jamais</strong> — votre meilleur score est conservé.</p>'
-          + '<div class="ob-tip">\ud83d\udca1 Votre score total \u2b50 est visible en haut de l\'écran Modules.</div>'
-    },
-    {
-      icon : '\ud83d\udcd6',
-      title: isFr ? 'Jechootaa' : 'L\'onglet Vocabulaire',
-      body : isFr
-        /* Oromo */
-        ? '<p>Cimdii <strong>Jechootaa</strong> — jechota moojuulaa tarree keessatti agarsiisa, yeroo hundaa ilaaluuf.</p>'
-          + '<ul>'
-          + '<li>Jecha tokko irratti cuqaasi — sagalee dhageeffatta.</li>'
-          + '<li>Jechoonni Oromoo fi Faransaayii waliin ni mul\'atu.</li>'
-          + '<li>Kaardota fi Quiz caalaa salphaa — irra deebi\'uuf gaarii.</li>'
-          + '</ul>'
-          + '<div class="ob-tip">💡 Jechootaa irraa jalqabuun ni danda\'ama — booda Kaardota fi Quiz gali !</div>'
-        /* Français */
-        : '<p>L\'onglet <strong>Vocabulaire</strong> affiche tous les mots du module sous forme de liste, consultable à tout moment.</p>'
-          + '<ul>'
-          + '<li>Tapez sur un mot pour l\'entendre prononcé.</li>'
-          + '<li>Chaque entrée affiche le mot en Oromo et sa traduction française côte à côte.</li>'
-          + '<li>Plus rapide que les cartes — idéal pour réviser avant un quiz.</li>'
-          + '</ul>'
-          + '<div class="ob-tip">💡 Utilisez le Vocabulaire comme aide-mémoire entre deux sessions !</div>'
-    },
-    {
-      icon : '\ud83d\udcac',
-      title: isFr ? 'Dubbii — Sadarkaa 2' : 'Les Dialogues — Niveau 2',
-      body : isFr
-        /* Oromo */
-        ? '<p>Moojuulota Sadarkaa 2 keessa <strong>haalli jireenya dhugaa</strong> jira — gurgurtaa, hospitaala, masaraa xiyyaaraa fi kkf.</p>'
-          + '<ul>'
-          + '<li>Haaloota hedduu (<em>Sit. 1, Sit. 2…</em>) — ongletota irraa filanna.</li>'
-          + '<li>Bubbulliiwwan lama ni mullatu — 🔵 bitaa fi 🟢 mirga — nama lama gidduutti dubbii.</li>'
-          + '<li>Caancala 🔊 cuqaasi — hirmaataa dubbisu dhageeffadhu.</li>'
-          + '<li>Cimdii <strong>Jechootaa</strong> : jechota murteessoo dubbii sanaa.</li>'
-          + '<li>Cimdii <strong>Quiz</strong> : gaafii dubbii irratti of-qori.</li>'
-          + '</ul>'
-          + '<div class="ob-tip">💡 Dura Sadarkaa 1 xumuruun gaarii — jechonni Sadarkaa 2 keessatti ni mul\'atu !</div>'
-        /* Français */
-        : '<p>Les modules du Niveau 2 proposent des <strong>mises en situation réelles</strong> — marché, hôpital, aéroport, etc.</p>'
-          + '<ul>'
-          + '<li>Plusieurs situations par thème (<em>Sit. 1, Sit. 2…</em>) — naviguez via les onglets en haut.</li>'
-          + '<li>Deux bulles de dialogue — 🔵 gauche et 🟢 droite — représentent les deux interlocuteurs.</li>'
-          + '<li>Cliquez sur 🔊 pour écouter chaque réplique prononcée.</li>'
-          + '<li>Onglet <strong>Vocabulaire</strong> : les mots-clés du dialogue.</li>'
-          + '<li>Onglet <strong>Quiz</strong> : questions de compréhension sur le dialogue.</li>'
-          + '</ul>'
-          + '<div class="ob-tip">💡 Conseil : lisez d\'abord le dialogue entier, puis écoutez-le, puis jouez le Quiz !</div>'
-    },
-    {
       icon : '\ud83d\udd0a',
-      title: isFr ? 'Sagalee qindeessuu' : 'Configurer l\'audio',
+      title: isFr ? 'Sagalee' : "L'audio",
       body : isFr
         /* Oromo — version concise */
         ? '<p>Sagalee sirriitti dhageeffachuun barachuu keessatti barbaachisaa dha. Appiin kun <strong>sagalee browser yookiin bilbila kee</strong> (Web Speech API) fayyadama.</p>'
@@ -2998,6 +2930,18 @@ function _buildHomeGuide() {
           + '<p>🍎 <strong>iPhone/iPad</strong> : Qindaa\'inaa → Gargaarsa → Sagalee dubbisuu → Sagalee → afaan filadhu, ⬇️ cuqaasi.</p>'
           + '<p>💻 <strong>Kompiyuutara</strong> : Chrome yookiin Edge fayyadami — sagalee gaarii qabdu.</p>'
           + '<div class="ob-tip">💡 Sagalee dhaabbataan yoo hin hojjenne — meeshaa kee gargaarsa barbaadi yookiin support Google/Apple quunnamaa.</div>'
+          + '<h4 style="margin:.8em 0 .3em;font-size:.95em;border-top:1px solid var(--color-border);padding-top:.6em">🎧 Tartiiba Sagalee Oromoo</h4>'
+          + '<p>Afaan Oromoo qubee Latin (Qubee) fayyadama. Sagaleen Oromoo meeshaalee hedduurratti hin argamtu — kanaaf appiin kun <strong>sagalee walii galaa sirriitti dubbisu</strong> barbaacha hojjeta.</p>'
+          + '<p>Sagalee Oromoo yoo dhabame, appiin sagalee biraa filataa :<br>'
+          + '🟢 Oromoo → 🔵 Somali → 🟡 Amharic → 🟠 Swahili → 🔴 Español</p>'
+          + '<div class="ob-tip">\ud83d\udca1 Sagalee jalqaba cuqaastu yeroo, banneerri xiqqaan maal sagalee hojjetaa jiruu ni agarta.</div>'
+          + '<h4 style="margin:.8em 0 .3em;font-size:.95em;border-top:1px solid var(--color-border);padding-top:.6em">🎤 Cimdii Irra deebʼi</h4>'
+          + '<p>Cimdii <strong>Irra deeb\u02bci</strong> sagalee shaakaaluuf maaykiroofoonii meeshaa kee fayyadama :</p>'
+          + '<ul>'
+          + '<li><strong>\ud83d\udd0a Dhageeffadhu</strong> — jecha dhaggeeffadhu.</li>'
+          + '<li><strong>\ud83c\udfa4 Dubbadhu</strong> — jecha dubbadhuu.</li>'
+          + '</ul>'
+          + '<div class="ob-tip">\ud83d\udca1 Hayyama maaykiroofoonii barbaachisa — browser mara irratti hin hojjetu.</div>'
         /* Français — guide complet */
         : '<p>Bien entendre les mots, c\'est essentiel ! L\'appli utilise la <strong>synthèse vocale intégrée</strong> à votre téléphone ou navigateur (Web Speech API). Si le son est absent, robotique ou dans la mauvaise langue, suivez le guide ci-dessous.</p>'
           /* Android */
@@ -3044,18 +2988,8 @@ function _buildHomeGuide() {
           + '</p>'
           + '<p>Pour tout autre fabricant (Xiaomi, Oppo, OnePlus…), recherchez <em>« synthèse vocale + [nom de votre téléphone] »</em> sur le site officiel du fabricant.</p>'
           + '</div>'
-    },
-    {
-      icon : '\ud83c\udfa7',
-      title: isFr ? 'Sagalee Oromoo — Tartiiba Sagalee' : 'L\'audio en Oromo : la Cascade de Voix',
-      body : isFr
-        /* Oromo — version concise */
-        ? '<p>Afaan Oromoo qubee Latin (Qubee) fayyadama. Sagaleen Oromoo meeshaalee hedduurratti hin argamtu — kanaaf appiin kun <strong>sagalee walii galaa sirriitti dubbisu</strong> barbaacha hojjeta.</p>'
-          + '<p>Sagalee Oromoo yoo dhabame, appiin sagalee biraa filataa :<br>'
-          + '🟢 Oromoo → 🔵 Somali → 🟡 Amharic → 🟠 Swahili → 🔴 Español</p>'
-          + '<div class="ob-tip">\ud83d\udca1 Sagalee jalqaba cuqaastu yeroo, banneerri xiqqaan maal sagalee hojjetaa jiruu ni agarta.</div>'
-        /* Français — version complète */
-        : '<p>L\'Oromo (Afaan Oromoo) s\'écrit avec l\'alphabet latin (le Qubee). Comme la voix native Oromo n\'est pas encore préinstallée sur tous les appareils, l\'application utilise un <strong>système intelligent de cascade phonétique</strong> — si le niveau 1 est absent, elle descend automatiquement au suivant.</p>'
+          + '<h4 style="margin:.8em 0 .3em;font-size:.95em;border-top:1px solid var(--color-border);padding-top:.6em">🎧 L\'audio en Oromo : la Cascade de Voix</h4>'
+          + '<p>L\'Oromo (Afaan Oromoo) s\'écrit avec l\'alphabet latin (le Qubee). Comme la voix native Oromo n\'est pas encore préinstallée sur tous les appareils, l\'application utilise un <strong>système intelligent de cascade phonétique</strong> — si le niveau 1 est absent, elle descend automatiquement au suivant.</p>'
           /* cascade visuelle */
           + '<div class="ob-cascade">'
           /* P1 Oromo */
@@ -3084,10 +3018,10 @@ function _buildHomeGuide() {
           + '<span class="ob-ex-bad">\u274c Caffee \u2192 [café]</span><span class="ob-ex-good">\u2705 Caffee \u2192 [tcha--ffé]</span>'
           + '<span class="ob-ex-bad">\u274c Xalayaa \u2192 [ksalaya]</span><span class="ob-ex-good">\u2705 Xalayaa \u2192 [t\'alavaa]</span>'
           + '</div>'
-          /* P4 Swahili/Haoussa */
+          /* P4 Haoussa/Swahili */
           + '<div class="ob-cascade-row ob-cascade-p4">'
           + '<span class="ob-cascade-badge">🟠 Priorité 4</span>'
-          + '<span class="ob-cascade-lang">\ud83c\uddf0\ud83c\uddea\ud83c\uddf3\ud83c\uddec Swahili / Haoussa <code>[sw-KE / ha-NG]</code></span>'
+          + '<span class="ob-cascade-lang">\ud83c\uddf3\ud83c\uddec\ud83c\uddf0\ud83c\uddea Haoussa / Swahili <code>[ha-NG / sw-KE]</code></span>'
           + '<span class="ob-cascade-desc">Voyelles pures — le E fait [é], le U fait [ou], sans avaler les finales</span>'
           + '</div>'
           + '<div class="ob-cascade-example">'
@@ -3107,19 +3041,8 @@ function _buildHomeGuide() {
           + '</div>'
           /* ce que ça change */
           + '<div class="ob-tip">\ud83d\udca1 Au premier clic \ud83d\udd0a, un bandeau discret vous indique quelle voix est active — ex. <em>« \ud83c\udfa4 Audio Oromo configuré avec la voix : Somali »</em>. Vous savez ainsi avec quel accent travaille votre oreille !</div>'
-    },
-    {
-      icon : '\ud83c\udfa4',
-      title: isFr ? 'Cimdii Irra deeb\u02bci' : "L'onglet Répète",
-      sub  : isFr ? "L'onglet Répète"         : 'Onglet Irra deebʼi',
-      body : isFr
-        ? '<p>Cimdii <strong>Irra deeb\u02bci</strong> sagalee shaakaaluuf maaykiroofoonii meeshaa kee fayyadama :</p>'
-          + '<ul>'
-          + '<li><strong>\ud83d\udd0a Dhageeffadhu</strong> — jecha dhaggeeffadhu.</li>'
-          + '<li><strong>\ud83c\udfa4 Dubbadhu</strong> — jecha dubbadhuu.</li>'
-          + '</ul>'
-          + '<div class="ob-tip">\ud83d\udca1 Hayyama maaykiroofoonii barbaachisa — browser mara irratti hin hojjetu.</div>'
-        : "<p>L'onglet <strong>Répète</strong> utilise le microphone pour pratiquer la prononciation :</p>"
+          + '<h4 style="margin:.8em 0 .3em;font-size:.95em;border-top:1px solid var(--color-border);padding-top:.6em">🎤 L\'onglet Répète</h4>'
+          + "<p>L'onglet <strong>Répète</strong> utilise le microphone pour pratiquer la prononciation :</p>"
           + '<ul>'
           + '<li><strong>\ud83d\udd0a Écouter</strong> — entendez le mot.</li>'
           + '<li><strong>\ud83c\udfa4 Parler</strong> — prononcez-le à votre tour.</li>'
@@ -3128,21 +3051,21 @@ function _buildHomeGuide() {
     },
     {
       icon : '\ud83d\udd04',
-      title: isFr ? 'Moojuula haaromsuuu (\u2b50 haquuu)' : 'Réinitialiser un module',
+      title: isFr ? 'Moojuula irra deebi\'uu (\u2b50 haquuu)' : 'Réinitialiser un module',
       body : isFr
         /* Oromo */
         ? '<p>Moojuula tokko irra deebi\'uu barbaaddaa? Urjiilee haquun <strong>jalqaba irraa jalqabuu</strong> ni dandaa\'ama.</p>'
           + '<ul>'
-          + '<li>Fuula <strong>Moojuulota</strong> irratti moojuula filadhu.</li>'
-          + '<li>Caancala <strong>🔄 Haaromsi</strong> cuqaasi — mirkaneeffannaa ni gaafata.</li>'
+          + '<li>Fuula <strong>Moojuulota</strong> irratti moojuula xumurame barbaacha baha — kaardii isaa irratti caancalli <strong>🔄 Irra deebi\'i</strong> mul\'ata.</li>'
+          + '<li>Caancala sana cuqaasi — mirkaneeffannaa ni gaafata.</li>'
           + '<li>Urjiilee ni dhaban — garuu Quiz irra deebi\'uun urjii haaraa argachuu ni dandaa\'ama.</li>'
           + '</ul>'
           + '<div class="ob-tip">💡 Madaalli haaraan kan duraa caale qofti yaadatama — yeroo hunda waltajjii keessan ol ta\'a !</div>'
         /* Français */
         : '<p>Envie de recommencer un module à zéro ? Vous pouvez <strong>effacer vos étoiles</strong> et repartir de la base.</p>'
           + '<ul>'
-          + '<li>Depuis l\'écran <strong>Modules</strong>, appuyez sur le thème concerné.</li>'
-          + '<li>Appuyez sur le bouton <strong>🔄 Recommencer</strong> — une confirmation vous sera demandée.</li>'
+          + '<li>Depuis l\'écran <strong>Modules</strong>, repérez le thème déjà complété — le bouton <strong>🔄 Recommencer</strong> apparaît directement sur sa carte.</li>'
+          + '<li>Appuyez sur ce bouton — une confirmation vous sera demandée.</li>'
           + '<li>Vos étoiles sont supprimées — rejouez le Quiz pour en regagner.</li>'
           + '</ul>'
           + '<div class="ob-tip">💡 Seul votre meilleur score est conservé — si vous rejouez et faites mieux, le compteur monte. Si vous faites moins bien, il ne bouge pas !</div>'
@@ -3156,11 +3079,13 @@ function _buildHomeGuide() {
           + '<li><strong>iOS / Safari</strong> : \ud83d\udd17 cuqaasi \u2192 <em>"Fuula jalqabarratti"</em></li>'
           + '</ul>'
           + '<p>Erga buufamee booda, interneetii malee <strong>hojjeta</strong> — iddoo kamittiyyuu !</p>'
+          + '<p>📄 <strong>Galmee buusuuf</strong> : fuula kana ol\'aana irra caancala <em>📄 Galmee buusi</em> cuqaasi — gara meeshaa keetiitti buufatta.</p>'
         : '<ul>'
           + '<li><strong>Android / Chrome</strong> : menu \u22ee \u2192 <em>"Ajouter à l\'écran d\'accueil"</em></li>'
           + '<li><strong>iOS / Safari</strong> : \ud83d\udd17 \u2192 <em>"Sur l\'écran d\'accueil"</em></li>'
           + '</ul>'
           + "<p>Une fois installée, l'app fonctionne <strong>entièrement hors-ligne</strong> !</p>"
+          + '<p>📄 <strong>Télécharger le guide en PDF</strong> : appuyez sur le bouton <em>📄 Télécharger le guide</em> en haut de cette page pour sauvegarder le guide complet sur votre appareil.</p>'
     },
     {
       icon : '\u2696\ufe0f',
