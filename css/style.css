@@ -863,25 +863,35 @@ html.theme-french .btn-reset-theme:hover{
 
 /* ── Onglets ─────────────────────────────────────────────────────── */
 /*
-  overflow-x:auto → les onglets scrollent horizontalement si
-  leur nombre dépasse la largeur de l'écran (petits mobiles).
+  Modifié : suppression du débordement pour que les 4 onglets 
+  s'adaptent parfaitement à l'écran sans scroller.
 */
-.tabs{display:flex;gap:6px;margin-bottom:14px;overflow-x:auto}
-.tab{
-  flex:1;
-  min-width:80px;
-  padding:9px 4px;
-  border-radius:10px;
-  border:2px solid var(--c-primary);
-  background:#fff;
-  color:var(--c-primary);
-  font-weight:700;
-  font-size:.74rem;
-  cursor:pointer;
-  text-align:center;
-  transition:all .15s;
-  white-space:nowrap;
+.tabs {
+  display: flex;
+  justify-content: space-between; /* Aligne proprement les onglets sur toute la largeur */
+  gap: 4px;                       /* Réduit légèrement l'espace entre les boutons */
+  margin-bottom: 14px;
+  width: 100%;
 }
+
+.tab {
+  flex: 1;
+  min-width: 0;                   /* ← MODIFIÉ : Autorise l'onglet à rétrécir sous les 80px si besoin */
+  padding: 9px 2px;               /* ← MODIFIÉ : Réduit un tout petit peu le padding gauche/droite */
+  border-radius: 10px;
+  border: 2px solid var(--c-primary);
+  background: #fff;
+  color: var(--c-primary);
+  font-weight: 700;
+  font-size: .74rem;              /* Votre taille de police est déjà très bien (0.74rem) */
+  cursor: pointer;
+  text-align: center;
+  transition: all .15s;
+  white-space: nowrap;
+  overflow: hidden;               /* Sécurité anti-débordement au cas où */
+  text-overflow: ellipsis;        /* Ajoute "..." si le mot est vraiment trop long sur un tout petit écran */
+}
+
 /* Onglet actif : fond plein */
 .tab.active{background:var(--c-primary);color:#fff}
 
