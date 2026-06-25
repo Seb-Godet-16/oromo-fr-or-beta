@@ -3204,32 +3204,31 @@ footer a:hover{text-decoration:underline}
 /* Étiquette RECTO/VERSO */
 #lesson.mode-cartes .section-label{
   flex-shrink:0;
-  margin-bottom:3px;
+  margin-bottom:0; /* gap:8px du parent gère l'espacement */
 }
 
-/* tabContent : colonne flex, espace restant */
+/* tabContent : colonne flex, espace restant.
+   gap:8px : espacement uniforme entre l'étiquette, la carte,
+   les boutons nav et le bouton Écouter, sans toucher aux marges. */
 #lesson.mode-cartes #tabContent{
   display:flex;
   flex-direction:column;
   flex:1;
   min-height:0;
+  gap:8px;
 }
 
-/* fc-wrap : prend TOUT l'espace restant dans #tabContent (flex:1).
-   POURQUOI flex:1 ET NON flex:0 1 auto :
-   Les faces de la carte (.fc-front, .fc-back) sont en position:absolute
-   avec height:100%. En CSS, height:100% exige que le parent ait une
-   hauteur "résolue" (définie par le moteur flex via flex:1, ou par un
-   height explicite). max-height seul ne suffit PAS → les faces
-   s'effondrent à 0 px et la carte devient invisible.
-   Avec flex:1, le moteur flexbox assigne une hauteur réelle à fc-wrap ;
-   height:100% sur .fc et ses faces se résout correctement.
-   max-height supprimé : flex:1 dans un conteneur de hauteur connue
-   (--app-h) empêche naturellement tout débordement. */
+/* fc-wrap : prend tout l'espace restant dans #tabContent, plafonné par
+   max-height pour que la carte n'occupe pas toute la hauteur disponible.
+   flex:1 (requis) : donne à fc-wrap une hauteur résolue par le moteur
+   flex → height:100% sur les faces (.fc-front/.fc-back) se calcule bien.
+   max-height:--app-h - 400px : réduit légèrement la carte vs flex pur
+   et laisse un souffle naturel entre "Écouter" et "Télécharger". */
 #lesson.mode-cartes .fc-wrap{
   flex:1;
   min-height:0;
   overflow:hidden;
+  max-height:calc(var(--app-h, 100dvh) - 400px);
   margin-bottom:0;
   perspective:900px;
 }
@@ -3269,7 +3268,7 @@ footer a:hover{text-decoration:underline}
 /* Navigation */
 #lesson.mode-cartes .fc-nav{
   flex-shrink:0;
-  margin-top:5px;
+  margin-top:0; /* gap:8px du parent gère l'espacement */
   margin-bottom:0;
 }
 
@@ -3283,8 +3282,8 @@ footer a:hover{text-decoration:underline}
   flex-shrink:0;
   position:static;
   box-shadow:none;
-  background:transparent;  /* supprime le fond vert qui crée un espace visuel */
-  padding:4px 0 0;
+  background:transparent; /* supprime le fond vert qui crée un espace visuel */
+  padding:0;
   margin-top:0;
 }
 
@@ -3299,8 +3298,8 @@ footer a:hover{text-decoration:underline}
 #lesson.mode-cartes .lesson-export-bar{
   position:static;
   box-shadow:none;
-  padding:0 14px 4px;      /* 0 en haut : colle directement sous Écouter */
-  border-top:none;         /* supprime le trait séparateur */
+  padding:6px 14px 4px;   /* 6px en haut : légère respiration sous "Écouter" */
+  border-top:none;        /* supprime le trait séparateur */
 }
 /* ════════════════════════════════════════════════════════════════
    §20e — GRILLE DE THÈMES DANS LES ÉCRANS LEVEL  (sans <details>)
