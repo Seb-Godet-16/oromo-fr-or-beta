@@ -3185,7 +3185,6 @@ footer a:hover{text-decoration:underline}
 /* overflow:hidden UNIQUEMENT en mode cartes */
 #lesson.mode-cartes{
   overflow:hidden;
-  padding-bottom: calc(var(--bottom-nav-h, 56px) + 58px + env(safe-area-inset-bottom, 0px));
 }
 
 /* lesson-body : colonne flex, sans scroll */
@@ -3299,17 +3298,10 @@ footer a:hover{text-decoration:underline}
 /* Bouton Télécharger en mode cartes : fixed au-dessus de la bottom-nav,
    indépendant du layout flex → insensible aux variations de --app-h */
 #lesson.mode-cartes .lesson-export-bar {
-  position: fixed;
-  bottom: calc(var(--bottom-nav-h, 56px) + env(safe-area-inset-bottom, 0px));
-  left: 50%;
-  transform: translateX(-50%);
-  width: 100%;
-  max-width: 480px;
-  z-index: 500;
+  position: static;
+  box-shadow: none;
   padding: 6px 14px 4px;
   border-top: none;
-  box-shadow: none;
-  background: var(--c-bg);
 }
 /* ════════════════════════════════════════════════════════════════
    §20e — GRILLE DE THÈMES DANS LES ÉCRANS LEVEL  (sans <details>)

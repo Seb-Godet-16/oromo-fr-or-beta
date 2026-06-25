@@ -1510,12 +1510,29 @@ function switchTab(tab) {
     b.classList.toggle('active', b.dataset.tab === tab);
   });
 
-  /* Mode cartes : layout sans scroll — toujours visible sur un écran */
   const lessonEl = document.getElementById('lesson');
   if (lessonEl) lessonEl.classList.toggle('mode-cartes', tab === 'flash');
 
-  /* Arrêter toute reconnaissance vocale en cours si on quitte l'onglet Répète */
   if (tab !== 'repeat') _stopRepeat();
+
+  // ── NOUVEAU : déplacer/replacer la barre export selon le mode ──
+  const exportBar = document.querySelector('.lesson-export-bar');
+  const bottomNav = document.getElementById('bottom-nav');
+  const lesson    = document.getElementById('lesson');
+  if (exportBar && bottomNav && lesson) {
+    if (tab === 'flash') {
+      // En mode cartes : insérer la barre DANS la bottom-nav (elle suit le viewport)
+      if (!bottomNav.contains(exportBar)) {
+        bottomNav.insertBefore(exportBar, bottomNav.firstChild);
+      }
+    } else {
+      // Autres onglets : remettre la barre à sa place dans #lesson
+      if (!lesson.contains(exportBar)) {
+        lesson.appendChild(exportBar);
+      }
+    }
+  }
+  // ── FIN NOUVEAU ──
 
   if      (tab === 'flash')  { renderFlash(); }
   else if (tab === 'quiz10') { q10Step = 0; q10Score = 0; q10Answered = false; _q10Questions = null; if (!_restoreQuizSession()) renderQuiz10(); }
