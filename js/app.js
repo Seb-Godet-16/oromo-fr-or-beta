@@ -1501,6 +1501,10 @@ function switchTab(tab) {
     b.classList.toggle('active', b.dataset.tab === tab);
   });
 
+  /* Mode cartes : layout sans scroll — toujours visible sur un écran */
+  const lessonEl = document.getElementById('lesson');
+  if (lessonEl) lessonEl.classList.toggle('mode-cartes', tab === 'flash');
+
   /* Arrêter toute reconnaissance vocale en cours si on quitte l'onglet Répète */
   if (tab !== 'repeat') _stopRepeat();
 

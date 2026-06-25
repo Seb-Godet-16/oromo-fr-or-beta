@@ -3100,12 +3100,81 @@ footer a:hover{text-decoration:underline}
   /* display géré par .screen / .screen.active — ne pas forcer flex ici */
   flex-direction:column;
   min-height:100vh;
+  /* Hauteur fixe = viewport moins bottom-nav, évite le débordement sur mobile */
+  height:100dvh;
+  max-height:100dvh;
+  padding-bottom:56px; /* réserve l'espace de la bottom-nav fixe */
+  box-sizing:border-box;
 }
 .lesson-body{
   flex:1;
-  overflow-y:auto;
+  overflow-y:auto;          /* scroll pour les onglets Quiz/Dialogue/Vocab */
   padding:14px;
-  padding-bottom:90px; /* espace pour la lesson-export-bar sticky */
+  padding-bottom:8px;
+  min-height:0;             /* autorise flex à comprimer */
+}
+
+/* ── Mode Cartes : tout sur un écran, sans scroll ─────────────────
+   Quand #tabContent contient une flashcard (.fc-wrap),
+   on passe le lesson-body en overflow:hidden et on répartit
+   verticalement : section-label + fc-wrap (flex:1) + fc-nav + audio + export
+*/
+#lesson.mode-cartes .lesson-body{
+  overflow:hidden;
+  display:flex;
+  flex-direction:column;
+  padding-bottom:0;
+}
+#lesson.mode-cartes .lesson-export-bar{
+  position:static;
+  box-shadow:none;
+  padding:6px 14px 8px;
+  border-top:1px solid rgba(0,0,0,.08);
+}
+#lesson.mode-cartes #tabContent{
+  display:flex;
+  flex-direction:column;
+  flex:1;
+  min-height:0;
+}
+#lesson.mode-cartes .fc-wrap{
+  flex:1;
+  min-height:0;
+  margin-bottom:0;
+  perspective:900px;
+}
+#lesson.mode-cartes .fc{
+  height:100%;
+  min-height:0;
+}
+#lesson.mode-cartes .fc-front,
+#lesson.mode-cartes .fc-back{
+  min-height:0;
+  height:100%;
+  padding:12px 16px;
+}
+#lesson.mode-cartes .fc-front-emoji,
+#lesson.mode-cartes .fc-back-emoji{
+  font-size:2.4rem;
+  margin-bottom:6px;
+}
+#lesson.mode-cartes .fc-front-word,
+#lesson.mode-cartes .fc-back-word{
+  font-size:1.5rem;
+}
+#lesson.mode-cartes .fc-nav{
+  margin-top:8px;
+  flex-shrink:0;
+}
+#lesson.mode-cartes .fc-audio-wrap{
+  position:static;
+  box-shadow:none;
+  padding:6px 0 2px;
+  flex-shrink:0;
+}
+#lesson.mode-cartes .section-label{
+  margin-bottom:6px;
+  flex-shrink:0;
 }
 /* ════════════════════════════════════════════════════════════════
    §20e — GRILLE DE THÈMES DANS LES ÉCRANS LEVEL  (sans <details>)
