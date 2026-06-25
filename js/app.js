@@ -12,40 +12,42 @@
      └─ app.js       → Ce fichier : logique applicative complète
 
    SECTIONS DE CE FICHIER (ordre d'apparition réel) :
-     —   Utilitaire bilingue L() / langKeys()          ligne ~   86
-     1.  Variables d'état globales (let/const)          ligne ~   52
-     2.  Point d'entrée — initApp(mode)                 ligne ~  156
-     3.  Synthèse vocale + prononciation Oromo          ligne ~  341
-     3b. Retour haptique — _vibrateFeedback()           ligne ~  522
-     3b2.Confetti — animation de félicitations ⭐⭐⭐  ligne ~  544
-     3c. Interruption audio — visibilitychange / focus  ligne ~  617
-     4.  Persistance de la progression (étoiles ⭐)     ligne ~  654
-     4b. Restauration de session quiz (sessionStorage)  ligne ~  877
-     4c. Réinitialisation — confirmResetProgress()      ligne ~  724  (dans §4)
-     5.  Navigation entre écrans                        ligne ~  976
-     5b. Navigation basse — helpers                     ligne ~ 1077
-     6.  Écran Home — barre de progression globale      ligne ~ 1200
-     7.  Écran Sections — grille des thèmes             ligne ~ 1282
-     8.  Ouverture d'un thème (écran Lesson + onglets)  ligne ~ 1387
-     9.  Cartes Flash — vocabulaire interactif          ligne ~ 1529
-    10.  Quiz 10 questions — avec étoiles progressives  ligne ~ 1678
-    11.  Dialogue — scènes de situation                 ligne ~ 1926
-    12.  Vocabulaire — lexique visuel cliquable         ligne ~ 1983
-    13b. Onglet Répète — reconnaissance vocale          ligne ~ 2028
-    13.  Quiz Dialogue — questions sur le dialogue      ligne ~ 2622
-    14.  Utilitaires & chaînes de résultats bilingues   ligne ~ 2712
-    17.  Guide utilisateur — Onboarding                 ligne ~ 2771
-    —    Écran 2 / Guide Home — _buildHomeGuide()       ligne ~ 2796
-    18.  Crédits — showCredits()                        ligne ~ 3333
-    15.  Initialisation du launcher                     ligne ~ 3384
-    16.  Accessibilité clavier                          ligne ~ 3395
-    19.  Spinner de chargement des données              ligne ~ 3407
-    21b. Viewport height fix — Android Chrome / Brave   ligne ~ 3450
-    20.  Enregistrement du Service Worker (PWA)         ligne ~ 3512
-    21.  Exports PDF — window.print() + @media print    ligne ~ 3559
-    21a. Export Guide (écran Home)                      ligne ~ 3744
-    21b. Export Vocabulaire (leçon Niveau 1)            ligne ~ 3841
-    21c. Export Situation (leçon Niveau 2 — dialogue)   ligne ~ 3937
+      1.   Variables d'état globales (let/const)             ligne ~   52
+      —    Utilitaire bilingue L() / langKeys()              ligne ~   86
+      2.   Point d'entrée — initApp(mode)                    ligne ~  156
+      3.   Synthèse vocale + prononciation Oromo             ligne ~  341
+      3b.  Retour haptique — _vibrateFeedback()              ligne ~  522
+      3b2. Confetti — animation de félicitations (stars)     ligne ~  544
+      3c.  Interruption audio — visibilitychange / focus     ligne ~  617
+      4.   Persistance de la progression (étoiles)           ligne ~  654
+      4c.  Réinitialisation — confirmResetProgress()         ligne ~  724  (dans §4)
+      4b.  Restauration de session quiz (sessionStorage)     ligne ~  877
+      5.   Navigation entre écrans                           ligne ~  976
+      5b.  Navigation basse — helpers                        ligne ~ 1077
+      6.   Écran Home — barre de progression globale         ligne ~ 1200
+      7.   Écran Sections — grille des thèmes                ligne ~ 1282
+      8.   Ouverture d'un thème (écran Lesson + onglets)     ligne ~ 1387
+           switchTab() : onglets + repositionnement          ligne ~ 1508
+           du bouton PDF en mode Cartes (fixed via JS)
+      9.   Cartes Flash — vocabulaire interactif             ligne ~ 1558
+     10.   Quiz 10 questions — avec étoiles progressives     ligne ~ 1707
+     11.   Dialogue — scènes de situation                    ligne ~ 1955
+     12.   Vocabulaire — lexique visuel cliquable            ligne ~ 2012
+     13b.  Onglet Répète — reconnaissance vocale             ligne ~ 2057
+     13.   Quiz Dialogue — questions sur le dialogue         ligne ~ 2651
+     14.   Utilitaires & chaînes de résultats bilingues      ligne ~ 2741
+     17.   Guide utilisateur — Onboarding                    ligne ~ 2800
+      —    Écran Home — _buildHomeGuide()                    ligne ~ 2825
+     18.   Crédits — showCredits()                           ligne ~ 3362
+     15.   Initialisation du launcher                        ligne ~ 3413
+     16.   Accessibilité clavier                             ligne ~ 3424
+     19.   Spinner de chargement des données                 ligne ~ 3436
+     21b.  Viewport height fix — Android Chrome / Brave      ligne ~ 3479
+     20.   Enregistrement du Service Worker (PWA)            ligne ~ 3541
+     21.   Exports PDF — window.print() + @media print       ligne ~ 3588
+     21a.  Export Guide (écran Home)                         ligne ~ 3773
+     21b.  Export Vocabulaire (leçon Niveau 1)               ligne ~ 3870
+     21c.  Export Situation (leçon Niveau 2 — dialogue)      ligne ~ 3966
    ============================================================ */
 
 
@@ -1515,17 +1517,31 @@ function switchTab(tab) {
 
   if (tab !== 'repeat') _stopRepeat();
 
-  // ── NOUVEAU : positionner la barre export au-dessus de la bottom-nav ──
+  /* ── Repositionnement du bouton PDF selon le mode ──────────────────
+     PROBLÈME ANDROID : en mode Cartes, #lesson a overflow:hidden et
+     height fixe (--app-h). Quand la barre d'URL du navigateur se
+     rétracte/étend, --app-h se désynchronise et le bouton PDF
+     (frère flex de .lesson-body) disparaît sous la bottom-nav.
+
+     SOLUTION : en mode flash uniquement, on sort .lesson-export-bar
+     du flux flex de #lesson et on l'insère comme frère AVANT
+     #bottom-nav dans le DOM. On lui applique position:fixed avec
+     bottom = hauteur réelle de #bottom-nav lue via getBoundingClientRect()
+     — valeur toujours synchronisée avec la barre d'URL, contrairement
+     à la CSS custom property --bottom-nav-h calculée à intervalle.
+
+     En quittant le mode flash, on remet la barre dans #lesson et
+     on efface tous les styles inline. */
   const exportBar = document.querySelector('.lesson-export-bar');
   const bottomNav = document.getElementById('bottom-nav');
   const lesson    = document.getElementById('lesson');
   if (exportBar && bottomNav && lesson) {
     if (tab === 'flash') {
-      // Sortir du flux flex de #lesson et insérer juste AVANT la bottom-nav
+      /* Sortir du flux flex de #lesson, insérer juste avant #bottom-nav */
       if (bottomNav.previousElementSibling !== exportBar) {
         bottomNav.parentNode.insertBefore(exportBar, bottomNav);
       }
-      // Ancrer dynamiquement au-dessus de la bottom-nav
+      /* Ancrer dynamiquement : bottom = hauteur réelle de la bottom-nav */
       const navH = bottomNav.getBoundingClientRect().height;
       exportBar.style.position = 'fixed';
       exportBar.style.bottom   = navH + 'px';
@@ -1533,7 +1549,7 @@ function switchTab(tab) {
       exportBar.style.right    = '0';
       exportBar.style.zIndex   = '999';
     } else {
-      // Remettre dans #lesson et effacer les styles inline
+      /* Remettre dans #lesson et effacer tous les styles inline */
       if (!lesson.contains(exportBar)) {
         lesson.appendChild(exportBar);
       }
@@ -1544,7 +1560,6 @@ function switchTab(tab) {
       exportBar.style.zIndex   = '';
     }
   }
-  // ── FIN NOUVEAU ──
 
   if      (tab === 'flash')  { renderFlash(); }
   else if (tab === 'quiz10') { q10Step = 0; q10Score = 0; q10Answered = false; _q10Questions = null; if (!_restoreQuizSession()) renderQuiz10(); }

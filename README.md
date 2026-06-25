@@ -41,8 +41,8 @@ Taphad'Meuh/
 │
 ├── js/
 │   ├── app.js              ← Full application engine (~3 983 lines, 21 sections)
-│   ├── data-fr.js          ← Dataset — "Learn French" mode (48 themes, ~1 350 lines)
-│   └── data-or.js          ← Dataset — "Learn Oromo" mode  (48 themes, ~1 350 lines)
+│   ├── data-fr.js          ← Dataset — "Learn French" mode (48 themes, ~1 428 lines)
+│   └── data-or.js          ← Dataset — "Learn Oromo" mode  (48 themes, ~1 383 lines)
 │
 ├── sw.js                   ← Service Worker — Cache First / Network First + SVG fallbacks
 ├── manifest.json           ← PWA manifest — icons, theme colors, orientation

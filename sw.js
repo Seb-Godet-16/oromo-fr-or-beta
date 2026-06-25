@@ -32,7 +32,7 @@
  */
 
 /* ──────────────────────────────────────────────────────────────────
-   CONFIGURATION
+   CONFIGURATION  (L.34)
    ──────────────────────────────────────────────────────────────────
    CACHE_NAME : suffixe automatiquement remplacé par GitHub Actions
    (variable GITHUB_RUN_NUMBER) à chaque déploiement — pas d'action
@@ -96,7 +96,7 @@ var ICONS_PATH = '/icons/';
 
 
 /* ──────────────────────────────────────────────────────────────────
-   HELPERS — CLASSIFICATION DES REQUÊTES
+   HELPERS — CLASSIFICATION DES REQUÊTES  (L.98)
    ────────────────────────────────────────────────────────────────── */
 
 /**
@@ -153,7 +153,7 @@ function _isNavigation(request) {
 
 
 /* ──────────────────────────────────────────────────────────────────
-   INSTALL — Pré-cache des ressources statiques
+   INSTALL — Pré-cache des ressources statiques  (L.155)
    ──────────────────────────────────────────────────────────────────
    skipWaiting() : le nouveau SW prend le contrôle immédiatement
    sans attendre la fermeture de tous les onglets.
@@ -172,7 +172,7 @@ self.addEventListener('install', function(event) {
 
 
 /* ──────────────────────────────────────────────────────────────────
-   ACTIVATE — Nettoyage des anciens caches
+   ACTIVATE — Nettoyage des anciens caches  (L.174)
    ────────────────────────────────────────────────────────────────── */
 self.addEventListener('activate', function(event) {
   event.waitUntil(
@@ -192,7 +192,7 @@ self.addEventListener('activate', function(event) {
 
 
 /* ──────────────────────────────────────────────────────────────────
-   FETCH — Interception des requêtes réseau
+   FETCH — Interception des requêtes réseau  (L.194)
    ──────────────────────────────────────────────────────────────────
    Dispatch vers la stratégie appropriée selon le type de ressource.
    ────────────────────────────────────────────────────────────────── */
@@ -208,7 +208,7 @@ self.addEventListener('fetch', function(event) {
 
 
 /* ──────────────────────────────────────────────────────────────────
-   STRATÉGIE 1 — CACHE FIRST (ressources locales)
+   STRATÉGIE 1 — CACHE FIRST (ressources locales)  (L.210)
    ──────────────────────────────────────────────────────────────────
    1. Cherche dans le cache
    2. Si trouvé → répond immédiatement
@@ -242,7 +242,7 @@ function cacheFirst(request) {
 
 
 /* ──────────────────────────────────────────────────────────────────
-   STRATÉGIE 2 — NETWORK FIRST (ressources externes)
+   STRATÉGIE 2 — NETWORK FIRST (ressources externes)  (L.244)
    ──────────────────────────────────────────────────────────────────
    1. Tente le fetch réseau
    2. Si succès → répond + met à jour le cache en arrière-plan
@@ -273,7 +273,7 @@ function networkFirst(request) {
 
 
 /* ──────────────────────────────────────────────────────────────────
-   DISPATCH DU FALLBACK OFFLINE (ressources locales)
+   DISPATCH DU FALLBACK OFFLINE (ressources locales)  (L.275)
    ──────────────────────────────────────────────────────────────────
    Choisit le bon fallback selon le type de ressource manquante :
      • Navigation HTML    → page offline complète avec bouton retry
@@ -305,7 +305,7 @@ function _offlineFallback(request) {
 
 
 /* ──────────────────────────────────────────────────────────────────
-   FALLBACK 1 — ICÔNE PWA MANQUANTE
+   FALLBACK 1 — ICÔNE PWA MANQUANTE  (L.307)
    ──────────────────────────────────────────────────────────────────
    SVG carré 512×512 qui reproduit l'identité visuelle de l'app :
    dégradé tricolore (bleu FR / blanc / rouge), globe centré et
@@ -419,7 +419,7 @@ function _respondSvgIcon() {
 
 
 /* ──────────────────────────────────────────────────────────────────
-   FALLBACK 2 — IMAGE LOCALE MANQUANTE
+   FALLBACK 2 — IMAGE LOCALE MANQUANTE  (L.421)
    ──────────────────────────────────────────────────────────────────
    SVG placeholder neutre pour toute image PNG/JPG locale absente
    du cache. Montre une icône image cassée stylisée avec le logo
@@ -454,7 +454,7 @@ function _respondSvgLocalImage() {
 
 
 /* ──────────────────────────────────────────────────────────────────
-   FALLBACK 3 — IMAGE EXTERNE MANQUANTE (CDN, API…)
+   FALLBACK 3 — IMAGE EXTERNE MANQUANTE (CDN, API…)  (L.456)
    ──────────────────────────────────────────────────────────────────
    Variante du placeholder local mais avec un ton légèrement
    différent pour indiquer que c'est une ressource distante
@@ -494,7 +494,7 @@ function _respondSvgExternalImage() {
 
 
 /* ──────────────────────────────────────────────────────────────────
-   FALLBACK 4 — PAGE DE NAVIGATION HORS-LIGNE
+   FALLBACK 4 — PAGE DE NAVIGATION HORS-LIGNE  (L.496)
    ──────────────────────────────────────────────────────────────────
    Page HTML complète affichée quand l'utilisateur tente d'ouvrir
    l'app sans réseau ET avant la première visite (cache vide).
