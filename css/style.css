@@ -3094,17 +3094,26 @@ footer a:hover{text-decoration:underline}
   padding:12px 14px 80px;
 }
 
-/* Écran leçon : idem */
+/* Écran leçon
+   STRUCTURE FLEX VERTICALE :
+     #lesson          (flex col, hauteur = --app-h calculée par JS)
+       ├─ .lesson-header     (flex-shrink:0)
+       ├─ .lesson-body       (flex:1, scroll en mode normal)
+       └─ .lesson-export-bar (flex-shrink:0, toujours visible en bas)
+
+   --app-h est écrit par setAppHeight() dans app.js via window.innerHeight,
+   ce qui est fiable sur Android Chrome/Brave quelle que soit la barre d'URL.
+   padding-bottom = --bottom-nav-h (hauteur réelle de #bottom-nav).
+*/
 #lesson{
   background:var(--c-bg);
   /* display géré par .screen / .screen.active — ne pas forcer flex ici */
   flex-direction:column;
-  min-height:100vh;
-  /* Hauteur fixe = viewport moins bottom-nav, évite le débordement sur mobile */
-  height:100dvh;
-  max-height:100dvh;
-  padding-bottom:56px; /* réserve l'espace de la bottom-nav fixe */
+  height:var(--app-h, 100dvh);
+  max-height:var(--app-h, 100dvh);
+  padding-bottom:var(--bottom-nav-h, 56px);
   box-sizing:border-box;
+  overflow:hidden; /* le scroll est géré par .lesson-body, pas par #lesson */
 }
 .lesson-body{
   flex:1;
@@ -3113,22 +3122,28 @@ footer a:hover{text-decoration:underline}
   padding-bottom:8px;
   min-height:0;             /* autorise flex à comprimer */
 }
+/* La barre d'export est HORS de .lesson-body (frère dans #lesson).
+   Elle doit rester visible sans scroll — flex-shrink:0 suffit. */
+.lesson-export-bar{
+  flex-shrink:0;
+}
 
 /* ── Mode Cartes : tout sur un écran, SANS scroll ──────────────────
-   Architecture flex verticale stricte :
-     lesson-header (flex-shrink:0)
-     └─ lesson-body (flex:1, overflow:hidden, flex col)
-         ├─ .tabs          (flex-shrink:0)
-         ├─ .section-label (flex-shrink:0)
-         ├─ #tabContent    (flex:1, min-height:0, flex col)
-         │   ├─ .fc-wrap   (flex:1, min-height:0)  ← carte étirable
-         │   ├─ .fc-nav    (flex-shrink:0)
-         │   └─ .fc-audio-wrap (flex-shrink:0)
-         └─ .lesson-export-bar (flex-shrink:0)
+   VRAIE structure DOM (voir index.html) :
+     #lesson                  (flex col, height:--app-h)
+       ├─ .lesson-header         (flex-shrink:0)
+       ├─ .lesson-body           (flex:1, overflow:hidden en mode-cartes)
+       │   ├─ .tabs              (flex-shrink:0)
+       │   └─ #tabContent        (flex:1, min-height:0, flex col)
+       │       ├─ .section-label (flex-shrink:0)
+       │       ├─ .fc-wrap       (flex:1, min-height:0)  ← carte étirable
+       │       ├─ .fc-nav        (flex-shrink:0)
+       │       └─ .fc-audio-wrap (flex-shrink:0)
+       └─ .lesson-export-bar     (flex-shrink:0)  ← FRÈRE de lesson-body !
 
-   RÈGLE CLÉ : aucun élément ne doit avoir de hauteur fixe ou de
-   margin/padding non compressible. Tout ce qui est flex-shrink:0
-   doit avoir des paddings minimaux pour laisser le maximum à la carte.
+   .lesson-export-bar est injecté directement dans #lesson, pas dans
+   .lesson-body → il faut que #lesson soit le conteneur flex principal
+   et que lesson-export-bar ait flex-shrink:0 (déjà géré dans le bloc #lesson).
 */
 
 /* lesson-body : colonne flex stricte, pas de scroll */
