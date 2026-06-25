@@ -676,7 +676,7 @@ html.theme-oromo body{background:#f4f9f4}
 .theme-card{
   background:#fff;
   border-radius:16px;
-  padding:12px 8px;
+  padding:14px 10px 12px;
   text-align:center;
   cursor:pointer;
   box-shadow:0 2px 8px #0001;
@@ -698,10 +698,10 @@ html.theme-oromo body{background:#f4f9f4}
 }
 
 /* Éléments internes de la carte-thème */
-.t-emoji{font-size:1.9rem}
-.t-name{font-size:.8rem;font-weight:700;color:#333;margin-top:4px;line-height:1.2}
-.t-sub{font-size:.65rem;color:#aaa;margin-top:2px}
-.t-stars{font-size:.8rem;margin-top:3px}
+.t-emoji{font-size:2.4rem;line-height:1.1}
+.t-name{font-size:.88rem;font-weight:700;color:#333;margin-top:6px;line-height:1.25}
+.t-sub{font-size:.72rem;color:#888;margin-top:3px;line-height:1.3}
+.t-stars{font-size:.82rem;margin-top:5px}
 /* Bouton reset d'un thème (anciennement styles inline dans app.js) */
 .btn-reset-theme{
   display:inline-block;
@@ -3149,11 +3149,11 @@ footer a:hover{text-decoration:underline}
      #lesson (overflow:hidden)
        ├─ .lesson-header    (~68px)  flex-shrink:0
        ├─ .lesson-body      (flex:1, overflow:hidden, flex col)
-       │   ├─ .tabs          (~46px)  flex-shrink:0
+       │   ├─ .tabs          (~52px)  flex-shrink:0
        │   └─ #tabContent    (flex:1, flex col)
-       │       ├─ .section-label  (~24px) flex-shrink:0
-       │       ├─ .fc-wrap        (flex:1, max-height calc)
-       │       ├─ .fc-nav         (~44px) flex-shrink:0
+       │       ├─ .section-label  (~28px) flex-shrink:0
+       │       ├─ .fc-wrap        (flex:1, max-height calc → -460px)
+       │       ├─ .fc-nav         (~50px) flex-shrink:0
        │       └─ .fc-audio-wrap  (~50px) flex-shrink:0
        └─ .lesson-export-bar (~58px) flex-shrink:0 (déjà défini)
 */
@@ -3193,12 +3193,15 @@ footer a:hover{text-decoration:underline}
 
 /* fc-wrap : s'étire MAIS plafonné par max-height calc()
    Budget fixe = header(68) + tabs(52) + label(28) + fc-nav(50)
-               + audio(50) + export(58) + paddings(30) + marge(64)
-               = 400px */
+               + audio(50) + export(58) + paddings(30) + marge(124)
+               = 460px
+   ↑ +60px par rapport à l'ancienne valeur (400px) pour absorber
+     la barre d'URL du navigateur (~56px sur Brave/Chrome Android)
+     qui s'ajoute au-dessus et pousse le contenu vers le bas. */
 #lesson.mode-cartes .fc-wrap{
   flex:1;
   min-height:0;
-  max-height:calc(var(--app-h, 100dvh) - 400px);
+  max-height:calc(var(--app-h, 100dvh) - 460px);
   margin-bottom:0;
   perspective:900px;
 }

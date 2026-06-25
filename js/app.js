@@ -3554,14 +3554,19 @@ if ('serviceWorker' in navigator) {
 /**
  * Ouvre une fenêtre d'impression avec le contenu HTML fourni.
  *
- * STRATÉGIE DOUBLE :
- *   • Cas normal        : window.open() + window.print() (tous navigateurs desktop/Android)
+ * STRATÉGIE TRIPLE :
+ *   • Cas normal        : window.open() + window.print() (navigateurs desktop)
+ *   • Android           : window.open() avec Blob URL est bloqué silencieusement par
+ *     le bloqueur de popups intégré (Brave, Chrome…) — la fenêtre retourne non-null
+ *     mais l'événement 'load' ne se déclenche jamais → print() n'est jamais appelé.
+ *     Fallback direct → _downloadAsHtml() pour tous les UA Android.
  *   • iOS PWA standalone : window.open() est bloqué par Safari en mode standalone.
  *     Fallback → Blob HTML + <a download> qui déclenche un téléchargement direct du
- *     fichier .html, que l'utilisateur peut ouvrir dans Safari pour imprimer.
+ *     fichier .html, que l'utilisateur peut ouvrir dans son navigateur pour imprimer.
  *
  * Détection iOS standalone : navigator.standalone === true (propriété non-standard
  * Apple, disponible sur tous les Safari iOS depuis iOS 2.1).
+ * Détection Android : /Android/i.test(navigator.userAgent).
  *
  * @param {string} htmlContent - Document HTML complet à imprimer / télécharger
  */
@@ -3570,6 +3575,20 @@ function _openPrintWindow(htmlContent) {
   const isIosPwaStandalone = (navigator.standalone === true);
 
   if (isIosPwaStandalone) {
+    _downloadAsHtml(htmlContent);
+    return;
+  }
+
+  /* ── Détection Android ──
+     Sur Android (Brave, Chrome, Firefox…), window.open() avec une Blob URL
+     est bloqué silencieusement par le bloqueur de popups intégré : la fonction
+     retourne un objet non-null mais la fenêtre n'est jamais rendue, et l'événement
+     'load' ne se déclenche donc pas → window.print() n'est jamais appelé.
+     Solution : on contourne window.open() sur Android et on télécharge directement
+     le fichier HTML via _downloadAsHtml(), que l'utilisateur ouvre pour imprimer. */
+  const isAndroid = /Android/i.test(navigator.userAgent);
+
+  if (isAndroid) {
     _downloadAsHtml(htmlContent);
     return;
   }
@@ -3640,9 +3659,14 @@ function _downloadAsHtml(htmlContent) {
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
     }, 1000);
+    const isAndroid = /Android/i.test(navigator.userAgent);
     _showToast(L(
-      '📄 Fichier HTML téléchargé — ouvrez-le dans Safari pour imprimer.',
-      '📄 Faayilii HTML buufame — maxxansuuf Safari keessatti bani.'
+      isAndroid
+        ? '📄 Fichier HTML téléchargé — ouvrez-le dans votre navigateur pour imprimer.'
+        : '📄 Fichier HTML téléchargé — ouvrez-le dans Safari pour imprimer.',
+      isAndroid
+        ? '📄 Faayilii HTML buufame — maxxansuuf browser keessatti bani.'
+        : '📄 Faayilii HTML buufame — maxxansuuf Safari keessatti bani.'
     ), 6000);
   } catch(e) {
     _showToast(L(
