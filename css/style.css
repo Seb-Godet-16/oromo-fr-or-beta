@@ -3215,36 +3215,44 @@ footer a:hover{text-decoration:underline}
   min-height:0;
 }
 
-/* fc-wrap : s'étire MAIS plafonné par max-height calc()
+/* fc-wrap : taille selon son contenu, plafonnée par max-height.
+   flex:0 1 auto (au lieu de flex:1) : la carte ne prend QUE la place
+   de son contenu réel → supprime l'espace vide entre "Écouter" et
+   "Télécharger" quand la carte est petite (verbes courts, etc.).
+   overflow:hidden : évite tout débordement interne si le contenu est
+   plus grand que le max-height.
+   max-height utilise --app-h (mis à jour par JS après chaque resize /
+   touchend) plutôt que 100dvh : quand la barre d'URL de Brave Android
+   réapparaît, --app-h reflète window.innerHeight réel → la dernière
+   ligne de conjugaison n'est plus coupée.
    Budget fixe = header(68) + tabs(52) + label(28) + fc-nav(50)
                + audio(50) + export(58) + paddings(30) + marge(124)
-               = 460px
-   On utilise 100dvh (dynamic viewport height) plutôt que --app-h :
-   dvh se recalcule automatiquement à chaque pixel quand la barre
-   d'URL du navigateur (Chrome/Brave Android) apparaît ou disparaît,
-   sans dépendre d'un listener JS. --app-h reste utilisé sur #lesson
-   pour fixer la hauteur totale de l'écran, mais ici le max-height
-   de la carte bénéficie du recalcul natif du navigateur. */
+               = 460px */
 #lesson.mode-cartes .fc-wrap{
-  flex:1;
+  flex:0 1 auto;
   min-height:0;
-  max-height:calc(100dvh - 460px);
+  overflow:hidden;
+  max-height:calc(var(--app-h, 100dvh) - 460px);
   margin-bottom:0;
   perspective:900px;
 }
 
-/* Carte 3D */
+/* Carte 3D : s'étire pour remplir fc-wrap */
 #lesson.mode-cartes .fc{
   height:100%;
   min-height:0;
 }
 
-/* Faces : padding compact */
+/* Faces : s'adaptent à la hauteur de la carte.
+   overflow-y:auto : si le contenu (ex. conjugaisons longues) dépasse
+   le max-height disponible, on scrolle à l'intérieur de la carte
+   plutôt que de couper la dernière ligne de conjugaison. */
 #lesson.mode-cartes .fc-front,
 #lesson.mode-cartes .fc-back{
   min-height:0;
   height:100%;
   padding:8px 16px;
+  overflow-y:auto;
 }
 
 /* Emoji */
