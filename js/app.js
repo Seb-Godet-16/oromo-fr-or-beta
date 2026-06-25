@@ -1450,7 +1450,7 @@ function openTheme(id, dir) {
   if (CT.type === 'dialog') {
     tabs = [
       { k: 'dialog', lbl: L('💬 Maree',    '💬 Dialogue')   },
-      { k: 'vocab',  lbl: L('📚 Jechoota', '📚 Vocabulaire') },
+      { k: 'vocab',  lbl: L('📚 Jechoota', '📚 Lexique') },
       { k: 'dquiz',  lbl: L('❓ Gaaffilee', '❓ Quiz')        },
       { k: 'repeat', lbl: L('🎙️ Irraddeessi', '🎙️ Répète')   }
     ];
