@@ -865,34 +865,22 @@ html.theme-french .btn-reset-theme:hover{
 /*
   overflow-x:auto → les onglets scrollent horizontalement si
   leur nombre dépasse la largeur de l'écran (petits mobiles).
-
-  CORRECTIF VOCABULAIRE (Juin 2026) :
-  Avec 4 onglets sur mobile étroit, "Vocabulaire" débordait de son
-  encadré. Correctifs appliqués :
-    • white-space:normal   → le label peut passer à la ligne si besoin
-    • line-height réduit   → évite que le retour à la ligne gonfle trop
-    • padding latéral 6px  → un peu plus d'air sans dépasser la largeur
-    • font-size .72rem     → légère réduction pour les 4 onglets
-    • min-width 0          → laisse flex calculer librement (pas de plancher
-                              rigide qui forçait le débordement)
 */
-.tabs{display:flex;gap:5px;margin-bottom:14px;overflow-x:auto}
+.tabs{display:flex;gap:6px;margin-bottom:14px;overflow-x:auto}
 .tab{
   flex:1;
-  min-width:0;
-  padding:8px 6px;
+  min-width:80px;
+  padding:9px 4px;
   border-radius:10px;
   border:2px solid var(--c-primary);
   background:#fff;
   color:var(--c-primary);
   font-weight:700;
-  font-size:.72rem;
-  line-height:1.2;
+  font-size:.74rem;
   cursor:pointer;
   text-align:center;
   transition:all .15s;
-  white-space:normal;
-  word-break:keep-all;
+  white-space:nowrap;
 }
 /* Onglet actif : fond plein */
 .tab.active{background:var(--c-primary);color:#fff}
@@ -3126,66 +3114,124 @@ footer a:hover{text-decoration:underline}
   min-height:0;             /* autorise flex à comprimer */
 }
 
-/* ── Mode Cartes : tout sur un écran, sans scroll ─────────────────
-   Quand #tabContent contient une flashcard (.fc-wrap),
-   on passe le lesson-body en overflow:hidden et on répartit
-   verticalement : section-label + fc-wrap (flex:1) + fc-nav + audio + export
+/* ── Mode Cartes : tout sur un écran, SANS scroll ──────────────────
+   Architecture flex verticale stricte :
+     lesson-header (flex-shrink:0)
+     └─ lesson-body (flex:1, overflow:hidden, flex col)
+         ├─ .tabs          (flex-shrink:0)
+         ├─ .section-label (flex-shrink:0)
+         ├─ #tabContent    (flex:1, min-height:0, flex col)
+         │   ├─ .fc-wrap   (flex:1, min-height:0)  ← carte étirable
+         │   ├─ .fc-nav    (flex-shrink:0)
+         │   └─ .fc-audio-wrap (flex-shrink:0)
+         └─ .lesson-export-bar (flex-shrink:0)
+
+   RÈGLE CLÉ : aucun élément ne doit avoir de hauteur fixe ou de
+   margin/padding non compressible. Tout ce qui est flex-shrink:0
+   doit avoir des paddings minimaux pour laisser le maximum à la carte.
 */
+
+/* lesson-body : colonne flex stricte, pas de scroll */
 #lesson.mode-cartes .lesson-body{
   overflow:hidden;
   display:flex;
   flex-direction:column;
-  padding-bottom:0;
+  padding:8px 14px 0;
 }
-#lesson.mode-cartes .lesson-export-bar{
-  position:static;
-  box-shadow:none;
-  padding:6px 14px 8px;
-  border-top:1px solid rgba(0,0,0,.08);
+
+/* Barre d'onglets : compresser la marge du bas */
+#lesson.mode-cartes .tabs{
+  margin-bottom:6px;
+  flex-shrink:0;
 }
+
+/* Étiquette RECTO/VERSO : moins de marge */
+#lesson.mode-cartes .section-label{
+  margin-bottom:4px;
+  flex-shrink:0;
+}
+
+/* tabContent : colonne flex qui prend tout l'espace restant */
 #lesson.mode-cartes #tabContent{
   display:flex;
   flex-direction:column;
   flex:1;
   min-height:0;
 }
+
+/* Conteneur de la carte : s'étire pour remplir l'espace disponible */
 #lesson.mode-cartes .fc-wrap{
   flex:1;
   min-height:0;
   margin-bottom:0;
   perspective:900px;
 }
+
+/* La carte 3D prend toute la hauteur du conteneur */
 #lesson.mode-cartes .fc{
   height:100%;
   min-height:0;
 }
+
+/* Les deux faces s'adaptent à la hauteur réelle */
 #lesson.mode-cartes .fc-front,
 #lesson.mode-cartes .fc-back{
   min-height:0;
   height:100%;
-  padding:12px 16px;
+  padding:10px 16px;
 }
+
+/* Emoji : légèrement réduit */
 #lesson.mode-cartes .fc-front-emoji,
 #lesson.mode-cartes .fc-back-emoji{
-  font-size:2.4rem;
-  margin-bottom:6px;
-}
-#lesson.mode-cartes .fc-front-word,
-#lesson.mode-cartes .fc-back-word{
-  font-size:1.5rem;
-}
-#lesson.mode-cartes .fc-nav{
-  margin-top:8px;
+  font-size:2.2rem;
+  margin-bottom:4px;
   flex-shrink:0;
 }
+
+/* Mot principal : taille adaptée mobile */
+#lesson.mode-cartes .fc-front-word,
+#lesson.mode-cartes .fc-back-word{
+  font-size:1.45rem;
+}
+
+/* Navigation Précédent / Suivant : marges réduites */
+#lesson.mode-cartes .fc-nav{
+  margin-top:6px;
+  margin-bottom:0;
+  flex-shrink:0;
+  padding:0;
+}
+
+/* Boutons nav : padding vertical réduit tout en restant tappables */
+#lesson.mode-cartes .fc-nav button{
+  padding:7px 16px;
+  min-height:40px;
+}
+
+/* Bouton Écouter : sorti de sticky, intégré dans le flux flex */
 #lesson.mode-cartes .fc-audio-wrap{
   position:static;
   box-shadow:none;
-  padding:6px 0 2px;
+  padding:5px 0 2px;
+  margin-top:0;
   flex-shrink:0;
 }
-#lesson.mode-cartes .section-label{
-  margin-bottom:6px;
+
+/* Bouton audio : hauteur réduite */
+#lesson.mode-cartes .audio-btn-big{
+  margin-top:0;
+  padding:9px 12px;
+  min-height:42px;
+  font-size:.9rem;
+}
+
+/* Barre d'export : sortie de sticky, intégrée dans le flux */
+#lesson.mode-cartes .lesson-export-bar{
+  position:static;
+  box-shadow:none;
+  padding:5px 0 6px;
+  border-top:1px solid rgba(0,0,0,.08);
   flex-shrink:0;
 }
 /* ════════════════════════════════════════════════════════════════
