@@ -1515,21 +1515,33 @@ function switchTab(tab) {
 
   if (tab !== 'repeat') _stopRepeat();
 
-  // ── NOUVEAU : déplacer/replacer la barre export selon le mode ──
+  // ── NOUVEAU : positionner la barre export au-dessus de la bottom-nav ──
   const exportBar = document.querySelector('.lesson-export-bar');
   const bottomNav = document.getElementById('bottom-nav');
   const lesson    = document.getElementById('lesson');
   if (exportBar && bottomNav && lesson) {
     if (tab === 'flash') {
-      // En mode cartes : insérer la barre DANS la bottom-nav (elle suit le viewport)
-      if (!bottomNav.contains(exportBar)) {
-        bottomNav.insertBefore(exportBar, bottomNav.firstChild);
+      // Sortir du flux flex de #lesson et insérer juste AVANT la bottom-nav
+      if (bottomNav.previousElementSibling !== exportBar) {
+        bottomNav.parentNode.insertBefore(exportBar, bottomNav);
       }
+      // Ancrer dynamiquement au-dessus de la bottom-nav
+      const navH = bottomNav.getBoundingClientRect().height;
+      exportBar.style.position = 'fixed';
+      exportBar.style.bottom   = navH + 'px';
+      exportBar.style.left     = '0';
+      exportBar.style.right    = '0';
+      exportBar.style.zIndex   = '999';
     } else {
-      // Autres onglets : remettre la barre à sa place dans #lesson
+      // Remettre dans #lesson et effacer les styles inline
       if (!lesson.contains(exportBar)) {
         lesson.appendChild(exportBar);
       }
+      exportBar.style.position = '';
+      exportBar.style.bottom   = '';
+      exportBar.style.left     = '';
+      exportBar.style.right    = '';
+      exportBar.style.zIndex   = '';
     }
   }
   // ── FIN NOUVEAU ──
