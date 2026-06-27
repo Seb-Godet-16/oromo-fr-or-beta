@@ -1441,7 +1441,7 @@ function renderSections(activeLevel) {
     let pl = document.getElementById('progressLabel' + s);
     if (pl) pl.innerHTML =
       '<span class="progress-label-text">'
-      + p.n + ' / ' + p.total + ' ' + L('modules', 'kutaalee') + ' — ' + p.pct + '%'
+      + p.n + ' / ' + p.total + ' ' + L('📚', '📚') + ' — ' + p.pct + '%'
       + '</span>'
       + '<button class="btn-reset-prog" onclick="confirmResetProgress()"'
       + ' title="' + L('Tartiiba guutuu haqi', 'Réinitialiser toute la progression') + '"'
