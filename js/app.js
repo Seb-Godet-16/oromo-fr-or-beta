@@ -1313,14 +1313,22 @@ function renderSections(activeLevel) {
 
   let p = _getProgress();
 
-  /* ── Libellés de niveau bilingues ── */
+  /* ── Libellés de niveau bilingues (avec traduction en sous-titre) ── */
   let lbl1 = L('Niveau 1 — Vocabulaire',     'Sadarkaa 1 — Jechoota');
   let lbl2 = L('Niveau 2 — Dialogues', 'Sadarkaa 2 — Dubbii');
+  /* Traductions pour les onglets */
+  let lbl1transl = L('Sadarkaa 1 — Jechoota', 'Niveau 1 — Vocabulaire');
+  let lbl2transl = L('Sadarkaa 2 — Dubbii',   'Niveau 2 — Dialogues');
+  /* Traduction du titre "Modules" dans le header */
+  let titleTransl = L('📚 Moojuulota', '📚 Modules');
 
   /* ── Helper : remplir les éléments d'un header de sections ── */
   function _fillHeader(suffix) {
     let s = suffix || '';
-    _setText('sectionsTitle' + s,   L('📚 Modules', '📚 Moojuulota'));
+    let titleEl = document.getElementById('sectionsTitle' + s);
+    if (titleEl) titleEl.innerHTML =
+      L('📚 Modules', '📚 Moojuulota')
+      + '<span class="hdr-transl">' + titleTransl + '</span>';
     let gp = document.getElementById('globalProgress' + s);
     if (gp) gp.style.width = p.pct + '%';
 
@@ -1349,8 +1357,10 @@ function renderSections(activeLevel) {
 
   /* ── Remplir les libellés des onglets de niveau (deux paires : '' et 'B') ── */
   ['', 'B'].forEach((sfx) => {
-    _setText('level1Label' + sfx, lbl1);
-    _setText('level2Label' + sfx, lbl2);
+    let el1 = document.getElementById('level1Label' + sfx);
+    let el2 = document.getElementById('level2Label' + sfx);
+    if (el1) el1.innerHTML = lbl1 + '<span class="level-tab-transl">' + lbl1transl + '</span>';
+    if (el2) el2.innerHTML = lbl2 + '<span class="level-tab-transl">' + lbl2transl + '</span>';
   });
 
   /* ── Grilles de thèmes ── */
@@ -1459,14 +1469,14 @@ function openTheme(id, dir) {
 
   /* Mémoriser le niveau du thème ouvert pour le retour et les flèches */
   _currentThemeLevel = CT.level;
-  /* Si déjà sur l'écran lesson (navigation prev/next), rafraîchir sans transition.
-     Sinon, animer avec la direction fournie par l'appelant (ou 'forward' par défaut). */
+  /* Si déjà sur l'écran lesson (navigation prev/next) :
+     animer le corps (lessonBody) en slide horizontal selon la direction,
+     sans recréer l'écran entier (les flèches et le header restent en place).
+     Sinon, animer l'écran complet avec showScreen(). */
   const _alreadyInLesson = document.getElementById('lesson').classList.contains('active');
-  if (_alreadyInLesson) {
-    _updateLessonNavArrows();
-  } else {
-    showScreen('lesson', dir || 'forward');
-    _updateLessonNavArrows();
+  const _slideDir = dir || 'forward';   /* direction mémorisée pour l'animation du body */
+  if (!_alreadyInLesson) {
+    showScreen('lesson', _slideDir);
   }
 
   /* ── Construction des onglets selon le type de thème ── */
@@ -1514,6 +1524,28 @@ function openTheme(id, dir) {
   }
 
   switchTab(tabs[0].k);
+
+  /* ── Mise à jour des flèches prev/next (après switchTab pour avoir le bon CT) ── */
+  _updateLessonNavArrows();
+
+  /* ── Animation du corps de la leçon lors d'une navigation prev/next ──
+     Seulement si on était déjà dans lesson (évite la double animation
+     avec showScreen qui anime l'écran entier à l'arrivée). */
+  if (_alreadyInLesson) {
+    let body = document.getElementById('lessonBody');
+    if (body) {
+      let inClass  = _slideDir === 'back' ? 'lesson-body-slide-in-left'  : 'lesson-body-slide-in-right';
+      let outClass = _slideDir === 'back' ? 'lesson-body-slide-out-right': 'lesson-body-slide-out-left';
+      /* Sortie du contenu actuel */
+      body.classList.add(outClass);
+      setTimeout(() => {
+        body.classList.remove(outClass);
+        /* Entrée du nouveau contenu */
+        body.classList.add(inClass);
+        setTimeout(() => { body.classList.remove(inClass); }, 240);
+      }, 160);
+    }
+  }
 }
 
 /**

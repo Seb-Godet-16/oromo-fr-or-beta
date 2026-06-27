@@ -312,7 +312,7 @@ const LEVEL1_THEMES_FR = [
       {et:'Dadhabaa / Dadhabduu',fr:'Fatigué / Fatiguée',em:'😴'},
       {et:'Dallansuu / Dallantuu',fr:'Fâché / Fâchée',em:'😠'},
       {et:'Rifaatuu / Rifatii',fr:'Surpris / Choqué(e)',em:'😲'},
-      {et:'Sodaachuu',fr:'Avoir peur / Avoir peur',em:'😨'},
+      {et:'Sodaachuu',fr:'Avoir peur',em:'😨'},
       {et:'Dhukkubsataa / Dhukkubsattuu',fr:'Malade / Malade',em:'🤒'},
       {et:'Xiqqoo dhukkubsataa',fr:'Pas très bien / Un peu souffrant',em:'🤒'},
       {et:'Yaaddoo / Yaaddoftuu',fr:'Inquiet / Inquiète',em:'😟'},
@@ -362,7 +362,7 @@ const LEVEL1_THEMES_FR = [
       {et:'Dhiqachuu',fr:'Se doucher / Se laver',em:'🚿'}, {et:'Fuula dhiqachuu',fr:'Se laver le visage',em:'🧼'},
       {et:'Ilkaan eebuu',fr:'Se brosser les dents',em:'🦷'}, {et:'Uffachuu',fr:'S\'habiller',em:'👕'},
       {et:'Ciree nyaachuu',fr:'Prendre le petit-déjeuner',em:'🍳'}, {et:'Hojjechuu',fr:'Travailler',em:'💼'},
-      {et:'Barumsaaf deemuu',fr:'Aller à l\'cole / Aller étudier',em:'🎒'},
+      {et:'Barumsaaf deemuu',fr:'Aller à l\'école / Aller étudier',em:'🎒'},
       {et:'Baha manaa deemuu',fr:'Sortir de la maison',em:'🚪'},
       {et:'Bitachuu / Gabaa deemuu',fr:'Faire les courses',em:'🛒'},
       {et:'Nyaata bilcheessuu / Daakuu hojjechuu',fr:'Faire la cuisine / Cuisiner',em:'🍳'},
@@ -800,7 +800,7 @@ const LEVEL2_THEMES_FR = [
       {label:'Sit. 1',title:'Dans un cours d\'oromo',img:'📚',dialogue:[
         {s:'Barsiistuu',et:'Akkam! Maqaan kee eenyu?',fr:'Bonjour ! Tu t\'appelles comment ?',side:'right'},
         {s:'Marc',et:'Maqaan koo Marc. Atis hoo?',fr:'Je m\'appelle Marc. Et toi ?',side:'left'},
-        {s:'Barsiistuu',et:'Ani Bontu. Lammii kamii ta\'a, Marc?',fr:'Je suis Laura. Tu es d\'où, Marc ?',side:'right'},
+        {s:'Barsiistuu',et:'Ani Bontu. Lammii kamii ta\'a, Marc?',fr:'Je suis Bontu. Tu es d\'où, Marc ?',side:'right'},
         {s:'Marc',et:'Lammii Firaansaay, Paarisii irraa. Atis hoo?',fr:'Je suis de France, de Paris. Et toi ?',side:'left'},
         {s:'Barsiistuu',et:'Ani Shaashamannee irraa. Baga nagaan dhufte!',fr:'Je suis de Shashemene. Bienvenue !',side:'right'},
         {s:'Marc',et:'Galatoomi!',fr:'Merci !',side:'left'}
@@ -1145,7 +1145,7 @@ const LEVEL2_THEMES_FR = [
         {s:'Birraa',et:'Lakki. Atis?',fr:'Non. Et toi ?',side:'left'},
         {s:'Camille',et:'Ani qabaa. Waloon haa deemnu!',fr:'Moi oui. Allons-y ensemble !',side:'right'}
       ]},
-      {label:'Sit. 3',title:'Parler des seasons',img:'🍂',dialogue:[
+      {label:'Sit. 3',title:'Parler des saisons',img:'🍂',dialogue:[
         {s:'Caaltuu',et:'Yeroon bareedaan kee kami?',fr:'Quelle est ta saison préférée ?',side:'right'},
         {s:'Théo',et:'Gannaa. Aduu fi ho\'a jaalladha.',fr:'L\'été. J\'aime le soleil et la chaleur.',side:'left'},
         {s:'Caaltuu',et:'Ani birraa jaalladha. Hin qorruu hin ho\'u.',fr:'Moi je préfère l\'automne. Il ne fait ni chaud ni froid.',side:'right'},
@@ -1184,7 +1184,7 @@ const LEVEL2_THEMES_FR = [
         {s:'Lamma',et:'Ganama ho\'aa, garuu galgala roobu dandaa.',fr:'Il fait chaud le matin, mais il peut pleuvoir le soir.',side:'right'},
         {s:'Sophie',et:'Shaashamanneetti yeroo maraan akkana?',fr:'À Shashamané c\'est souvent comme ça ?',side:'left'},
         {s:'Lamma',et:'Arfasaatti eeyyeen. Roobni guyyaa guyyaa dhufa.',fr:'En saison des pluies oui. Il pleut tous les jours.',side:'right'},
-        {s:'Sophie',et:'Faransaayitti garuu bona qofaaa.',fr:'En France c\'est seulement en hiver.',side:'left'},
+        {s:'Sophie',et:'Faransaayitti garuu bona qofaa.',fr:'En France c\'est seulement en hiver.',side:'left'},
         {s:'Lamma',et:'Baay\'ee adda! As ho\'a baay\'ee jaalladha.',fr:'C\'est très différent ! Ici j\'aime beaucoup la chaleur.',side:'right'}
       ]},
       {label:'Sit. 3',title:'Planifier selon la météo',img:'🌧️',dialogue:[

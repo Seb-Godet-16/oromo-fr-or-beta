@@ -810,6 +810,52 @@ html.theme-french .btn-reset-theme:hover{
   cursor:default;
 }
 
+/* ── Animation directionnelle du corps de leçon (nav prev / next) ──
+   Déclenchée par openTheme() quand on est déjà dans l'écran lesson.
+   Durées courtes (160ms sortie + 240ms entrée) pour rester réactif
+   sans masquer le contenu trop longtemps sur mobile.           ── */
+@keyframes lessonBodyOutLeft{
+  from{transform:translateX(0);   opacity:1}
+  to  {transform:translateX(-28%);opacity:0}
+}
+@keyframes lessonBodyOutRight{
+  from{transform:translateX(0);  opacity:1}
+  to  {transform:translateX(28%);opacity:0}
+}
+@keyframes lessonBodyInRight{
+  from{transform:translateX(28%);opacity:0}
+  to  {transform:translateX(0);  opacity:1}
+}
+@keyframes lessonBodyInLeft{
+  from{transform:translateX(-28%);opacity:0}
+  to  {transform:translateX(0);   opacity:1}
+}
+
+.lesson-body-slide-out-left {
+  animation:lessonBodyOutLeft  .16s ease-in  both;
+  pointer-events:none;
+}
+.lesson-body-slide-out-right{
+  animation:lessonBodyOutRight .16s ease-in  both;
+  pointer-events:none;
+}
+.lesson-body-slide-in-right {
+  animation:lessonBodyInRight  .24s ease-out both;
+}
+.lesson-body-slide-in-left  {
+  animation:lessonBodyInLeft   .24s ease-out both;
+}
+
+/* Respect du paramètre système "réduire les animations" */
+@media(prefers-reduced-motion:reduce){
+  .lesson-body-slide-out-left,
+  .lesson-body-slide-out-right,
+  .lesson-body-slide-in-right,
+  .lesson-body-slide-in-left{
+    animation:none;
+  }
+}
+
 .lesson-level-badge:hover{
   background:rgba(255,255,255,.35);
 }
