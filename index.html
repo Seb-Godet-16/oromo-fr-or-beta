@@ -182,24 +182,33 @@
        ÉCRAN 1 — GUIDE / ONBOARDING  (#home)
        ────────────────────────────────────────────────────────────────
        Affiché après la sélection de langue (remplace l'ancien Home).
-       Contenu injecté dynamiquement par app.js via _buildHomeGuide().
-       Langue : Oromo si l'apprenant apprend le Français, et vice versa.
-       Checkbox "Ne plus afficher" → flag localStorage par mode.
+
+       ARCHITECTURE :
+       • La structure HTML complète du guide est déclarée ici,
+         dans deux blocs statiques :
+           - .home-lang-block[data-lang="or"] → guide en Oromo
+             (affiché quand l'apprenant apprend le Français)
+           - .home-lang-block[data-lang="fr"] → guide en Français
+             (affiché quand l'apprenant apprend l'Oromo)
+       • app.js (_buildHomeGuide) se limite à :
+           1. Afficher le bon bloc selon le mode
+           2. Mettre à jour les quelques IDs dynamiques
+              (drapeaux, titre, sous-titre, badges, boutons)
+       • Les accordéons utilisent <details>/<summary> natifs —
+         zéro JS pour l'ouverture/fermeture.
        ════════════════════════════════════════════════════════════════ -->
   <div id="home" class="screen">
 
-    <!-- Titre fixe en haut -->
+    <!-- Titre fixe en haut — mis à jour par _buildHomeGuide() -->
     <div class="home-topbar">
       <span class="home-topbar-title" id="homeTopbarTitle"></span>
     </div>
 
-    <!-- En-tête coloré selon le mode -->
+    <!-- En-tête coloré — IDs mis à jour par _buildHomeGuide() -->
     <div class="home-guide-header" id="homeGuideHeader">
       <div class="home-guide-flags" id="homeGuideFlagsRow"></div>
       <h1 class="home-guide-title" id="homeTitle"></h1>
       <p class="home-guide-subtitle" id="homeGuideSubtitle"></p>
-
-      <!-- Badges fonctionnalités -->
       <div class="home-guide-badges" id="homeGuideBadges"></div>
 
       <!-- Cercle SVG de progression (visible une fois des modules complétés) -->
@@ -215,19 +224,576 @@
           <text class="hpc-sub"  x="60" y="74" id="hpcSub">⭐ 0</text>
         </svg>
       </div>
-
     </div><!-- /.home-guide-header -->
 
-    <!-- Bouton Commencer — sticky entre les badges et les rubriques -->
+    <!-- Bouton Commencer — libellé mis à jour par _buildHomeGuide() -->
     <div class="home-start-sticky">
       <button class="btn-start-main" id="homeStartBtn" onclick="showScreen('sections-level1')"></button>
     </div>
 
-    <div class="home-guide-body" id="homeGuideBody"></div>
-
     <!--
-      Bouton export PDF du guide — déclenche _exportGuide() dans app.js.
+      ══════════════════════════════════════════════════════════════
+      CORPS DU GUIDE — deux blocs statiques (un par langue)
+      Seul le bloc correspondant au mode actif est visible.
+      Géré par _buildHomeGuide() via la classe .home-lang-hidden.
+      ══════════════════════════════════════════════════════════════
     -->
+    <div class="home-guide-body" id="homeGuideBody">
+
+      <!-- ─────────────────────────────────────────────────────────
+           BLOC OROMO — guide en Afaan Oromoo
+           Affiché quand l'apprenant apprend le Français (learn_french).
+           Langue maternelle de l'apprenant = Oromo → guide en Oromo.
+           ───────────────────────────────────────────────────────── -->
+      <div class="home-lang-block home-lang-hidden" data-lang="or">
+
+        <!-- 1. Comment ça marche -->
+        <details class="hg-section">
+          <summary class="hg-summary">
+            <span class="hg-icon">🗺️</span>
+            <span class="hg-label">Appiin keessa akkamiin deemna</span>
+            <span class="hg-chevron">▼</span>
+          </summary>
+          <div class="hg-detail">
+            <p>Appiin kun <strong>tartiiba keessan</strong> tarkaanfii tarkaanfiitti, yeroo keessanitti, galmee fi kafaltii malee isin qajeelcha.</p>
+            <p>Appiin kun <strong>sadarkaa lama</strong> qaba :</p>
+            <ul>
+              <li>📚 <strong>Sadarkaa 1 — Jechota (32)</strong> : Kaardota, Jechootaa, Quiz, Irra deebʼi</li>
+              <li>💬 <strong>Sadarkaa 2 — Dubbii (16)</strong> : Haala jireenya dhugaa keessatti fayyadamuu</li>
+            </ul>
+            <div class="ob-flow">
+              <span class="ob-flow-step">🚀 Jalqabaa</span>
+              <span class="ob-flow-arrow">→</span>
+              <span class="ob-flow-step">📚 Moojuulota</span>
+              <span class="ob-flow-arrow">→</span>
+              <span class="ob-flow-step">🃏 Kaardota</span>
+              <span class="ob-flow-arrow">→</span>
+              <span class="ob-flow-step">🎯 Quiz</span>
+              <span class="ob-flow-arrow">→</span>
+              <span class="ob-flow-step">⭐ Urjii</span>
+            </div>
+            <p><strong>Quiz fi Urjii ⭐</strong> : Kaardota booda <strong>Quiz gaafii</strong> (3–10 haala jechota irratti hundaa'e). Deebii sirrii 4 keessaa tokko filadhu.</p>
+            <ul>
+              <li>⭐ : ≥ 50% darbe !  · ⭐⭐ : ≥ 75%  · ⭐⭐⭐ : 100% 🎉</li>
+              <li>Urjiilee <strong>hir'atan hin beekani</strong> — madaala gaarii ta'e qofti yaadatama.</li>
+            </ul>
+            <p>Fuula <strong>Gargaarsa</strong> kun yeroo hunda caancala ❓ gara jalaa cuqaasuun ni mulʼata.</p>
+            <div class="ob-tip">💡 Sadarkaa 1 irraa jalqabi — booda sadarkaa 2 salphaa taʼa !</div>
+          </div>
+        </details>
+
+        <!-- 2. Points forts -->
+        <details class="hg-section">
+          <summary class="hg-summary">
+            <span class="hg-icon">⭐</span>
+            <span class="hg-label">Faayidaawwan Appii kanaatii</span>
+            <span class="hg-chevron">▼</span>
+          </summary>
+          <div class="hg-detail">
+            <ul>
+              <li>💸 <strong>Bilisaa guutuu</strong> — gatii hin kaffaltu, beeksisni hin jiru</li>
+              <li>🚫 <strong>Galmee malee</strong> — app bani, hojjechuuf jalqabi</li>
+              <li>📚 <strong>Qabiyyee guddaa</strong> — jechota 32 + dubbii 16 (waliigala 48)</li>
+              <li>🔊 <strong>Sagalee dhaggeeffachuu</strong> — jechoota dhaggeeffachuuf caancala 🔊 cuqaasi</li>
+              <li>🎤 <strong>Dubbii shaakali</strong> — onglet Irra deebʼi maaykiroofoonii fayyadama</li>
+              <li>📴 <strong>Interneetii malee</strong> — app fuula jalqabarratti buufadhu, iddoo kamittiyyuu baradhu</li>
+              <li>⭐ <strong>Tartiiba urjii</strong> — madaala keessan kan darbee ni eegama ; caalmaan argatte ol ni ba'a, gad bu'u hin beeku</li>
+            </ul>
+            <div class="ob-tip">💡 Appiin kun meeshaa tokkicha hin taʼu — Duolingo fi barsiisaa waliin itti fayyadami !</div>
+          </div>
+        </details>
+
+        <!-- 3. Audio -->
+        <details class="hg-section">
+          <summary class="hg-summary">
+            <span class="hg-icon">🔊</span>
+            <span class="hg-label">Sagalee</span>
+            <span class="hg-chevron">▼</span>
+          </summary>
+          <div class="hg-detail">
+            <h4 style="margin:0 0 .4em;font-size:.95em">🔊 Sagalee qindeessuu</h4>
+            <p>Sagalee sirriitti dhageeffachuun barachuu keessatti barbaachisaa dha. Appiin kun <strong>sagalee browser yookiin bilbila kee</strong> (Web Speech API) fayyadama. Sagaleen Faransaayii meeshaalee hedduu irratti argama — yoo hin jiraanne, gara gadii hordofi.</p>
+
+            <div class="ob-audio-block">
+              <div class="ob-audio-head">🤖 Android</div>
+              <ol>
+                <li>Banaa <strong>Qindaa'inaa → Gargaarsa → Sagalee uumamaa</strong> (yookiin « sagalee » barbaadi).</li>
+                <li><em>Injinii filatamaatti</em>, <strong>Google Text-to-Speech</strong> filadhu, Play Store irraa haaromsi.</li>
+                <li>⚙️ → <em>Daataa sagalee buusi</em> → <strong>Faransaayii (Fraansi)</strong> buufadhu.</li>
+                <li>Appii keessatti deebi'i, <strong>fuula haaromsi</strong>.</li>
+              </ol>
+              <div class="ob-audio-tip">💡 Samsung irratti : Qindaa'inaa → Gargaarsa → TTS. Sagleeleen dabalataa sanuma irraa buufamu.</div>
+            </div>
+
+            <div class="ob-audio-block">
+              <div class="ob-audio-head">🍎 iPhone / iPad (iOS)</div>
+              <ol>
+                <li>Banaa <strong>Qindaa'inaa → Gargaarsa → Dubbii → Sagalee</strong>.</li>
+                <li>Afaan filadhu, sagalee filadhu, ⬇️ cuqaasi — <em>Fooyya'aa</em> buufadhu.</li>
+                <li>Appii <strong>Safari</strong> keessatti bani (iOS irratti filatamaa) — 🔊 jalqabaaf cuqaasi, iOS hayyama sagalee gaafata.</li>
+                <li>Sagaleen yoo hin bane — <strong>qaaccee callisaa</strong> (cinaa irratti) mirkaneeffadhu.</li>
+              </ol>
+              <div class="ob-audio-tip">💡 Onglet 🎤 Irra deebi'i Safari iOS 14.5+ fi Chrome Android irratti qofa hojjeta — Firefox mobile irratti hin hojjetu.</div>
+            </div>
+
+            <div class="ob-audio-block">
+              <div class="ob-audio-head">💻 Kompiyuutara (Windows / Mac)</div>
+              <ol>
+                <li><strong>Chrome yookiin Edge</strong> filatamoo dha — sagalee gaarii fi dubbii beeksisuu ni deeggaruu.</li>
+                <li><strong>Windows</strong> : Qindaa'inaa → Sa'aa fi afaan → Dubbii → Sagalee dabalata → <em>Faransaayii (Fraansi)</em> buufadhu.</li>
+                <li><strong>Mac</strong> : Filannoo Sirna → Gargaarsa → Dubbii → Sagalee sirna → <em>Thomas (FR)</em> buufadhu.</li>
+                <li>Buufannaa booda browser haaromsi — sagleeleen haaraan fe'amti.</li>
+              </ol>
+            </div>
+
+            <div class="ob-audio-block">
+              <div class="ob-audio-head">🆘 Rakkoon itti fufe ?</div>
+              <p>Sagaleen yoo hin hojjenne, rakkoon meeshaa keetiif addaa ta'uu danda'a. Gargaarsi armaan gadii si gargaaruu ni danda'a :</p>
+              <p style="margin:.4em 0">
+                🤖 <a href="https://support.google.com/accessibility/android" target="_blank" rel="noopener">Support Google / Android</a> ·
+                🍎 <a href="https://support.apple.com" target="_blank" rel="noopener">Support Apple</a> ·
+                📱 <a href="https://www.samsung.com/fr/support/" target="_blank" rel="noopener">Support Samsung</a> ·
+                💻 <a href="https://support.microsoft.com" target="_blank" rel="noopener">Support Microsoft</a>
+              </p>
+              <p>Meeshaalee biroo (Xiaomi, Oppo, OnePlus…) irratti, <em>« sagalee uumamaa + [maqaa bilbila kee] »</em> barbaadi.</p>
+            </div>
+            <div class="ob-tip">💡 Sagaleen Faransaayii meeshaalee hedduu irratti argama — haarawa ta'uu baatee, gara olii deemi buufadhu. Cascade sagalee hin barbaachisu !</div>
+
+            <h4 style="margin:.8em 0 .3em;font-size:.95em;border-top:1px solid var(--color-border);padding-top:.6em">🎤 Cimdii Irra deebʼi</h4>
+            <p>Cimdii <strong>Irra deebʼi</strong> sagalee shaakaaluuf maaykiroofoonii meeshaa kee fayyadama :</p>
+            <ul>
+              <li><strong>🔊 Dhageeffadhu</strong> — jecha dhaggeeffadhu.</li>
+              <li><strong>🎤 Dubbadhu</strong> — jecha dubbadhuu.</li>
+            </ul>
+            <div class="ob-tip">💡 Hayyama maaykiroofoonii barbaachisa — browser mara irratti hin hojjetu.</div>
+          </div>
+        </details>
+
+        <!-- 4. Réinitialiser -->
+        <details class="hg-section">
+          <summary class="hg-summary">
+            <span class="hg-icon">🔄</span>
+            <span class="hg-label">Moojuula irra deebi'uu (⭐ haquuu)</span>
+            <span class="hg-chevron">▼</span>
+          </summary>
+          <div class="hg-detail">
+            <p>Moojuula tokko irra deebi'uu barbaaddaa? Urjiilee haquun <strong>jalqaba irraa jalqabuu</strong> ni dandaa'ama.</p>
+            <ul>
+              <li>Fuula <strong>Moojuulota</strong> irratti moojuula xumurame barbaacha baha — kaardii isaa irratti caancalli <strong>🔄 Irra deebi'i</strong> mul'ata.</li>
+              <li>Caancala sana cuqaasi — mirkaneeffannaa ni gaafata.</li>
+              <li>Urjiilee ni dhaban — garuu Quiz irra deebi'uun urjii haaraa argachuu ni dandaa'ama.</li>
+            </ul>
+          </div>
+        </details>
+
+        <!-- 5. Hors ligne -->
+        <details class="hg-section">
+          <summary class="hg-summary">
+            <span class="hg-icon">📲</span>
+            <span class="hg-label">Galmee malee</span>
+            <span class="hg-chevron">▼</span>
+          </summary>
+          <div class="hg-detail">
+            <h4 style="margin:0 0 .4em;font-size:.95em">📲 App gara meeshaa irratti buusi</h4>
+            <ul>
+              <li><strong>Android / Chrome</strong> : ⋮ cuqaasi → <em>"Fuula jalqabarratti ida'i"</em></li>
+              <li><strong>iOS / Safari</strong> : 🔗 cuqaasi → <em>"Fuula jalqabarratti"</em></li>
+            </ul>
+            <p>Erga buufamee booda, interneetii malee <strong>hojjeta</strong> — iddoo kamittiyyuu !</p>
+            <div class="ob-tip">💡 App yeroo yeroodhaan diriirfama — browser irratti bantu, version haaraan ofumaatti buufama.</div>
+
+            <h4 style="margin:.8em 0 .3em;font-size:.95em;border-top:1px solid var(--color-border);padding-top:.6em">📄 Galmee PDF buusuuf</h4>
+            <p>Barnoota kee gara meeshaa keetiitti qusachuuf, PDFota sadii ni argatta :</p>
+            <ul>
+              <li><strong>📖 Gargaarsa guutuu</strong> — caancala <em>📄 Galmee buusi</em> fuula kana ol'aana irraa.</li>
+              <li><strong>📚 Moojuula tokko</strong> — caancala <em>📄 Moojuula kana buusi</em> fuula moojuula sanaa irraa.</li>
+              <li><strong>💬 Haala tokko</strong> — caancala <em>📄 Haala kana buusi</em> fuula dubbii irraa.</li>
+            </ul>
+          </div>
+        </details>
+
+        <!-- 6. Comparaison -->
+        <details class="hg-section">
+          <summary class="hg-summary">
+            <span class="hg-icon">⚖️</span>
+            <span class="hg-label">Walbira qabuu — meeshaalee barachuu</span>
+            <span class="hg-chevron">▼</span>
+          </summary>
+          <div class="hg-detail">
+            <p>Meeshaa tokko qofti gahaa miti — walitti makuun saffisaan barata !</p>
+            <div class="ob-compare">
+              <div class="ob-compare-col">
+                <div class="ob-compare-head">📱 App tana</div>
+                <ul><li>💸 Bilisaa guutuu</li><li>🚫 Galmee malee</li><li>🗂️ Jechota sirna qabsiifte</li><li>🔊 Sagalee</li><li>🎤 Dubbii shaakali</li><li>📴 Interneetii malee</li></ul>
+              </div>
+              <div class="ob-compare-col">
+                <div class="ob-compare-head">🦉 Duolingo / Babbel</div>
+                <ul><li>🎮 Taphataa kan kakaasu</li><li>🌐 Afaanota baay'ee</li><li>🎯 Karaa kan of madaaluu</li><li>👥 Hawaasa fi dorgommii</li><li>📐 Caasluga tartiibaan</li></ul>
+              </div>
+              <div class="ob-compare-col">
+                <div class="ob-compare-head">🏫 Mana barumsaa</div>
+                <ul><li>🧑‍🏫 Barsiisaa namaa</li><li>📋 Sirna barnootaa</li><li>🗣️ Hirmaachiisa</li><li>🎓 Ragaa beekamaa</li><li>📐 Caasluga gadi-fagoo</li></ul>
+              </div>
+              <div class="ob-compare-col">
+                <div class="ob-compare-head">🗣️ Hiriyoota Oromoo</div>
+                <ul><li>🌍 Afaan jireenya dhugaa</li><li>🎙️ Sagalee uumamaa</li><li>🛒 Jechota guyyaa guyyaa</li><li>💪 Amantaa of-keessaa</li><li>🤝 Waljijjiirraa aadaa</li></ul>
+              </div>
+            </div>
+            <div class="ob-tip">💡 Gorsa keenya : app kana jechota irratti hojjechuuf fayyadami — booda Duolingo yookiin barsiisaa caaslugaaf fayyadami, fi hiriyoota uumamaa waliin dubbii dhugaa shaakali. Meeshaaleen hunduu wal-cimsu !</div>
+          </div>
+        </details>
+
+        <!-- 7. Remerciements -->
+        <details class="hg-section">
+          <summary class="hg-summary">
+            <span class="hg-icon">🙏</span>
+            <span class="hg-label">Galateeffannaa</span>
+            <span class="hg-chevron">▼</span>
+          </summary>
+          <div class="hg-detail">
+            <p>Galata guddaa <strong>Fédérico Calo</strong>
+              (<a href="https://www.linkedin.com/in/federicocalo/" target="_blank" rel="noopener">Architektii Guddisaa Web</a>)
+              gargaarsa teknikaaf.</p>
+            <p>Galata baay'een <strong>Mussa Sembro</strong>
+              (<a href="https://www.linkedin.com/in/mussa-sembro-137472174/" target="_blank" rel="noopener">Hiikkaa-Ibsituu Afaan Oromoo</a>)
+              fi maatii kootiif — irra deebi'ee dubbisuu, hiika sirreessuu, fi gorsa ergonomii appii kennuuf.</p>
+          </div>
+        </details>
+
+        <!-- 8. À propos -->
+        <details class="hg-section">
+          <summary class="hg-summary">
+            <span class="hg-icon">🙋</span>
+            <span class="hg-label">Eenyuu fi maaliif?</span>
+            <span class="hg-chevron">▼</span>
+          </summary>
+          <div class="hg-detail">
+            <div class="ob-bio-card">
+              <div class="ob-bio-avatar">🙋</div>
+              <div class="ob-bio-info">
+                <div class="ob-bio-name">Sébastien Godet</div>
+                <div class="ob-bio-role">Hojii jijjiirraa — Gestionna Pirojektii Agile &amp; Data</div>
+              </div>
+            </div>
+            <p>Waggaa 10 ol geomaaketingii keessa ergan hojjadhe booda — qorannoo gabaa, xiinxala bakka buusuu — gara gestionna pirojektii jijjiiramuuf jira. Dandeettii koo garaagarummaa qaba : Scrum Master, Product Owner, Chef de Projet, Business Analyst yookiin AI Project Manager.</p>
+            <p><strong>Taphad'Meuh</strong> hawwii salphaa irraa dhalate : meeshaa bilisaa, galmee malee, dhugumaan faayidaarra oolu — Oromoota fi Faransaawiota walitti fiduuf. Karaa hojii kootiis kana — shaakala irraa barachuu, furmaata argachuu, xiyyeeffannoo kennuu.</p>
+            <p>App kun network koo waliin guddata : yeroo hiriyoonni jecha haaraa natti beeksisan, nan ida'a. Kun <strong>pirojektii jiraataa, namoota dhugaaf yaadame</strong>.</p>
+            <div class="ob-bio-contact">
+              <div class="ob-bio-contact-title">💬 Yaada, dogoggora, waanti argite ?</div>
+              <p>App kun siif hojjetame — deebiin kee hundi barbaachisaa dha !</p>
+              <div class="ob-bio-links">
+                <button class="ob-bio-btn antispam-btn" onclick="openAndCopyEmail()">✉️ <span class="antispam-email">moc.liamg@61tedog.neitsabes</span></button>
+                <a class="ob-bio-btn" href="https://www.linkedin.com/in/s%C3%A9bastien-godet-142ba6145" target="_blank" rel="noopener">💼 Message LinkedIn</a>
+              </div>
+            </div>
+          </div>
+        </details>
+
+      </div><!-- /.home-lang-block[data-lang="or"] -->
+
+
+      <!-- ─────────────────────────────────────────────────────────
+           BLOC FRANÇAIS — guide en Français
+           Affiché quand l'apprenant apprend l'Oromo (learn_oromo).
+           Langue maternelle de l'apprenant = Français → guide en Français.
+           ───────────────────────────────────────────────────────── -->
+      <div class="home-lang-block home-lang-hidden" data-lang="fr">
+
+        <!-- 1. Comment ça marche -->
+        <details class="hg-section">
+          <summary class="hg-summary">
+            <span class="hg-icon">🗺️</span>
+            <span class="hg-label">Comment ça marche</span>
+            <span class="hg-chevron">▼</span>
+          </summary>
+          <div class="hg-detail">
+            <p>Cette appli vous guide pas à pas pour apprendre l'Oromo, à votre rythme, sans inscription ni abonnement.</p>
+            <p>Elle est organisée en <strong>deux niveaux</strong> :</p>
+            <ul>
+              <li>📚 <strong>Niveau 1 — Vocabulaire (32 thèmes)</strong> : Cartes Flash, Lexique, Quiz, Répétition orale</li>
+              <li>💬 <strong>Niveau 2 — Dialogues (16 mises en situation)</strong> : scènes de la vie réelle à écouter, comprendre et répéter</li>
+            </ul>
+            <div class="ob-flow">
+              <span class="ob-flow-step">🚀 Lancement</span>
+              <span class="ob-flow-arrow">→</span>
+              <span class="ob-flow-step">📚 Modules</span>
+              <span class="ob-flow-arrow">→</span>
+              <span class="ob-flow-step">🃏 Cartes</span>
+              <span class="ob-flow-arrow">→</span>
+              <span class="ob-flow-step">🎯 Quiz</span>
+              <span class="ob-flow-arrow">→</span>
+              <span class="ob-flow-step">⭐ Étoiles</span>
+            </div>
+            <p><strong>Le Quiz et les Étoiles ⭐</strong> : après les cartes, un <strong>Quiz</strong> (3 à 10 questions selon la taille du module). Choisissez la bonne réponse parmi 4 options.</p>
+            <ul>
+              <li>⭐ : ≥ 50% → module validé !  · ⭐⭐ : ≥ 75%  · ⭐⭐⭐ : 100% 🎉</li>
+              <li>Les étoiles ne <strong>diminuent jamais</strong> — si vous rejouez et faites mieux, le compteur monte ; si vous faites moins bien, il ne bouge pas.</li>
+            </ul>
+            <p>Ce <strong>Guide</strong> est accessible à tout moment via le bouton ❓ dans la barre de navigation en bas.</p>
+            <div class="ob-tip">💡 Commencez par le Niveau 1 — les dialogues du Niveau 2 seront plus faciles ensuite !</div>
+          </div>
+        </details>
+
+        <!-- 2. Points forts -->
+        <details class="hg-section">
+          <summary class="hg-summary">
+            <span class="hg-icon">⭐</span>
+            <span class="hg-label">Points forts de cette appli</span>
+            <span class="hg-chevron">▼</span>
+          </summary>
+          <div class="hg-detail">
+            <ul>
+              <li>💸 <strong>100% gratuit</strong> — aucun abonnement, aucune publicité</li>
+              <li>🚫 <strong>Sans inscription</strong> — ouvrez l'app et commencez immédiatement</li>
+              <li>🗂️ <strong>Vocabulaire structuré</strong> — 32 thèmes + 16 dialogues, du plus simple au plus complexe</li>
+              <li>🔊 <strong>Audio intégré</strong> — écoutez chaque mot prononcé d'un simple tap</li>
+              <li>🎤 <strong>Répétition orale</strong> — l'onglet <em>Répète</em> analyse votre prononciation en temps réel</li>
+              <li>📴 <strong>Hors-ligne</strong> — installez l'app sur votre écran d'accueil et apprenez sans connexion</li>
+              <li>⭐ <strong>Progression sauvegardée</strong> — vos étoiles ne diminuent jamais, votre meilleur score est conservé</li>
+            </ul>
+            <div class="ob-tip">💡 Cette appli n'est pas un outil unique — combinez-la avec Duolingo, un cours ou des amis natifs pour progresser plus vite !</div>
+          </div>
+        </details>
+
+        <!-- 3. Audio -->
+        <details class="hg-section">
+          <summary class="hg-summary">
+            <span class="hg-icon">🔊</span>
+            <span class="hg-label">L'audio</span>
+            <span class="hg-chevron">▼</span>
+          </summary>
+          <div class="hg-detail">
+            <h4 style="margin:0 0 .4em;font-size:.95em">🔊 Configurer son audio</h4>
+            <p>Bien entendre les mots, c'est essentiel ! L'appli utilise la <strong>synthèse vocale intégrée</strong> à votre téléphone ou navigateur (Web Speech API). Si le son est absent, robotique ou dans la mauvaise langue, suivez le guide ci-dessous.</p>
+
+            <div class="ob-audio-block">
+              <div class="ob-audio-head">🤖 Android</div>
+              <ol>
+                <li>Ouvrez <strong>Paramètres → Accessibilité → Synthèse vocale</strong> (ou cherchez « synthèse » dans la barre de recherche).</li>
+                <li>Dans <em>Moteur préféré</em>, choisissez <strong>Google Text-to-Speech</strong> et mettez-le à jour dans le Play Store.</li>
+                <li>Appuyez sur ⚙️ → <em>Installer les données vocales</em> → téléchargez la voix <strong>Français (France)</strong>.</li>
+                <li>Revenez dans l'appli et <strong>actualisez la page</strong>.</li>
+              </ol>
+              <div class="ob-audio-tip">💡 Sur Samsung : Paramètres → Accessibilité → TTS. Les voix supplémentaires se téléchargent depuis ce même menu.</div>
+            </div>
+
+            <div class="ob-audio-block">
+              <div class="ob-audio-head">🍎 iPhone / iPad (iOS)</div>
+              <ol>
+                <li>Ouvrez <strong>Réglages → Accessibilité → Contenu énoncé → Voix</strong>.</li>
+                <li>Sélectionnez la langue cible, choisissez une voix et appuyez sur ⬇️ pour la télécharger en qualité <em>Améliorée</em>.</li>
+                <li>Ouvrez l'appli dans <strong>Safari</strong> (recommandé sur iOS) et tapez une première fois sur 🔊 — iOS demande une interaction avant d'autoriser l'audio.</li>
+                <li>Si rien ne sort, vérifiez que le <strong>bouton silencieux</strong> (interrupteur sur le côté) est bien désactivé.</li>
+              </ol>
+              <div class="ob-audio-tip">💡 L'onglet 🎤 Répète n'est disponible que sur Safari iOS 14.5+ et Chrome Android — pas sur Firefox mobile.</div>
+            </div>
+
+            <div class="ob-audio-block">
+              <div class="ob-audio-head">💻 Ordinateur (Windows / Mac)</div>
+              <ol>
+                <li><strong>Chrome ou Edge</strong> sont recommandés — ils embarquent de bonnes voix et supportent la reconnaissance vocale.</li>
+                <li><strong>Windows</strong> : Paramètres → Heure et langue → Parole → Ajouter des voix → installez <em>Français (France)</em>.</li>
+                <li><strong>Mac</strong> : Préférences Système → Accessibilité → Contenu parlé → Voix système → téléchargez <em>Thomas (FR)</em>.</li>
+                <li>Redémarrez le navigateur après l'installation — les nouvelles voix sont détectées au chargement.</li>
+              </ol>
+            </div>
+
+            <div class="ob-audio-block">
+              <div class="ob-audio-head">🆘 Toujours un problème ?</div>
+              <p>Si l'audio ne fonctionne toujours pas, le problème vient probablement d'un réglage spécifique à votre modèle. Les équipes support peuvent vous aider :</p>
+              <p style="margin:.4em 0">
+                🤖 <a href="https://support.google.com/accessibility/android" target="_blank" rel="noopener">Support Google / Android</a> ·
+                🍎 <a href="https://support.apple.com" target="_blank" rel="noopener">Support Apple</a> ·
+                📱 <a href="https://www.samsung.com/fr/support/" target="_blank" rel="noopener">Support Samsung</a> ·
+                💻 <a href="https://support.microsoft.com" target="_blank" rel="noopener">Support Microsoft</a>
+              </p>
+              <p>Pour tout autre fabricant (Xiaomi, Oppo, OnePlus…), recherchez <em>« synthèse vocale + [nom de votre téléphone] »</em> sur le site officiel du fabricant.</p>
+            </div>
+
+            <h4 style="margin:.8em 0 .3em;font-size:.95em;border-top:1px solid var(--color-border);padding-top:.6em">🎧 L'audio en Oromo : la Cascade de Voix</h4>
+            <p>L'Oromo (Afaan Oromoo) s'écrit avec l'alphabet latin (le Qubee). Comme la voix native Oromo n'est pas encore préinstallée sur tous les appareils, l'application utilise un <strong>système intelligent de cascade phonétique</strong> — si le niveau 1 est absent, elle descend automatiquement au suivant.</p>
+
+            <div class="ob-cascade">
+              <div class="ob-cascade-row ob-cascade-p1">
+                <span class="ob-cascade-badge">🟢 Priorité 1</span>
+                <span class="ob-cascade-lang">🇪🇹 Oromo <code>[om-ET]</code></span>
+                <span class="ob-cascade-desc">L'idéal absolu — prononciation 100% authentique</span>
+              </div>
+              <div class="ob-cascade-row ob-cascade-p2">
+                <span class="ob-cascade-badge">🔵 Priorité 2</span>
+                <span class="ob-cascade-lang">🇸🇴 Somali <code>[so-SO]</code></span>
+                <span class="ob-cascade-desc">Famille couchitique — maîtrise les voyelles longues (haaraa, osoo…)</span>
+              </div>
+              <div class="ob-cascade-example">
+                <span class="ob-ex-bad">❌ Haaraa → [ara]</span><span class="ob-ex-good">✅ Haaraa → [haaa-raaa]</span>
+                <span class="ob-ex-bad">❌ Osoo → [ozo]</span><span class="ob-ex-good">✅ Osoo → [osooo]</span>
+              </div>
+              <div class="ob-cascade-row ob-cascade-p3">
+                <span class="ob-cascade-badge">🟡 Priorité 3</span>
+                <span class="ob-cascade-lang">🇪🇹 Amharique <code>[am-ET]</code></span>
+                <span class="ob-cascade-desc">Éthiopie — musicalité d'Afrique de l'Est, consonnes éjectives</span>
+              </div>
+              <div class="ob-cascade-example">
+                <span class="ob-ex-bad">❌ Caffee → [café]</span><span class="ob-ex-good">✅ Caffee → [tcha--ffé]</span>
+                <span class="ob-ex-bad">❌ Xalayaa → [ksalaya]</span><span class="ob-ex-good">✅ Xalayaa → [t'alavaa]</span>
+              </div>
+              <div class="ob-cascade-row ob-cascade-p4">
+                <span class="ob-cascade-badge">🟠 Priorité 4</span>
+                <span class="ob-cascade-lang">🇳🇬🇰🇪 Haoussa / Swahili <code>[ha-NG / sw-KE]</code></span>
+                <span class="ob-cascade-desc">Voyelles pures — le E fait [é], le U fait [ou], sans avaler les finales</span>
+              </div>
+              <div class="ob-cascade-example">
+                <span class="ob-ex-bad">❌ Bari → [barin]</span><span class="ob-ex-good">✅ Bari → [ba-ri]</span>
+                <span class="ob-ex-bad">❌ Mucaad → [mycad]</span><span class="ob-ex-good">✅ Mucaad → [mou-caad]</span>
+              </div>
+              <div class="ob-cascade-row ob-cascade-p5">
+                <span class="ob-cascade-badge">🔴 Priorité 5</span>
+                <span class="ob-cascade-lang">🇪🇸🇮🇹 Espagnol / Italien <code>[es-ES / it-IT]</code></span>
+                <span class="ob-cascade-desc">Bouclier anti-français — U=[ou], CH=[tch], zéro voyelle nasale</span>
+              </div>
+              <div class="ob-cascade-example">
+                <span class="ob-ex-bad">❌ Mana → [mâna]</span><span class="ob-ex-good">✅ Mana → [ma-na]</span>
+                <span class="ob-ex-bad">❌ Gutu → [gy-ty]</span><span class="ob-ex-good">✅ Gutu → [gou-tou]</span>
+              </div>
+            </div>
+            <div class="ob-tip">💡 Au premier clic 🔊, un bandeau discret vous indique quelle voix est active — ex. <em>« 🎤 Audio Oromo configuré avec la voix : Somali »</em>. Vous savez ainsi avec quel accent travaille votre oreille !</div>
+
+            <h4 style="margin:.8em 0 .3em;font-size:.95em;border-top:1px solid var(--color-border);padding-top:.6em">🎤 L'onglet Répète</h4>
+            <p>L'onglet <strong>Répète</strong> utilise le microphone pour pratiquer la prononciation :</p>
+            <ul>
+              <li><strong>🔊 Écouter</strong> — entendez le mot.</li>
+              <li><strong>🎤 Parler</strong> — prononcez-le à votre tour.</li>
+            </ul>
+            <div class="ob-tip">💡 Nécessite l'autorisation microphone — peut ne pas fonctionner sur tous les navigateurs.</div>
+          </div>
+        </details>
+
+        <!-- 4. Réinitialiser -->
+        <details class="hg-section">
+          <summary class="hg-summary">
+            <span class="hg-icon">🔄</span>
+            <span class="hg-label">Réinitialiser un module</span>
+            <span class="hg-chevron">▼</span>
+          </summary>
+          <div class="hg-detail">
+            <p>Envie de recommencer un module à zéro ? Vous pouvez <strong>effacer vos étoiles</strong> et repartir de la base.</p>
+            <ul>
+              <li>Depuis l'écran <strong>Modules</strong>, repérez le thème déjà complété — le bouton <strong>🔄 Recommencer</strong> apparaît directement sur sa carte.</li>
+              <li>Appuyez sur ce bouton — une confirmation vous sera demandée.</li>
+              <li>Vos étoiles sont supprimées — rejouez le Quiz pour en regagner.</li>
+            </ul>
+          </div>
+        </details>
+
+        <!-- 5. Hors ligne -->
+        <details class="hg-section">
+          <summary class="hg-summary">
+            <span class="hg-icon">📲</span>
+            <span class="hg-label">Hors ligne</span>
+            <span class="hg-chevron">▼</span>
+          </summary>
+          <div class="hg-detail">
+            <h4 style="margin:0 0 .4em;font-size:.95em">📲 Installer l'app en hors ligne</h4>
+            <ul>
+              <li><strong>Android / Chrome</strong> : menu ⋮ → <em>"Ajouter à l'écran d'accueil"</em></li>
+              <li><strong>iOS / Safari</strong> : 🔗 → <em>"Sur l'écran d'accueil"</em></li>
+            </ul>
+            <p>Une fois installée, l'app fonctionne <strong>entièrement hors ligne</strong>.</p>
+            <div class="ob-tip">💡 L'app se met à jour automatiquement à chaque nouvelle version — il suffit de la rouvrir dans le navigateur pour que le cache soit rafraîchi.</div>
+
+            <h4 style="margin:.8em 0 .3em;font-size:.95em;border-top:1px solid var(--color-border);padding-top:.6em">📄 Téléchargement en PDF</h4>
+            <p>Vous pouvez sauvegarder trois types de contenus en PDF :</p>
+            <ul>
+              <li><strong>📖 Ce guide complet</strong> — bouton <em>📄 Télécharger le guide</em> en haut de cette page.</li>
+              <li><strong>📚 Un module thématique</strong> — bouton <em>📄 Télécharger ce module</em> depuis la page du module.</li>
+              <li><strong>💬 Une situation de dialogue</strong> — bouton <em>📄 Télécharger cette situation</em> depuis la page du dialogue.</li>
+            </ul>
+          </div>
+        </details>
+
+        <!-- 6. Comparaison -->
+        <details class="hg-section">
+          <summary class="hg-summary">
+            <span class="hg-icon">⚖️</span>
+            <span class="hg-label">Comparaison — cette appli vs. les autres</span>
+            <span class="hg-chevron">▼</span>
+          </summary>
+          <div class="hg-detail">
+            <p>Pas de meilleure méthode unique — chacune a ses forces. <strong>L'idéal, c'est de les combiner !</strong></p>
+            <div class="ob-compare">
+              <div class="ob-compare-col">
+                <div class="ob-compare-head">📱 Cette appli</div>
+                <ul><li>💸 100% gratuit</li><li>🚫 Sans inscription</li><li>🗂️ Vocabulaire structuré</li><li>🔊 Audio intégré</li><li>🎤 Répétition orale</li><li>📴 Hors-ligne</li></ul>
+              </div>
+              <div class="ob-compare-col">
+                <div class="ob-compare-head">🦉 Duolingo / Babbel</div>
+                <ul><li>🎮 Gamification motivante</li><li>🌐 Large catalogue</li><li>🎯 Parcours adaptatif</li><li>👥 Communauté</li><li>📐 Grammaire progressive</li></ul>
+              </div>
+              <div class="ob-compare-col">
+                <div class="ob-compare-head">🏫 École de langue</div>
+                <ul><li>🧑‍🏫 Enseignant humain</li><li>📋 Structure pédagogique</li><li>🗣️ Pratique entre apprenants</li><li>🎓 Certification reconnue</li><li>📐 Grammaire approfondie</li></ul>
+              </div>
+              <div class="ob-compare-col">
+                <div class="ob-compare-head">🗣️ Immersion / Amis natifs</div>
+                <ul><li>🌍 Langue authentique</li><li>🎙️ Accent naturel</li><li>🛒 Vocabulaire du quotidien</li><li>💪 Confiance en soi</li><li>🤝 Échanges culturels</li></ul>
+              </div>
+            </div>
+            <div class="ob-tip">💡 Notre conseil : utilise cette appli pour construire ta base de vocabulaire dès le premier jour — puis appuie-toi sur Duolingo ou une école pour la grammaire, et pratique avec des natifs pour la fluidité. Chaque outil renforce les autres !</div>
+          </div>
+        </details>
+
+        <!-- 7. Remerciements -->
+        <details class="hg-section">
+          <summary class="hg-summary">
+            <span class="hg-icon">🙏</span>
+            <span class="hg-label">Remerciements</span>
+            <span class="hg-chevron">▼</span>
+          </summary>
+          <div class="hg-detail">
+            <p>Un grand merci à <strong>Fédérico Calo</strong>
+              (<a href="https://www.linkedin.com/in/federicocalo/" target="_blank" rel="noopener">Architecte Développeur Web</a>)
+              pour son aide technique.</p>
+            <p>Merci beaucoup également à <strong>Mussa Sembro</strong>
+              (<a href="https://www.linkedin.com/in/mussa-sembro-137472174/" target="_blank" rel="noopener">Traducteur-Interprète en Oromo</a>)
+              et à mes parents pour leur travail de relecture, leurs corrections sur les traductions
+              et leurs conseils sur l'ergonomie de l'application.</p>
+          </div>
+        </details>
+
+        <!-- 8. À propos -->
+        <details class="hg-section">
+          <summary class="hg-summary">
+            <span class="hg-icon">🙋</span>
+            <span class="hg-label">À propos — Qui suis-je ?</span>
+            <span class="hg-chevron">▼</span>
+          </summary>
+          <div class="hg-detail">
+            <div class="ob-bio-card">
+              <div class="ob-bio-avatar">🙋</div>
+              <div class="ob-bio-info">
+                <div class="ob-bio-name">Sébastien Godet</div>
+                <div class="ob-bio-role">En reconversion — Gestion de projets Agile &amp; Data</div>
+              </div>
+            </div>
+            <p>Après plus de 10 ans dans le géomarketing — études de marché, analyses d'implantation — je suis en reconversion vers la gestion de projets. Mon profil est volontairement polyvalent : Scrum Master, Product Owner, Chef de Projet, Business Analyst ou AI Project Manager selon les besoins.</p>
+            <p><strong>Taphad'Meuh</strong> est née d'une envie simple : créer un outil gratuit, sans inscription et vraiment utile pour tisser des liens entre francophones et oromophones. C'est aussi ma façon de travailler — apprendre par la pratique, trouver des solutions, soigner le détail.</p>
+            <p>L'appli grandit avec mon réseau : quand de nouveaux contacts me font découvrir de nouveaux mots ou expressions, je les intègre. C'est un <strong>projet vivant, pensé pour des gens réels</strong>.</p>
+            <div class="ob-bio-contact">
+              <div class="ob-bio-contact-title">💬 Une suggestion, une coquille, une idée ?</div>
+              <p>Cette appli est faite pour toi — chaque retour compte vraiment !</p>
+              <div class="ob-bio-links">
+                <button class="ob-bio-btn antispam-btn" onclick="openAndCopyEmail()">✉️ <span class="antispam-email">moc.liamg@61tedog.neitsabes</span></button>
+                <a class="ob-bio-btn" href="https://www.linkedin.com/in/s%C3%A9bastien-godet-142ba6145" target="_blank" rel="noopener">💼 Message LinkedIn</a>
+              </div>
+            </div>
+          </div>
+        </details>
+
+      </div><!-- /.home-lang-block[data-lang="fr"] -->
+
+    </div><!-- /#homeGuideBody -->
+
+    <!-- Bouton export PDF du guide — libellé mis à jour par _buildHomeGuide() -->
     <div class="home-guide-cta">
       <button class="btn-export-pdf" id="homeExportBtn" onclick="_exportGuide()"></button>
     </div>

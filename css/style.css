@@ -2356,6 +2356,17 @@ footer a:hover{text-decoration:underline}
   z-index:1;
 }
 
+/* ── Blocs bilingues du guide (un par langue, déclarés dans index.html) ──
+   .home-lang-hidden : masqué par défaut.
+   _buildHomeGuide() retire cette classe sur le bloc de la langue active.
+   ────────────────────────────────────────────────────────────────────── */
+.home-lang-block{
+  /* Pas de style propre : hérite du flux de .home-guide-body */
+}
+.home-lang-hidden{
+  display:none !important;
+}
+
 /* Accordéon individuel */
 .hg-section{
   border-bottom:1px solid rgba(0,0,0,.07);

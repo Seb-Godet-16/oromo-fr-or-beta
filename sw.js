@@ -2,7 +2,7 @@
  * ╔══════════════════════════════════════════════════════════════════╗
  * ║  Language App 🇫🇷🇪🇹  —  sw.js  (Service Worker)              ║
  * ║  Auteur   : Sébastien Godet                                     ║
- * ║  Assisté  : Claude Sonnet 4.6                                   ║
+ * ║  Assistés  : Claude Sonnet 4.6 et Gemini 3.5 Flash                                 ║
  * ║  Version  : Juin 2026                                           ║
  * ╠══════════════════════════════════════════════════════════════════╣
  * ║  STRATÉGIE DE CACHE HYBRIDE                                     ║
@@ -21,7 +21,8 @@
  * ║  plutôt qu'une erreur 503 nue. Quatre types couverts :          ║
  * ║    • Image PNG/JPG/WEBP manquante  → svgFallbackImage()         ║
  * ║    • Icône PWA manquante           → svgFallbackIcon()          ║
- * ║    • Ressource externe manquante   → réponse 503 vide (normal)  ║
+ * ║    • Image externe manquante       → _respondSvgExternalImage() ║
+ * ║      (GitHub raw, CDN Twemoji, Google Fonts…)                   ║
  * ║    • Navigation HTML manquante     → offlinePage()              ║
  * ║                                                                 ║
  * ║  CYCLE DE VIE                                                   ║
@@ -38,7 +39,7 @@
    (variable GITHUB_RUN_NUMBER) à chaque déploiement — pas d'action
    manuelle requise.
    ────────────────────────────────────────────────────────────────── */
-var CACHE_NAME = 'taphadmeuh-GITHUB_RUN_NUMBER';   /* Suffixe automatisé par GitHub Actions */
+const CACHE_NAME = 'taphadmeuh-GITHUB_RUN_NUMBER';   /* Suffixe automatisé par GitHub Actions */
 
 /*
   Liste exhaustive des ressources à pré-cacher lors de l'installation.
@@ -52,7 +53,7 @@ var CACHE_NAME = 'taphadmeuh-GITHUB_RUN_NUMBER';   /* Suffixe automatisé par Gi
   (Le coût réseau est identique à l'ancien data.js monolithique,
   mais la mémoire JS n'est consommée que pour le mode actif.)
 */
-var PRECACHE_URLS = [
+const PRECACHE_URLS = [
   './index.html',
   './css/style.css',
   './js/data-fr.js',
@@ -81,18 +82,19 @@ var PRECACHE_URLS = [
 ];
 
 /* Préfixes d'URLs considérées comme "externes" → stratégie Network First */
-var EXTERNAL_PREFIXES = [
+const EXTERNAL_PREFIXES = [
   'https://fonts.googleapis.com',
   'https://fonts.gstatic.com',
   'https://cdnjs.cloudflare.com',
+  'https://raw.githubusercontent.com/',
   'https://api.'
 ];
 
 /* Extensions reconnues comme des images raster */
-var IMAGE_EXTENSIONS = ['.png', '.jpg', '.jpeg', '.webp', '.gif'];
+const IMAGE_EXTENSIONS = ['.png', '.jpg', '.jpeg', '.webp', '.gif'];
 
 /* Chemin du dossier des icônes PWA */
-var ICONS_PATH = '/icons/';
+const ICONS_PATH = '/icons/';
 
 
 /* ──────────────────────────────────────────────────────────────────
@@ -105,9 +107,7 @@ var ICONS_PATH = '/icons/';
  * @returns {boolean}
  */
 function _isExternal(url) {
-  return EXTERNAL_PREFIXES.some(function(prefix) {
-    return url.indexOf(prefix) === 0;
-  });
+  return EXTERNAL_PREFIXES.some((prefix) => url.startsWith(prefix));
 }
 
 /**
@@ -127,8 +127,8 @@ function _shouldHandle(request) {
  * @returns {boolean}
  */
 function _isRasterImage(url) {
-  var clean = url.split('?')[0].toLowerCase();
-  return IMAGE_EXTENSIONS.some(function(ext) { return clean.endsWith(ext); });
+  const clean = url.split('?')[0].toLowerCase();
+  return IMAGE_EXTENSIONS.some((ext) => clean.endsWith(ext));
 }
 
 /**
@@ -137,7 +137,7 @@ function _isRasterImage(url) {
  * @returns {boolean}
  */
 function _isPwaIcon(url) {
-  return url.indexOf(ICONS_PATH) !== -1;
+  return url.includes(ICONS_PATH);
 }
 
 /**
@@ -158,15 +158,11 @@ function _isNavigation(request) {
    skipWaiting() : le nouveau SW prend le contrôle immédiatement
    sans attendre la fermeture de tous les onglets.
    ────────────────────────────────────────────────────────────────── */
-self.addEventListener('install', function(event) {
+self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME)
-      .then(function(cache) {
-        return cache.addAll(PRECACHE_URLS);
-      })
-      .then(function() {
-        return self.skipWaiting();
-      })
+      .then((cache) => cache.addAll(PRECACHE_URLS))
+      .then(() => self.skipWaiting())
   );
 });
 
@@ -174,19 +170,15 @@ self.addEventListener('install', function(event) {
 /* ──────────────────────────────────────────────────────────────────
    ACTIVATE — Nettoyage des anciens caches  (L.174)
    ────────────────────────────────────────────────────────────────── */
-self.addEventListener('activate', function(event) {
+self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys()
-      .then(function(cacheNames) {
-        return Promise.all(
-          cacheNames
-            .filter(function(name) { return name !== CACHE_NAME; })
-            .map(function(name)   { return caches.delete(name); })
-        );
-      })
-      .then(function() {
-        return self.clients.claim();
-      })
+      .then((cacheNames) => Promise.all(
+        cacheNames
+          .filter((name) => name !== CACHE_NAME)
+          .map((name)   => caches.delete(name))
+      ))
+      .then(() => self.clients.claim())
   );
 });
 
@@ -264,7 +256,9 @@ function networkFirst(request) {
     .catch(function() {
       return caches.match(request).then(function(cached) {
         if (cached) return cached;
-        /* Ressource externe absente du cache → fallback SVG si image */
+        /* Ressource externe absente du cache → fallback SVG si image.
+         * Couvre : Google Fonts, CDN Twemoji, GitHub raw (raw.githubusercontent.com).
+         */
         if (_isRasterImage(request.url)) return _respondSvgExternalImage();
         return new Response('', { status: 503, statusText: 'Hors ligne' });
       });
