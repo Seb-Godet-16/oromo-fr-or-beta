@@ -866,29 +866,39 @@
   <div id="lesson" class="screen">
 
     <div class="lesson-header">
-      <!-- Retour vers la liste des sections -->
-      <button class="back-btn" id="lessonBackBtn" onclick="lessonGoBack()">←</button>
 
-      <!-- Badge niveau cliquable : "Niv. 1" ou "Niv. 2" -- renseigné par openTheme() -->
-      <button class="lesson-level-badge" id="lessonLevelBadge" onclick="lessonGoBack()"></button>
-
-      <span id="lessonEmoji"></span>
-      <h3 id="lessonTitle"></h3>
-
-      <!--
-        Boutons PDF déplacés dans le header (pill compact blanc).
-        Visibilité gérée par app.js via .is-hidden.
-      -->
-      <button class="btn-pdf-pill is-hidden" id="lessonExportVocab"
-              onclick="_exportVocab()" aria-label="Télécharger ce module en PDF">📄</button>
-      <button class="btn-pdf-pill is-hidden" id="lessonExportSit"
-              onclick="_exportSituation()" aria-label="Télécharger cette situation en PDF">📄</button>
-
-      <!-- Navigation prev / next dans le niveau -->
-      <div class="lesson-nav-arrows">
-        <button class="lesson-nav-btn" id="lessonPrevBtn" onclick="lessonNav(-1)" title="Module précédent">‹</button>
-        <button class="lesson-nav-btn" id="lessonNextBtn" onclick="lessonNav(1)"  title="Module suivant">›</button>
+      <!-- ── Ligne 1 : retour + badge niveau + emoji + titre ── -->
+      <div class="lesson-header-top">
+        <button class="back-btn" id="lessonBackBtn" onclick="lessonGoBack()">←</button>
+        <!-- Badge niveau cliquable : "Niv. 1" ou "Niv. 2" — renseigné par openTheme() -->
+        <button class="lesson-level-badge" id="lessonLevelBadge" onclick="lessonGoBack()"></button>
+        <span id="lessonEmoji"></span>
+        <h3 id="lessonTitle"></h3>
       </div>
+
+      <!-- ── Ligne 2 : bouton PDF (gauche) + flèches navigation (droite) ── -->
+      <div class="lesson-header-bot">
+        <!--
+          Boutons PDF — pill lisible avec texte.
+          Un seul bouton actif à la fois selon le type de thème (vocab ou dialog).
+          Visibilité gérée par app.js via .is-hidden.
+        -->
+        <button class="btn-pdf-pill is-hidden" id="lessonExportVocab"
+                onclick="_exportVocab()" aria-label="Télécharger ce module en PDF">
+          📄 <span id="lessonExportVocabLabel">PDF</span>
+        </button>
+        <button class="btn-pdf-pill is-hidden" id="lessonExportSit"
+                onclick="_exportSituation()" aria-label="Télécharger cette situation en PDF">
+          📄 <span id="lessonExportSitLabel">PDF</span>
+        </button>
+
+        <!-- Flèches prev / next entre modules — agrandies et plus contrastées -->
+        <div class="lesson-nav-arrows">
+          <button class="lesson-nav-btn" id="lessonPrevBtn" onclick="lessonNav(-1)" title="Module précédent">‹</button>
+          <button class="lesson-nav-btn" id="lessonNextBtn" onclick="lessonNav(1)"  title="Module suivant">›</button>
+        </div>
+      </div><!-- /.lesson-header-bot -->
+
     </div><!-- /.lesson-header -->
 
     <div class="lesson-body" id="lessonBody">

@@ -721,14 +721,42 @@ html.theme-french .btn-reset-theme:hover{
    ══════════════════════════════════════════════════════════════════ */
 /* #lesson layout moved to §28 — no-scroll fix */
 
+/* ── Lesson header : 2 lignes ─────────────────────────────────────
+   Ligne 1 (.lesson-header-top)  : ← badge emoji titre
+   Ligne 2 (.lesson-header-bot)  : bouton PDF  +  flèches nav
+   ────────────────────────────────────────────────────────────────── */
 .lesson-header{
   background:var(--c-grad-lesson);
-  padding:14px 16px;
+  padding:10px 14px 8px;
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+
+/* Ligne 1 : retour + badge + emoji + titre */
+.lesson-header-top{
   display:flex;
   align-items:center;
-  gap:10px;
+  gap:8px;
 }
-.lesson-header h3{color:#fff;font-size:1rem;flex:1;line-height:1.3}
+.lesson-header-top h3{
+  color:#fff;
+  font-size:.95rem;
+  flex:1;
+  line-height:1.25;
+  margin:0;
+}
+
+/* Ligne 2 : bouton PDF à gauche, flèches à droite */
+.lesson-header-bot{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+}
+
+/* Alias de compatibilité — certains sélecteurs ciblent .lesson-header h3 */
+.lesson-header h3{color:#fff;font-size:.95rem;flex:1;line-height:1.25}
 
 /*
   #lessonEmoji : emoji du thème affiché dans l'en-tête de leçon.
@@ -777,36 +805,37 @@ html.theme-french .btn-reset-theme:hover{
 */
 .lesson-nav-arrows{
   display:flex;
-  gap:4px;
+  gap:8px;
   flex-shrink:0;
-  margin-left:auto;
 }
 .lesson-nav-btn{
-  background:rgba(255,255,255,.18);
-  border:1.5px solid rgba(255,255,255,.4);
+  background:rgba(255,255,255,.22);
+  border:2px solid rgba(255,255,255,.55);
   border-radius:50%;
   color:#fff;
-  font-size:1.1rem;
-  font-weight:700;
-  width:30px;
-  height:30px;
+  font-size:1.35rem;
+  font-weight:800;
+  width:40px;
+  height:40px;
   display:flex;
   align-items:center;
   justify-content:center;
   cursor:pointer;
   line-height:1;
-  transition:background .15s, transform .1s;
+  transition:background .15s, transform .1s, box-shadow .15s;
   padding:0;
+  box-shadow:0 2px 8px rgba(0,0,0,.18);
 }
 .lesson-nav-btn:hover:not(:disabled){
-  background:rgba(255,255,255,.32);
+  background:rgba(255,255,255,.38);
+  box-shadow:0 3px 12px rgba(0,0,0,.22);
 }
 .lesson-nav-btn:active:not(:disabled){
-  background:rgba(255,255,255,.5);
-  transform:scale(.9);
+  background:rgba(255,255,255,.55);
+  transform:scale(.88);
 }
 .lesson-nav-btn:disabled{
-  opacity:.3;
+  opacity:.25;
   cursor:default;
 }
 
@@ -1609,25 +1638,35 @@ footer a:hover{text-decoration:underline}
   line-height:1.5;
 }
 
-/* ── Bandeau langue alternative ────────────────────────────────── */
-.repeat-alt-lang{
-  background:#fff8e1;
-  border:1.5px solid #f9a825;
-  border-radius:12px;
-  padding:10px 14px;
-  font-size:.78rem;
-  color:#5d4e00;
-  line-height:1.5;
-  margin-bottom:10px;
-}
-
 /* ── Info langue utilisée ──────────────────────────────────────── */
+/* Cas normal (langue native : fr-FR ou om-ET) : discret, en bas à droite */
 .repeat-lang-info{
-  font-size:.7rem;
+  font-size:.72rem;
   color:#aaa;
   text-align:right;
   margin-bottom:8px;
   padding-right:2px;
+  line-height:1.4;
+}
+
+/* Cas fallback (langue approximative) : pill visible avec fond ambre doux */
+.repeat-lang-info.repeat-lang-fallback{
+  text-align:left;
+  background:#fff8e1;
+  border:1.5px solid #f9a825;
+  border-radius:10px;
+  padding:8px 12px;
+  color:#5d4e00;
+  font-size:.76rem;
+}
+
+/* Note explicative dans le pill fallback */
+.repeat-lang-note{
+  display:block;
+  font-size:.68rem;
+  font-weight:400;
+  opacity:.8;
+  margin-top:2px;
 }
 
 /* ── Carte du mot à répéter ────────────────────────────────────── */
@@ -2941,7 +2980,37 @@ footer a:hover{text-decoration:underline}
 /* Classe utilitaire — masque un élément sans inline style */
 .is-hidden{display:none!important}
 
-/* Bouton export générique */
+/* ── Bouton PDF pill — ligne basse du header leçon ──────────────────
+   Visible et lisible : fond blanc semi-transparent, texte + icône,
+   arrondi pill. Remplace l'ancienne icône seule 📄 trop petite.   */
+.btn-pdf-pill{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  background:rgba(255,255,255,.22);
+  border:2px solid rgba(255,255,255,.55);
+  border-radius:50px;
+  color:#fff;
+  font-size:.82rem;
+  font-weight:700;
+  padding:7px 14px;
+  cursor:pointer;
+  white-space:nowrap;
+  transition:background .15s, box-shadow .15s, transform .1s;
+  box-shadow:0 2px 8px rgba(0,0,0,.15);
+  letter-spacing:.01em;
+  flex-shrink:0;
+}
+.btn-pdf-pill:hover{
+  background:rgba(255,255,255,.36);
+  box-shadow:0 3px 12px rgba(0,0,0,.2);
+}
+.btn-pdf-pill:active{
+  background:rgba(255,255,255,.50);
+  transform:scale(.95);
+}
+
+/* Bouton export générique (hors header leçon) */
 .btn-export-pdf{
   display:inline-flex;
   align-items:center;

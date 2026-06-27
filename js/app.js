@@ -445,12 +445,7 @@ function _resolveOromoVoice(callback) {
     /* Repli absolu : première voix disponible si aucune ne correspond */
     _oromoVoice = foundVoice || voices[0];
 
-    /* Notification unique à l'utilisateur sur la voix choisie */
-    if (!_hasNotifiedVoice) {
-      _hasNotifiedVoice = true;
-      _showToast('🎙️ Audio Oromo configuré avec la voix : ' + foundLabel);
-    }
-
+    /* La langue audio est affichée dans l'onglet Répète (repeat-lang-info) — pas de toast ici */
     callback(_oromoVoice);
     return true;
   }
@@ -481,10 +476,7 @@ function _resolveOromoVoice(callback) {
         /* Forcer un résultat même si la liste est vide */
         const fallback = speechSynthesis.getVoices();
         _oromoVoice = fallback.length > 0 ? fallback[0] : null;
-        if (!_hasNotifiedVoice) {
-          _hasNotifiedVoice = true;
-          _showToast('🎙️ Audio Oromo configuré avec la voix : Voix par défaut');
-        }
+        /* Pas de toast — la langue audio est visible dans l'onglet Répète */
       }
       callback(_oromoVoice);
     }, 2000);
@@ -1614,7 +1606,7 @@ function openTheme(id, dir) {
 
   /* ── Bouton d'export PDF : afficher le bon selon le type de thème ──
      Visibilité gérée via .is-hidden (définie dans style.css §25)
-     Les boutons sont désormais intégrés dans .lesson-header (pills compacts). */
+     Chaque bouton affiche un label bilingue dans le span enfant. */
   let btnVocab = document.getElementById('lessonExportVocab');
   let btnSit   = document.getElementById('lessonExportSit');
   if (btnVocab && btnSit) {
@@ -1622,10 +1614,14 @@ function openTheme(id, dir) {
       btnVocab.classList.add('is-hidden');
       btnSit.classList.remove('is-hidden');
       btnSit.title = L('Galmee haala kana buusi', 'Télécharger cette situation (PDF)');
+      let lblSit = document.getElementById('lessonExportSitLabel');
+      if (lblSit) lblSit.textContent = L('Haala buusi', 'Situation PDF');
     } else {
       btnSit.classList.add('is-hidden');
       btnVocab.classList.remove('is-hidden');
       btnVocab.title = L('Moojuula kana buusi', 'Télécharger ce module (PDF)');
+      let lblVocab = document.getElementById('lessonExportVocabLabel');
+      if (lblVocab) lblVocab.textContent = L('Moojuula buusi', 'Module PDF');
     }
   }
 
@@ -2427,12 +2423,10 @@ function renderRepeat() {
       }
       _repeatLangUsed  = lang;
       _repeatLangLabel = label;
-      let isNative = (lang === 'om-ET');
-      let altMsg = isNative ? null : (
-        '⚠️ Pas de reconnaissance Oromo native. Utilisation de : <strong>' + label + '</strong><br>'
-        + '<small>La reconnaissance sera approximative. Parlez lentement et clairement.</small>'
-      );
-      _renderRepeatUI(altMsg, null);
+      /* Pas de bannière d'alerte : la langue est déjà affichée dans la ligne
+         "🌐 Reconnaissance : …" de _renderRepeatUI. Ce texte suffit — pas besoin
+         de doubler l'information avec un bandeau rouge/orange. */
+      _renderRepeatUI(null);
     });
   }
 }
@@ -2512,8 +2506,9 @@ function _renderRepeatUnavailable(mainMsg, tip) {
 
 /**
  * Affiche l'interface principale de l'onglet Répète.
- * @param {string|null} altLangMsg  - Message d'avertissement langue alternative (HTML)
- * @param {string|null} _unused
+ * Le paramètre altLangMsg est conservé pour compatibilité mais toujours null :
+ * la langue de reconnaissance est affichée via la ligne "🌐 Reconnaissance : …".
+ * @param {string|null} altLangMsg  - (inutilisé) ancien bandeau d'alerte
  */
 function _renderRepeatUI(altLangMsg) {
   if (!_repeatWords.length) {
@@ -2528,9 +2523,18 @@ function _renderRepeatUI(altLangMsg) {
     ? '<div class="repeat-alt-lang">' + altLangMsg + '</div>'
     : '';
 
-  let langInfo = '<div class="repeat-lang-info">🌐 '
-    + L('Af-dubbii : ', 'Reconnaissance : ')
-    + '<strong>' + _repeatLangLabel + '</strong></div>';
+  /* Affichage langue : neutre si Oromo natif, en évidence si fallback */
+  let isNativeLang = (isFrench() || _repeatLangUsed === 'om-ET');
+  let langInfo = isNativeLang
+    ? '<div class="repeat-lang-info">🌐 '
+        + L('Af-dubbii : ', 'Reconnaissance : ')
+        + '<strong>' + _repeatLangLabel + '</strong></div>'
+    : '<div class="repeat-lang-info repeat-lang-fallback">⚠️ '
+        + L('Af-dubbii : ', 'Reconnaissance : ')
+        + '<strong>' + _repeatLangLabel + '</strong>'
+        + '<span class="repeat-lang-note"> '
+        + L('— Oromo hin deeggararamu, afaan kanaan yaali', '— Oromo non supporté, cette langue est utilisée à la place')
+        + '</span></div>';
 
   document.getElementById('tabContent').innerHTML =
     altBanner
