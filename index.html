@@ -226,9 +226,12 @@
       </div>
     </div><!-- /.home-guide-header -->
 
-    <!-- Bouton Commencer — libellé mis à jour par _buildHomeGuide() -->
+    <!-- Bouton Commencer + bouton PDF Guide côte à côte dans la barre sticky -->
     <div class="home-start-sticky">
-      <button class="btn-start-main" id="homeStartBtn" onclick="showScreen('sections-level1')"></button>
+      <div class="home-start-row">
+        <button class="btn-start-main" id="homeStartBtn" onclick="showScreen('sections-level1')"></button>
+        <button class="btn-pdf-pill" id="homeExportBtn" onclick="_exportGuide()" aria-label="Télécharger le guide PDF"></button>
+      </div>
     </div>
 
     <!--
@@ -793,11 +796,6 @@
 
     </div><!-- /#homeGuideBody -->
 
-    <!-- Bouton export PDF du guide — libellé mis à jour par _buildHomeGuide() -->
-    <div class="home-guide-cta">
-      <button class="btn-export-pdf" id="homeExportBtn" onclick="_exportGuide()"></button>
-    </div>
-
   </div><!-- /#home -->
 
 
@@ -877,6 +875,15 @@
       <span id="lessonEmoji"></span>
       <h3 id="lessonTitle"></h3>
 
+      <!--
+        Boutons PDF déplacés dans le header (pill compact blanc).
+        Visibilité gérée par app.js via .is-hidden.
+      -->
+      <button class="btn-pdf-pill is-hidden" id="lessonExportVocab"
+              onclick="_exportVocab()" aria-label="Télécharger ce module en PDF">📄</button>
+      <button class="btn-pdf-pill is-hidden" id="lessonExportSit"
+              onclick="_exportSituation()" aria-label="Télécharger cette situation en PDF">📄</button>
+
       <!-- Navigation prev / next dans le niveau -->
       <div class="lesson-nav-arrows">
         <button class="lesson-nav-btn" id="lessonPrevBtn" onclick="lessonNav(-1)" title="Module précédent">‹</button>
@@ -894,30 +901,6 @@
       <div class="tabs" id="lessonTabs"></div>
       <div id="tabContent" aria-live="polite" aria-atomic="false"></div>
     </div><!-- /.lesson-body -->
-
-    <!--
-      Barre d'export PDF — affichée sous le contenu de la leçon.
-      • #lessonExportVocab  : visible uniquement sur les thèmes Niveau 1 (vocabulaire)
-      • #lessonExportSit    : visible uniquement sur les thèmes Niveau 2 (dialogue)
-
-      VISIBILITÉ : gérée par app.js via openTheme() avec .is-hidden (style.css §25) :
-        Niveau 1 → .is-hidden retiré sur #lessonExportVocab, ajouté sur #lessonExportSit
-        Niveau 2 → inverse. Les deux boutons portent .is-hidden par défaut.
-
-      POSITIONNEMENT EN MODE CARTES : switchTab() dans app.js déplace
-      dynamiquement ce conteneur hors de #lesson (flux flex) et l'insère
-      comme frère juste avant #bottom-nav. Un style inline position:fixed
-      calé sur getBoundingClientRect(#bottom-nav) le maintient visible
-      quelle que soit la position de la barre d'URL Android.
-      En quittant l'onglet Cartes, il est replacé dans #lesson et les
-      styles inline sont effacés. Voir app.js §8 / switchTab().
-    -->
-    <div class="lesson-export-bar">
-      <button class="btn-export-pdf is-hidden" id="lessonExportVocab"
-              onclick="_exportVocab()">📄 Télécharger ce module</button>
-      <button class="btn-export-pdf is-hidden" id="lessonExportSit"
-              onclick="_exportSituation()">📄 Télécharger cette situation</button>
-    </div>
 
     <!--
       Pas de footer sur cet écran pour maximiser l'espace

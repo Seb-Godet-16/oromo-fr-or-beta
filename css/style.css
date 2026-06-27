@@ -331,7 +331,7 @@ html.theme-oromo body{background:#f4f9f4}
   background: #BFA98A; /* Café au lait plus soutenu / plus foncé */
   align-items: center;
   justify-content: center;
-  padding: 24px 20px 80px; /* padding-bottom réservé au footer absolu */
+  padding: 24px 20px calc(var(--bottom-nav-h, 56px) + 60px); /* espace pour la nav + footer */
   position: relative;
   overflow: hidden;
   min-height: 100vh;
@@ -510,15 +510,14 @@ html.theme-oromo body{background:#f4f9f4}
 
 /* ── Footer du lanceur ───────────────────────────────────────────── */
 /*
-   Position:absolute + bottom:0 → colle au bas de #app-launcher
-   sans pousser le contenu vers le bas (d'où le padding-bottom:80px
-   sur #app-launcher pour éviter le chevauchement).
+   Position:absolute + bottom = hauteur nav → colle juste au-dessus
+   de la bottom-nav visible sur cet écran.
 */
 .launcher-footer{
   position: absolute;
-  bottom: 0; left: 0; right: 0;
+  bottom: var(--bottom-nav-h, 56px); left: 0; right: 0;
   text-align: center;
-  padding: 14px 12px;
+  padding: 10px 12px;
   font-size: .68rem;
   color: #7D6B69;
   background: transparent;
@@ -2360,9 +2359,6 @@ footer a:hover{text-decoration:underline}
    .home-lang-hidden : masqué par défaut.
    _buildHomeGuide() retire cette classe sur le bloc de la langue active.
    ────────────────────────────────────────────────────────────────────── */
-.home-lang-block{
-  /* Pas de style propre : hérite du flux de .home-guide-body */
-}
 .home-lang-hidden{
   display:none !important;
 }
@@ -2490,12 +2486,68 @@ footer a:hover{text-decoration:underline}
 }
 .btn-start-main:active{transform:scale(.97);box-shadow:0 2px 8px rgba(0,0,0,.22)}
 
-/* ── Zone export PDF uniquement (le bouton Commencer est dans .home-start-sticky) ── */
-.home-guide-cta{
-  margin:12px 14px 4px;
-  position:relative;
-  z-index:1;
-  text-align:center;
+/* ── Ligne sticky : Commencer + PDF côte à côte ── */
+.home-start-row{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+  width:100%;
+  max-width:340px;
+  margin:0 auto;
+}
+.home-start-row .btn-start-main{
+  flex:1;
+  min-width:0;
+  max-width:none;
+}
+
+/* ── Bouton PDF compact (pill blanc) ─────────────────────────────
+   Utilisé : dans .home-start-row (guide) et dans .lesson-header.
+   Petit, discret, toujours visible au même endroit que l'action
+   principale. Inspiré du style "espagnol". ── */
+.btn-pdf-pill{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:5px;
+  background:rgba(255,255,255,.22);
+  border:1.5px solid rgba(255,255,255,.60);
+  border-radius:50px;
+  color:#fff;
+  font-size:.78rem;
+  font-weight:700;
+  padding:0 12px;
+  height:42px;
+  white-space:nowrap;
+  flex-shrink:0;
+  cursor:pointer;
+  backdrop-filter:blur(4px);
+  -webkit-backdrop-filter:blur(4px);
+  box-shadow:0 2px 8px rgba(0,0,0,.15);
+  transition:background .15s, transform .1s, box-shadow .15s;
+  font-family:inherit;
+}
+.btn-pdf-pill:hover,.btn-pdf-pill:focus-visible{
+  background:rgba(255,255,255,.38);
+  box-shadow:0 4px 12px rgba(0,0,0,.22);
+  transform:translateY(-1px);
+  outline:none;
+}
+.btn-pdf-pill:active{
+  background:rgba(255,255,255,.50);
+  transform:scale(.95);
+  box-shadow:0 1px 4px rgba(0,0,0,.15);
+}
+
+/* Version dans le lesson-header : encore plus compacte (icône seule) */
+.lesson-header .btn-pdf-pill{
+  height:30px;
+  width:30px;
+  padding:0;
+  font-size:1rem;
+  border-radius:50%;
+  border-width:1.5px;
 }
 
 /* ════════════════════════════════════════════════════════════════
@@ -2535,6 +2587,23 @@ footer a:hover{text-decoration:underline}
   font-weight:800;
   margin:0 0 4px;
   line-height:1.2;
+}
+
+/* Traduction du titre "Modules / Moojuulota" dans le header coloré */
+.hdr-transl{
+  display:block;
+  font-size:.65rem;
+  font-weight:500;
+  opacity:.70;
+  letter-spacing:.01em;
+  margin-top:1px;
+}
+
+/* Traduction inline dans le progress-label ("modules · kutaalee") */
+.hdr-transl-inline{
+  font-size:.72em;
+  opacity:.70;
+  font-weight:400;
 }
 
 /* Étoiles (récupérées depuis l'ancien Home) */
@@ -2813,15 +2882,14 @@ footer a:hover{text-decoration:underline}
 /* ══════════════════════════════════════════════════════════════════
    §25 — BOUTONS D'EXPORT PDF
    ══════════════════════════════════════════════════════════════════
-   .btn-export-pdf    : bouton discret sous le contenu principal
-   .lesson-export-bar : conteneur centré sous le lesson-body
+   .btn-export-pdf : bouton générique (ancien style, conservé pour compatibilité)
+   .btn-pdf-pill   : nouveau pill compact intégré dans les headers
+                     (home-start-sticky pour le guide, lesson-header pour les leçons)
 
    VISIBILITÉ :
    Les boutons #lessonExportVocab et #lessonExportSit portent la
-   classe .is-hidden par défaut (définie ici). app.js retire cette
-   classe sur le bon bouton via classList.remove('is-hidden') et
-   la remet sur l'autre via classList.add('is-hidden').
-   Aucun style="display:…" inline n'est nécessaire.
+   classe .is-hidden par défaut. app.js retire cette classe sur le bon
+   bouton via classList.remove('is-hidden') selon le type de thème.
    ══════════════════════════════════════════════════════════════════ */
 
 /* Classe utilitaire — masque un élément sans inline style */
@@ -2859,51 +2927,8 @@ footer a:hover{text-decoration:underline}
   transform:translateY(0);
 }
 
-/* Conteneur du bouton export sur l'écran Home */
-#homeExportBtn{
-  margin-top:10px;
-  width:100%;
-  justify-content:center;
-  background:rgba(255,255,255,.22);
-  border:1.5px solid rgba(255,255,255,.6);
-  color:var(--c-home-title);
-  border-radius:50px;
-  backdrop-filter:blur(4px);
-  box-shadow:0 2px 8px rgba(0,0,0,.12);
-}
-#homeExportBtn:hover,#homeExportBtn:focus-visible{
-  background:rgba(255,255,255,.38);
-  color:var(--c-home-title);
-  box-shadow:0 4px 12px rgba(0,0,0,.18);
-  transform:translateY(-1px);
-  outline:none;
-}
-#homeExportBtn:active{
-  background:rgba(255,255,255,.48);
-  color:var(--c-home-title);
-  transform:translateY(0);
-}
-
-/* Barre d'export sur l'écran Leçon */
-.lesson-export-bar{
-  display:flex;
-  justify-content:center;
-  padding:10px 16px 14px;
-  border-top:1px solid rgba(0,0,0,.08);
-  background:var(--c-bg);
-  /* flex-shrink:0 : reste toujours visible en bas du conteneur flex #lesson,
-     QUEL QUE SOIT le mode (Cartes, Quiz, Dialogue, Vocab).
-     On abandonne position:sticky qui échoue sur Android quand le parent
-     est overflow:hidden (mode-cartes) ou quand la barre du navigateur
-     masque le bas de l'écran. */
-  flex-shrink:0;
-  box-shadow:0 -4px 12px rgba(0,0,0,.07);
-}
-.lesson-export-bar .btn-export-pdf{
-  width:100%;
-  max-width:340px;
-  justify-content:center;
-}
+/* ── Barre d'export leçon : supprimée, boutons intégrés dans .lesson-header ── */
+/* (voir .btn-pdf-pill et .lesson-header .btn-pdf-pill ci-dessus) */
 
 /* Mode sombre */
 @media(prefers-color-scheme:dark){
@@ -2916,15 +2941,11 @@ footer a:hover{text-decoration:underline}
     background:var(--c-primary-dark);
     box-shadow:0 5px 16px rgba(0,0,0,.5);
   }
-  .lesson-export-bar{
-    border-top-color:rgba(255,255,255,.08);
-    box-shadow:0 -4px 12px rgba(0,0,0,.25);
-  }
 }
 
-/* Masquer les boutons d'export à l'impression (ils seraient dans le print) */
+/* Masquer les boutons d'export à l'impression */
 @media print{
-  .btn-export-pdf,.lesson-export-bar{display:none!important}
+  .btn-export-pdf,.btn-pdf-pill{display:none!important}
 }
 
 /* ════════════════════════════════════════════════════════════════
@@ -3056,10 +3077,11 @@ footer a:hover{text-decoration:underline}
 .level-tab{
   flex:1;
   display:flex;
+  flex-direction:column;
   align-items:center;
   justify-content:center;
-  gap:7px;
-  padding:11px 8px;
+  gap:2px;
+  padding:9px 8px;
   background:transparent;
   border:none;
   color:rgba(255,255,255,.45);
@@ -3072,6 +3094,16 @@ footer a:hover{text-decoration:underline}
 }
 .level-tab:active{
   background:rgba(0,0,0,.12);
+}
+
+/* Traduction en sous-titre dans les onglets de niveau */
+.level-tab-transl{
+  display:block;
+  font-size:.6rem;
+  font-weight:400;
+  opacity:.65;
+  letter-spacing:0;
+  line-height:1.2;
 }
 
 /* Onglet actif : fond noir translucide pour foncer + texte blanc vif + trait épais en bas */
@@ -3146,16 +3178,10 @@ footer a:hover{text-decoration:underline}
 }
 
 /* Écran leçon
-   STRUCTURE FLEX VERTICALE (tous modes sauf Cartes) :
+   STRUCTURE FLEX VERTICALE :
      #lesson                (flex col, height = --app-h via JS)
-       ├─ .lesson-header       (flex-shrink:0)
-       ├─ .lesson-body         (flex:1, overflow-y:auto)
-       └─ .lesson-export-bar   (flex-shrink:0 → toujours visible)
-
-   MODE CARTES : .lesson-export-bar est déplacé par switchTab() dans
-   app.js comme frère de #bottom-nav (position:fixed calculée via
-   getBoundingClientRect()), ce qui le rend insensible aux variations
-   de --app-h causées par la barre d'URL Android.
+       ├─ .lesson-header       (flex-shrink:0, contient btn-pdf-pill)
+       └─ .lesson-body         (flex:1, overflow-y:auto)
 
    NOTE : overflow:hidden est mis UNIQUEMENT sur #lesson.mode-cartes
    pour ne pas bloquer le scroll des onglets Dialogue/Quiz/Vocab.
@@ -3177,12 +3203,7 @@ footer a:hover{text-decoration:underline}
   padding-bottom:8px;
   min-height:0;
 }
-/* .lesson-export-bar est FRÈRE de .lesson-body dans #lesson (flex col).
-   flex-shrink:0 garantit qu'il reste visible en bas dans TOUS les modes,
-   y compris Dialogue, Quiz, Vocabulaire. */
-.lesson-export-bar{
-  flex-shrink:0;
-}
+/* .lesson-body est l'unique zone scrollable de la leçon */
 
 /* ── Mode Cartes uniquement : sans scroll, tout tient à l'écran ───────
    En mode-cartes, #lesson reçoit overflow:hidden pour bloquer tout
@@ -3191,15 +3212,14 @@ footer a:hover{text-decoration:underline}
 
    Structure en mode-cartes :
      #lesson (overflow:hidden)
-       ├─ .lesson-header    (~68px)  flex-shrink:0
-       ├─ .lesson-body      (flex:1, overflow:hidden, flex col)
-       │   ├─ .tabs          (~52px)  flex-shrink:0
-       │   └─ #tabContent    (flex:1, flex col)
-       │       ├─ .section-label  (~28px) flex-shrink:0
-       │       ├─ .fc-wrap        (flex:1 — prend tout l'espace restant)
-       │       ├─ .fc-nav         (~50px) flex-shrink:0
-       │       └─ .fc-audio-wrap  (~50px) flex-shrink:0
-       └─ .lesson-export-bar (~58px) flex-shrink:0 (déjà défini)
+       ├─ .lesson-header    (~68px)  flex-shrink:0 (avec btn-pdf-pill)
+       └─ .lesson-body      (flex:1, overflow:hidden, flex col)
+           ├─ .tabs          (~52px)  flex-shrink:0
+           └─ #tabContent    (flex:1, flex col)
+               ├─ .section-label  (~28px) flex-shrink:0
+               ├─ .fc-wrap        (flex:1 — prend tout l'espace restant)
+               ├─ .fc-nav         (~50px) flex-shrink:0
+               └─ .fc-audio-wrap  (~50px) flex-shrink:0
 */
 
 /* overflow:hidden UNIQUEMENT en mode cartes */
@@ -3315,16 +3335,6 @@ footer a:hover{text-decoration:underline}
   font-size:.9rem;
 }
 
-/* Bouton Télécharger en mode cartes : le CSS se contente du style visuel.
-   Le positionnement (fixed, bottom, left, right, z-index) est appliqué
-   dynamiquement par switchTab() dans app.js via getBoundingClientRect()
-   sur #bottom-nav — garanti synchronisé avec la barre d'URL Android. */
-#lesson.mode-cartes .lesson-export-bar {
-  position: static;
-  box-shadow: none;
-  padding: 6px 14px 4px;
-  border-top: none;
-}
 /* ════════════════════════════════════════════════════════════════
    §20e — GRILLE DE THÈMES DANS LES ÉCRANS LEVEL  (sans <details>)
    ════════════════════════════════════════════════════════════════ */

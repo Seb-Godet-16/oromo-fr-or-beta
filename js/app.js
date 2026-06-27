@@ -1109,12 +1109,31 @@ function _updateBottomNav(screenId) {
   let nav = document.getElementById('bottom-nav');
   if (!nav) return;
 
-  /* Cacher la nav sur le launcher */
+  nav.classList.add('visible');
+
+  /* Sur le launcher : état neutre, libellés FR par défaut, boutons Guide/Modules grisés */
   if (screenId === 'app-launcher') {
-    nav.classList.remove('visible');
+    /* Réinitialiser l'icône langue au globe neutre */
+    let langFlag = document.getElementById('navLangFlag');
+    if (langFlag) langFlag.textContent = '🌐';
+    /* Aucun bouton actif */
+    ['navBtnLang','navBtnGuide','navBtnModules','navBtnCredits'].forEach((id) => {
+      let el = document.getElementById(id);
+      if (el) el.classList.remove('active');
+    });
+    /* Griser les boutons non utilisables avant le choix de langue */
+    let btnGuide   = document.getElementById('navBtnGuide');
+    let btnModules = document.getElementById('navBtnModules');
+    if (btnGuide)   btnGuide.style.opacity   = '.35';
+    if (btnModules) btnModules.style.opacity  = '.35';
     return;
   }
-  nav.classList.add('visible');
+
+  /* Rétablir l'opacité normale sur tous les boutons (une fois un mode choisi) */
+  ['navBtnGuide','navBtnModules'].forEach((id) => {
+    let el = document.getElementById(id);
+    if (el) el.style.opacity = '';
+  });
 
   /* Mettre à jour les libellés bilingues de la nav (dans la langue de l'apprenant) */
   _setText('navLabelLang',    L('Afaan',     'Langue'));
@@ -1130,6 +1149,7 @@ function _updateBottomNav(screenId) {
     let el = document.getElementById(id);
     if (el) el.classList.remove('active');
   });
+  /* Sur le launcher, aucun bouton n'est actif (état neutre) */
   if (screenId === 'sections-level1' || screenId === 'sections-level2') {
     let mb = document.getElementById('navBtnModules');
     if (mb) mb.classList.add('active');
@@ -1478,18 +1498,18 @@ function openTheme(id, dir) {
 
   /* ── Bouton d'export PDF : afficher le bon selon le type de thème ──
      Visibilité gérée via .is-hidden (définie dans style.css §25)
-     plutôt que par style.display inline, pour respecter le système CSS. */
+     Les boutons sont désormais intégrés dans .lesson-header (pills compacts). */
   let btnVocab = document.getElementById('lessonExportVocab');
   let btnSit   = document.getElementById('lessonExportSit');
   if (btnVocab && btnSit) {
     if (CT.type === 'dialog') {
       btnVocab.classList.add('is-hidden');
       btnSit.classList.remove('is-hidden');
-      btnSit.textContent = L('\ud83d\udcc4 Galmee haala kana buusi', '\ud83d\udcc4 Télécharger cette situation');
+      btnSit.title = L('Galmee haala kana buusi', 'Télécharger cette situation (PDF)');
     } else {
       btnSit.classList.add('is-hidden');
       btnVocab.classList.remove('is-hidden');
-      btnVocab.textContent = L('\ud83d\udcc4 Moojuula kana buusi', '\ud83d\udcc4 Télécharger ce module');
+      btnVocab.title = L('Moojuula kana buusi', 'Télécharger ce module (PDF)');
     }
   }
 
@@ -1509,50 +1529,6 @@ function switchTab(tab) {
   if (lessonEl) lessonEl.classList.toggle('mode-cartes', tab === 'flash');
 
   if (tab !== 'repeat') _stopRepeat();
-
-  /* ── Repositionnement du bouton PDF selon le mode ──────────────────
-     PROBLÈME ANDROID : en mode Cartes, #lesson a overflow:hidden et
-     height fixe (--app-h). Quand la barre d'URL du navigateur se
-     rétracte/étend, --app-h se désynchronise et le bouton PDF
-     (frère flex de .lesson-body) disparaît sous la bottom-nav.
-
-     SOLUTION : en mode flash uniquement, on sort .lesson-export-bar
-     du flux flex de #lesson et on l'insère comme frère AVANT
-     #bottom-nav dans le DOM. On lui applique position:fixed avec
-     bottom = hauteur réelle de #bottom-nav lue via getBoundingClientRect()
-     — valeur toujours synchronisée avec la barre d'URL, contrairement
-     à la CSS custom property --bottom-nav-h calculée à intervalle.
-
-     En quittant le mode flash, on remet la barre dans #lesson et
-     on efface tous les styles inline. */
-  const exportBar = document.querySelector('.lesson-export-bar');
-  const bottomNav = document.getElementById('bottom-nav');
-  const lesson    = document.getElementById('lesson');
-  if (exportBar && bottomNav && lesson) {
-    if (tab === 'flash') {
-      /* Sortir du flux flex de #lesson, insérer juste avant #bottom-nav */
-      if (bottomNav.previousElementSibling !== exportBar) {
-        bottomNav.parentNode.insertBefore(exportBar, bottomNav);
-      }
-      /* Ancrer dynamiquement : bottom = hauteur réelle de la bottom-nav */
-      const navH = bottomNav.getBoundingClientRect().height;
-      exportBar.style.position = 'fixed';
-      exportBar.style.bottom   = navH + 'px';
-      exportBar.style.left     = '0';
-      exportBar.style.right    = '0';
-      exportBar.style.zIndex   = '999';
-    } else {
-      /* Remettre dans #lesson et effacer tous les styles inline */
-      if (!lesson.contains(exportBar)) {
-        lesson.appendChild(exportBar);
-      }
-      exportBar.style.position = '';
-      exportBar.style.bottom   = '';
-      exportBar.style.left     = '';
-      exportBar.style.right    = '';
-      exportBar.style.zIndex   = '';
-    }
-  }
 
   if      (tab === 'flash')  { renderFlash(); }
   else if (tab === 'quiz10') { q10Step = 0; q10Score = 0; q10Answered = false; _q10Questions = null; if (!_restoreQuizSession()) renderQuiz10(); }
@@ -2914,10 +2890,11 @@ function _buildHomeGuide() {
     btn.onclick = () => { showScreen('sections-level1'); };
   }
 
-  /* ── 6. Bouton export PDF du guide ── */
+  /* ── 6. Bouton export PDF du guide (pill compact dans la barre sticky) ── */
   let exportBtn = document.getElementById('homeExportBtn');
   if (exportBtn) {
-    exportBtn.textContent = L('📄 Galmee buusi', '📄 Télécharger le guide');
+    exportBtn.textContent = L('📄 PDF', '📄 PDF');
+    exportBtn.title = L('Galmee guutuu buusi', 'Télécharger le guide (PDF)');
   }
 }
 
@@ -3005,6 +2982,13 @@ function showCredits() {
 /* ============================================================
    15. INITIALISATION DU LAUNCHER
    ============================================================ */
+
+/* Afficher la nav dès le chargement — visible sur toutes les pages
+   y compris le launcher (état neutre : aucun bouton actif) */
+(function() {
+  let nav = document.getElementById('bottom-nav');
+  if (nav) nav.classList.add('visible');
+})();
 
 document.querySelectorAll('.lang-card[data-lang]').forEach((card) => {
   card.addEventListener('click', () => {
