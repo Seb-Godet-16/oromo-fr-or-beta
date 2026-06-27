@@ -53,6 +53,10 @@ const CACHE_NAME = 'taphadmeuh-GITHUB_RUN_NUMBER';   /* Suffixe automatisé par 
   (Le coût réseau est identique à l'ancien data.js monolithique,
   mais la mémoire JS n'est consommée que pour le mode actif.)
 */
+/*
+  Ressources CRITIQUES : un seul échec fait échouer l'installation entière du SW.
+  Ces fichiers doivent tous répondre 200 ou l'app ne sera pas installable hors-ligne.
+*/
 const PRECACHE_URLS = [
   './index.html',
   './css/style.css',
@@ -72,11 +76,20 @@ const PRECACHE_URLS = [
   './icons/icon-192x192-maskable.png',
   './icons/icon-384x384.png',
   './icons/icon-512x512.png',
-  './icons/icon-512x512-maskable.png',
-  /* Screenshots déclarés dans manifest.json — pré-cachés pour cohérence hors-ligne */
+  './icons/icon-512x512-maskable.png'
+];
+
+/*
+  Ressources OPTIONNELLES : screenshots manifest.json uniquement.
+  Leurs noms contiennent des espaces et des caractères accentués (ç)
+  qui peuvent provoquer des erreurs 404 selon l'encodage du serveur.
+  Un échec ici NE bloque PAS l'installation du SW : cache.addAll()
+  est remplacé par des cache.add() individuels avec .catch() silencieux.
+*/
+const PRECACHE_SCREENSHOTS = [
   './img/Ecran Accueil - 933x1829.png',
   './img/Modules 933x1829.png',
-  './img/Flashcard français recto 933x1829.png',
+  './img/Flashcard fran\u00e7ais recto 933x1829.png',
   './img/Flashcard oromo verso 933x1829.png',
   './img/Guide Explicatif 933x1829.png'
 ];
@@ -160,9 +173,17 @@ function _isNavigation(request) {
    ────────────────────────────────────────────────────────────────── */
 self.addEventListener('install', (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME)
-      .then((cache) => cache.addAll(PRECACHE_URLS))
-      .then(() => self.skipWaiting())
+    caches.open(CACHE_NAME).then((cache) => {
+      /* 1. Ressources critiques : un échec ici fait échouer l'installation */
+      return cache.addAll(PRECACHE_URLS)
+        .then(() => {
+          /* 2. Screenshots optionnels : échecs silencieux (noms avec espaces/accents) */
+          return Promise.all(
+            PRECACHE_SCREENSHOTS.map((url) => cache.add(url).catch(() => {}))
+          );
+        });
+    })
+    .then(() => self.skipWaiting())
   );
 });
 

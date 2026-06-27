@@ -1660,13 +1660,30 @@ footer a:hover{text-decoration:underline}
   font-size:.76rem;
 }
 
-/* Note explicative dans le pill fallback */
-.repeat-lang-note{
-  display:block;
+/* Cas Oromo natif supporté : pill verte rassurante */
+.repeat-lang-info.repeat-lang-native{
+  text-align:left;
+  background:#f0faf2;
+  border:1.5px solid #43a047;
+  border-radius:10px;
+  padding:8px 12px;
+  color:#1b5e20;
+  font-size:.76rem;
+}
+
+/* Ligne 1 du pill fallback : ⚠️ Reconnaissance audio : Haoussa (ha-NG) */
+.repeat-lang-fallback-line1{
+  font-weight:600;
+  line-height:1.4;
+}
+
+/* Ligne 2 du pill fallback : — Oromo non supporté — langue «…» utilisée à la place */
+.repeat-lang-fallback-line2{
   font-size:.68rem;
   font-weight:400;
-  opacity:.8;
-  margin-top:2px;
+  opacity:.82;
+  margin-top:3px;
+  line-height:1.4;
 }
 
 /* ── Carte du mot à répéter ────────────────────────────────────── */

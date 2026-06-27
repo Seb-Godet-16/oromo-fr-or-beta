@@ -311,9 +311,8 @@ function _setUI(t) {
   _setText('level1Label',     t.level1Label);
   _setText('level2Label',     t.level2Label);
 
-  /* Le bouton "Démarrer" sur l'écran home ouvre l'écran sections */
-  let btn = document.getElementById('homeStartBtn');
-  if (btn) btn.onclick = () => { showScreen('sections-level1'); };
+  /* Le bouton "Démarrer" sur l'écran home est câblé par _buildHomeGuide()
+     (appelée juste après _setUI dans initApp). Pas de doublon ici. */
 
   /* Mettre à jour les footers selon la langue du parcours */
   _setFooters();
@@ -872,25 +871,27 @@ function executeResetProgress() {
   closeConfirmModal();
 
   // 2. Détermination du mode actuel pour cibler l'onboarding à réinitialiser
-  let isOromoInterface = (STORAGE_KEY === 'pe_om_fr_done_v1');
+  //    pe_om_fr_done_v1 = interface Oromo, apprentissage Français (learn_french)
+  //    pe_fr_om_done_v1 = interface Français, apprentissage Oromo  (learn_oromo)
+  let isLearnFrenchMode = (STORAGE_KEY === 'pe_om_fr_done_v1');
 
   // 3. On supprime proprement la progression du mode actif
-  localStorage.removeItem(STORAGE_KEY); 
-  
+  localStorage.removeItem(STORAGE_KEY);
+
   // 4. On supprime l'onboarding du mode actif pour réafficher le guide au redémarrage
-  if (isOromoInterface) {
-    localStorage.removeItem(_OB_KEY_FR); // Mode "Apprendre le Français"
+  if (isLearnFrenchMode) {
+    localStorage.removeItem(_OB_KEY_FR); // Mode learn_french : onboarding interface Oromo
   } else {
-    localStorage.removeItem(_OB_KEY_OR); // Mode "Apprendre l'Oromo"
+    localStorage.removeItem(_OB_KEY_OR); // Mode learn_oromo  : onboarding interface Français
   }
 
   // 5. Déclenchement d'un retour haptique de confirmation (vibration tactile)
   _vibrateFeedback('correct');
 
   // 6. Notification de succès via le système de Toast bilingue de l'application
-  _showToast(isOromoInterface 
+  _showToast(isLearnFrenchMode
     ? '🔄 Appilikeeshiniin deebifameera!'
-    : '🔄 Application réinitialisée avec succès !' 
+    : '🔄 Application réinitialisée avec succès !'
   );
 
   // 7. Rechargement propre de la page après un léger délai pour appliquer les changements
@@ -1486,7 +1487,7 @@ function _buildThemeCard(t) {
   let resetBtn = isDone(t.id)
     ? '<button class="btn-reset-theme" '
       + 'onclick="event.stopPropagation();resetTheme(\'' + t.id + '\')">'
-      + L('🔄 Irra deebiʼi', '🔄 Recommencer')
+      + L('🔄 Irra deebii\'i', '🔄 Recommencer')
       + '</button>'
     : '';
 
@@ -1583,9 +1584,14 @@ function openTheme(id, dir) {
     tabs = [
       { k: 'dialog', lbl: L('💬 Maree',    '💬 Dialogue')   },
       { k: 'vocab',  lbl: L('📚 Jechoota', '📚 Lexique') },
-      { k: 'dquiz',  lbl: L('❓ Gaaffilee', '❓ Quiz')        },
       { k: 'repeat', lbl: L('🎙️ Irraddeessi', '🎙️ Répète')   }
     ];
+    /* L'onglet Quiz n'est affiché que si le thème dispose effectivement
+       d'un tableau quiz non vide — évite un crash sur CT.quiz.length si
+       un thème Niveau 2 est ajouté dans les données sans son champ quiz. */
+    if (CT.quiz && CT.quiz.length > 0) {
+      tabs.splice(2, 0, { k: 'dquiz', lbl: L('❓ Gaaffilee', '❓ Quiz') });
+    }
   } else if (CT.type === 'alpha') {
     tabs = [
       { k: 'flash',  lbl: L('🔤 Qubee',    '🔤 Alphabet')   },
@@ -1758,7 +1764,7 @@ function renderFlash() {
     + '<button onclick="nextCard()">' + nextLabel + '</button>'
     + '</div>'
     + '<div class="fc-audio-wrap" style="text-align:center;">'
-    + '<button class="audio-btn-big" onclick="speak(\'' + esc(card[keys.src]) + '\')">' + audioBtn + '</button>'
+    + '<button class="audio-btn-big" onclick="speak(\'' + escJS(card[keys.src]) + '\')">' + audioBtn + '</button>'
     + '</div>';
 }
 
@@ -1771,7 +1777,7 @@ function buildAlphaDetail(c) {
   let keys = langKeys();
   return '<div class="alpha-detail-letter" lang="' + keys.src + '">' + c[keys.src] + '</div>'
     + '<div class="alpha-detail-name" lang="' + keys.tgt + '">' + c[keys.tgt] + '</div>'
-    + '<button class="alpha-detail-btn" onclick="speak(\'' + esc(c[keys.src]) + '\')">'
+    + '<button class="alpha-detail-btn" onclick="speak(\'' + escJS(c[keys.src]) + '\')">'
     + L('🔊 Dhaggeeffadhu', '🔊 Écouter')
     + '</button>';
 }
@@ -1834,6 +1840,18 @@ function isAlphaQuiz() {
 
 /**
  * Détermine le nombre optimal de questions selon la taille du vocabulaire.
+ *
+ * Seuils calibrés sur la distribution réelle des thèmes (data-fr.js / data-or.js) :
+ *   <  10 mots  → 3 questions  (ex : alphabet partiel, modules très courts)
+ *   < 15 mots   → 5 questions  (ex : chiffres, couleurs — ~10-14 entrées)
+ *   ≤ 27 mots   → 8 questions  (majorité des thèmes Niveau 1 — ~15-27 entrées)
+ *   > 27 mots   → 10 questions (thèmes larges : corps humain, famille… ≥ 28 entrées)
+ *
+ * Le seuil 27 correspond à la coupure naturelle observée dans la distribution
+ * du nombre de mots par thème : aucun thème ne contient entre 24 et 28 mots,
+ * ce qui rend la frontière stable (pas de thème "borderline" qui basculerait
+ * d'une catégorie à l'autre selon de futures modifications mineures du contenu).
+ *
  * @param {Object} theme - Objet thème
  * @returns {3|5|8|10}
  */
@@ -1841,7 +1859,7 @@ function getQuizTotal(theme) {
   let n = (theme.words || []).length;
   if (n < 10)  return 3;
   if (n < 15)  return 5;
-  if (n <= 27) return 8;
+  if (n <= 27) return 8;   // seuil 27 : coupure naturelle dans la distribution des thèmes
   return 10;
 }
 
@@ -2094,7 +2112,7 @@ function renderDialog() {
       + '<div class="speaker-name">' + ln.s + '</div>'
       + '<div class="msg-row">'
       + '<div class="msg" lang="' + keys.src + '">' + ln[keys.src] + '</div>'
-      + '<button class="speak-bubble-btn" onclick="speak(\'' + esc(ln[keys.src]) + '\')" title="' + listenTip + '">🔊</button>'
+      + '<button class="speak-bubble-btn" onclick="speak(\'' + escJS(ln[keys.src]) + '\')" title="' + listenTip + '">🔊</button>'
       + '</div>'
       + '<div class="bubble-translation" lang="' + keys.tgt + '">' + ln[keys.tgt] + '</div>'
       + '</div>';
@@ -2106,11 +2124,13 @@ function renderDialog() {
     + '<div class="scene-img-big">' + sit.img + '</div>'
     + '<div class="bubble-wrap">' + bubbles + '</div>'
     + '</div>'
-    + '<div class="action-row">'
-    + '<button class="btn-start-quiz" onclick="switchTab(\'dquiz\')">'
-    + L('Quiz jalqabi ➜', 'Lancer le mini quiz ➜')
-    + '</button>'
-    + '</div>';
+    + (CT.quiz && CT.quiz.length > 0
+      ? '<div class="action-row">'
+          + '<button class="btn-start-quiz" onclick="switchTab(\'dquiz\')">'
+          + L('Quiz jalqabi ➜', 'Lancer le mini quiz ➜')
+          + '</button>'
+          + '</div>'
+      : '');
 
   setTimeout(() => {
     document.querySelectorAll('[id^=bl]').forEach((b) => { b.style.opacity = '1'; });
@@ -2150,7 +2170,7 @@ function renderVocab() {
     let listenTip = L('Dhaggeeffadhu : ', 'Écouter : ') + mainWord;
 
     return '<span class="vocab-chip" role="button" tabindex="0" '
-      + 'aria-label="' + _escAttr(listenTip) + '" onclick="speak(\'' + esc(mainWord) + '\')">'
+      + 'aria-label="' + _escAttr(listenTip) + '" onclick="speak(\'' + escJS(mainWord) + '\')">'
       + '<span class="vocab-item-et">' + mainWord + '</span>'
       + (subWord ? '<span class="vocab-item-fr">= ' + subWord + '</span>' : '')
       + '</span>';
@@ -2164,11 +2184,13 @@ function renderVocab() {
     + '</div>'
     + '<div class="vocab-grid">' + chips + '</div>'
     + '</div>'
-    + '<div class="action-row">'
-    + '<button class="btn-start-quiz" onclick="switchTab(\'dquiz\')">'
-    + L('Quiz jalqabi ➜', 'Lancer le mini quiz ➜')
-    + '</button>'
-    + '</div>';
+    + (CT.quiz && CT.quiz.length > 0
+      ? '<div class="action-row">'
+          + '<button class="btn-start-quiz" onclick="switchTab(\'dquiz\')">'
+          + L('Quiz jalqabi ➜', 'Lancer le mini quiz ➜')
+          + '</button>'
+          + '</div>'
+      : '');
 }
 
 
@@ -2523,18 +2545,37 @@ function _renderRepeatUI(altLangMsg) {
     ? '<div class="repeat-alt-lang">' + altLangMsg + '</div>'
     : '';
 
-  /* Affichage langue : neutre si Oromo natif, en évidence si fallback */
-  let isNativeLang = (isFrench() || _repeatLangUsed === 'om-ET');
-  let langInfo = isNativeLang
-    ? '<div class="repeat-lang-info">🌐 '
-        + L('Af-dubbii : ', 'Reconnaissance : ')
-        + '<strong>' + _repeatLangLabel + '</strong></div>'
-    : '<div class="repeat-lang-info repeat-lang-fallback">⚠️ '
-        + L('Af-dubbii : ', 'Reconnaissance : ')
-        + '<strong>' + _repeatLangLabel + '</strong>'
-        + '<span class="repeat-lang-note"> '
-        + L('— Oromo hin deeggararamu, afaan kanaan yaali', '— Oromo non supporté, cette langue est utilisée à la place')
-        + '</span></div>';
+  /* Affichage langue — 3 cas distincts :
+     1. Mode learn_french (fr-FR)   → discret gris, aucune confusion possible
+     2. Oromo natif (om-ET)         → pill verte, confirmation rassurante
+     3. Fallback (ha-NG, so-SO…)    → pill ambre ⚠️ deux lignes explicatives   */
+  let langInfo;
+  if (isFrench()) {
+    /* Cas 1 — Français natif : mention discrète en bas à droite */
+    langInfo = '<div class="repeat-lang-info">🎤 '
+      + 'Reconnaissance audio : '
+      + '<strong>' + _repeatLangLabel + '</strong></div>';
+  } else if (_repeatLangUsed === 'om-ET') {
+    /* Cas 2 — Oromo natif supporté : pill verte, message positif */
+    langInfo = '<div class="repeat-lang-info repeat-lang-native">'
+      + '<div class="repeat-lang-fallback-line1">✅ '
+      + 'Reconnaissance audio : '
+      + '<strong>' + _repeatLangLabel + '</strong></div>'
+      + '<div class="repeat-lang-fallback-line2">'
+      + L('— Afaan Oromoo sirnaan deeggararama', '— Oromo reconnu nativement par votre appareil')
+      + '</div>'
+      + '</div>';
+  } else {
+    /* Cas 3 — Fallback : pill ambre ⚠️, deux lignes explicatives */
+    langInfo = '<div class="repeat-lang-info repeat-lang-fallback">'
+      + '<div class="repeat-lang-fallback-line1">⚠️ '
+      + L('Af-dubbii sagalee : ', 'Reconnaissance audio : ')
+      + '<strong>' + _repeatLangLabel + '</strong></div>'
+      + '<div class="repeat-lang-fallback-line2">'
+      + L('— Oromo hin deeggararamu — afaan kana fayyadamaa', '— Oromo non supporté — langue «\u00a0' + _repeatLangLabel + '\u00a0» utilisée à la place')
+      + '</div>'
+      + '</div>';
+  }
 
   document.getElementById('tabContent').innerHTML =
     altBanner
@@ -2798,6 +2839,17 @@ function _renderRepeatResult() {
  * Affiche la question courante du quiz dialogue (ou l'écran de résultats).
  */
 function renderDialogQuiz() {
+  /* Guard défensif : CT.quiz absent ou vide (thème sans quiz dans les données).
+     Ne devrait pas arriver si openTheme() masque l'onglet dquiz correctement,
+     mais protège contre un appel direct ou une restauration de session corrompue. */
+  if (!CT.quiz || CT.quiz.length === 0) {
+    document.getElementById('tabContent').innerHTML =
+      '<div class="repeat-unavailable"><p>'
+      + L('Gaaffii hin jiru.', 'Aucun quiz disponible pour ce module.')
+      + '</p></div>';
+    return;
+  }
+
   let qs    = CT.quiz;
   let total = qs.length;
 
@@ -2892,9 +2944,9 @@ function _quizResultStrings(pct, type) {
   let isSuccess = stars > 0;
 
   let title = L('Quiz xumurameera!', 'Quiz terminé !');
-  if      (stars === 3) title = L('Baayʼee gaari da! 🌟🌟🌟', 'Parfait ! 🌟🌟🌟');
-  else if (stars === 2) title = L('Gari da! ⭐⭐',             'Très bien ! ⭐⭐');
-  else if (stars === 1) title = L('Ni dandaʼama! ⭐',          'Bien ! ⭐');
+  if      (stars === 3) title = L('Baay\'ee gaarii dha! 🌟🌟🌟', 'Parfait ! 🌟🌟🌟');
+  else if (stars === 2) title = L('Gaarii dha! ⭐⭐',              'Très bien ! ⭐⭐');
+  else if (stars === 1) title = L('Ni danda\'ama! ⭐',             'Bien ! ⭐');
 
   return {
     title : title,
@@ -2921,6 +2973,24 @@ function esc(s) {
     .replaceAll('\\', '\\\\')
     .replaceAll("'",  '&#39;')   // Protège l'apostrophe Oromo dans le DOM HTML
     .replaceAll('"',  '&quot;'); // Protège les guillemets
+}
+
+/**
+ * Échappe une chaîne pour une insertion sécurisée dans un LITTÉRAL JS
+ * inclus dans un attribut HTML inline — ex : onclick="speak('...')".
+ * Contrairement à esc(), utilise \' (séquence JS) et non &#39; (entité HTML),
+ * car la valeur sera évaluée par le moteur JS et non affichée dans le DOM.
+ * Sans cela, les mots Oromo avec apostrophes (danda'u, ba'uu…) seraient
+ * prononcés "danda ampersand hash 39 semi u" par le TTS.
+ * @param {string} s
+ * @returns {string}
+ */
+function escJS(s) {
+  if (!s) return '';
+  return s
+    .replaceAll('\\', '\\\\')
+    .replaceAll("'",  "\\'")     // Apostrophe → séquence JS (pas entité HTML)
+    .replaceAll('"',  '\\"');    // Guillemet   → séquence JS
 }
 
 /**
@@ -3029,7 +3099,7 @@ function _buildHomeGuide() {
   let badgesEl = document.getElementById('homeGuideBadges');
   if (badgesEl) {
     let badges = isFr
-      ? ['✅ Bilisaa', '🚧 Galmee malee', '📱 Bilbila & Kompiyuutara', '🔊 Sagalee', '🎤 Irra deebʼi', '📲 Interneetii malee']
+      ? ['✅ Bilisaa', '🚧 Galmee malee', '📱 Bilbila & Kompiyuutara', '🔊 Sagalee', '🎤 Irra deebii\'i', '📲 Interneetii malee']
       : ['✅ 100% Gratuit', '🚧 Sans inscription', '📱 Mobile & Bureau', '🔊 Audio inclus', '🎤 Répétition orale', '📲 Hors-ligne'];
     badgesEl.innerHTML = badges.map((b) => '<span class="hg-badge">' + b + '</span>').join('');
   }
@@ -3345,7 +3415,9 @@ if ('serviceWorker' in navigator) {
  *
  * Détection iOS standalone : navigator.standalone === true (propriété non-standard
  * Apple, disponible sur tous les Safari iOS depuis iOS 2.1).
- * Détection Android : /Android/i.test(navigator.userAgent).
+ * Détection Android smartphone : UA contient "Android" ET "Mobile".
+ * Les tablettes Android (UA "Android" sans "Mobile") utilisent le chemin normal
+ * (Blob URL + popup) comme un navigateur desktop.
  *
  * @param {string} htmlContent - Document HTML complet à imprimer / télécharger
  */
@@ -3358,16 +3430,24 @@ function _openPrintWindow(htmlContent) {
     return;
   }
 
-  /* ── Détection Android ──
-     Sur Android (Brave, Chrome, Firefox…), window.open() avec une Blob URL
+  /* ── Détection Android smartphone ──
+     Sur Android SMARTPHONE (Brave, Chrome, Firefox…), window.open() avec une Blob URL
      est bloqué silencieusement par le bloqueur de popups intégré : la fonction
      retourne un objet non-null mais la fenêtre n'est jamais rendue, et l'événement
      'load' ne se déclenche donc pas → window.print() n'est jamais appelé.
-     Solution : on contourne window.open() sur Android et on télécharge directement
-     le fichier HTML via _downloadAsHtml(), que l'utilisateur ouvre pour imprimer. */
-  const isAndroid = /Android/i.test(navigator.userAgent);
+     Solution : on contourne window.open() sur Android smartphone et on télécharge
+     directement le fichier HTML via _downloadAsHtml(), que l'utilisateur ouvre pour imprimer.
 
-  if (isAndroid) {
+     Distinction smartphone / tablette :
+     - Android smartphone → UA contient "Android" ET "Mobile"
+     - Android tablette   → UA contient "Android" mais PAS "Mobile"
+     Les tablettes Android sous Chrome (y compris mode "desktop") se comportent
+     comme un navigateur desktop : window.open() + print() fonctionnent correctement.
+     On les laisse donc passer dans le chemin normal (Blob URL + popup). */
+  const ua          = navigator.userAgent;
+  const isAndroidSmartphone = /Android/i.test(ua) && /Mobile/i.test(ua);
+
+  if (isAndroidSmartphone) {
     _downloadAsHtml(htmlContent);
     return;
   }
@@ -3438,12 +3518,12 @@ function _downloadAsHtml(htmlContent) {
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
     }, 1000);
-    const isAndroid = /Android/i.test(navigator.userAgent);
+    const isAndroidSmartphone = /Android/i.test(navigator.userAgent) && /Mobile/i.test(navigator.userAgent);
     _showToast(L(
-      isAndroid
+      isAndroidSmartphone
         ? '📄 Fichier HTML téléchargé — ouvrez-le dans votre navigateur pour imprimer.'
         : '📄 Fichier HTML téléchargé — ouvrez-le dans Safari pour imprimer.',
-      isAndroid
+      isAndroidSmartphone
         ? '📄 Faayilii HTML buufame — maxxansuuf browser keessatti bani.'
         : '📄 Faayilii HTML buufame — maxxansuuf Safari keessatti bani.'
     ), 6000);
