@@ -3679,3 +3679,62 @@ footer a:hover{text-decoration:underline}
   text-underline-offset:2px;
 }
 .antispam-btn:hover{opacity:.75}
+
+
+/* ══════════════════════════════════════════════════════════════
+   §SPEAKING  Feedback visuel bouton audio pendant la lecture TTS
+   ══════════════════════════════════════════════════════════════
+   La classe .is-speaking est posée par speak() / _doSpeak()
+   sur le bouton déclencheur dès le début de la lecture,
+   et retirée dans le dernier onend (ou à l'annulation).
+
+   Deux variantes selon le contexte :
+   • Boutons génériques (flash, vocab, dialogue) — animation
+     d'onde (ripple) en arrière-plan + légère atténuation
+   • Bouton .repeat-btn--listen dans l'onglet Répète — remplace
+     le pulse ponctuel existant par un état persistant
+   ══════════════════════════════════════════════════════════════ */
+
+/* Animation d'onde circulaire sur le bouton pendant la lecture */
+@keyframes speakingPulse {
+  0%   { box-shadow: 0 0 0 0    rgba(var(--c-primary-rgb, 0,35,149), .45); }
+  70%  { box-shadow: 0 0 0 8px  rgba(var(--c-primary-rgb, 0,35,149), 0);   }
+  100% { box-shadow: 0 0 0 0    rgba(var(--c-primary-rgb, 0,35,149), 0);   }
+}
+
+.is-speaking {
+  animation: speakingPulse 1s ease-out infinite;
+  opacity: .82;
+  cursor: wait;
+}
+
+/* Sur les boutons son (🔊) des flashcards / vocab / dialogue */
+.btn-speak.is-speaking,
+.vocab-chip.is-speaking,
+.dial-speak-btn.is-speaking {
+  filter: brightness(.88) saturate(1.4);
+}
+
+/* Dans l'onglet Répète : état persistant sur le bouton écouter */
+.repeat-btn--listen.is-speaking {
+  animation: speakingPulse 1s ease-out infinite;
+  opacity: .80;
+}
+
+/* Mode sombre : adapter l'onde */
+@media (prefers-color-scheme: dark) {
+  @keyframes speakingPulse {
+    0%   { box-shadow: 0 0 0 0   rgba(255,255,255,.35); }
+    70%  { box-shadow: 0 0 0 8px rgba(255,255,255,0);   }
+    100% { box-shadow: 0 0 0 0   rgba(255,255,255,0);   }
+  }
+}
+
+/* Accessibilité : reduced-motion — on désactive l'animation */
+@media (prefers-reduced-motion: reduce) {
+  .is-speaking {
+    animation: none;
+    outline: 2px solid var(--c-primary);
+    outline-offset: 2px;
+  }
+}

@@ -220,6 +220,11 @@ function _loadDataScript(filename, callback) {
 function initApp(mode) {
   currentMode = mode;
 
+  /* ── Réinitialiser le cache de voix Oromo à chaque changement de mode ──
+     Évite qu'une voix Oromo résolue lors d'une session précédente
+     soit réutilisée en mode Français (et inversement). */
+  _resetOromoVoiceCache();
+
   /* ── Appliquer immédiatement le thème visuel et masquer le launcher ── */
   if (mode === 'learn_french') {
     document.documentElement.className = 'theme-french';
@@ -353,6 +358,16 @@ let _oromoVoice = undefined;
 let _hasNotifiedVoice = false;
 
 /**
+ * Réinitialise le cache de voix Oromo.
+ * Appelé par initApp() à chaque changement de mode pour éviter
+ * qu'une voix Oromo résolue précédemment soit utilisée en mode Français.
+ */
+function _resetOromoVoiceCache() {
+  _oromoVoice       = undefined;
+  _hasNotifiedVoice = false;
+}
+
+/**
  * Affiche une notification discrète et non bloquante en haut de l'écran.
  * Remplace l'usage de alert(), qui interrompt brutalement l'apprentissage
  * et bloque le thread JS tant que l'utilisateur n'a pas cliqué "OK".
@@ -440,24 +455,66 @@ function _resolveOromoVoice(callback) {
     return true;
   }
 
-  /* Si les voix ne sont pas encore chargées, on attend l'événement 'voiceschanged' */
+  /* Si les voix ne sont pas encore chargées, on attend l'événement 'voiceschanged'.
+     Sur iOS/Safari, cet événement ne se déclenche parfois jamais.
+     Un timeout de 2 s force la résolution avec les voix disponibles à ce moment
+     (ou la voix par défaut si la liste est encore vide). */
   if (!search()) {
-    speechSynthesis.addEventListener('voiceschanged', function h() {
-      speechSynthesis.removeEventListener('voiceschanged', h);
-      search();
+    let _voicesTimeout = null;
+
+    function _onVoicesChanged() {
+      speechSynthesis.removeEventListener('voiceschanged', _onVoicesChanged);
+      clearTimeout(_voicesTimeout);
+      if (_oromoVoice === undefined) {
+        /* Pas encore résolu : forcer avec ce qu'on a */
+        _oromoVoice = speechSynthesis.getVoices()[0] || null;
+      }
       callback(_oromoVoice);
-    });
+    }
+
+    speechSynthesis.addEventListener('voiceschanged', _onVoicesChanged);
+
+    /* Timeout de sécurité : 2 s max pour éviter un callback silencieux sur iOS */
+    _voicesTimeout = setTimeout(() => {
+      speechSynthesis.removeEventListener('voiceschanged', _onVoicesChanged);
+      if (_oromoVoice === undefined) {
+        /* Forcer un résultat même si la liste est vide */
+        const fallback = speechSynthesis.getVoices();
+        _oromoVoice = fallback.length > 0 ? fallback[0] : null;
+        if (!_hasNotifiedVoice) {
+          _hasNotifiedVoice = true;
+          _showToast('🎙️ Audio Oromo configuré avec la voix : Voix par défaut');
+        }
+      }
+      callback(_oromoVoice);
+    }, 2000);
   }
 }
 
 /**
  * Point d'entrée unique pour la lecture audio d'un texte.
  * Redirige vers la cascade Oromo ou la lecture française standard.
- * Gère les textes multiples séparés par " / " (pause de 2s entre chaque).
- * @param {string} txt - Texte à lire (peut contenir " / " comme séparateur)
+ * Gère les textes multiples séparés par " / " (pause de 800ms entre chaque).
+ * Applique la classe CSS `is-speaking` sur le bouton déclencheur pendant
+ * toute la durée de la lecture, pour un retour visuel immédiat.
+ * @param {string} txt      - Texte à lire (peut contenir " / " comme séparateur)
+ * @param {HTMLElement} [triggerBtn] - Bouton ayant déclenché la lecture (optionnel)
  */
-function speak(txt) {
+function speak(txt, triggerBtn) {
   if (!txt) return;
+
+  /* ── Feedback visuel : marquer le bouton comme "en lecture" ── */
+  function _markSpeaking(btn) {
+    if (!btn) return;
+    btn.classList.add('is-speaking');
+    btn.setAttribute('aria-label', (btn.getAttribute('aria-label') || '') + ' (lecture…)');
+  }
+  function _unmarkSpeaking(btn) {
+    if (!btn) return;
+    btn.classList.remove('is-speaking');
+    const lbl = btn.getAttribute('aria-label') || '';
+    btn.setAttribute('aria-label', lbl.replace(' (lecture…)', ''));
+  }
 
   if (currentMode === 'learn_oromo') {
     if (!window.speechSynthesis) return;
@@ -465,9 +522,10 @@ function speak(txt) {
     _resolveOromoVoice(function(voice) {
       speechSynthesis.cancel();
       let parts = txt.split('/').map((p) => p.trim()).filter(Boolean);
+      _markSpeaking(triggerBtn);
 
       function speakPart(i) {
-        if (i >= parts.length) return;
+        if (i >= parts.length) { _unmarkSpeaking(triggerBtn); return; }
         let u = new SpeechSynthesisUtterance(parts[i]);
         if (voice) {
           u.voice = voice;
@@ -475,7 +533,8 @@ function speak(txt) {
         }
         u.rate  = 0.85;  // Légèrement ralenti pour faciliter la compréhension
         u.onend = () => {
-          if (i + 1 < parts.length) setTimeout(() => { speakPart(i + 1); }, 2000);
+          if (i + 1 < parts.length) setTimeout(() => { speakPart(i + 1); }, 800);
+          else _unmarkSpeaking(triggerBtn);
         };
         speechSynthesis.speak(u);
       }
@@ -485,7 +544,7 @@ function speak(txt) {
 
   } else {
     /* Mode learn_french : lecture standard en français */
-    _doSpeak(txt, null, 0.80);
+    _doSpeak(txt, null, 0.80, triggerBtn);
   }
 }
 
@@ -495,19 +554,25 @@ function speak(txt) {
  * @param {string} txt      - Texte à lire
  * @param {SpeechSynthesisVoice|null} voiceObj - Voix à utiliser (null = voix par défaut)
  * @param {number} rate     - Vitesse de lecture (0.1 à 10)
+ * @param {HTMLElement} [triggerBtn] - Bouton déclencheur (reçoit is-speaking pendant la lecture)
  */
-function _doSpeak(txt, voiceObj, rate) {
+function _doSpeak(txt, voiceObj, rate, triggerBtn) {
   speechSynthesis.cancel();
   let parts = txt.split('/').map((p) => p.trim()).filter(Boolean);
+  if (triggerBtn) triggerBtn.classList.add('is-speaking');
 
   function speakPart(i) {
-    if (i >= parts.length) return;
+    if (i >= parts.length) {
+      if (triggerBtn) triggerBtn.classList.remove('is-speaking');
+      return;
+    }
     let u  = new SpeechSynthesisUtterance(parts[i]);
     u.lang = voiceLang;
     u.rate = rate;
     if (voiceObj) u.voice = voiceObj;
     u.onend = () => {
-      if (i + 1 < parts.length) setTimeout(() => { speakPart(i + 1); }, 2000);
+      if (i + 1 < parts.length) setTimeout(() => { speakPart(i + 1); }, 800);
+      else if (triggerBtn) triggerBtn.classList.remove('is-speaking');
     };
     speechSynthesis.speak(u);
   }
@@ -646,6 +711,47 @@ if (window.speechSynthesis) {
     }
   });
 }
+
+/* ============================================================
+   3d. KEEPALIVE WATCHDOG — Chrome / Android
+   ============================================================
+   Bug Chrome/Android : speechSynthesis.speaking passe à false
+   après ~15 s d'inactivité du moteur TTS (bug Chromium #503948).
+   La synthèse se fige silencieusement en plein milieu d'une
+   lecture, sans déclencher onend ni onerror.
+
+   Solution : un intervalle de 10 s qui appelle pause()/resume()
+   si et seulement si le moteur est censé être en train de parler
+   (speaking === true). Ce micro-jolt réveille le thread TTS
+   sans interrompre l'audio perçu par l'utilisateur.
+
+   L'intervalle est suspendu automatiquement quand l'app passe
+   en arrière-plan (document.hidden) pour économiser la batterie,
+   et reprend à la remise au premier plan.
+   ============================================================ */
+let _ttsKeepAliveTimer = null;
+
+function _startTtsKeepAlive() {
+  if (_ttsKeepAliveTimer) return;           // déjà actif
+  if (!window.speechSynthesis) return;
+  _ttsKeepAliveTimer = setInterval(() => {
+    if (document.hidden) return;            // app en arrière-plan : on ne fait rien
+    if (speechSynthesis.speaking && !speechSynthesis.paused) {
+      speechSynthesis.pause();
+      speechSynthesis.resume();
+    }
+  }, 10000);
+}
+
+function _stopTtsKeepAlive() {
+  if (_ttsKeepAliveTimer) {
+    clearInterval(_ttsKeepAliveTimer);
+    _ttsKeepAliveTimer = null;
+  }
+}
+
+/* Démarrer le watchdog dès le chargement de la page */
+_startTtsKeepAlive();
 
 
 /* ============================================================
@@ -2127,27 +2233,74 @@ function _stopRepeat() {
 /**
  * Normalise un texte pour la comparaison :
  * minuscules, sans accents, sans ponctuation superflue.
+ * L'apostrophe typographique Oromo ' (U+2019) est convertie en
+ * apostrophe droite ' (U+0027) avant le nettoyage, ce qui évite
+ * les faux négatifs sur les mots comme ba'uu, ni ja'a, hin ta'u…
  * @param {string} s
  * @returns {string}
  */
 function _normalizeRepeat(s) {
   return (s || '')
     .toLowerCase()
+    .replace(/\u2019/g, "'")           // apostrophe typographique → droite (Oromo)
+    .replace(/[\u2018\u201A\u0060]/g, "'") // autres variantes d'apostrophe ouvrante
     .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')  // supprime les diacritiques
-    .replace(/[^a-z0-9\s']/g, ' ')   // ponctuation → espace
+    .replace(/[\u0300-\u036f]/g, '')   // supprime les diacritiques
+    .replace(/[^a-z0-9\s']/g, ' ')    // ponctuation → espace (conserve l'apostrophe droite)
     .replace(/\s+/g, ' ')
     .trim();
 }
 
 /**
- * Teste si la transcription contient le mot attendu (tolérance partielle :
- * le mot attendu doit apparaître quelque part dans la transcription,
- * ce qui absorbe les mots parasites courants du speech-to-text).
+ * Teste si la transcription contient le mot attendu.
+ * Stratégie en trois passes :
+ *   1. Correspondance exacte ou inclusion directe.
+ *   2. Tolérance Levenshtein ≤ 25 % sur la transcription entière.
+ *   3. Même tolérance mot par mot (absorbe les parasites STT).
+ *   4. Pour les expressions avec " / ", chaque partie est testée
+ *      indépendamment — la première qui passe valide la réponse.
  * @param {string} transcript
  * @param {string} expected
  * @returns {boolean}
  */
+function _matchRepeat(transcript, expected) {
+  /* Tester une paire normalisée (t, e) avec la logique Levenshtein */
+  function _testPair(t, e) {
+    if (!e) return false;
+    if (t === e || t.indexOf(e) !== -1) return true;
+    /* Mots très courts (≤ 3 car) : pas de tolérance */
+    if (e.length <= 3) return t === e;
+    let threshold = Math.floor(e.length * 0.25);
+    if (threshold < 1) threshold = 1;
+    if (_levenshtein(t, e) <= threshold) return true;
+    /* Test mot par mot dans la transcription */
+    const words = t.split(/\s+/);
+    for (const word of words) {
+      if (_levenshtein(word, e) <= threshold) return true;
+    }
+    return false;
+  }
+
+  let t = _normalizeRepeat(transcript);
+
+  /* Bug 8 — Tester chaque partie séparée par " / " indépendamment.
+     Ex. : "ba'uu / hin deemne" → on teste "ba'uu" ET "hin deemne"
+     séparément. La transcription STT ne restitue qu'une seule partie ;
+     le seuil de 25% global échouerait sur l'expression complète. */
+  const expectedParts = expected.split('/').map((p) => _normalizeRepeat(p)).filter(Boolean);
+
+  if (expectedParts.length <= 1) {
+    /* Pas de séparateur : comportement classique */
+    return _testPair(t, _normalizeRepeat(expected));
+  }
+
+  /* Plusieurs parties : la transcription doit matcher au moins l'une d'elles */
+  for (const part of expectedParts) {
+    if (_testPair(t, part)) return true;
+  }
+  return false;
+}
+
 /**
  * Calcule la distance de Levenshtein entre deux chaînes.
  * Algorithme DP classique, O(n*m) en temps, O(min(n,m)) en espace.
@@ -2177,40 +2330,6 @@ function _levenshtein(a, b) {
     [prev, curr] = [curr, prev];
   }
   return prev[short.length];
-}
-
-function _matchRepeat(transcript, expected) {
-  let t = _normalizeRepeat(transcript);
-  let e = _normalizeRepeat(expected);
-
-  /* Correspondance exacte ou le mot attendu est contenu dans la transcription */
-  if (t === e || t.indexOf(e) !== -1) return true;
-
-  /* Mots très courts (≤ 3 car) : pas de tolérance pour éviter les faux positifs */
-  if (e.length <= 3) return t === e;
-
-  /*
-    Tolérance Levenshtein : on accepte si la distance normalisée est ≤ 25 %.
-    Exemples avec seuil 25% :
-      "bonjour" (7) → tolère jusqu'à 1 faute  (7 × 0.25 = 1.75 → floor 1)
-      "au revoir" (8) → tolère jusqu'à 2 fautes
-      "enchanté" (8) → "enchante" (sans accent) → distance 1 → ✅
-    On teste aussi chaque mot de la transcription séparément, ce qui absorbe
-    les mots parasites que le STT ajoute souvent en début ou fin de phrase.
-  */
-  let threshold = Math.floor(e.length * 0.25);
-  if (threshold < 1) threshold = 1;
-
-  /* Test sur la transcription entière d'abord */
-  if (_levenshtein(t, e) <= threshold) return true;
-
-  /* Test mot par mot dans la transcription (absorbe les "euh", "et", etc.) */
-  const words = t.split(/\s+/);
-  for (const word of words) {
-    if (_levenshtein(word, e) <= threshold) return true;
-  }
-
-  return false;
 }
 
 /**
