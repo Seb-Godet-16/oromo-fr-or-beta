@@ -715,6 +715,11 @@ if (window.speechSynthesis) {
   document.addEventListener('visibilitychange', () => {
     if (document.hidden) {
       speechSynthesis.cancel();
+      /* Suspendre le watchdog TTS en arrière-plan pour économiser CPU/batterie */
+      _stopTtsKeepAlive();
+    } else {
+      /* Reprendre le watchdog à la remise au premier plan */
+      _startTtsKeepAlive();
     }
   });
 }
@@ -922,6 +927,9 @@ function executeResetProgress() {
   // 7. Rechargement propre de la page après un léger délai pour appliquer les changements
   setTimeout(() => {
     window.location.reload();
+    // Sécurité : si le rechargement échoue (hors-ligne, erreur réseau),
+    // réinitialiser le flag après 5 s pour ne pas bloquer les tentatives suivantes.
+    setTimeout(() => { executeResetProgress._running = false; }, 5000);
   }, 1200);
 }
 
@@ -2502,6 +2510,9 @@ function _buildRepeatWords() {
  * Détecte la disponibilité de la reconnaissance vocale, résout la langue,
  * puis affiche l'interface de répétition ou un message d'indisponibilité.
  */
+/* Garde anti-appels concurrents : true si une résolution de langue Oromo est en cours */
+let _repeatLangResolving = false;
+
 function renderRepeat() {
   _stopRepeat();
   _repeatWords = _buildRepeatWords();
@@ -2529,8 +2540,15 @@ function renderRepeat() {
     _renderRepeatUI(null, null);
 
   } else {
-    /* ── Mode learn_oromo : cascade de langues ── */
+    /* ── Mode learn_oromo : cascade de langues ──
+       Le flag _repeatLangResolving évite qu'un double-clic rapide
+       sur l'onglet Répète lance deux résolutions en parallèle avec
+       leurs timeouts de 600 ms chacun. */
+    if (_repeatLangResolving) return;
+    _repeatLangResolving = true;
+
     _resolveRepeatLangOromo(function(lang, label) {
+      _repeatLangResolving = false;   /* libérer le verrou dans tous les cas */
       if (!lang) {
         _renderRepeatUnavailable(
           '🎙️ Aucune langue de reconnaissance compatible avec l\'Oromo n\'est disponible sur ce navigateur.',
@@ -3718,9 +3736,18 @@ function _exportGuide() {
 
       let tempDiv = document.createElement('div');
       tempDiv.innerHTML = detailEl.innerHTML;
+      /* Nettoyer les liens internes non fonctionnels en PDF */
       tempDiv.querySelectorAll('a[href="#"]').forEach((a) => {
         a.removeAttribute('href');
         a.removeAttribute('onclick');
+      });
+      /* Nettoyer les boutons avec onclick (openAndCopyEmail, etc.)
+         qui ne sont pas définis dans le contexte de la fenêtre d'impression */
+      tempDiv.querySelectorAll('button').forEach((b) => {
+        b.removeAttribute('onclick');
+        b.style.pointerEvents = 'none';
+        b.style.cursor = 'default';
+        b.style.opacity = '0.6';
       });
       let cleanBody = tempDiv.innerHTML;
 
@@ -3895,7 +3922,7 @@ function _exportSituation() {
   }
 
   let sit = CT.situations[sitIdx];
-  if (!sit) { _showToast('\u26a0\ufe0f Situation introuvable.', 3000); return; }
+  if (!sit) { _showToast(L('\u26a0\ufe0f Haalli hin argamne.', '\u26a0\ufe0f Situation introuvable.'), 3000); return; }
 
   let keys    = langKeys();
   let primary = isFrench() ? '#002395' : '#009A44';

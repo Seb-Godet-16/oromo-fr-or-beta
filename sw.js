@@ -167,7 +167,7 @@ function _isPwaIcon(url) {
  */
 function _isNavigation(request) {
   return request.mode === 'navigate'
-    || request.headers.get('accept').indexOf('text/html') !== -1;
+    || (request.headers.get('accept') || '').indexOf('text/html') !== -1;
 }
 
 
