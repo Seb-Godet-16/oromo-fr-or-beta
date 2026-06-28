@@ -3138,7 +3138,7 @@ function esc(s) {
     .replaceAll('&',  '&amp;')   // DOIT être en premier (évite de doubler les entités déjà présentes)
     .replaceAll('<',  '&lt;')    // Bloque toute balise HTML (vecteur XSS)
     .replaceAll('>',  '&gt;')    // Idem
-    .replaceAll(\"'\",  '&#39;')   // Protège l'apostrophe Oromo dans le DOM HTML
+    .replaceAll("'",  '&#39;')   // Protège l'apostrophe Oromo dans le DOM HTML
     .replaceAll('\"',  '&quot;'); // Protège les guillemets
 }
 
