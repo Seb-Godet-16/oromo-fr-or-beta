@@ -194,7 +194,36 @@ Cache name is auto-versioned by GitHub Actions (`GITHUB_RUN_NUMBER`) on every de
 
 ---
 
-## 👤 Author
+## 🗂️ Notes de maintenabilité
+
+### `app.js` — fichier unique volontairement monolithique
+
+Le moteur applicatif tient dans un seul fichier (~3 900 lignes, 21 sections commentées).
+Ce choix est délibéré : zéro étape de build, compatibilité maximale, hébergement statique sans bundler.
+
+Si le projet grossit significativement, une migration vers des modules ES (`import`/`export`) est envisageable. Elle nécessiterait :
+- un serveur de développement local (les modules ES ne fonctionnent pas en `file://`)
+- un bundler ou un `<script type="module">` avec les bons en-têtes CORS
+- de reprendre les fonctions exposées globalement (ex : `onclick="flipCard()"` dans le HTML généré dynamiquement)
+
+Pour l'instant, la section `SECTIONS DE CE FICHIER` en tête de `app.js` et les commentaires `// §N` suffisent à naviguer rapidement.
+
+### Alphabet — quiz `quiz10[]` statique vs génération dynamique
+
+Les autres thèmes de Niveau 1 génèrent leurs questions à la volée depuis `words[]` (algorithme Fisher-Yates dans `_generateQuiz()`). Le thème `alpha` fait exception et utilise un tableau `quiz10[]` défini manuellement dans chaque fichier de données :
+
+| Fichier | Langue du quiz | Spécificité |
+|---|---|---|
+| `data-fr.js` → `quiz10` | Questions en Afaan Oromoo | Sons français difficiles : C, E, Q, X, V, Z… |
+| `data-or.js` → `quiz10` | Questions en Français | Sons oromo difficiles : DH, CH, NY, Q, X, SH, PH… |
+
+**Pourquoi statique ?** Le quiz alphabet est un **quiz audio** ("quelle lettre entendez-vous ?"). Les distracteurs doivent être phonétiquement proches (ex : `C / K / CH / G`), ce qu'un mélange aléatoire parmi les 26–33 lettres ne garantit pas.
+
+**⚠️ Point d'attention pour les futurs contributeurs :** si vous ajoutez ou supprimez des lettres dans `words[]` du thème `alpha`, pensez à mettre à jour `quiz10[]` dans le même fichier pour maintenir la cohérence.
+
+---
+
+
 
 **Sébastien Godet** — sebastien.godet16@gmail.com · [LinkedIn](https://www.linkedin.com/in/sébastien-godet-142ba6145)
 

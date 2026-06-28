@@ -1836,6 +1836,31 @@ function isAlphaQuiz() {
    (mélange aléatoire) pour les thèmes de vocabulaire standard,
    ou chargées depuis le champ statique 'quiz' / 'quiz10'
    pour les dialogues et l'alphabet.
+
+   TROIS SOURCES DE QUESTIONS (voir getQuizQuestions() ci-dessous) :
+   ┌─────────────────────┬──────────────────────────────────────────────────────┐
+   │ type de thème       │ source des questions                                 │
+   ├─────────────────────┼──────────────────────────────────────────────────────┤
+   │ type:'alpha'        │ quiz10[] statique dans data-fr.js / data-or.js       │
+   │                     │ Questions audio : "quelle lettre entendez-vous ?"    │
+   │                     │ Contient exactement 10 questions par fichier de       │
+   │                     │ données, ciblant les sons difficiles (ex : C/K, Q,   │
+   │                     │ X, DH/D en Oromo). Statique car la génération        │
+   │                     │ dynamique depuis words[] ne peut pas reproduire le   │
+   │                     │ challenge audio (les distracteurs doivent être        │
+   │                     │ phonétiquement proches, pas juste aléatoires).        │
+   │                     │ ⚠️  Si ce thème est modifié dans data-*.js,          │
+   │                     │ mettre à jour quiz10[] manuellement en conséquence.  │
+   ├─────────────────────┼──────────────────────────────────────────────────────┤
+   │ level:2 / 'dialog'  │ quiz[] statique dans data-fr.js / data-or.js         │
+   │                     │ Questions sur le scénario du dialogue. Statique car  │
+   │                     │ les questions portent sur le sens global d'un échange │
+   │                     │ et non sur une paire de mots isolée.                  │
+   ├─────────────────────┼──────────────────────────────────────────────────────┤
+   │ level:1 (défaut)    │ _generateQuiz() — génération dynamique par           │
+   │                     │ mélange Fisher-Yates sur words[]. N questions selon  │
+   │                     │ la taille du vocabulaire (voir getQuizTotal()).       │
+   └─────────────────────┴──────────────────────────────────────────────────────┘
    ============================================================ */
 
 /**
@@ -1926,8 +1951,27 @@ function _generateQuiz(theme, total) {
 
 /**
  * Retourne les questions à utiliser pour le quiz selon le type de thème.
+ *
+ * TROIS CAS :
+ *
+ * 1. type:'alpha' → theme.quiz10[]  (statique, défini dans data-fr.js / data-or.js)
+ *    L'alphabet utilise un quiz AUDIO : l'apprenant entend une lettre prononcée
+ *    (champ `audio` déclenche speak()) et doit identifier la lettre parmi 4 choix.
+ *    Les distracteurs sont choisis manuellement pour être phonétiquement proches
+ *    (ex : C / K / G / CH ; Q / K / C / P) — ce que la génération aléatoire
+ *    depuis words[] ne pourrait pas garantir.
+ *    ⚠️  Si le thème alpha est modifié dans data-*.js (ajout/suppression de lettres),
+ *    mettre à jour quiz10[] manuellement dans le même fichier.
+ *
+ * 2. level:2 ou type:'dialog' → theme.quiz[]  (statique, défini dans data-*.js)
+ *    Questions portant sur le scénario complet du dialogue (compréhension globale) ;
+ *    ne peuvent pas être déduites mécaniquement de la liste de mots.
+ *
+ * 3. Niveau 1 standard → _generateQuiz()  (dynamique, Fisher-Yates)
+ *    N questions calculées selon la taille du vocabulaire via getQuizTotal().
+ *
  * @param {Object} theme
- * @returns {Array}
+ * @returns {Array<{q:string, opts:string[], ans:number, audio?:string}>}
  */
 function getQuizQuestions(theme) {
   if (theme.type === 'alpha')                      return (theme.quiz10 || []);
