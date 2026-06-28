@@ -2,7 +2,7 @@
  * ╔══════════════════════════════════════════════════════════════════╗
  * ║  Language App 🇫🇷🇪🇹  —  sw.js  (Service Worker)              ║
  * ║  Auteur   : Sébastien Godet                                     ║
- * ║  Assistés  : Claude Sonnet 4.6 et Gemini 3.5 Flash                                 ║
+ * ║  Assisté   : Claude Sonnet 4.6 et Gemini 3.5 Flash             ║
  * ║  Version  : Juin 2026                                           ║
  * ╠══════════════════════════════════════════════════════════════════╣
  * ║  STRATÉGIE DE CACHE HYBRIDE                                     ║
@@ -270,8 +270,14 @@ function cacheFirst(request) {
 function networkFirst(request) {
   return fetch(request)
     .then(function(networkResponse) {
+      /* Rejeter les réponses invalides, erreurs, ET opaques.
+         Les réponses opaques (type 'opaque', status 0) proviennent de requêtes
+         cross-origin sans CORS — elles ne doivent pas être mises en cache :
+         leur status 0 trompe la condition status===200 et elles peuvent saturer
+         le quota de cache (certains navigateurs leur allouent 7 Mo chacune). */
       if (!networkResponse || networkResponse.status !== 200
-          || networkResponse.type === 'error') {
+          || networkResponse.type === 'error'
+          || networkResponse.type === 'opaque') {
         return networkResponse;
       }
       var toCache = networkResponse.clone();

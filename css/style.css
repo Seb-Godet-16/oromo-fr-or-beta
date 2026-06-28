@@ -3732,6 +3732,7 @@ footer a:hover{text-decoration:underline}
 /* Classe utilitaire d'affichage */
 .modal-hidden {
   display: none !important;
+  pointer-events: none !important;  /* Sécurité : empêche tout blocage de clics si display échoue */
 }
 
 /* Animation fluide d'apparition */

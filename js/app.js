@@ -218,6 +218,12 @@ function _loadDataScript(filename, callback) {
  * @param {'learn_french'|'learn_oromo'} mode
  */
 function initApp(mode) {
+  /* SÉCURITÉ : whitelist des modes valides — rejette toute valeur inattendue
+     (ex : data-lang modifié via DevTools ou injection DOM). */
+  if (mode !== 'learn_french' && mode !== 'learn_oromo') {
+    console.error('[initApp] Mode invalide : "' + mode + '" — attendu learn_french | learn_oromo');
+    return;
+  }
   currentMode = mode;
 
   /* ── Réinitialiser le cache de voix Oromo à chaque changement de mode ──
@@ -835,6 +841,7 @@ function _openConfirmModal(opts) {
   });
 
   modal.classList.remove('modal-hidden');
+  modal.style.pointerEvents = '';  /* BUG-FIX : réinitialise tout override inline éventuel */
 }
 
 /**
@@ -859,7 +866,10 @@ function confirmResetProgress() {
  */
 function closeConfirmModal() {
   const modal = document.getElementById('custom-confirm-modal');
-  if (modal) modal.classList.add('modal-hidden');
+  if (modal) {
+    modal.classList.add('modal-hidden');
+    modal.style.pointerEvents = 'none';  /* BUG-FIX : garantit que l'overlay ne capte plus les clics */
+  }
 }
 
 /**
@@ -1140,6 +1150,14 @@ function _clearQuizSession() {
 const _SCREEN_ORDER = ['app-launcher', 'home', 'sections-level1', 'sections-level2', 'lesson'];
 
 function showScreen(id, dir) {
+  /* BUG-FIX : fermer toute modale restée ouverte accidentellement
+     (overlay invisible en z-index 10000 qui bloque tous les clics) */
+  const confirmModal = document.getElementById('custom-confirm-modal');
+  if (confirmModal && !confirmModal.classList.contains('modal-hidden')) {
+    confirmModal.classList.add('modal-hidden');
+    confirmModal.style.pointerEvents = 'none';
+  }
+
   /* Trouver l'écran actuellement actif */
   let currentScreen = null;
   document.querySelectorAll('.screen').forEach((s) => {
@@ -1182,7 +1200,13 @@ function showScreen(id, dir) {
     let currentId = currentScreen.id;
     let iCurrent  = _SCREEN_ORDER.indexOf(currentId);
     let iNext     = _SCREEN_ORDER.indexOf(id);
-    dir = (iNext > iCurrent) ? 'forward' : 'back';
+    /* Garde défensif : si un id est absent de _SCREEN_ORDER, indexOf retourne -1.
+       -1 > iCurrent serait faux → direction incorrecte. On force 'forward' par défaut. */
+    if (iCurrent === -1 || iNext === -1) {
+      dir = 'forward';
+    } else {
+      dir = (iNext > iCurrent) ? 'forward' : 'back';
+    }
   }
 
   /* ── Nettoyer toute animation résiduelle ── */
@@ -2162,6 +2186,14 @@ function checkQ10(chosen, correct) {
 
   let qs = _q10Questions || getQuizQuestions(CT);
 
+  /* Garde défensif : si qs est vide ou q10Step hors-limites (état incohérent),
+     on réinitialise le quiz proprement plutôt que de provoquer un crash. */
+  if (!qs || !qs.length || q10Step >= qs.length) {
+    q10Answered = false;
+    renderQuiz10();
+    return;
+  }
+
   document.querySelectorAll('[id^=q10o]').forEach((b, i) => {
     b.classList.add('disabled');
     if (i === correct)                           b.classList.add('correct');
@@ -2172,10 +2204,12 @@ function checkQ10(chosen, correct) {
 
   let correctWord = qs[q10Step].opts[correct];
   let fb  = document.getElementById('q10fb');
-  fb.textContent = (chosen === correct)
-    ? L('✅ Sirrii dha! Baga gammadde!', '✅ Correct ! Félicitations !')
-    : L('❌ Dogoggora. Deebiin sirriin: ', '❌ Mauvaise réponse. La solution était : ') + correctWord;
-  fb.style.color = (chosen === correct) ? 'var(--c-success)' : 'var(--c-error)';
+  if (fb) {
+    fb.textContent = (chosen === correct)
+      ? L('✅ Sirrii dha! Baga gammadde!', '✅ Correct ! Félicitations !')
+      : L('❌ Dogoggora. Deebiin sirriin: ', '❌ Mauvaise réponse. La solution était : ') + correctWord;
+    fb.style.color = (chosen === correct) ? 'var(--c-success)' : 'var(--c-error)';
+  }
 
   if (isAlphaQuiz()) {
     if (chosen !== correct) setTimeout(() => { speak(qs[q10Step].audio); }, 300);
@@ -2866,7 +2900,10 @@ function _resetMicBtn() {
  */
 function _handleRepeatResult(transcripts, expected) {
   let matched = transcripts.some((t) => _matchRepeat(t, expected));
-  let best    = transcripts[0] || '';
+  /* SÉCURITÉ : le transcript vient de la Web Speech API (entrée utilisateur).
+     Il doit être échappé avant toute injection dans innerHTML pour prévenir
+     tout vecteur XSS (ex : navigateur retournant <script>…</script>). */
+  let best    = esc(transcripts[0] || '');
 
   let fbEl = document.getElementById('repeat-feedback');
   if (!fbEl) return;
@@ -3023,6 +3060,13 @@ function checkDQ(chosen, correct) {
   if (dqAnswered) return;
   dqAnswered = true;
 
+  /* Garde défensif : CT.quiz absent ou dqStep hors-limites → reset propre */
+  if (!CT || !CT.quiz || !CT.quiz.length || dqStep >= CT.quiz.length) {
+    dqAnswered = false;
+    renderDialogQuiz();
+    return;
+  }
+
   document.querySelectorAll('[id^=dqo]').forEach((b, i) => {
     b.classList.add('disabled');
     if (i === correct)                           b.classList.add('correct');
@@ -3032,10 +3076,12 @@ function checkDQ(chosen, correct) {
   if (chosen === correct) { dqScore++; _vibrateFeedback('correct'); } else { _vibrateFeedback('wrong'); }
 
   let fb = document.getElementById('dqfb');
-  fb.textContent = (chosen === correct)
-    ? L('✅ Deebii sirrii dha!', '✅ Bonne réponse !')
-    : L('❌ Deebistee yaali!',   '❌ Essayer de nouveau !');
-  fb.style.color = (chosen === correct) ? 'var(--c-success)' : 'var(--c-error)';
+  if (fb) {
+    fb.textContent = (chosen === correct)
+      ? L('✅ Deebii sirrii dha!', '✅ Bonne réponse !')
+      : L('❌ Deebistee yaali!',   '❌ Essayer de nouveau !');
+    fb.style.color = (chosen === correct) ? 'var(--c-success)' : 'var(--c-error)';
+  }
 
   _saveQuizSession('dq');
   setTimeout(() => { dqStep++; renderDialogQuiz(); }, 1500);
@@ -3089,9 +3135,11 @@ function _quizResultStrings(pct, type) {
 function esc(s) {
   if (!s) return '';
   return s
-    .replaceAll('\\', '\\\\')
-    .replaceAll("'",  '&#39;')   // Protège l'apostrophe Oromo dans le DOM HTML
-    .replaceAll('"',  '&quot;'); // Protège les guillemets
+    .replaceAll('&',  '&amp;')   // DOIT être en premier (évite de doubler les entités déjà présentes)
+    .replaceAll('<',  '&lt;')    // Bloque toute balise HTML (vecteur XSS)
+    .replaceAll('>',  '&gt;')    // Idem
+    .replaceAll(\"'\",  '&#39;')   // Protège l'apostrophe Oromo dans le DOM HTML
+    .replaceAll('\"',  '&quot;'); // Protège les guillemets
 }
 
 /**
@@ -3121,6 +3169,8 @@ function escJS(s) {
 function _escAttr(s) {
   return (s || '')
     .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
     .replaceAll('"', '&quot;');
 }
 
@@ -3518,7 +3568,7 @@ if ('serviceWorker' in navigator) {
    (styles inline @media print), déclenche window.print(),
    puis ferme la fenêtre automatiquement.
 
-   _exportGuide()      → Ecran Home  : guide complet toutes sections
+   _exportGuide()      → Écran Home  : guide complet toutes sections
    _exportVocab()      → Lecon Niv.1 : tableau 2 col. dense (Oromo|FR)
    _exportSituation()  → Lecon Niv.2 : situation courante (sitIdx)
    ============================================================ */
@@ -3710,7 +3760,7 @@ function _printDocFooter() {
 
 
 /* ============================================================
-   21a. EXPORT GUIDE (Ecran Home)
+   21a. EXPORT GUIDE (Écran Home)
    ============================================================ */
 
 function _exportGuide() {
