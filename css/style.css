@@ -1509,21 +1509,23 @@ html.theme-french .btn-reset-theme:hover{
   line-height:1.6;
 }
 
-/* Liens dans le texte de la modale */
+/* Liens dans le texte de la modale — var(--c-primary) pour respecter le thème (W3) */
 .modal-content a{
-  color:#007bff;
+  color:var(--c-primary);
   text-decoration:none;
   font-weight:bold;
 }
 .modal-content a:hover{text-decoration:underline}
 
-/* Bouton "Fermer" */
-.modal-content button{
+/* Bouton "Fermer" — ciblé uniquement sur la modale Infos (W3).
+   Les boutons de #custom-confirm-modal ont leurs propres règles plus spécifiques
+   qui ne sont pas affectées. Utilise var(--c-primary) pour respecter le thème actif. */
+#credits-modal .modal-content button{
   margin-top:15px;
   padding:10px 25px;
   border-radius:8px;
   border:none;
-  background:#007bff;
+  background:var(--c-primary);
   color:#fff;
   font-weight:bold;
   cursor:pointer;
@@ -3643,7 +3645,7 @@ footer a:hover{text-decoration:underline}
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 3000;                        /* Reste au-dessus de la bottom-nav */
+  z-index: 10000;                       /* Au-dessus de .modal (9999) — empêche l'obstruction par la modale Infos */
   padding: 16px;
   box-sizing: border-box;
 }

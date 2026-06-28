@@ -314,8 +314,6 @@ function _setUI(t) {
   /* Le bouton "Démarrer" sur l'écran home est câblé par _buildHomeGuide()
      (appelée juste après _setUI dans initApp). Pas de doublon ici. */
 
-  /* Mettre à jour les footers selon la langue du parcours */
-  _setFooters();
 }
 
 /**
@@ -329,15 +327,7 @@ function _setText(id, val) {
   if (el) el.textContent = val;
 }
 
-/**
- * Met à jour les footers des écrans #home et #sections selon le mode actif.
- * - Mode learn_french (apprenant francophone → interface FR) : textes en français
- * - Mode learn_oromo  (apprenant oromophone → interface OR) : textes en afaan oromoo
- */
-function _setFooters() {
-  /* Les footers home et sections sont supprimés (contenu intégré dans la modale Infos via showCredits).
-     Cette fonction est conservée pour compatibilité mais ne modifie plus le DOM. */
-}
+/* W2: _setFooters() supprimée — footers intégrés dans la modale Infos (showCredits). */
 
 
 /* ============================================================
@@ -493,6 +483,10 @@ function _resolveOromoVoice(callback) {
  */
 function speak(txt, triggerBtn) {
   if (!txt) return;
+  // W6 — Debounce 300 ms sur les appels bouton 🔊 (évite les boucles TTS sur iOS)
+  const now = Date.now();
+  if (speak._lastCall && (now - speak._lastCall) < 300) return;
+  speak._lastCall = now;
 
   /* ── Feedback visuel : marquer le bouton comme "en lecture" ── */
   function _markSpeaking(btn) {
@@ -794,6 +788,11 @@ function _openConfirmModal(opts) {
   const btnCancel = document.getElementById('modal-confirm-cancel');
   if (!modal || !btnOk || !btnCancel) return;
 
+  /* C4 — Fermer la modale Infos si elle est ouverte, pour éviter qu'elle
+     obstrue la modale de confirmation (qui doit rester accessible). */
+  const creditsModal = document.getElementById('credits-modal');
+  if (creditsModal) creditsModal.style.display = 'none';
+
   /* Injecter le contenu dynamique */
   document.getElementById('modal-confirm-title').textContent = opts.title;
   document.getElementById('modal-confirm-msg').textContent   = opts.msg;
@@ -867,6 +866,10 @@ function openAndCopyEmail() {
  * Supprime la progression, l'onboarding et rafraîchit proprement la page.
  */
 function executeResetProgress() {
+  // W6 — Garde-fou anti-double-exécution (reload peut échouer hors-ligne)
+  if (executeResetProgress._running) return;
+  executeResetProgress._running = true;
+
   // 1. Fermer immédiatement la modale visuelle
   closeConfirmModal();
 
@@ -1037,6 +1040,19 @@ function _restoreQuizSession() {
 
     if (state.quizType === 'q10') {
       if (state.step >= (state.questions || []).length) return false;
+
+      /* W8 — Validation de la structure de state.questions avant restauration.
+         Un utilisateur peut modifier la sessionStorage via DevTools et injecter
+         des données malformées qui feraient planter renderQuiz10() / checkQ10(). */
+      const qs = state.questions;
+      const isValid = Array.isArray(qs) && qs.length > 0 && qs.every((item) =>
+        item && typeof item.q === 'string'
+             && Array.isArray(item.opts) && item.opts.length === 4
+             && item.opts.every((o) => typeof o === 'string')
+             && typeof item.ans === 'number' && item.ans >= 0 && item.ans <= 3
+      );
+      if (!isValid) { _clearQuizSession(); return false; }
+
       /* Restauration du quiz standard */
       q10Step       = state.step;
       q10Score      = state.score;
@@ -1486,7 +1502,7 @@ function _buildThemeCard(t) {
 
   let resetBtn = isDone(t.id)
     ? '<button class="btn-reset-theme" '
-      + 'onclick="event.stopPropagation();resetTheme(\'' + t.id + '\')">'
+      + 'onclick="event.stopPropagation();resetTheme(\'' + escJS(t.id) + '\')">'
       + L('🔄 Irra deebii\'i', '🔄 Recommencer')
       + '</button>'
     : '';
@@ -1498,7 +1514,7 @@ function _buildThemeCard(t) {
 
   return '<div class="theme-card' + (isDone(t.id) ? ' done' : '') + '" '
     + 'role="button" tabindex="0" aria-label="' + _escAttr(mainTitle) + '" '
-    + 'onclick="openTheme(\'' + t.id + '\')">'
+    + 'onclick="openTheme(\'' + escJS(t.id) + '\')">'
     + '<div class="t-emoji">'   + t.emoji    + '</div>'
     + '<div class="t-name">'    + mainTitle  + '</div>'
     + '<div class="t-sub">'     + title.sub  + '</div>'
@@ -1539,13 +1555,9 @@ function openTheme(id, dir) {
   document.getElementById('lessonEmoji').textContent = CT.emoji;
 
   let title = _themeTitle(CT);
-  let lessonTitle = L(
-    title.main + ' — ' + title.sub,
-    title.main + ' — ' + title.sub
-  );
-  // Note: _themeTitle retourne déjà (main=langue source, sub=langue cible)
-  // on concatène donc toujours main + ' — ' + sub, dans les deux modes.
-  lessonTitle = title.main + ' — ' + title.sub;
+  // _themeTitle retourne (main=langue source, sub=langue cible).
+  // On concatène toujours main + ' — ' + sub, identique dans les deux modes.
+  let lessonTitle = title.main + ' — ' + title.sub;
   if (lessonTitle) {
     lessonTitle = lessonTitle.charAt(0).toUpperCase() + lessonTitle.slice(1);
   }
@@ -1671,7 +1683,7 @@ function switchTab(tab) {
   if (tab !== 'repeat') _stopRepeat();
 
   if      (tab === 'flash')  { renderFlash(); }
-  else if (tab === 'quiz10') { q10Step = 0; q10Score = 0; q10Answered = false; _q10Questions = null; if (!_restoreQuizSession()) renderQuiz10(); }
+  else if (tab === 'quiz10') { /* W4 — re-clic onglet : repart toujours de zéro, sans restaurer la session précédente. */ _clearQuizSession(); q10Step = 0; q10Score = 0; q10Answered = false; _q10Questions = null; renderQuiz10(); }
   else if (tab === 'dialog') { renderDialog(); }
   else if (tab === 'vocab')  { renderVocab(); }
   else if (tab === 'dquiz')  { dqStep = 0; dqScore = 0; dqAnswered = false; if (!_restoreQuizSession()) renderDialogQuiz(); }
@@ -2052,7 +2064,7 @@ function renderQuiz10() {
       + '<div class="alpha-audio-label">'
       + L('Sagalee dhaggeeffadhu kutaa sirrii filadhu', 'Écoutez le son et choisissez la bonne lettre')
       + '<br><small>' + qLabel + '</small></div>'
-      + '<button class="alpha-audio-btn" id="playAudioBtn" onclick="playAlphaAudio(\'' + esc(q.audio) + '\')" '
+      + '<button class="alpha-audio-btn" id="playAudioBtn" onclick="playAlphaAudio(\'' + escJS(q.audio) + '\')" '
       + 'title="' + L('Dhaggeeffachuuf cuqaasi', 'Cliquez pour écouter') + '">🔊</button>'
       + '<div style="font-size:.75rem;color:#aaa;margin-bottom:14px">'
       + L('Dhaggeeffachuuf cuqaasi', 'Cliquez pour écouter') + '</div>'
@@ -3005,9 +3017,15 @@ function _quizResultStrings(pct, type) {
 }
 
 /**
+ * RÈGLE D'ÉCHAPPEMENT — À RESPECTER PAR TOUS LES CONTRIBUTEURS :
+ *   • Dans un onclick inline  → toujours escJS()   ex: onclick="speak(\'"+escJS(s)+"\'"
+ *   • Dans un attribut HTML   → toujours _escAttr() ex: aria-label=""+_escAttr(s)+""
+ *   • esc() est RÉSERVÉ au rendu texte dans le DOM (innerHTML affiché, pas évalué).
+ *     Ne pas utiliser esc() dans un contexte onclick : l'entité &#39; casse le JS.
+ *
  * Échappe les caractères spéciaux pour une insertion sécurisée
- * dans les attributs HTML inline (onclick="...") et les littéraux JS,
- * en protégeant particulièrement les apostrophes (hudhaa) de l'Afaan Oromoo.
+ * dans le texte HTML affiché (innerHTML). Utilise des entités HTML (&#39;).
+ * ⚠️  NE PAS utiliser dans un attribut onclick — utiliser escJS() à la place.
  * @param {string} s
  * @returns {string}
  */
@@ -3174,19 +3192,14 @@ function _maybeShowOnboarding() {
 }
 
 /**
- * Ferme la modale onboarding legacy (gardée pour compatibilité).
+ * Ferme la modale onboarding legacy.
+ * @deprecated Le DOM #onboarding-modal n'existe plus. Corps vidé (W1).
+ *             Les constantes _OB_KEY_FR / _OB_KEY_OR restent utilisées
+ *             dans executeResetProgress() — ne pas les supprimer.
+ *             Déclaration conservée pour compatibilité des appels existants.
  */
 function _closeOnboarding() {
-  let overlay = document.getElementById('onboarding-modal');
-  if (!overlay) return;
-  overlay.classList.remove('ob-visible');
-  let key = (currentMode === 'learn_french') ? _OB_KEY_FR : _OB_KEY_OR;
-  try { localStorage.setItem(key, '1'); } catch(e) {}
-  /* Synchroniser les deux checkboxes sur l'écran home */
-  let chk = document.getElementById('homeNoshowChk');
-  if (chk) chk.checked = true;
-  let chkTopbar = document.getElementById('homeTopbarNoshowChk');
-  if (chkTopbar) chkTopbar.checked = true;
+  /* Corps volontairement vide — modale supprimée du DOM (W1). */
 }
 
 /**
@@ -3220,25 +3233,25 @@ function showCredits() {
       /* ── Texte Oromo (interface pour l'apprenant de français) ── */
       ? '<p class="credits-copy">' + lblCopy + '</p>'
         + '<p><button class="antispam-btn credits-email" onclick="openAndCopyEmail()"><span class="antispam-email">moc.liamg@61tedog.neitsabes</span></button>'
-        + ' · <a href="https://www.linkedin.com/in/s%C3%A9bastien-godet-142ba6145" target="_blank" rel="noopener">LinkedIn</a></p>'
+        + ' · <a href="https://www.linkedin.com/in/s%C3%A9bastien-godet-142ba6145" target="_blank" rel="noopener noreferrer">LinkedIn</a></p>'
         + '<hr class="credits-sep">'
         + '<p>Galata guddaa <strong>Fédérico Calo</strong>'
-        + ' (<a href="https://www.linkedin.com/in/federicocalo/" target="_blank" rel="noopener">Architektii Guddisaa Web</a>)'
+        + ' (<a href="https://www.linkedin.com/in/federicocalo/" target="_blank" rel="noopener noreferrer">Architektii Guddisaa Web</a>)'
         + ' gargaarsa teknikaaf.</p>'
         + '<p>Galata baay\'een <strong>Mussa Sembro</strong>'
-        + ' (<a href="https://www.linkedin.com/in/mussa-sembro-137472174/" target="_blank" rel="noopener">Hiikkaa-Ibsituu Afaan Oromoo</a>)'
+        + ' (<a href="https://www.linkedin.com/in/mussa-sembro-137472174/" target="_blank" rel="noopener noreferrer">Hiikkaa-Ibsituu Afaan Oromoo</a>)'
         + ' — hiikaa, sirreessaa fi gorsa afaanii.</p>'
         + '<p><strong>Maatii koo</strong> — irra deebi\'ee dubbisuu fi gorsaaf.</p>'
       /* ── Texte français (interface pour l'apprenant d'Oromo) ── */
       : '<p class="credits-copy">' + lblCopy + '</p>'
         + '<p><button class="antispam-btn credits-email" onclick="openAndCopyEmail()"><span class="antispam-email">moc.liamg@61tedog.neitsabes</span></button>'
-        + ' · <a href="https://www.linkedin.com/in/s%C3%A9bastien-godet-142ba6145" target="_blank" rel="noopener">LinkedIn</a></p>'
+        + ' · <a href="https://www.linkedin.com/in/s%C3%A9bastien-godet-142ba6145" target="_blank" rel="noopener noreferrer">LinkedIn</a></p>'
         + '<hr class="credits-sep">'
         + '<p>Un grand merci à <strong>Fédérico Calo</strong>'
-        + ' (<a href="https://www.linkedin.com/in/federicocalo/" target="_blank" rel="noopener">Architecte Développeur Web</a>)'
+        + ' (<a href="https://www.linkedin.com/in/federicocalo/" target="_blank" rel="noopener noreferrer">Architecte Développeur Web</a>)'
         + ' pour son aide technique.</p>'
         + '<p>Merci beaucoup à <strong>Mussa Sembro</strong>'
-        + ' (<a href="https://www.linkedin.com/in/mussa-sembro-137472174/" target="_blank" rel="noopener">Traducteur-Interprète en Oromo</a>)'
+        + ' (<a href="https://www.linkedin.com/in/mussa-sembro-137472174/" target="_blank" rel="noopener noreferrer">Traducteur-Interprète en Oromo</a>)'
         + ' pour son travail de traduction, ses corrections et ses précieux conseils linguistiques.</p>'
         + '<p>Merci à mes <strong>parents</strong> pour leur relecture attentive et leurs conseils.</p>';
   }
@@ -3563,18 +3576,19 @@ function _downloadAsHtml(htmlContent) {
       URL.revokeObjectURL(url);
     }, 1000);
     const isAndroidSmartphone = /Android/i.test(navigator.userAgent) && /Mobile/i.test(navigator.userAgent);
+    // W9.3 — L(oromo_text, french_text) : premier argument = mode learn_french (UI Oromo)
     _showToast(L(
       isAndroidSmartphone
-        ? '📄 Fichier HTML téléchargé — ouvrez-le dans votre navigateur pour imprimer.'
-        : '📄 Fichier HTML téléchargé — ouvrez-le dans Safari pour imprimer.',
-      isAndroidSmartphone
         ? '📄 Faayilii HTML buufame — maxxansuuf browser keessatti bani.'
-        : '📄 Faayilii HTML buufame — maxxansuuf Safari keessatti bani.'
+        : '📄 Faayilii HTML buufame — maxxansuuf Safari keessatti bani.',
+      isAndroidSmartphone
+        ? '📄 Fichier HTML téléchargé — ouvrez-le dans votre navigateur pour imprimer.'
+        : '📄 Fichier HTML téléchargé — ouvrez-le dans Safari pour imprimer.'
     ), 6000);
   } catch(e) {
     _showToast(L(
-      '⚠️ Export impossible sur cet appareil.',
-      "⚠️ Meeshaa kana irratti erguu hin danda'amu."
+      "⚠️ Meeshaa kana irratti erguu hin danda'amu.",
+      '⚠️ Export impossible sur cet appareil.'
     ), 5000);
   }
 }
@@ -3618,9 +3632,12 @@ function _printDocHeader(titleLine1, titleLine2, meta1, meta2, primaryColor, acc
 
 /* ── Pied de page commun ── */
 function _printDocFooter() {
+  /* C2 — Dans un PDF généré, le CSS direction:rtl n'est pas appliqué,
+     l'adresse inversée serait donc lisible par les bots. On utilise
+     la notation [at] qui est protectrice dans tout contexte imprimé. */
   return '<div class="print-footer">'
     + 'Taphad\'Meuh \u2014 Application bilingue Fran\u00e7ais \u2194 Afaan Oromoo \xb7 D\u00e9velopp\u00e9 par S\u00e9bastien Godet \xb7 '
-    + '<span class="antispam-email">moc.liamg@61tedog.neitsabes</span> \xb7 linkedin.com/in/s\u00e9bastien-godet-142ba6145'
+    + 'sebastien.godet16 [at] gmail.com \xb7 linkedin.com/in/s\u00e9bastien-godet-142ba6145'
     + '</div>';
 }
 
@@ -3919,7 +3936,8 @@ function _exportSituation() {
 
   let dColSrc = isFrench() ? 'Fran\u00e7ais \ud83c\uddeb\ud83c\uddf7'    : 'Afaan Oromoo \ud83c\uddea\ud83c\uddf9';
   let dColTgt = isFrench() ? 'Afaan Oromoo \ud83c\uddea\ud83c\uddf9'  : 'Fran\u00e7ais \ud83c\uddeb\ud83c\uddf7';
-  let locLabel = isFrench() ? 'Dubbataa' : 'Locuteur';
+  // W9.1 — isFrench() = mode learn_french = UI en Français → 'Locuteur' ; sinon UI en Oromo → 'Dubbataa'
+  let locLabel = isFrench() ? 'Locuteur' : 'Dubbataa';
 
   let html = '<!DOCTYPE html><html lang="' + (isFrench() ? 'om' : 'fr') + '"><head>'
     + '<meta charset="UTF-8">'
