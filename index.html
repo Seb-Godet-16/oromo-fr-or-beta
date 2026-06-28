@@ -48,16 +48,19 @@
     Content Security Policy (I3) :
     • default-src 'self'        → toutes les ressources doivent venir du même
                                    domaine (bloque chargements tiers non déclarés)
-    • script-src 'self'         → autorise uniquement les scripts locaux,
-                                   compatibles avec _loadDataScript() qui injecte
-                                   des <script src="js/data-*.js"> (même origine)
+    • script-src 'self' 'unsafe-inline' → autorise les scripts locaux ET les handlers
+                                   onclick inline (showScreen, initApp, openAndCopyEmail…).
+                                   Sans 'unsafe-inline', la CSP bloque tous les attributs
+                                   onclick du HTML et la navigation est totalement cassée.
+                                   Note : GitHub Pages ne supporte pas les headers HTTP
+                                   personnalisés — cette meta est incontournable ici.
     • style-src 'self' 'unsafe-inline' → nécessaire car app.js génère des styles
                                    inline (flashcards, quiz, résultats) via innerHTML
     GitHub Pages ne supporte pas les headers HTTP personnalisés ;
     cette meta est le seul mécanisme CSP disponible sur cet hébergeur.
   -->
   <meta http-equiv="Content-Security-Policy"
-        content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'">
+        content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'">
   <!-- 
     viewport : Autorise le zoom manuel jusqu'à 5.0 pour l'accessibilité (WCAG),
     tout en préservant l'échelle initiale (1.0) pour un affichage stable sur mobile.
