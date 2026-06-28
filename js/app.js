@@ -387,6 +387,28 @@ function _showToast(msg, duration) {
 }
 
 /**
+ * Envoie un message à la région aria-live dédiée (#sr-announce) pour
+ * notifier les lecteurs d'écran (VoiceOver, TalkBack) sans déclencher
+ * d'annonce lors de la reconstruction complète de #tabContent.
+ * (I4) — #tabContent est passé à aria-live="off" ; toutes les
+ * annonces accessibles doivent transiter par cette fonction.
+ *
+ * Exemples d'usage :
+ *   _announce(L('Sirriidha!', 'Correct !'));
+ *   _announce(r.title + ' — ' + q10Score + '/' + total);
+ *
+ * @param {string} msg - Message lu par le screen-reader
+ */
+function _announce(msg) {
+  const el = document.getElementById('sr-announce');
+  if (!el) return;
+  /* Vider puis reremplir force une nouvelle annonce même si le texte
+     est identique à la précédente (les SR ne répètent pas les doublons). */
+  el.textContent = '';
+  requestAnimationFrame(() => { el.textContent = msg; });
+}
+
+/**
  * Résout de manière asynchrone la meilleure voix disponible pour l'Oromo.
  * Utilise un cache interne pour éviter de répéter la recherche.
  * @param {Function} callback - Appelé avec la voix trouvée (ou null)
@@ -1304,12 +1326,20 @@ function lessonGoBack() {
  * Navigation prev/next entre modules du même niveau.
  * @param {number} delta - +1 (suivant) ou -1 (précédent)
  */
+/* Guard contre le double-tap rapide : bloque les clics pendant 300 ms
+   (durée de l'animation de slide CSS), évitant un état intermédiaire
+   où openTheme() serait appelé deux fois avant la fin de la transition. */
+let _lessonNavLocked = false;
+
 function lessonNav(delta) {
+  if (_lessonNavLocked) return;
   if (!CT || !ALL_THEMES.length) return;
   let levelThemes = ALL_THEMES.filter((t) => t.level === CT.level);
   let idx = levelThemes.findIndex((t) => t.id === CT.id);
   let newIdx = idx + delta;
   if (newIdx < 0 || newIdx >= levelThemes.length) return;
+  _lessonNavLocked = true;
+  setTimeout(() => { _lessonNavLocked = false; }, 300);
   openTheme(levelThemes[newIdx].id, delta > 0 ? 'forward' : 'back');
 }
 
@@ -1683,7 +1713,16 @@ function switchTab(tab) {
   if (tab !== 'repeat') _stopRepeat();
 
   if      (tab === 'flash')  { renderFlash(); }
-  else if (tab === 'quiz10') { /* W4 — re-clic onglet : repart toujours de zéro, sans restaurer la session précédente. */ _clearQuizSession(); q10Step = 0; q10Score = 0; q10Answered = false; _q10Questions = null; renderQuiz10(); }
+  else if (tab === 'quiz10') {
+    /* W4 — Re-clic sur l'onglet Quiz : repart toujours de zéro.
+       On ne restaure PAS la session précédente (contrairement à 'dquiz') afin
+       d'éviter de surprendre l'utilisateur qui revient sur l'onglet quiz10.
+       _q10Questions = null invalide le cache de questions pour forcer
+       un nouveau tirage aléatoire au prochain renderQuiz10(). */
+    _clearQuizSession();
+    q10Step = 0; q10Score = 0; q10Answered = false; _q10Questions = null;
+    renderQuiz10();
+  }
   else if (tab === 'dialog') { renderDialog(); }
   else if (tab === 'vocab')  { renderVocab(); }
   else if (tab === 'dquiz')  { dqStep = 0; dqScore = 0; dqAnswered = false; if (!_restoreQuizSession()) renderDialogQuiz(); }
@@ -3258,6 +3297,16 @@ function showCredits() {
 
   let modal = document.getElementById('credits-modal');
   if (modal) modal.style.display = 'flex';
+}
+
+/**
+ * Ferme la modale Remerciements/Infos.
+ * Remplace l'ancien onclick inline dans index.html pour cohérence
+ * avec la convention de délégation HTML → app.js (I7).
+ */
+function closeCreditsModal() {
+  let modal = document.getElementById('credits-modal');
+  if (modal) modal.style.display = 'none';
 }
 
 

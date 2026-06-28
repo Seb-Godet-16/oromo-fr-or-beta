@@ -56,6 +56,12 @@ const CACHE_NAME = 'taphadmeuh-GITHUB_RUN_NUMBER';   /* Suffixe automatisé par 
 /*
   Ressources CRITIQUES : un seul échec fait échouer l'installation entière du SW.
   Ces fichiers doivent tous répondre 200 ou l'app ne sera pas installable hors-ligne.
+
+  IMPORTANT (I5) — data-fr.js et data-or.js sont explicitement précachés ici.
+  Sans cela, _loadDataScript() (injection dynamique de <script>) ne pourrait pas
+  les servir hors-ligne : le SW naïf (cache statique à l'install) ne les intercepte
+  que s'ils figurent dans PRECACHE_URLS. Les deux fichiers DOIVENT rester dans cette
+  liste si de nouveaux fichiers de données sont ajoutés à l'avenir.
 */
 const PRECACHE_URLS = [
   './index.html',

@@ -27,11 +27,14 @@ jobs:
       - name: Setup Pages
         uses: actions/configure-pages@v4
 
-      - name: Injecter le numero de version automatique
+      - name: Inject build number into sw.js cache version
         run: |
+          # Replace the GITHUB_RUN_NUMBER placeholder in sw.js with the actual
+          # build number so each deploy gets a unique cache name, forcing
+          # browsers to fetch fresh assets without any manual cache busting.
           sed -i "s/GITHUB_RUN_NUMBER/${{ github.run_number }}/g" sw.js
 
-      - name: Packager les fichiers du site
+      - name: Package site files for deployment
         uses: actions/upload-pages-artifact@v3
         with:
           path: '.'

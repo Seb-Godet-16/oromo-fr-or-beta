@@ -44,6 +44,20 @@
 
 <head>
   <meta charset="UTF-8">
+  <!--
+    Content Security Policy (I3) :
+    • default-src 'self'        → toutes les ressources doivent venir du même
+                                   domaine (bloque chargements tiers non déclarés)
+    • script-src 'self'         → autorise uniquement les scripts locaux,
+                                   compatibles avec _loadDataScript() qui injecte
+                                   des <script src="js/data-*.js"> (même origine)
+    • style-src 'self' 'unsafe-inline' → nécessaire car app.js génère des styles
+                                   inline (flashcards, quiz, résultats) via innerHTML
+    GitHub Pages ne supporte pas les headers HTTP personnalisés ;
+    cette meta est le seul mécanisme CSP disponible sur cet hébergeur.
+  -->
+  <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'">
   <!-- 
     viewport : Autorise le zoom manuel jusqu'à 5.0 pour l'accessibilité (WCAG),
     tout en préservant l'échelle initiale (1.0) pour un affichage stable sur mobile.
@@ -909,7 +923,18 @@
                         à chaque changement d'onglet
       -->
       <div class="tabs" id="lessonTabs"></div>
-      <div id="tabContent" aria-live="polite" aria-atomic="false"></div>
+      <div id="tabContent" aria-live="off" aria-atomic="false"></div>
+      <!--
+        Région d'annonce screen-reader dédiée (aria-live="polite").
+        Invisible visuellement, elle permet à app.js de notifier les lecteurs
+        d'écran uniquement sur les actions importantes (résultat de quiz,
+        changement de carte), sans que chaque reconstruction complète de
+        #tabContent ne déclenche une annonce — ce qui interférerait avec
+        le TTS de l'app sur VoiceOver iOS et TalkBack Android.
+        Utilisation dans app.js : _announce(message)
+      -->
+      <div id="sr-announce" aria-live="polite" aria-atomic="true"
+           style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;"></div>
     </div><!-- /.lesson-body -->
 
     <!--
@@ -948,7 +973,7 @@
 
       <!-- Fermeture de la modale : remet display à "none" -->
       <button id="credits-modal-close"
-              onclick="document.getElementById('credits-modal').style.display='none'">
+              onclick="closeCreditsModal()">
       </button>
 
     </div><!-- /.modal-content -->

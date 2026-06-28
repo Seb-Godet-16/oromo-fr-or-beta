@@ -699,6 +699,10 @@ html.theme-oromo body{background:#f4f9f4}
   cursor:pointer;
   font-weight:700;
   transition:background .15s, color .15s;
+  /* I6 — Zone de tap minimale 44×44 px (WCAG 2.5.5 / Apple HIG)
+     Critique sur grille 2 colonnes à 360 px où le bouton serait sinon trop petit. */
+  min-height:44px;
+  min-width:44px;
 }
 .btn-reset-theme:hover{
   background:#009A44;
