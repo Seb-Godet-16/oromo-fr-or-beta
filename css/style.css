@@ -22,39 +22,39 @@
  * ║  rendu visuel.                                                  ║
  * ╠══════════════════════════════════════════════════════════════════╣
  * ║  PLAN DU FICHIER                                                ║
- * ║   §1        Reset & base                          ligne ~   59  ║
- * ║   §2        Variables de thème (:root / fallback) ligne ~  183  ║
- * ║   §3        Thème Français (html.theme-french)    ligne ~  246  ║
- * ║   §4        Thème Oromo (html.theme-oromo)        ligne ~  286  ║
- * ║   §5        Écran 0 — Lanceur                     ligne ~  321  ║
- * ║   §6        Écran 1 — Accueil #home               ligne ~  528  ║
- * ║   §7        Écran 2 — Sections                    ligne ~  594  ║
- * ║   §8        Écran 3 — Leçon                       ligne ~  715  ║
- * ║   §9        Composants : Flashcards               ligne ~  891  ║
- * ║   §10       Composants : Alphabet                 ligne ~ 1014  ║
- * ║   §11       Composants : Quiz                     ligne ~ 1114  ║
- * ║   §12       Composants : Dialogues / Situations   ligne ~ 1219  ║
- * ║   §13       Composants : Vocabulaire              ligne ~ 1324  ║
- * ║   §14       Modale Remerciements                  ligne ~ 1392  ║
- * ║   §15       Footer commun                         ligne ~ 1477  ║
- * ║   §16       Toast notification                    ligne ~ 1497  ║
- * ║   §17       Onglet Répète                         ligne ~ 1533  ║
- * ║   §18       Focus clavier                         ligne ~ 1755  ║
- * ║   §19       Guide utilisateur (.ob-*)             ligne ~ 1773  ║
- * ║   §20       Spinner de chargement                 ligne ~ 2229  ║
- * ║   §22       Écran Home redesigné                  ligne ~ 2266  ║
- * ║   §23       Écran Sections redesigné              ligne ~ 2487  ║
- * ║   §24       Responsive : tablette & desktop       ligne ~ 2598  ║
- * ║   §24b      Mode sombre                           ligne ~ 2688  ║
- * ║   §25       Boutons d'export PDF                  ligne ~ 2799  ║
- * ║   §26       Barre de navigation basse             ligne ~ 2916  ║
- * ║   §27       Onglets niveau 1 / 2                  ligne ~ 3024  ║
- * ║   §28       Écrans sections level (no-scroll)     ligne ~ 3108  ║
- * ║   §20e      Grille thèmes écrans level            ligne ~ 3307  ║
- * ║   §CONFETTI Animation de félicitations ⭐⭐⭐      ligne ~ 3327  ║
- * ║   §PROGRESS Cercle SVG de progression (Home)      ligne ~ 3386  ║
- * ║   §CONFIRM  Modale confirmation suppression       ligne ~ 3462  ║
- * ║   §ANTISPAM E-mail affiché à l'envers (CSS RTL)  ligne ~ 3576  ║
+ * ║   §1        Reset & base                          ligne    63   ║
+ * ║   §2        Variables de thème (:root / fallback) ligne   187   ║
+ * ║   §3        Thème Français (html.theme-french)    ligne   250   ║
+ * ║   §4        Thème Oromo (html.theme-oromo)        ligne   290   ║
+ * ║   §5        Écran 0 — Lanceur                     ligne   325   ║
+ * ║   §6        Écran 1 — Accueil #home               ligne   531   ║
+ * ║   §7        Écran 2 — Sections                    ligne   597   ║
+ * ║   §8        Écran 3 — Leçon                       ligne   722   ║
+ * ║   §9        Composants : Flashcards               ligne   973   ║
+ * ║   §10       Composants : Alphabet                 ligne  1096   ║
+ * ║   §11       Composants : Quiz                     ligne  1196   ║
+ * ║   §12       Composants : Dialogues / Situations   ligne  1301   ║
+ * ║   §13       Composants : Vocabulaire              ligne  1406   ║
+ * ║   §14       Modale Remerciements                  ligne  1474   ║
+ * ║   §15       Footer commun                         ligne  1561   ║
+ * ║   §16       Toast notification                    ligne  1581   ║
+ * ║   §17       Onglet Répète                         ligne  1617   ║
+ * ║   §18       Focus clavier                         ligne  1866   ║
+ * ║   §19       Guide utilisateur (.ob-*)             ligne  1884   ║
+ * ║   §20       Spinner de chargement                 ligne  2340   ║
+ * ║   §22       Écran Home redesigné                  ligne  2377   ║
+ * ║   §23       Écran Sections redesigné              ligne  2662   ║
+ * ║   §24       Responsive : tablette & desktop       ligne  2790   ║
+ * ║   §24b      Mode sombre                           ligne  2880   ║
+ * ║   §25       Boutons d'export PDF                  ligne  2991   ║
+ * ║   §26       Barre de navigation basse             ligne  3090   ║
+ * ║   §27       Onglets niveau 1 / 2                  ligne  3198   ║
+ * ║   §28       Écrans sections level (no-scroll)     ligne  3293   ║
+ * ║   §20e      Grille thèmes écrans level            ligne  3477   ║
+ * ║   §CONFETTI Animation de félicitations ⭐⭐⭐      ligne  3498   ║
+ * ║   §PROGRESS Cercle SVG de progression (Home)      ligne  3556   ║
+ * ║   §CONFIRM  Modale confirmation suppression       ligne  3632   ║
+ * ║   §ANTISPAM E-mail affiché à l'envers (CSS RTL)  ligne  3751   ║
  * ╚══════════════════════════════════════════════════════════════════╝
  */
 

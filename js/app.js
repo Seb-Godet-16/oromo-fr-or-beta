@@ -12,42 +12,42 @@
      └─ app.js       → Ce fichier : logique applicative complète
 
    SECTIONS DE CE FICHIER (ordre d'apparition réel) :
-      1.   Variables d'état globales (let/const)             ligne ~   52
-      —    Utilitaire bilingue L() / langKeys()              ligne ~   86
-      2.   Point d'entrée — initApp(mode)                    ligne ~  156
-      3.   Synthèse vocale + prononciation Oromo             ligne ~  341
-      3b.  Retour haptique — _vibrateFeedback()              ligne ~  522
-      3b2. Confetti — animation de félicitations (stars)     ligne ~  544
-      3c.  Interruption audio — visibilitychange / focus     ligne ~  617
-      4.   Persistance de la progression (étoiles)           ligne ~  654
-      4c.  Réinitialisation — confirmResetProgress()         ligne ~  724  (dans §4)
-      4b.  Restauration de session quiz (sessionStorage)     ligne ~  877
-      5.   Navigation entre écrans                           ligne ~  976
-      5b.  Navigation basse — helpers                        ligne ~ 1077
-      6.   Écran Home — barre de progression globale         ligne ~ 1200
-      7.   Écran Sections — grille des thèmes                ligne ~ 1282
-      8.   Ouverture d'un thème (écran Lesson + onglets)     ligne ~ 1387
-           switchTab() : onglets + repositionnement          ligne ~ 1508
+      1.   Variables d'état globales (let/const)             ligne    63
+      —    Utilitaire bilingue L() / langKeys()              ligne   112
+      2.   Point d'entrée — initApp(mode)                    ligne   220
+      3.   Synthèse vocale + prononciation Oromo             ligne   512
+      3b.  Retour haptique — _vibrateFeedback()              ligne   609
+      3b2. Confetti — animation de félicitations (stars)     ligne   641
+      3c.  Interruption audio — visibilitychange / focus     ligne   693
+      4.   Persistance de la progression (étoiles)           ligne   788
+      4c.  Réinitialisation — confirmResetProgress()         ligne   851  (dans §4)
+      4b.  Restauration de session quiz (sessionStorage)     ligne  1047
+      5.   Navigation entre écrans                           ligne  1152
+      5b.  Navigation basse — helpers                        ligne  1336
+      6.   Écran Home — barre de progression globale         ligne  1421
+      7.   Écran Sections — grille des thèmes                ligne  1487
+      8.   Ouverture d'un thème (écran Lesson + onglets)     ligne  1601
+           switchTab() : onglets + repositionnement          ligne  1737
            du bouton PDF en mode Cartes (fixed via JS)
-      9.   Cartes Flash — vocabulaire interactif             ligne ~ 1558
-     10.   Quiz 10 questions — avec étoiles progressives     ligne ~ 1707
-     11.   Dialogue — scènes de situation                    ligne ~ 1955
-     12.   Vocabulaire — lexique visuel cliquable            ligne ~ 2012
-     13b.  Onglet Répète — reconnaissance vocale             ligne ~ 2057
-     13.   Quiz Dialogue — questions sur le dialogue         ligne ~ 2651
-     14.   Utilitaires & chaînes de résultats bilingues      ligne ~ 2741
-     17.   Guide utilisateur — Onboarding                    ligne ~ 2800
-      —    Écran Home — _buildHomeGuide()                    ligne ~ 2825
-     18.   Crédits — showCredits()                           ligne ~ 3362
-     15.   Initialisation du launcher                        ligne ~ 3413
-     16.   Accessibilité clavier                             ligne ~ 3424
-     19.   Spinner de chargement des données                 ligne ~ 3436
-     19b.  Viewport height fix — Android Chrome / Brave      ligne ~ 3479
-     20.   Enregistrement du Service Worker (PWA)            ligne ~ 3541
-     21.   Exports PDF — window.print() + @media print       ligne ~ 3588
-     21a.  Export Guide (écran Home)                         ligne ~ 3773
-     21b.  Export Vocabulaire (leçon Niveau 1)               ligne ~ 3870
-     21c.  Export Situation (leçon Niveau 2 — dialogue)      ligne ~ 3966
+      9.   Cartes Flash — vocabulaire interactif             ligne  1775
+     10.   Quiz 10 questions — avec étoiles progressives     ligne  2068
+     11.   Dialogue — scènes de situation                    ligne  2238
+     12.   Vocabulaire — lexique visuel cliquable            ligne  2297
+     13b.  Onglet Répète — reconnaissance vocale             ligne  2550
+     13.   Quiz Dialogue — questions sur le dialogue         ligne  2991
+     14.   Utilitaires & chaînes de résultats bilingues      ligne  3135
+     17.   Guide utilisateur — Onboarding                    ligne  3296
+      —    Écran Home — _buildHomeGuide()                    ligne  3235
+     18.   Crédits — showCredits()                           ligne  3324
+     15.   Initialisation du launcher                        ligne  3402
+     16.   Accessibilité clavier                             ligne  3402
+     19.   Spinner de chargement des données                 ligne  3424
+     19b.  Viewport height fix — Android Chrome / Brave      ligne  3458
+     20.   Enregistrement du Service Worker (PWA)            ligne  3523
+     21.   Exports PDF — window.print() + @media print       ligne  3598
+     21a.  Export Guide (écran Home)                         ligne  3766
+     21b.  Export Vocabulaire (leçon Niveau 1)               ligne  3872
+     21c.  Export Situation (leçon Niveau 2 — dialogue)      ligne  3968
    ============================================================ */
 
 
