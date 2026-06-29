@@ -15,7 +15,7 @@
 | Thèmes par mode | 48 (32 Niveau 1 Vocabulaire + 16 Niveau 2 Dialogue) |
 | Mots/expressions par mode | ~387 entrées (Français) · ~396 entrées (Oromo) |
 | Fonctionnement hors-ligne | ✅ 100 % après première visite (Service Worker) |
-| Taille totale du code source | ~607 Ko (6 fichiers principaux, 12 418 lignes) |
+| Taille totale du code source | ~594 Ko (6 fichiers principaux, 12 443 lignes) |
 
 ---
 
@@ -25,11 +25,11 @@
 
 | Fichier | Taille | Lignes | Rôle |
 |---|---|---|---|
-| `js/app.js` | 166 Ko | 4 096 | Moteur applicatif complet (104 fonctions) |
-| `css/style.css` | 123 Ko | 3 832 | Styles + système de thèmes dual |
-| `js/data-fr.js` | 109 Ko | 1 427 | Dataset mode "Apprendre le Français" |
+| `js/app.js` | 167 Ko | 4 112 | Moteur applicatif complet (104 fonctions) |
+| `css/style.css` | 124 Ko | 3 828 | Styles + système de thèmes dual |
+| `js/data-fr.js` | 110 Ko | 1 427 | Dataset mode "Apprendre le Français" |
 | `js/data-or.js` | 106 Ko | 1 382 | Dataset mode "Apprendre l'Oromo" |
-| `index.html` | 66 Ko | 1 057 | Structure HTML — 4 écrans + 2 modales |
+| `index.html` | 67 Ko | 1 070 | Structure HTML — 4 écrans + 2 modales |
 | `sw.js` | 33 Ko | 624 | Service Worker — Cache First / Network First |
 | `manifest.json` | — | — | PWA — icônes, orientation, screenshots |
 | `deploy.yml` | — | — | CI/CD GitHub Actions |
@@ -60,34 +60,37 @@
 
 | # | Section | Fonctions clés | Ligne exacte |
 |---|---|---|---|
-| 1 | Variables d'état globales | `currentMode`, `CT`, `done`, `q10Step`… | **63** |
-| — | Utilitaire bilingue | `L()`, `isFrench()`, `langKeys()` | **112** |
-| 2 | Point d'entrée | `initApp(mode)`, `_loadDataScript()` | **220 / 190** |
-| 3 | Synthèse vocale TTS | `speak()`, `_resolveOromoVoice()`, `_doSpeak()` | **422 / 512 / 572** |
-| 3b | Retour haptique | `_vibrateFeedback()` | **609** |
-| 3b2 | Confetti | `_launchConfetti()` | **641** |
-| 3c | Interruption audio | `_startTtsKeepAlive()`, `_stopTtsKeepAlive()` | **752 / 764** |
-| 4 | Persistance progression | `loadDone()`, `saveDone()`, `markDone()` | **788 / 800 / 961** |
-| 4c | Réinitialisation | `confirmResetProgress()`, `executeResetProgress()` | **851 / 905** |
-| 4b | Session quiz | `_saveQuizSession()`, `_restoreQuizSession()` | **1047 / 1066** |
-| 5 | Navigation | `showScreen()`, `lessonGoBack()`, `lessonNav()` | **1152 / 1351 / 1366** |
-| 6 | Écran Home | `renderHome()`, `_getProgress()` | **1421 / 1409** |
-| 7 | Écran Sections | `renderSections()`, `_buildThemeCard()` | **1487 / 1559** |
-| 8 | Ouverture thème | `openTheme()`, `switchTab()` | **1601 / 1737** |
-| 9 | Cartes Flash | `renderFlash()`, `flipCard()`, `nextCard()` | **1775 / 1883 / 1892** |
-| 10 | Quiz 10 questions | `renderQuiz10()`, `_generateQuiz()`, `checkQ10()` | **2068 / 2004 / 2183** |
-| 11 | Dialogue | `renderDialog()`, `pickSit()` | **2238 / 2281** |
-| 12 | Vocabulaire | `renderVocab()` | **2297** |
-| 13b | Onglet Répète | `renderRepeat()`, `repeatRecord()`, `_matchRepeat()` | **2550 / 2805 / 2421** |
-| 13 | Quiz Dialogue | `renderDialogQuiz()`, `checkDQ()` | **2991 / 3059** |
-| 14 | Utilitaires | `esc()`, `escJS()`, `_quizResultStrings()` | **3135 / 3155 / 3101** |
-| 17 | Guide / Onboarding | `_buildHomeGuide()`, `_maybeShowOnboarding()` | **3235 / 3296** |
-| 18 | Crédits | `showCredits()`, `closeCreditsModal()` | **3324 / 3375** |
-| 15 | Launcher init | Initialisation au chargement | **3413** |
-| 16 | Accessibilité clavier | Navigation clavier globale | **3424** |
-| 19 | Spinner / Viewport | `_showLoadingSpinner()`, fix Android Chrome | **3424 / 3483** |
-| 20 | Service Worker | Enregistrement PWA | **3555** |
-| 21 | Exports PDF | `_exportGuide()`, `_exportVocab()`, `_exportSituation()` | **3766 / 3872 / 3968** |
+| 1 | Variables d'état globales | `currentMode`, `CT`, `done`, `q10Step`… | **54** |
+| — | Utilitaire bilingue | `L()`, `isFrench()`, `langKeys()` | **88** |
+| 2 | Point d'entrée | `initApp(mode)`, `_loadDataScript()` | **158 / 190** |
+| 3 | Synthèse vocale TTS | `speak()`, `_resolveOromoVoice()`, `_doSpeak()` | **339 / 422 / 582** |
+| 3b | Retour haptique | `_vibrateFeedback()` | **617** |
+| 3b2 | Confetti | `_launchConfetti()` | **639** |
+| 3c | Interruption audio | `visibilitychange / focus` | **712** |
+| 3d | KeepAlive watchdog | `_startTtsKeepAlive()`, `_stopTtsKeepAlive()` | **753 / 772 / 784** |
+| 4 | Persistance progression | `loadDone()`, `saveDone()`, `markDone()` | **795 / 808 / 981** |
+| 4c | Réinitialisation | `confirmResetProgress()`, `executeResetProgress()` | **871 / 925** |
+| 4b | Session quiz | `_saveQuizSession()`, `_restoreQuizSession()` | **1036 / 1067 / 1086** |
+| 5 | Navigation | `showScreen()`, `lessonGoBack()`, `lessonNav()` | **1148 / 1371 / 1386** |
+| 5b | Navigation basse | `navGoModules()`, `_updateBottomNav()` | **1263 / 1297** |
+| 6 | Écran Home | `renderHome()`, `_getProgress()` | **1414 / 1429** |
+| 7 | Écran Sections | `renderSections()`, `_buildThemeCard()` | **1496 / 1507 / 1579** |
+| 8 | Ouverture thème | `openTheme()`, `switchTab()` | **1609 / 1621 / 1753** |
+| 9 | Cartes Flash | `renderFlash()`, `flipCard()`, `nextCard()` | **1781 / 1899 / 1908** |
+| 10 | Quiz 10 questions | `renderQuiz10()`, `_generateQuiz()`, `checkQ10()` | **1930 / 2020 / 2084 / 2199** |
+| 11 | Dialogue | `renderDialog()`, `pickSit()` | **2244 / 2254 / 2297** |
+| 12 | Vocabulaire | `renderVocab()` | **2303 / 2313** |
+| 13b | Onglet Répète | `renderRepeat()`, `repeatRecord()`, `_matchRepeat()` | **2350 / 2566 / 2821 / 2437** |
+| 13 | Quiz Dialogue | `renderDialogQuiz()`, `checkDQ()` | **2997 / 3007 / 3075** |
+| 14 | Utilitaires | `esc()`, `escJS()`, `_quizResultStrings()` | **3107 / 3151 / 3171 / 3117** |
+| 17 | Guide / Onboarding | `_buildHomeGuide()`, `_maybeShowOnboarding()` | **3194 / 3251 / 3312** |
+| — | Écran Home (guide) | `_buildHomeGuide()` | **3219** |
+| 18 | Crédits | `showCredits()`, `closeCreditsModal()` | **3336 / 3340 / 3391** |
+| 15 | Launcher init | Initialisation au chargement | **3397** |
+| 16 | Accessibilité clavier | Navigation clavier globale | **3415** |
+| 19 | Spinner / Viewport | `_showLoadingSpinner()`, fix Android Chrome | **3427 / 3440 / 3470** |
+| 20 | Service Worker | Enregistrement PWA | **3532** |
+| 21 | Exports PDF | `_exportGuide()`, `_exportVocab()`, `_exportSituation()` | **3579 / 3782 / 3888 / 3984** |
 
 ---
 
@@ -95,40 +98,40 @@
 
 | § | Section | Ligne |
 |---|---|---|
-| §1 | Reset & base globale | 63 |
-| §2 | Variables de thème `:root` (fallback) | 187 |
-| §3 | Thème Français `html.theme-french` | 250 |
-| §4 | Thème Oromo `html.theme-oromo` | 290 |
-| §5 | Écran 0 — Lanceur | 325 |
-| §6 | Écran 1 — Accueil #home | 531 |
-| §7 | Écran 2 — Sections | 597 |
-| §8 | Écran 3 — Leçon | 722 |
-| §9 | Flashcards | 973 |
-| §10 | Alphabet | 1096 |
-| §11 | Quiz | 1196 |
-| §12 | Dialogues / Situations | 1301 |
-| §13 | Vocabulaire | 1406 |
-| §14 | Modale Remerciements | 1474 |
-| §15 | Footer commun | 1561 |
-| §16 | Toast notification | 1581 |
-| §17 | Onglet Répète | 1617 |
-| §18 | Focus clavier | 1866 |
-| §19 | Guide utilisateur `.ob-*` | 1884 |
-| §20 | Spinner de chargement | 2340 |
-| §20e | Grille thèmes dans les écrans level | 3477 |
-| §22 | Écran Home redesigné | 2377 |
-| §23 | Écran Sections redesigné | 2662 |
-| §24 | Responsive tablette & desktop | 2790 |
-| §24b | Mode sombre `prefers-color-scheme` | 2880 |
-| §25 | Boutons export PDF | 2991 |
-| §26 | Barre de navigation basse | 3090 |
-| §27 | Onglets Niveau 1 / 2 | 3198 |
-| §28 | Écrans sections (no-scroll fix) | 3293 |
-| §CONFETTI | Animation ⭐⭐⭐ | 3498 |
-| §PROGRESS | Cercle SVG progression | 3556 |
-| §CONFIRM | Modale confirmation suppression | 3632 |
-| §ANTISPAM | Email affiché à l'envers (RTL CSS) | 3751 |
-| §SPEAKING | Feedback visuel bouton audio (TTS) | 3778 |
+| §1 | Reset & base globale | 62 |
+| §2 | Variables de thème `:root` (fallback) | 186 |
+| §3 | Thème Français `html.theme-french` | 249 |
+| §4 | Thème Oromo `html.theme-oromo` | 289 |
+| §5 | Écran 0 — Lanceur | 324 |
+| §6 | Écran 1 — Accueil #home | 530 |
+| §7 | Écran 2 — Sections | 596 |
+| §8 | Écran 3 — Leçon | 721 |
+| §9 | Flashcards | 972 |
+| §10 | Alphabet | 1095 |
+| §11 | Quiz | 1195 |
+| §12 | Dialogues / Situations | 1300 |
+| §13 | Vocabulaire | 1405 |
+| §14 | Modale Remerciements | 1473 |
+| §15 | Footer commun | 1560 |
+| §16 | Toast notification | 1580 |
+| §17 | Onglet Répète | 1616 |
+| §18 | Focus clavier | 1865 |
+| §19 | Guide utilisateur `.ob-*` | 1883 |
+| §20 | Spinner de chargement | 2339 |
+| §22 | Écran Home redesigné | 2376 |
+| §23 | Écran Sections redesigné | 2637 |
+| §24 | Responsive tablette & desktop | 2765 |
+| §24b | Mode sombre `prefers-color-scheme` | 2855 |
+| §25 | Boutons export PDF | 2966 |
+| §26 | Barre de navigation basse | 3066 |
+| §27 | Onglets Niveau 1 / 2 | 3193 |
+| §28 | Écrans sections (no-scroll fix) | 3288 |
+| §20e | Grille thèmes dans les écrans level | 3472 |
+| §CONFETTI | Animation ⭐⭐⭐ | 3493 |
+| §PROGRESS | Cercle SVG progression | 3551 |
+| §CONFIRM | Modale confirmation suppression | 3627 |
+| §ANTISPAM | Email affiché à l'envers (RTL CSS) | 3746 |
+| §SPEAKING | Feedback visuel bouton audio (TTS) | 3773 |
 
 ---
 
@@ -138,14 +141,14 @@
 |---|---|---|
 | `<head>` | Meta, CSP, PWA, Open Graph | 1 |
 | Écran 0 | `#app-launcher` — Lanceur | 117 |
-| Écran 1 | `#home` — Guide / Onboarding | 219 |
-| Écran 2a | `#sections-level1` — Grille Niveau 1 | 824 |
-| Écran 2b | `#sections-level2` — Grille Niveau 2 | 852 |
-| Écran 3 | `#lesson` — Leçon (5 onglets) | 885 |
-| Modale 1 | `#credits-modal` — Remerciements | 964 |
-| Modale 2 | `#custom-confirm-modal` — Confirmation suppression | 997 |
-| Nav | `#bottom-nav` — Barre de navigation basse | 1013 |
-| Scripts | Chargement de `app.js` | 1055 |
+| Écran 1 | `#home` — Guide / Onboarding | 220 |
+| Écran 2a | `#sections-level1` — Grille Niveau 1 | 837 |
+| Écran 2b | `#sections-level2` — Grille Niveau 2 | 865 |
+| Écran 3 | `#lesson` — Leçon (5 onglets) | 898 |
+| Modale 1 | `#credits-modal` — Remerciements | 977 |
+| Modale 2 | `#custom-confirm-modal` — Confirmation suppression | 1010 |
+| Nav | `#bottom-nav` — Barre de navigation basse | 1026 |
+| Scripts | Chargement de `app.js` | 1068 |
 
 ---
 
@@ -161,25 +164,25 @@ Une seule classe sur `<html>` (`theme-french` ou `theme-oromo`) bascule l'intég
 La voix Oromo native (`om-ET`) est quasi absente des appareils. `_resolveOromoVoice()` tente : `om-ET` → `so-SO` → `am-ET` → `ha-NG` → `sw-KE` → `es-ES`. L'onglet Répète a sa propre cascade `_resolveRepeatLangOromo()` avec le même ordre.
 
 ### 6.4 Algorithme de correspondance Répète
-`_matchRepeat()` combine correspondance exacte + distance de Levenshtein (`_levenshtein()`, **ligne 2466**) pour tolérer les erreurs de prononciation mineures lors de la reconnaissance vocale.
+`_matchRepeat()` combine correspondance exacte + distance de Levenshtein (`_levenshtein()`, **ligne 2482**) pour tolérer les erreurs de prononciation mineures lors de la reconnaissance vocale.
 
 ### 6.5 Persistance de progression
 Deux clés localStorage indépendantes : `pe_om_fr_done_v1` (mode Français) et `pe_fr_om_done_v1` (mode Oromo). Les étoiles ne décroissent jamais — seul le meilleur score est conservé. Seuils : ≥ 50 % → ⭐ · ≥ 75 % → ⭐⭐ · 100 % → ⭐⭐⭐.
 
 ### 6.6 Quiz alphabet — statique vs dynamique
-Le thème `alpha` seul utilise un tableau `quiz10[]` codé en dur dans les données, car le quiz est **audio** (phonétique) : les distracteurs doivent être phonétiquement proches (ex : C / K / CH / G). Tous les autres thèmes utilisent `_generateQuiz()` (Fisher-Yates, **ligne 2004**).
+Le thème `alpha` seul utilise un tableau `quiz10[]` codé en dur dans les données, car le quiz est **audio** (phonétique) : les distracteurs doivent être phonétiquement proches (ex : C / K / CH / G). Tous les autres thèmes utilisent `_generateQuiz()` (Fisher-Yates, **ligne 2020**).
 
 ### 6.7 Session quiz (sessionStorage)
-`_saveQuizSession()` / `_restoreQuizSession()` (**lignes 1047 / 1066**) sauvegardent l'état du quiz en cours dans `sessionStorage` — survit à un changement d'onglet accidentel, mais s'efface à la fermeture du navigateur.
+`_saveQuizSession()` / `_restoreQuizSession()` (**lignes 1067 / 1086**) sauvegardent l'état du quiz en cours dans `sessionStorage` — survit à un changement d'onglet accidentel, mais s'efface à la fermeture du navigateur.
 
 ### 6.8 Versioning de cache automatisé
 `sw.js` contient le placeholder `GITHUB_RUN_NUMBER`, remplacé par `sed` dans `deploy.yml` à chaque déploiement. Chaque build produit un nom de cache unique — aucune intervention manuelle requise.
 
 ### 6.9 Fix viewport Android
-`--app-h` et `--bottom-nav-h` sont recalculées via `window.innerHeight` à chaque `resize`/`orientationchange` (**ligne 3483**) pour contourner le bug `100dvh` incluant la barre d'URL sur Android Chrome/Brave.
+`--app-h` et `--bottom-nav-h` sont recalculées via `window.innerHeight` à chaque `resize`/`orientationchange` (**ligne 3470**) pour contourner le bug `100dvh` incluant la barre d'URL sur Android Chrome/Brave.
 
 ### 6.10 Anti-spam email
-L'adresse email est affichée en écriture RTL CSS dans `index.html` (**ligne 186**) et dans les guides onboarding (lignes **507** et **807**), masquant la vraie adresse aux scrapers. Le clic copie l'adresse corrigée dans le presse-papier.
+L'adresse email est affichée en écriture RTL CSS dans `index.html` (**ligne 187**) et dans les guides onboarding (lignes **520** et **820**), masquant la vraie adresse aux scrapers. Le clic copie l'adresse corrigée dans le presse-papier.
 
 ---
 
@@ -187,7 +190,7 @@ L'adresse email est affichée en écriture RTL CSS dans `index.html` (**ligne 18
 
 | Point | Niveau | Détail |
 |---|---|---|
-| `app.js` monolithique | ⚠️ Moyen | 4 096 lignes, 104 fonctions — maintenable grâce aux `§` mais migration ES modules complexe (handlers `onclick` inline) |
+| `app.js` monolithique | ⚠️ Moyen | 4 112 lignes, 104 fonctions — maintenable grâce aux `§` mais migration ES modules complexe (handlers `onclick` inline) |
 | `unsafe-inline` CSP | ⚠️ Moyen | Nécessaire pour les `onclick` générés dynamiquement par `innerHTML` et pour GitHub Pages (pas de headers HTTP customs) |
 | Voix Oromo TTS | ⚠️ Moyen | `om-ET` absente sur la plupart des appareils — l'utilisateur entend souvent du Somali ou de l'Amharique |
 | Quiz dynamique (Fisher-Yates) | ✅ OK | Bien implémenté — cache `_q10Questions` évite le re-shuffle si on revient sur l'onglet |

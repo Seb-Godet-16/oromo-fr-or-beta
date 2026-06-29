@@ -29,15 +29,15 @@
   ╠══════════════════════════════════════════════════════════════════╣
   ║  PLAN DU FICHIER                                                ║
   ║   <head>    Métadonnées, PWA, Open Graph, feuille de styles     ║
-  ║   Écran 0   Lanceur (#app-launcher)           ligne   117       ║
-  ║   Écran 1   Guide / Onboarding (#home)        ligne   219       ║
-  ║   Écran 2a  Niveau 1 Modules (#sections-l1)   ligne   824       ║
-  ║   Écran 2b  Niveau 2 Modules (#sections-l2)   ligne   852       ║
-  ║   Écran 3   Leçon (#lesson)                   ligne   885       ║
-  ║   Modale    Remerciements (#credits-modal)    ligne   964       ║
-  ║   Modale    Confirmation suppression          ligne   997       ║
-  ║   Nav       Barre de navigation basse         ligne  1013       ║
-  ║   Scripts   Chargement de app.js              ligne  1055       ║
+  ║   Écran 0   Lanceur (#app-launcher)           ligne ~   89      ║
+  ║   Écran 1   Guide / Onboarding (#home)        ligne ~  182      ║
+  ║   Écran 2a  Niveau 1 Modules (#sections-l1)   ligne ~  239      ║
+  ║   Écran 2b  Niveau 2 Modules (#sections-l2)   ligne ~  267      ║
+  ║   Écran 3   Leçon (#lesson)                   ligne ~  296      ║
+  ║   Modale    Remerciements (#credits-modal)    ligne ~  358      ║
+  ║   Modale    Confirmation suppression          ligne ~  394      ║
+  ║   Nav       Barre de navigation basse         ligne ~  414      ║
+  ║   Scripts   Chargement de app.js              ligne ~  441      ║
   ╚══════════════════════════════════════════════════════════════════╝
 -->
 <html lang="fr">
@@ -182,7 +182,8 @@
 
     <!-- Pied de page propre à cet écran (classe spécifique pour le style) -->
     <footer class="launcher-footer">
-      © Juin 2026 – Développé par Sébastien Godet · Assisté par IA Claude Sonnet 4.6 et Gemini 3.5 Flash<br>
+      © Juin 2026 – Développé par Sébastien Godet<br>
+      Assisté par IA · Claude Sonnet 4.6 &amp; Gemini 3.5 Flash<br>
       <button id="btn-copy-email" class="antispam-btn" onclick="openAndCopyEmail()"><span class="antispam-email">moc.liamg@61tedog.neitsabes</span></button> ·
       <a href="https://www.linkedin.com/in/s%C3%A9bastien-godet-142ba6145" target="_blank" rel="noopener noreferrer">LinkedIn</a> ·
       <!--
@@ -225,8 +226,20 @@
 
     <!-- En-tête coloré — IDs mis à jour par _buildHomeGuide() -->
     <div class="home-guide-header" id="homeGuideHeader">
-      <div class="home-guide-flags" id="homeGuideFlagsRow"></div>
       <h1 class="home-guide-title" id="homeTitle"></h1>
+
+      <!-- Logo centré entre le titre et les drapeaux -->
+      <div class="home-guide-logo-wrap">
+        <img
+          class="home-guide-logo"
+          src="img/Logo-appli-or-fr.png"
+          alt="Taphad'Meuh"
+          width="1408" height="768"
+          loading="lazy" decoding="async"
+        >
+      </div>
+
+      <div class="home-guide-flags" id="homeGuideFlagsRow"></div>
       <p class="home-guide-subtitle" id="homeGuideSubtitle"></p>
       <div class="home-guide-badges" id="homeGuideBadges"></div>
 
@@ -1017,15 +1030,15 @@
     </button>
     <button class="nav-btn" id="navBtnGuide" onclick="showOnboardingGuide()" aria-label="Guide">
       <span class="nav-icon">❓</span>
-      <span class="nav-label" id="navLabelGuide">Guide</span>
+      <span class="nav-label" id="navLabelGuide"><span class="nav-label-fr">Guide</span><span class="nav-label-or">Gargaarsa</span></span>
     </button>
     <button class="nav-btn" id="navBtnModules" onclick="navGoModules()" aria-label="Modules">
       <span class="nav-icon">📚</span>
-      <span class="nav-label" id="navLabelModules">Modules</span>
+      <span class="nav-label" id="navLabelModules"><span class="nav-label-fr">Modules</span><span class="nav-label-or">Kutaalee</span></span>
     </button>
     <button class="nav-btn" id="navBtnCredits" onclick="showCredits()" aria-label="Infos">
       <span class="nav-icon">💌</span>
-      <span class="nav-label" id="navLabelCredits">Infos</span>
+      <span class="nav-label" id="navLabelCredits"><span class="nav-label-fr">Infos</span><span class="nav-label-or">Odeeffannoo</span></span>
     </button>
   </nav>
 
@@ -1043,8 +1056,8 @@
     1. app.js   — moteur applicatif. Contient _loadDataScript(),
                   qui injecte dynamiquement le bon fichier de
                   données au moment du choix de langue :
-                    • learn_french → js/data-fr.js  (1 427 lignes)
-                    • learn_oromo  → js/data-or.js  (1 382 lignes)
+                    • learn_french → js/data-fr.js  (~1 350 lignes)
+                    • learn_oromo  → js/data-or.js  (~1 350 lignes)
 
   AVANTAGE : seul le dataset du mode choisi est chargé en mémoire
   (~50% de mémoire JS par mode vs un fichier monolithique unique).

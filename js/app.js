@@ -12,42 +12,43 @@
      └─ app.js       → Ce fichier : logique applicative complète
 
    SECTIONS DE CE FICHIER (ordre d'apparition réel) :
-      1.   Variables d'état globales (let/const)             ligne    63
-      —    Utilitaire bilingue L() / langKeys()              ligne   112
-      2.   Point d'entrée — initApp(mode)                    ligne   220
-      3.   Synthèse vocale + prononciation Oromo             ligne   512
-      3b.  Retour haptique — _vibrateFeedback()              ligne   609
-      3b2. Confetti — animation de félicitations (stars)     ligne   641
-      3c.  Interruption audio — visibilitychange / focus     ligne   692
-      4.   Persistance de la progression (étoiles)           ligne   788
-      4c.  Réinitialisation — confirmResetProgress()         ligne   851  (dans §4)
-      4b.  Restauration de session quiz (sessionStorage)     ligne  1047
-      5.   Navigation entre écrans                           ligne  1152
-      5b.  Navigation basse — helpers                        ligne  1336
-      6.   Écran Home — barre de progression globale         ligne  1421
-      7.   Écran Sections — grille des thèmes                ligne  1487
-      8.   Ouverture d'un thème (écran Lesson + onglets)     ligne  1601
-           switchTab() : onglets + repositionnement          ligne  1737
+      1.   Variables d'état globales (let/const)             ligne    54
+      —    Utilitaire bilingue L() / langKeys()              ligne    88
+      2.   Point d'entrée — initApp(mode)                    ligne   158
+      3.   Synthèse vocale + prononciation Oromo             ligne   339
+      3b.  Retour haptique — _vibrateFeedback()              ligne   617
+      3b2. Confetti — animation de félicitations (stars)     ligne   639
+      3c.  Interruption audio — visibilitychange / focus     ligne   712
+      3d.  KeepAlive watchdog — Chrome / Android             ligne   753
+      4.   Persistance de la progression (étoiles)           ligne   795
+      4c.  Réinitialisation — confirmResetProgress()         ligne   871  (dans §4)
+      4b.  Restauration de session quiz (sessionStorage)     ligne  1036
+      5.   Navigation entre écrans                           ligne  1148
+      5b.  Navigation basse — helpers                        ligne  1263
+      6.   Écran Home — barre de progression globale         ligne  1414
+      7.   Écran Sections — grille des thèmes                ligne  1496
+      8.   Ouverture d'un thème (écran Lesson + onglets)     ligne  1609
+           switchTab() : onglets + repositionnement          ligne  1753
            du bouton PDF en mode Cartes (fixed via JS)
-      9.   Cartes Flash — vocabulaire interactif             ligne  1775
-     10.   Quiz 10 questions — avec étoiles progressives     ligne  2068
-     11.   Dialogue — scènes de situation                    ligne  2238
-     12.   Vocabulaire — lexique visuel cliquable            ligne  2297
-     13b.  Onglet Répète — reconnaissance vocale             ligne  2550
-     13.   Quiz Dialogue — questions sur le dialogue         ligne  2991
-     14.   Utilitaires & chaînes de résultats bilingues      ligne  3135
-     17.   Guide utilisateur — Onboarding                    ligne  3296
-      —    Écran Home — _buildHomeGuide()                    ligne  3235
-     18.   Crédits — showCredits()                           ligne  3324
-     15.   Initialisation du launcher                        ligne  3382
-     16.   Accessibilité clavier                             ligne  3400
-     19.   Spinner de chargement des données                 ligne  3412
-     19b.  Viewport height fix — Android Chrome / Brave      ligne  3455
-     20.   Enregistrement du Service Worker (PWA)            ligne  3517
-     21.   Exports PDF — window.print() + @media print       ligne  3598
-     21a.  Export Guide (écran Home)                         ligne  3766
-     21b.  Export Vocabulaire (leçon Niveau 1)               ligne  3872
-     21c.  Export Situation (leçon Niveau 2 — dialogue)      ligne  3968
+      9.   Cartes Flash — vocabulaire interactif             ligne  1781
+     10.   Quiz 10 questions — avec étoiles progressives     ligne  1930
+     11.   Dialogue — scènes de situation                    ligne  2244
+     12.   Vocabulaire — lexique visuel cliquable            ligne  2303
+     13b.  Onglet Répète — reconnaissance vocale             ligne  2350
+     13.   Quiz Dialogue — questions sur le dialogue         ligne  2997
+     14.   Utilitaires & chaînes de résultats bilingues      ligne  3107
+     17.   Guide utilisateur — Onboarding                    ligne  3194
+      —    Écran Home — _buildHomeGuide()                    ligne  3219
+     18.   Crédits — showCredits()                           ligne  3336
+     15.   Initialisation du launcher                        ligne  3397
+     16.   Accessibilité clavier                             ligne  3415
+     19.   Spinner de chargement des données                 ligne  3427
+     19b.  Viewport height fix — Android Chrome / Brave      ligne  3470
+     20.   Enregistrement du Service Worker (PWA)            ligne  3532
+     21.   Exports PDF — window.print() + @media print       ligne  3579
+     21a.  Export Guide (écran Home)                         ligne  3778
+     21b.  Export Vocabulaire (leçon Niveau 1)               ligne  3884
+     21c.  Export Situation (leçon Niveau 2 — dialogue)      ligne  3980
    ============================================================ */
 
 
@@ -516,6 +517,14 @@ function speak(txt, triggerBtn) {
   if (speak._lastCall && (now - speak._lastCall) < 300) return;
   speak._lastCall = now;
 
+  /* ── Nettoyer le bouton précédemment marqué "en lecture" ── */
+  if (speak._activeBtn && speak._activeBtn !== triggerBtn) {
+    speak._activeBtn.classList.remove('is-speaking');
+    const lbl = speak._activeBtn.getAttribute('aria-label') || '';
+    speak._activeBtn.setAttribute('aria-label', lbl.replace(' (lecture…)', ''));
+  }
+  speak._activeBtn = triggerBtn || null;
+
   /* ── Feedback visuel : marquer le bouton comme "en lecture" ── */
   function _markSpeaking(btn) {
     if (!btn) return;
@@ -527,6 +536,7 @@ function speak(txt, triggerBtn) {
     btn.classList.remove('is-speaking');
     const lbl = btn.getAttribute('aria-label') || '';
     btn.setAttribute('aria-label', lbl.replace(' (lecture…)', ''));
+    if (speak._activeBtn === btn) speak._activeBtn = null;
   }
 
   if (currentMode === 'learn_oromo') {
@@ -546,9 +556,10 @@ function speak(txt, triggerBtn) {
         }
         u.rate  = 0.85;  // Légèrement ralenti pour faciliter la compréhension
         u.onend = () => {
-          if (i + 1 < parts.length) setTimeout(() => { speakPart(i + 1); }, 800);
+          if (i + 1 < parts.length) setTimeout(() => { speakPart(i + 1); }, 500);
           else _unmarkSpeaking(triggerBtn);
         };
+        u.onerror = () => { _unmarkSpeaking(triggerBtn); };
         speechSynthesis.speak(u);
       }
 
@@ -557,7 +568,7 @@ function speak(txt, triggerBtn) {
 
   } else {
     /* Mode learn_french : lecture standard en français */
-    _doSpeak(txt, null, 0.80, triggerBtn);
+    _doSpeak(txt, null, 0.82, triggerBtn);
   }
 }
 
@@ -570,23 +581,33 @@ function speak(txt, triggerBtn) {
  * @param {HTMLElement} [triggerBtn] - Bouton déclencheur (reçoit is-speaking pendant la lecture)
  */
 function _doSpeak(txt, voiceObj, rate, triggerBtn) {
+  if (!window.speechSynthesis) return;
   speechSynthesis.cancel();
   let parts = txt.split('/').map((p) => p.trim()).filter(Boolean);
-  if (triggerBtn) triggerBtn.classList.add('is-speaking');
+  if (triggerBtn) {
+    triggerBtn.classList.add('is-speaking');
+    triggerBtn.setAttribute('aria-label', (triggerBtn.getAttribute('aria-label') || '') + ' (lecture…)');
+  }
+
+  function _done() {
+    if (!triggerBtn) return;
+    triggerBtn.classList.remove('is-speaking');
+    const lbl = triggerBtn.getAttribute('aria-label') || '';
+    triggerBtn.setAttribute('aria-label', lbl.replace(' (lecture…)', ''));
+    if (speak._activeBtn === triggerBtn) speak._activeBtn = null;
+  }
 
   function speakPart(i) {
-    if (i >= parts.length) {
-      if (triggerBtn) triggerBtn.classList.remove('is-speaking');
-      return;
-    }
+    if (i >= parts.length) { _done(); return; }
     let u  = new SpeechSynthesisUtterance(parts[i]);
     u.lang = voiceLang;
     u.rate = rate;
     if (voiceObj) u.voice = voiceObj;
-    u.onend = () => {
-      if (i + 1 < parts.length) setTimeout(() => { speakPart(i + 1); }, 800);
-      else if (triggerBtn) triggerBtn.classList.remove('is-speaking');
+    u.onend  = () => {
+      if (i + 1 < parts.length) setTimeout(() => { speakPart(i + 1); }, 500);
+      else _done();
     };
+    u.onerror = () => { _done(); };
     speechSynthesis.speak(u);
   }
 
@@ -1686,7 +1707,7 @@ function openTheme(id, dir) {
 
   /* ── Bouton d'export PDF : afficher le bon selon le type de thème ──
      Visibilité gérée via .is-hidden (définie dans style.css §25)
-     Chaque bouton affiche un label bilingue dans le span enfant. */
+     Le label reste simplement "PDF" dans les deux cas.              */
   let btnVocab = document.getElementById('lessonExportVocab');
   let btnSit   = document.getElementById('lessonExportSit');
   if (btnVocab && btnSit) {
@@ -1694,14 +1715,10 @@ function openTheme(id, dir) {
       btnVocab.classList.add('is-hidden');
       btnSit.classList.remove('is-hidden');
       btnSit.title = L('Galmee haala kana buusi', 'Télécharger cette situation (PDF)');
-      let lblSit = document.getElementById('lessonExportSitLabel');
-      if (lblSit) lblSit.textContent = L('Haala buusi', 'Situation PDF');
     } else {
       btnSit.classList.add('is-hidden');
       btnVocab.classList.remove('is-hidden');
       btnVocab.title = L('Moojuula kana buusi', 'Télécharger ce module (PDF)');
-      let lblVocab = document.getElementById('lessonExportVocabLabel');
-      if (lblVocab) lblVocab.textContent = L('Moojuula buusi', 'Module PDF');
     }
   }
 
