@@ -29,15 +29,15 @@
   ╠══════════════════════════════════════════════════════════════════╣
   ║  PLAN DU FICHIER                                                ║
   ║   <head>    Métadonnées, PWA, Open Graph, feuille de styles     ║
-  ║   Écran 0   Lanceur (#app-launcher)           ligne ~   89      ║
-  ║   Écran 1   Guide / Onboarding (#home)        ligne ~  182      ║
-  ║   Écran 2a  Niveau 1 Modules (#sections-l1)   ligne ~  239      ║
-  ║   Écran 2b  Niveau 2 Modules (#sections-l2)   ligne ~  267      ║
-  ║   Écran 3   Leçon (#lesson)                   ligne ~  296      ║
-  ║   Modale    Remerciements (#credits-modal)    ligne ~  358      ║
-  ║   Modale    Confirmation suppression          ligne ~  394      ║
-  ║   Nav       Barre de navigation basse         ligne ~  414      ║
-  ║   Scripts   Chargement de app.js              ligne ~  441      ║
+  ║   Écran 0   Lanceur (#app-launcher)           ligne   117       ║
+  ║   Écran 1   Guide / Onboarding (#home)        ligne   219       ║
+  ║   Écran 2a  Niveau 1 Modules (#sections-l1)   ligne   824       ║
+  ║   Écran 2b  Niveau 2 Modules (#sections-l2)   ligne   852       ║
+  ║   Écran 3   Leçon (#lesson)                   ligne   885       ║
+  ║   Modale    Remerciements (#credits-modal)    ligne   964       ║
+  ║   Modale    Confirmation suppression          ligne   997       ║
+  ║   Nav       Barre de navigation basse         ligne  1013       ║
+  ║   Scripts   Chargement de app.js              ligne  1055       ║
   ╚══════════════════════════════════════════════════════════════════╝
 -->
 <html lang="fr">
@@ -1043,8 +1043,8 @@
     1. app.js   — moteur applicatif. Contient _loadDataScript(),
                   qui injecte dynamiquement le bon fichier de
                   données au moment du choix de langue :
-                    • learn_french → js/data-fr.js  (~1 350 lignes)
-                    • learn_oromo  → js/data-or.js  (~1 350 lignes)
+                    • learn_french → js/data-fr.js  (1 427 lignes)
+                    • learn_oromo  → js/data-or.js  (1 382 lignes)
 
   AVANTAGE : seul le dataset du mode choisi est chargé en mémoire
   (~50% de mémoire JS par mode vs un fichier monolithique unique).

@@ -40,9 +40,9 @@ Taphad'Meuh/
 │   └── style.css           ← All styles — dual theme system (theme-french / theme-oromo)
 │
 ├── js/
-│   ├── app.js              ← Full application engine (~3 983 lines, 21 sections)
-│   ├── data-fr.js          ← Dataset — "Learn French" mode (48 themes, ~1 428 lines)
-│   └── data-or.js          ← Dataset — "Learn Oromo" mode  (48 themes, ~1 383 lines)
+│   ├── app.js              ← Full application engine (4 096 lines, 21 sections)
+│   ├── data-fr.js          ← Dataset — "Learn French" mode (48 themes, 1 427 lines)
+│   └── data-or.js          ← Dataset — "Learn Oromo" mode  (48 themes, 1 382 lines)
 │
 ├── sw.js                   ← Service Worker — Cache First / Network First + SVG fallbacks
 ├── manifest.json           ← PWA manifest — icons, theme colors, orientation
@@ -198,7 +198,7 @@ Cache name is auto-versioned by GitHub Actions (`GITHUB_RUN_NUMBER`) on every de
 
 ### `app.js` — fichier unique volontairement monolithique
 
-Le moteur applicatif tient dans un seul fichier (~3 900 lignes, 21 sections commentées).
+Le moteur applicatif tient dans un seul fichier (4 096 lignes, 21 sections commentées).
 Ce choix est délibéré : zéro étape de build, compatibilité maximale, hébergement statique sans bundler.
 
 Si le projet grossit significativement, une migration vers des modules ES (`import`/`export`) est envisageable. Elle nécessiterait :

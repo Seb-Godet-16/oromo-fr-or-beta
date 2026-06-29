@@ -18,7 +18,7 @@
       3.   Synthèse vocale + prononciation Oromo             ligne   512
       3b.  Retour haptique — _vibrateFeedback()              ligne   609
       3b2. Confetti — animation de félicitations (stars)     ligne   641
-      3c.  Interruption audio — visibilitychange / focus     ligne   693
+      3c.  Interruption audio — visibilitychange / focus     ligne   692
       4.   Persistance de la progression (étoiles)           ligne   788
       4c.  Réinitialisation — confirmResetProgress()         ligne   851  (dans §4)
       4b.  Restauration de session quiz (sessionStorage)     ligne  1047
@@ -39,11 +39,11 @@
      17.   Guide utilisateur — Onboarding                    ligne  3296
       —    Écran Home — _buildHomeGuide()                    ligne  3235
      18.   Crédits — showCredits()                           ligne  3324
-     15.   Initialisation du launcher                        ligne  3402
-     16.   Accessibilité clavier                             ligne  3402
-     19.   Spinner de chargement des données                 ligne  3424
-     19b.  Viewport height fix — Android Chrome / Brave      ligne  3458
-     20.   Enregistrement du Service Worker (PWA)            ligne  3523
+     15.   Initialisation du launcher                        ligne  3382
+     16.   Accessibilité clavier                             ligne  3400
+     19.   Spinner de chargement des données                 ligne  3412
+     19b.  Viewport height fix — Android Chrome / Brave      ligne  3455
+     20.   Enregistrement du Service Worker (PWA)            ligne  3517
      21.   Exports PDF — window.print() + @media print       ligne  3598
      21a.  Export Guide (écran Home)                         ligne  3766
      21b.  Export Vocabulaire (leçon Niveau 1)               ligne  3872
