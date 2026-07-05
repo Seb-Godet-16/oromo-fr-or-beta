@@ -3,7 +3,7 @@
  * ║  Language App 🇫🇷🇪🇹  —  js/data-fr.js                         ║
  * ║  Auteur   : Sébastien Godet                                     ║
  * ║  Assisté  : Claude Sonnet 4.6 · Gemini 3.5 Flash               ║
- * ║  Modernisé ES2020 (const pour les tableaux de données)           ║
+ * ║  Cible : ES2020 max. — iOS Safari 14.5+ natif, sans transpileur  ║
  * ║  Version  : Juin 2026                                           ║
  * ╠══════════════════════════════════════════════════════════════════╣
  * ║  RÔLE DE CE FICHIER                                             ║
@@ -117,14 +117,14 @@ const LEVEL1_THEMES_FR = [
     id: 'salut', level: 1, emoji: '👋',
     name: 'Les Salutations', sub: 'Nagaa Gaafachuu',
     words: [
-      {et:'Akkam bulte / Akkam boolte',fr:'Bonjour (le matin)',em:'🌅'},
+      {et:'Akkam bulte / Akkam boolte',fr:'Bonjour',em:'🌅'},
       {et:'Akkam ooltee',fr:'Bon après-midi',em:'🌆'},
-      {et:'Akkam boolte / Aduun galatoomaa',fr:'Bonsoir / Bonne nuit',em:'🌙'}, {et:'Nagaa!',fr:'Salut !',em:'👋'},
-      {et:'Nagaan ooluu / Nagaan turaa',fr:'Au revoir / À bientôt',em:'👋'},
+      {et:'Akkam boolte',fr:'Bonsoir',em:'🌆'}, {et:'Aduun galatoomaa',fr:'Bonne nuit',em:'🌙'}, {et:'Nagaa!',fr:'Salut !',em:'👋'},
+      {et:'Nagaan ooluu',fr:'Au revoir',em:'👋'}, {et:'Nagaan turaa',fr:'À bientôt',em:'🔜'},
       {et:'Daddaffiin walargina',fr:'À bientôt',em:'⏱️'},
-      {et:'Galatoomaa / Baay\'ee galatoomaa',fr:'Merci / Merci beaucoup',em:'🙏'},
-      {et:'Maaloo / Waan gaarii',fr:'S\'il vous plaît / De rien',em:'🤝'},
-      {et:'Dhiifama',fr:'Pardon / Excusez-moi',em:'🙇'}, {et:'Eeyyee! / Tole!',fr:'Oui ! / D\'accord !',em:'👍'},
+      {et:'Galatoomaa',fr:'Merci',em:'🙏'}, {et:'Baay\'ee galatoomaa',fr:'Merci beaucoup',em:'🙌'},
+      {et:'Maaloo',fr:'S\'il vous plaît',em:'🙏'}, {et:'Waan gaarii',fr:'De rien',em:'🤝'},
+      {et:'Dhiifama',fr:'Pardon / Excusez-moi',em:'🙇'}, {et:'Eeyyee!',fr:'Oui !',em:'👍'}, {et:'Tole!',fr:'D\'accord !',em:'✅'},
       {et:'Eeyyee',fr:'Oui',em:'✅'}, {et:'Lakkii',fr:'Non',em:'❌'},
       {et:'Akkam jirta? yookiin Maaloo akkam?',fr:'Comment ça va ?',em:'🤗'},
       {et:'Fayyaan jira, galatoomaa',fr:'Je vais bien, merci',em:'😊'},
@@ -336,7 +336,7 @@ const LEVEL1_THEMES_FR = [
       {et:'Obboleessa',fr:'Le frère',em:'🧑'}, {et:'Akoo / Awoo',fr:'La grand-mère',em:'👵'},
       {et:'Akaakayyuu / Awoo Abbaa',fr:'Le grand-père',em:'👴'}, {et:'Niitii / Haadha manaa',fr:'La femme',em:'💑'},
       {et:'Abbaa warraa / Dhiirsa',fr:'Le mari',em:'💍'},
-      {et:'Adaadaa (haadha abbaa) / Adda (obboleessa abbaa)',fr:'La tante (côté père) / L\'oncle',em:'👨‍👩‍👧'}
+      {et:'Adaadaa (haadha abbaa)',fr:'La tante (côté père)',em:'👩'}, {et:'Adda (obboleessa abbaa)',fr:'L\'oncle',em:'👨'}
     ]
   },
 
@@ -358,7 +358,7 @@ const LEVEL1_THEMES_FR = [
     id: 'routine', level: 1, emoji: '🌅',
     name: 'La Vie Quotidienne', sub: 'Jireenya Guyyaa Guyyaa',
     words: [
-      {et:'Ka\'uu / Dammaquu',fr:'Se lever / Se réveiller',em:'⏰'},
+      {et:'Ka\'uu',fr:'Se lever',em:'🛏️'}, {et:'Dammaquu',fr:'Se réveiller',em:'⏰'},
       {et:'Dhiqachuu',fr:'Se doucher / Se laver',em:'🚿'}, {et:'Fuula dhiqachuu',fr:'Se laver le visage',em:'🧼'},
       {et:'Ilkaan eebuu',fr:'Se brosser les dents',em:'🦷'}, {et:'Uffachuu',fr:'S\'habiller',em:'👕'},
       {et:'Ciree nyaachuu',fr:'Prendre le petit-déjeuner',em:'🍳'}, {et:'Hojjechuu',fr:'Travailler',em:'💼'},
@@ -367,12 +367,12 @@ const LEVEL1_THEMES_FR = [
       {et:'Bitachuu / Gabaa deemuu',fr:'Faire les courses',em:'🛒'},
       {et:'Nyaata bilcheessuu / Daakuu hojjechuu',fr:'Faire la cuisine / Cuisiner',em:'🍳'},
       {et:'Uffata dhiquu',fr:'Laver le linge',em:'🧺'},
-      {et:'Uffata miicuu',fr:'Étendre / Repasser le linge',em:'👕'},
+      {et:'Uffata miicuu',fr:'Étendre le linge',em:'👕'},
       {et:'Mana qulqulleessuu',fr:'Nettoyer la maison / Faire le ménage',em:'🧹'},
       {et:'Meeshaalee dhiquu',fr:'Faire la vaisselle',em:'🍽️'}, {et:'Saree oofuu',fr:'Sortir le chien',em:'🐕'},
       {et:'Bifa cireen duraa nyaachuu',fr:'Déjeuner',em:'🥗'}, {et:'Halkan nyaachuu',fr:'Dîner',em:'🍽️'},
       {et:'Boqochuu',fr:'Se reposer',em:'😮‍💨'}, {et:'Telefishina ilaalu',fr:'Regarder la télé',em:'📺'},
-      {et:'Kitaaba dubbisuu',fr:'Lire un livre',em:'📖'}, {et:'Ciisuu / Rafuu',fr:'Se coucher / Dormir',em:'🛏️'}
+      {et:'Kitaaba dubbisuu',fr:'Lire un livre',em:'📖'}, {et:'Ciisuu',fr:'Se coucher',em:'🛏️'}, {et:'Rafuu',fr:'Dormir',em:'😴'}
     ]
   },
 
@@ -456,16 +456,16 @@ const LEVEL1_THEMES_FR = [
     words: [
       {et:'Magaalaa',fr:'La ville',em:'🏙️'}, {et:'Ganda',fr:'Le village',em:'🏡'},
       {et:'Baadiyyaa',fr:'La campagne',em:'🌾'},
-      {et:'Tullu / Gaara',fr:'La montagne / La chaîne de montagnes',em:'⛰️'},
-      {et:'Galaana / Haroo',fr:'La mer / L\'océan',em:'🌊'},
+      {et:'Tullu',fr:'La montagne',em:'⛰️'}, {et:'Gaara',fr:'La chaîne de montagnes',em:'🏔️'},
+      {et:'Galaana',fr:'La mer',em:'🌊'}, {et:'Haroo',fr:'L\'océan',em:'🌊'},
       {et:'Qorichee / Qixxee qilleensaa',fr:'La plage',em:'🏖️'}, {et:'Laga',fr:'La rivière',em:'🏞️'},
       {et:'Meeshaa bashannannaa',fr:'Le parc',em:'🌳'}, {et:'Bulee / Daaqqoo',fr:'La place publique',em:'⛲'},
-      {et:'Daandii / Karaa',fr:'La rue / L\'avenue',em:'🛣️'}, {et:'Naannoo manaa',fr:'Le pâté de maisons',em:'🏘️'},
+      {et:'Daandii',fr:'La rue',em:'🛣️'}, {et:'Karaa',fr:'L\'avenue',em:'🛣️'}, {et:'Naannoo manaa',fr:'Le pâté de maisons',em:'🏘️'},
       {et:'Mana bulchiinsaa',fr:'La mairie',em:'🏛️'}, {et:'Hospitaala',fr:'L\'hôpital',em:'🏥'},
       {et:'Farmaasiitii',fr:'La pharmacie',em:'💊'}, {et:'Baankii',fr:'La banque',em:'🏦'},
-      {et:'Kiilistiyaana / Masjiida',fr:'L\'église / La mosquée',em:'⛪🕌'},
-      {et:'Suupaarmaarkeeti',fr:'Le supermarché',em:'🛒'}, {et:'Buna mana / Bunaa',fr:'Le bar / Le café',em:'☕'},
-      {et:'Gabaa / Suuqii',fr:'Le marché / La boutique',em:'🛍️'},
+      {et:'Kiilistiyaana',fr:'L\'église',em:'⛪'}, {et:'Masjiida',fr:'La mosquée',em:'🕌'},
+      {et:'Suupaarmaarkeeti',fr:'Le supermarché',em:'🛒'}, {et:'Buna mana',fr:'Le bar',em:'🍺'}, {et:'Bunaa',fr:'Le café',em:'☕'},
+      {et:'Gabaa',fr:'Le marché',em:'🛒'}, {et:'Suuqii',fr:'La boutique',em:'🛍️'},
       {et:'Mana barumsaa daa\'immanii',fr:'L\'école maternelle',em:'🧸'},
       {et:'Mana barumsaa sadarkaa duraatii',fr:'L\'école primaire',em:'🎒'},
       {et:'Mana barumsaa sadarkaa lammaffaa',fr:'Le collège',em:'📚'},
@@ -503,7 +503,7 @@ const LEVEL1_THEMES_FR = [
       {et:'Ilkaan',fr:'La dent / Les dents',em:'🦷'}, {et:'Morma',fr:'Le cou',em:''},
       {et:'Harka gubbaa',fr:'Le bras / Les bras',em:'💪'}, {et:'Harka / Harkaan',fr:'La main / Les mains',em:'✋'},
       {et:'Quba / Qubaan',fr:'Le doigt / Les doigts',em:'☝️'},
-      {et:'Quba miila / Ciltuu',fr:'L\'orteil / L\'ongle',em:'💅'}, {et:'Dugda',fr:'Le dos',em:''},
+      {et:'Quba miila',fr:'L\'orteil',em:'🦶'}, {et:'Ciltuu',fr:'L\'ongle',em:'💅'}, {et:'Dugda',fr:'Le dos',em:''},
       {et:'Garaa',fr:'Le ventre',em:'🫃'}, {et:'Miila / Miilaan',fr:'La jambe / Les jambes',em:'🦵'},
       {et:'Miila jalaa / Miilaafi',fr:'Le pied / Les pieds',em:'🦶'}, {et:'Onnee',fr:'Le cœur',em:'❤️'},
       {et:'Sammuu',fr:'Le cerveau',em:'🧠'}, {et:'Lafee / Lafaan',fr:'L\'os / Les os',em:'🦴'}
@@ -519,7 +519,7 @@ const LEVEL1_THEMES_FR = [
       {et:'Kompiyuutara',fr:'L\'ordinateur',em:'💻'}, {et:'Chaajjara',fr:'Le chargeur',em:'🔌'},
       {et:'Sa\'atii harkaa',fr:'La montre',em:'⌚'}, {et:'Sa\'atii',fr:'L\'horloge / la pendule',em:'🕐'},
       {et:'Hirnaa',fr:'Les clés',em:'🔑'},
-      {et:'Fardaa qarshii / Baankii xinnoo',fr:'Le portefeuille / le porte-monnaie',em:'👛'},
+      {et:'Fardaa qarshii',fr:'Le portefeuille',em:'💳'}, {et:'Baankii xinnoo',fr:'le porte-monnaie',em:'👛'},
       {et:'Bursuusaa dugdaa',fr:'Le sac à dos',em:'🎒'}, {et:'Miidhagina ija',fr:'Les lunettes',em:'👓'},
       {et:'Aanoo roobaa',fr:'Le parapluie',em:'☂️'}, {et:'Waraqaa',fr:'Le papier',em:'📄'},
       {et:'Qalama / Biiroo',fr:'Le stylo / le bic',em:'🖊️'}, {et:'Mishira',fr:'Les ciseaux',em:'✂️'},
@@ -539,7 +539,7 @@ const LEVEL1_THEMES_FR = [
     words: [
       {et:'Mana',fr:'La maison',em:'🏠'}, {et:'Apartamaantii',fr:'L\'appartement',em:'🏢'},
       {et:'Seensa / Galma dura',fr:'L\'entrée',em:'🚪'},
-      {et:'Galma / Mana nyaataa',fr:'Le salon / la salle à manger',em:'🛋️'}, {et:'Daakuu',fr:'La cuisine',em:'🍳'},
+      {et:'Galma',fr:'Le salon',em:'🛋️'}, {et:'Mana nyaataa',fr:'la salle à manger',em:'🍽️'}, {et:'Daakuu',fr:'La cuisine',em:'🍳'},
       {et:'Kutaa ciisichaa',fr:'La chambre',em:'🛏️'},
       {et:'Mana fincaanii / Dhiqachuu',fr:'La salle de bain',em:'🚿'},
       {et:'Mana fincaanii',fr:'Les toilettes',em:'🚽'}, {et:'Mana konkolaataa',fr:'Le garage',em:'🚗'}
@@ -568,13 +568,13 @@ const LEVEL1_THEMES_FR = [
     name: 'Les Vêtements', sub: 'Uffata',
     words: [
       {et:'Shartii',fr:'Le t-shirt',em:'👕'}, {et:'Shartii dheeraa',fr:'La chemise',em:'👔'},
-      {et:'Surrii',fr:'Le pantalon',em:'👖'}, {et:'Kophee / Shaakaalaa',fr:'Les chaussures / Les baskets',em:'👟'},
+      {et:'Surrii',fr:'Le pantalon',em:'👖'}, {et:'Kophee',fr:'Les chaussures',em:'👞'}, {et:'Shaakaalaa',fr:'Les baskets',em:'👟'},
       {et:'Kaalseettii',fr:'Les chaussettes',em:'🧦'},
-      {et:'Uffata dubartii / Qanafee',fr:'La robe / La jupe',em:'👗'}, {et:'Surrii gabaabaa',fr:'Le short',em:'🩳'},
+      {et:'Uffata dubartii',fr:'La robe',em:'👗'}, {et:'Qanafee',fr:'La jupe',em:'👗'}, {et:'Surrii gabaabaa',fr:'Le short',em:'🩳'},
       {et:'Jaakeetii / Uffata ho\'a',fr:'Le pull',em:'🧥'}, {et:'Jaakeetii alaa',fr:'La veste',em:'🧥'},
-      {et:'Kuullaa / Keeppii',fr:'Le chapeau / La casquette',em:'🎩'}, {et:'Koobii guddaa',fr:'Le manteau',em:'🧥'},
+      {et:'Kuullaa',fr:'Le chapeau',em:'🎩'}, {et:'Keeppii',fr:'La casquette',em:'🧢'}, {et:'Koobii guddaa',fr:'Le manteau',em:'🧥'},
       {et:'Shanxii morma',fr:'L\'écharpe',em:'🧣'}, {et:'Gantii',fr:'Les gants',em:'🧤'},
-      {et:'Kuullaa ho\'a',fr:'Le bonnet',em:'🎿'}, {et:'Buursaa / Fardaa',fr:'Le sac / La poche',em:'👜'},
+      {et:'Kuullaa ho\'a',fr:'Le bonnet',em:'🎿'}, {et:'Buursaa',fr:'Le sac',em:'👜'}, {et:'Fardaa',fr:'La poche',em:'👖'},
       {et:'Uffata bishaan',fr:'Le maillot de bain',em:'🩱'}
     ]
   },
@@ -727,8 +727,8 @@ const LEVEL1_THEMES_FR = [
       {et:'Buna',fr:'La culture du café',em:'☕'}, {et:'Xaafii',fr:'Le teff (céréale locale)',em:'🌾'},
       {et:'Boqqolloo',fr:'Le maïs',em:'🌽'}, {et:'Qamadii',fr:'Le blé',em:'🌾'},
       {et:'Warqee / Qoccoo',fr:'La plantation d\'Ensete',em:'🌴'}, {et:'Sangaa',fr:'Le bœuf de trait',em:'🐂'},
-      {et:'Hoolaa / Re\'ee',fr:'Le mouton / La chèvre',em:'🐐'}, {et:'Lukkuu',fr:'La volaille / La poule',em:'🐔'},
-      {et:'Laga / Burqaa',fr:'La rivière / La source d\'eau',em:'💧'},
+      {et:'Hoolaa',fr:'Le mouton',em:'🐑'}, {et:'Re\'ee',fr:'La chèvre',em:'🐐'}, {et:'Lukkuu',fr:'La volaille / La poule',em:'🐔'},
+      {et:'Laga',fr:'La rivière',em:'🏞️'}, {et:'Burqaa',fr:'La source d\'eau',em:'💧'},
       {et:'Gindee / Muka marfoo',fr:'La charrue traditionnelle',em:'🪵'},
       {et:'Moteera qonnaa',fr:'Le tracteur',em:'🚜'}, {et:'Haamtuu',fr:'La faucille',em:'🌾'},
       {et:'Qonnaan buluu',fr:'Cultiver la terre',em:'🚜'},

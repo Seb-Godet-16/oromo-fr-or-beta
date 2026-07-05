@@ -2,7 +2,7 @@
    Taphad'Meuh 🐄  —  Moteur applicatif unifié
    Français ↔ Afaan Oromoo
    © Juin 2026 – Sébastien Godet · Claude Sonnet 4.6 et Gemini 3.5 Flash
-   Modernisé ES2020 : let/const, fonctions fléchées, for…of
+   Cible : ES2020 maximum pour assurer la compatibilité native iOS 14.5+ sans transpileur
    ============================================================
    ARCHITECTURE (5 fichiers) :
      ├─ index.html   → Structure HTML + launcher
@@ -85,6 +85,20 @@ let _q10Questions = null;   // Cache des questions générées pour le quiz en c
 /* ── Progression persistante ── */
 let done = [];              // Tableau d'objets { id, stars } sauvegardé dans localStorage
 
+/* ── Réglages audio TTS (Cartes Flash) ──────────────────────────────
+   Paliers de vitesse à TAPER (pas de slider continu) : plus rapide à
+   manipuler à une main sur mobile pendant la révision des flashcards.
+   Un slider est plus précis mais plus lent à ajuster dans ce contexte.
+   La vitesse choisie est persistée et s'applique à TOUTE lecture TTS
+   de l'appli (flashcards, vocabulaire, dialogues, alphabet). */
+const TTS_RATE_TIERS = [0.55, 0.70, 0.85, 1.00, 1.20];
+let _ttsRate = (() => {
+  const saved = parseFloat(localStorage.getItem('pe_tts_rate_v1'));
+  return TTS_RATE_TIERS.indexOf(saved) !== -1 ? saved : 0.85; // 0.85 = vitesse d'origine par défaut
+})();
+let _cardAudioToken = 0;    // Incrémenté à chaque navigation / nouvelle lecture,
+                            // pour annuler proprement un drill "répéter x fois" en cours
+
 
 /* ============================================================
    UTILITAIRE CENTRAL DE SÉLECTION BILINGUE
@@ -140,9 +154,9 @@ function langKeys() {
  * @returns {{ main: string, sub: string }}
  */
 function _themeTitle(t) {
-  let isAlpha = (t.id === 'alpha' || t.type === 'alpha');
-  let main = isAlpha ? L("L'Alphabet", 'Qubeewwan') : t.name;
-  let sub  = isAlpha ? L('Qubeewwan', "L'Alphabet") : t.sub;
+  const isAlpha = (t.id === 'alpha' || t.type === 'alpha');
+  const main = isAlpha ? L("L'Alphabet", 'Qubeewwan') : t.name;
+  const sub  = isAlpha ? L('Qubeewwan', "L'Alphabet") : t.sub;
   return { main: main, sub: sub };
 }
 
@@ -178,7 +192,7 @@ function _spokenKey(card) {
  * Évite de réinjecter le même <script> si l'utilisateur revient
  * sur le launcher et rechoisit le même mode.
  */
-let _loadedDataFiles = {};
+const _loadedDataFiles = {};
 
 /**
  * Injecte dynamiquement un script de données et appelle le callback
@@ -195,7 +209,7 @@ function _loadDataScript(filename, callback) {
     return;
   }
 
-  let script    = document.createElement('script');
+  const script    = document.createElement('script');
   script.src    = 'js/' + filename;
   script.async  = false;   /* false = ordre d'exécution garanti dans le DOM */
 
@@ -243,7 +257,7 @@ function initApp(mode) {
     voiceLang   = 'fr-FR';
     STORAGE_KEY = 'pe_om_fr_done_v1';
     /* Synchroniser la meta theme-color avec la couleur française */
-    let tcMeta = document.getElementById('meta-theme-color');
+    const tcMeta = document.getElementById('meta-theme-color');
     if (tcMeta) tcMeta.setAttribute('content', '#002395');
   } else {
     document.documentElement.className = 'theme-oromo';
@@ -255,7 +269,7 @@ function initApp(mode) {
     voiceLang   = 'om-ET';
     STORAGE_KEY = 'pe_fr_om_done_v1';
     /* Synchroniser la meta theme-color avec la couleur oromo */
-    let tcMeta = document.getElementById('meta-theme-color');
+    const tcMeta = document.getElementById('meta-theme-color');
     if (tcMeta) tcMeta.setAttribute('content', '#009A44');
   }
 
@@ -266,7 +280,7 @@ function initApp(mode) {
   _showLoadingSpinner();
 
   /* ── Déterminer le fichier de données à charger ── */
-  let dataFile = (mode === 'learn_french') ? 'data-fr.js' : 'data-or.js';
+  const dataFile = (mode === 'learn_french') ? 'data-fr.js' : 'data-or.js';
 
   _loadDataScript(dataFile, () => {
     /* Callback : données disponibles en mémoire → finaliser l'initialisation */
@@ -281,9 +295,9 @@ function initApp(mode) {
     _setUI({
       homeTitle      : L('Apprendre le Français',  'Afaan Oromoo barachuu'),
       homeStartBtn   : L('▶ Jalqabi',              '▶ Commencer'),
-      sectionsBackBtn: L('← Retour',               '← Gara duubaatti'),
+      sectionsBackBtn: L('← Gara duubaatti',       '← Retour'),
       sectionsTitle  : L('📚 Modules',              '📚 Moojuulota'),
-      lessonBackBtn  : L('← Modules',              '← Moojuulota'),
+      lessonBackBtn  : L('← Moojuulota',            '← Modules'),
       level1Label    : L('Niveau 1 — Vocabulaire',  'Sadarkaa 1 — Jechoota'),
       level2Label    : L('Niveau 2 — Dialogues',    'Sadarkaa 2 — Dubbii')
     });
@@ -313,6 +327,7 @@ function _setUI(t) {
   _setText('homeTitle',       t.homeTitle);
   _setText('homeStartBtn',    t.homeStartBtn);
   _setText('sectionsBackBtn', t.sectionsBackBtn);
+  _setText('sectionsBackBtn2', t.sectionsBackBtn);
   _setText('sectionsTitle',   t.sectionsTitle);
   _setText('lessonBackBtn',   t.lessonBackBtn);
   _setText('level1Label',     t.level1Label);
@@ -350,6 +365,11 @@ function _setText(id, val) {
 /* Cache de la voix Oromo résolue (undefined = pas encore cherché, null = aucune trouvée) */
 let _oromoVoice = undefined;
 
+/* Libellé lisible de la voix TTS résolue (ex: 'Oromo', 'Somali', 'Voix par défaut').
+   Alimenté par _resolveOromoVoice() / search() ci-dessous — réutilisé par le badge
+   de voix affiché dans l'onglet Cartes (voir §9 _buildCardVoiceBadgeHTML). */
+let _oromoVoiceLabel = null;
+
 /* Drapeau pour ne notifier l'utilisateur qu'une seule fois de la voix sélectionnée */
 let _hasNotifiedVoice = false;
 
@@ -360,6 +380,7 @@ let _hasNotifiedVoice = false;
  */
 function _resetOromoVoiceCache() {
   _oromoVoice       = undefined;
+  _oromoVoiceLabel  = null;
   _hasNotifiedVoice = false;
 }
 
@@ -432,11 +453,11 @@ function _resolveOromoVoice(callback) {
    * @returns {boolean} true si des voix étaient disponibles
    */
   function search() {
-    let voices = speechSynthesis.getVoices();
+    const voices = speechSynthesis.getVoices();
     if (!voices || voices.length === 0) return false;
 
     /* Priorités de voix : de la plus proche à la plus éloignée phonétiquement */
-    let priorities = [
+    const priorities = [
       { lang: 'om-ET', name: 'Oromo' },
       { lang: 'so-SO', name: 'Somali' },
       { lang: 'am-ET', name: 'Amharique' },
@@ -461,9 +482,11 @@ function _resolveOromoVoice(callback) {
     }
 
     /* Repli absolu : première voix disponible si aucune ne correspond */
-    _oromoVoice = foundVoice || voices[0];
+    _oromoVoice      = foundVoice || voices[0];
+    _oromoVoiceLabel = foundLabel;
 
-    /* La langue audio est affichée dans l'onglet Répète (repeat-lang-info) — pas de toast ici */
+    /* La langue audio est affichée dans l'onglet Répète (repeat-lang-info)
+       et dans le badge de voix de l'onglet Cartes — pas de toast ici */
     callback(_oromoVoice);
     return true;
   }
@@ -479,8 +502,12 @@ function _resolveOromoVoice(callback) {
       speechSynthesis.removeEventListener('voiceschanged', _onVoicesChanged);
       clearTimeout(_voicesTimeout);
       if (_oromoVoice === undefined) {
+        /* Retente la recherche par priorité maintenant que les voix sont là ;
+           search() appelle déjà callback() elle-même si elle réussit. */
+        if (search()) return;
         /* Pas encore résolu : forcer avec ce qu'on a */
-        _oromoVoice = speechSynthesis.getVoices()[0] || null;
+        _oromoVoice      = speechSynthesis.getVoices()[0] || null;
+        _oromoVoiceLabel = 'Voix par défaut';
       }
       callback(_oromoVoice);
     }
@@ -491,14 +518,91 @@ function _resolveOromoVoice(callback) {
     _voicesTimeout = setTimeout(() => {
       speechSynthesis.removeEventListener('voiceschanged', _onVoicesChanged);
       if (_oromoVoice === undefined) {
+        if (search()) return;
         /* Forcer un résultat même si la liste est vide */
         const fallback = speechSynthesis.getVoices();
-        _oromoVoice = fallback.length > 0 ? fallback[0] : null;
-        /* Pas de toast — la langue audio est visible dans l'onglet Répète */
+        _oromoVoice      = fallback.length > 0 ? fallback[0] : null;
+        _oromoVoiceLabel = 'Voix par défaut';
+        /* Pas de toast — la langue audio est visible dans l'onglet Répète et le badge Cartes */
       }
       callback(_oromoVoice);
     }, 2000);
   }
+}
+
+/**
+ * Construit le HTML du badge indiquant la voix TTS active dans l'onglet Cartes.
+ * Duplique le composant visuel de l'onglet Répète (mêmes classes CSS
+ * .repeat-lang-info / .repeat-lang-native / .repeat-lang-fallback), mais
+ * affiche la voix de SYNTHÈSE (bouton 🔊) plutôt que la langue de
+ * RECONNAISSANCE (Répète) — les deux mécanismes sont distincts.
+ * @param {boolean} loading - true tant que la résolution async est en cours
+ * @returns {string} HTML du badge
+ */
+function _buildCardVoiceBadgeHTML(loading) {
+  if (isFrench()) {
+    return '<div class="repeat-lang-info fc-voice-badge">🔊 '
+      + L('Sagalee : ', 'Voix : ')
+      + '<strong>Français (fr-FR)</strong></div>';
+  }
+
+  if (loading || _oromoVoiceLabel === null) {
+    return '<div class="repeat-lang-info fc-voice-badge">🔄 '
+      + L('Sagalee sakatta\u2019amaa jira…', 'Détection de la voix…')
+      + '</div>';
+  }
+
+  if (_oromoVoiceLabel === 'Oromo') {
+    /* Voix Oromo native trouvée — pill verte, même traitement que Répète */
+    return '<div class="repeat-lang-info repeat-lang-native fc-voice-badge">'
+      + '<div class="repeat-lang-fallback-line1">✅ '
+      + L('Sagalee : ', 'Voix : ')
+      + '<strong>Afaan Oromoo (om-ET)</strong></div>'
+      + '<div class="repeat-lang-fallback-line2">'
+      + L('— Afaan Oromoo sirnaan deeggarama', '— Oromo reconnu nativement par votre appareil')
+      + '</div></div>';
+  }
+
+  /* Voix de repli (Somali, Amharique, Haoussa, Swahili, phonétique…) — pill ambre */
+  return '<div class="repeat-lang-info repeat-lang-fallback fc-voice-badge">'
+    + '<div class="repeat-lang-fallback-line1">⚠️ '
+    + L('Sagalee : ', 'Voix : ')
+    + '<strong>' + _oromoVoiceLabel + '</strong></div>'
+    + '<div class="repeat-lang-fallback-line2">'
+    + L('— Afaan Oromoo hin deeggaramu — sagalee kana fayyadamaa',
+        '— Oromo non supporté sur cet appareil — voix «\u00a0' + _oromoVoiceLabel + '\u00a0» utilisée à la place')
+    + '</div></div>';
+}
+
+/**
+ * Met à jour dynamiquement le badge de voix TTS de l'onglet Cartes.
+ * Se connecte à la même fonction de résolution (_resolveOromoVoice) que le
+ * bouton 🔊 des cartes, afin que le badge reflète toujours la voix qui sera
+ * réellement utilisée au clic — pas de bandeau French statique).
+ * Appelée par renderFlash() après chaque (re)construction de l'onglet Cartes.
+ */
+function _updateCardVoiceBadge() {
+  const el = document.getElementById('fcVoiceBadge');
+  if (!el) return;
+
+  /* Mode Français : voix fixe (fr-FR), aucune résolution asynchrone nécessaire */
+  if (isFrench()) {
+    el.innerHTML = _buildCardVoiceBadgeHTML(false);
+    return;
+  }
+
+  /* Voix déjà en cache (session précédente / carte suivante) : affichage immédiat */
+  if (_oromoVoice !== undefined) {
+    el.innerHTML = _buildCardVoiceBadgeHTML(false);
+    return;
+  }
+
+  /* Sinon : afficher un état "en détection" puis mettre à jour au callback */
+  el.innerHTML = _buildCardVoiceBadgeHTML(true);
+  _resolveOromoVoice(() => {
+    const el2 = document.getElementById('fcVoiceBadge');
+    if (el2) el2.innerHTML = _buildCardVoiceBadgeHTML(false);
+  });
 }
 
 /**
@@ -509,8 +613,12 @@ function _resolveOromoVoice(callback) {
  * toute la durée de la lecture, pour un retour visuel immédiat.
  * @param {string} txt      - Texte à lire (peut contenir " / " comme séparateur)
  * @param {HTMLElement} [triggerBtn] - Bouton ayant déclenché la lecture (optionnel)
+ * @param {Function} [onDone] - Appelé une fois la lecture terminée (fin normale OU erreur/annulation).
+ *                              Utilisé par playCardAudio() pour enchaîner un drill "répéter x fois".
+ * @param {HTMLElement} [highlightEl] - Conteneur de <span class="tts-word"> (généré par
+ *                              _wrapWordsForHighlight) dont les mots seront surlignés en cours de lecture.
  */
-function speak(txt, triggerBtn) {
+function speak(txt, triggerBtn, onDone, highlightEl) {
   if (!txt) return;
   // W6 — Debounce 300 ms sur les appels bouton 🔊 (évite les boucles TTS sur iOS)
   const now = Date.now();
@@ -524,6 +632,12 @@ function speak(txt, triggerBtn) {
     speak._activeBtn.setAttribute('aria-label', lbl.replace(' (lecture…)', ''));
   }
   speak._activeBtn = triggerBtn || null;
+
+  /* ── Nettoyer un surlignage mot-par-mot resté actif sur un précédent conteneur ── */
+  if (speak._lastHighlightEl && speak._lastHighlightEl !== highlightEl) {
+    _clearHighlighting(speak._lastHighlightEl);
+  }
+  speak._lastHighlightEl = highlightEl || null;
 
   /* ── Feedback visuel : marquer le bouton comme "en lecture" ── */
   function _markSpeaking(btn) {
@@ -542,24 +656,30 @@ function speak(txt, triggerBtn) {
   if (currentMode === 'learn_oromo') {
     if (!window.speechSynthesis) return;
 
-    _resolveOromoVoice(function(voice) {
+    _resolveOromoVoice((voice) => {
       speechSynthesis.cancel();
-      let parts = txt.split('/').map((p) => p.trim()).filter(Boolean);
+      const parts = txt.split('/').map((p) => p.trim()).filter(Boolean);
       _markSpeaking(triggerBtn);
 
       function speakPart(i) {
-        if (i >= parts.length) { _unmarkSpeaking(triggerBtn); return; }
-        let u = new SpeechSynthesisUtterance(parts[i]);
+        if (i >= parts.length) {
+          _unmarkSpeaking(triggerBtn);
+          _clearHighlighting(highlightEl);
+          if (onDone) onDone();
+          return;
+        }
+        const u = new SpeechSynthesisUtterance(parts[i]);
         if (voice) {
           u.voice = voice;
           u.lang  = voice.lang;
         }
-        u.rate  = 0.85;  // Légèrement ralenti pour faciliter la compréhension
+        u.rate  = _ttsRate;  // Palier de vitesse choisi par l'apprenant (défaut : 0.85)
+        if (i === 0) _attachHighlighting(u, highlightEl, _ttsRate); // surlignage sur le 1er segment uniquement
         u.onend = () => {
           if (i + 1 < parts.length) setTimeout(() => { speakPart(i + 1); }, 500);
-          else _unmarkSpeaking(triggerBtn);
+          else { _unmarkSpeaking(triggerBtn); _clearHighlighting(highlightEl); if (onDone) onDone(); }
         };
-        u.onerror = () => { _unmarkSpeaking(triggerBtn); };
+        u.onerror = () => { _unmarkSpeaking(triggerBtn); _clearHighlighting(highlightEl); if (onDone) onDone(); };
         speechSynthesis.speak(u);
       }
 
@@ -568,7 +688,7 @@ function speak(txt, triggerBtn) {
 
   } else {
     /* Mode learn_french : lecture standard en français */
-    _doSpeak(txt, null, 0.82, triggerBtn);
+    _doSpeak(txt, null, _ttsRate, triggerBtn, onDone, highlightEl);
   }
 }
 
@@ -579,30 +699,36 @@ function speak(txt, triggerBtn) {
  * @param {SpeechSynthesisVoice|null} voiceObj - Voix à utiliser (null = voix par défaut)
  * @param {number} rate     - Vitesse de lecture (0.1 à 10)
  * @param {HTMLElement} [triggerBtn] - Bouton déclencheur (reçoit is-speaking pendant la lecture)
+ * @param {Function} [onDone] - Appelé une fois la lecture terminée (voir speak())
+ * @param {HTMLElement} [highlightEl] - Conteneur de mots à surligner (voir speak())
  */
-function _doSpeak(txt, voiceObj, rate, triggerBtn) {
+function _doSpeak(txt, voiceObj, rate, triggerBtn, onDone, highlightEl) {
   if (!window.speechSynthesis) return;
   speechSynthesis.cancel();
-  let parts = txt.split('/').map((p) => p.trim()).filter(Boolean);
+  const parts = txt.split('/').map((p) => p.trim()).filter(Boolean);
   if (triggerBtn) {
     triggerBtn.classList.add('is-speaking');
     triggerBtn.setAttribute('aria-label', (triggerBtn.getAttribute('aria-label') || '') + ' (lecture…)');
   }
 
   function _done() {
-    if (!triggerBtn) return;
-    triggerBtn.classList.remove('is-speaking');
-    const lbl = triggerBtn.getAttribute('aria-label') || '';
-    triggerBtn.setAttribute('aria-label', lbl.replace(' (lecture…)', ''));
-    if (speak._activeBtn === triggerBtn) speak._activeBtn = null;
+    if (triggerBtn) {
+      triggerBtn.classList.remove('is-speaking');
+      const lbl = triggerBtn.getAttribute('aria-label') || '';
+      triggerBtn.setAttribute('aria-label', lbl.replace(' (lecture…)', ''));
+      if (speak._activeBtn === triggerBtn) speak._activeBtn = null;
+    }
+    _clearHighlighting(highlightEl);
+    if (onDone) onDone();
   }
 
   function speakPart(i) {
     if (i >= parts.length) { _done(); return; }
-    let u  = new SpeechSynthesisUtterance(parts[i]);
+    const u  = new SpeechSynthesisUtterance(parts[i]);
     u.lang = voiceLang;
     u.rate = rate;
     if (voiceObj) u.voice = voiceObj;
+    if (i === 0) _attachHighlighting(u, highlightEl, rate); // surlignage sur le 1er segment uniquement
     u.onend  = () => {
       if (i + 1 < parts.length) setTimeout(() => { speakPart(i + 1); }, 500);
       else _done();
@@ -612,6 +738,227 @@ function _doSpeak(txt, voiceObj, rate, triggerBtn) {
   }
 
   speakPart(0);
+}
+
+
+/* ============================================================
+   3a2. SURLIGNAGE MOT PAR MOT — pendant la lecture TTS
+   ============================================================
+   Découpe un texte affiché en <span> par mot, puis synchronise leur
+   surlignage sur l'événement 'boundary' de la Web Speech API pendant
+   la lecture. Dégrade silencieusement (aucune erreur, juste pas de
+   surlignage) sur les navigateurs/voix qui ne déclenchent pas cet
+   événement — le support est correct sur Chrome, partiel ailleurs.
+   ============================================================ */
+
+/**
+ * Enveloppe chaque mot d'un texte dans un <span class="tts-word"> portant
+ * ses indices de début/fin (dans la chaîne d'origine), pour permettre le
+ * surlignage synchronisé avec _attachHighlighting(). Espaces et ponctuation
+ * entre les mots sont conservés tels quels, échappés pour un innerHTML sûr.
+ * @param {string} text
+ * @returns {string} HTML prêt à insérer via innerHTML
+ */
+function _wrapWordsForHighlight(text) {
+  if (!text) return '';
+  let html = '';
+  const re = /\S+/g;
+  let m;
+  let last = 0;
+  while ((m = re.exec(text)) !== null) {
+    html += esc(text.slice(last, m.index));
+    html += '<span class="tts-word" data-start="' + m.index + '" data-end="' + (m.index + m[0].length) + '">'
+          + esc(m[0]) + '</span>';
+    last = m.index + m[0].length;
+  }
+  html += esc(text.slice(last));
+  return html;
+}
+
+/**
+ * Relie un SpeechSynthesisUtterance à un conteneur de mots surlignables :
+ * à chaque événement 'boundary' de type mot, active .tts-word-active sur
+ * le <span> correspondant à la position en cours de lecture.
+ *
+ * Filet de sécurité Safari / Firefox : ces moteurs ne déclenchent pas
+ * toujours 'boundary' (ça dépend de la voix — en particulier les voix de
+ * secours de la cascade Oromo). Si rien ne s'est déclenché 150ms après le
+ * début de la lecture, on bascule sur une simulation de la progression
+ * mot par mot, basée sur la longueur de chaque mot et la vitesse choisie.
+ * C'est approximatif (pas parfaitement synchronisé avec l'audio réel),
+ * mais nettement plus lisible qu'une absence totale de surlignage.
+ * @param {SpeechSynthesisUtterance} u
+ * @param {HTMLElement} [highlightEl]
+ * @param {number} [rate] - Vitesse de lecture choisie, pour calibrer la simulation
+ */
+function _attachHighlighting(u, highlightEl, rate) {
+  if (!highlightEl) return;
+  highlightEl._ttsDone = false; // (re)armé pour cette nouvelle lecture
+  let hasBoundary = false;
+
+  u.onboundary = (e) => {
+    if (e.name && e.name !== 'word') return; // ignore les limites de phrase le cas échéant
+    if (!document.body.contains(highlightEl)) return; // carte déjà re-rendue entre-temps
+    hasBoundary = true;
+    if (highlightEl._simTimerId) { clearTimeout(highlightEl._simTimerId); highlightEl._simTimerId = null; }
+    _highlightWordAt(highlightEl, e.charIndex);
+  };
+
+  u.onstart = () => {
+    setTimeout(() => {
+      if (!hasBoundary && !highlightEl._ttsDone) _startSimulatedHighlight(highlightEl, rate || 1);
+    }, 150);
+  };
+}
+
+/**
+ * Active .tts-word-active sur le <span> couvrant l'index de caractère donné
+ * (utilisé par le surlignage natif via l'événement 'boundary').
+ * @param {HTMLElement} highlightEl
+ * @param {number} idx
+ */
+function _highlightWordAt(highlightEl, idx) {
+  const spans = highlightEl.querySelectorAll('.tts-word');
+  for (let i = 0; i < spans.length; i++) {
+    const sp = spans[i];
+    const start = parseInt(sp.dataset.start, 10);
+    const end   = parseInt(sp.dataset.end, 10);
+    sp.classList.toggle('tts-word-active', idx >= start && idx < end);
+  }
+}
+
+/**
+ * Simule une progression mot par mot quand le navigateur/la voix ne
+ * déclenche pas d'événement 'boundary' (typiquement Safari/Firefox selon
+ * la voix). Chaque mot reste surligné une durée estimée à partir de sa
+ * longueur (≈13 caractères/seconde à vitesse 1×, ajusté par `rate`).
+ * S'arrête de lui-même si la carte est re-rendue ou la lecture terminée
+ * entre-temps (voir highlightEl._ttsDone, positionné par _clearHighlighting).
+ * @param {HTMLElement} highlightEl
+ * @param {number} rate
+ */
+function _startSimulatedHighlight(highlightEl, rate) {
+  if (!document.body.contains(highlightEl) || highlightEl._ttsDone) return;
+  const spans = highlightEl.querySelectorAll('.tts-word');
+  if (!spans.length) return;
+  const CHARS_PER_SEC = 13; // débit de parole naturel moyen approximatif, à vitesse 1×
+  let i = 0;
+
+  function step() {
+    if (!document.body.contains(highlightEl) || highlightEl._ttsDone) return;
+    for (let j = 0; j < spans.length; j++) {
+      spans[j].classList.toggle('tts-word-active', j === i);
+    }
+    if (i >= spans.length - 1) return; // dernier mot : on laisse _clearHighlighting nettoyer en fin de lecture
+    const len = (parseInt(spans[i].dataset.end, 10) - parseInt(spans[i].dataset.start, 10)) || 1;
+    const durationMs = (len / CHARS_PER_SEC / (rate || 1)) * 1000 + 70; // + courte pause inter-mots
+    i++;
+    highlightEl._simTimerId = setTimeout(step, durationMs);
+  }
+  step();
+}
+
+/**
+ * Retire tout surlignage restant dans un conteneur (fin de lecture, erreur,
+ * annulation, ou changement de carte pendant une lecture en cours), et
+ * coupe une éventuelle simulation de progression en cours (voir
+ * _startSimulatedHighlight).
+ * @param {HTMLElement} [highlightEl]
+ */
+function _clearHighlighting(highlightEl) {
+  if (!highlightEl) return;
+  highlightEl._ttsDone = true;
+  if (highlightEl._simTimerId) { clearTimeout(highlightEl._simTimerId); highlightEl._simTimerId = null; }
+  if (!document.body.contains(highlightEl)) return;
+  highlightEl.querySelectorAll('.tts-word-active').forEach((sp) => {
+    sp.classList.remove('tts-word-active');
+  });
+}
+
+
+/* ============================================================
+   3a3. VITESSE DE LECTURE — paliers à taper (Cartes Flash)
+   ============================================================
+   5 paliers fixes (0.55 / 0.70 / 0.85 / 1.00 / 1.20) plutôt qu'un
+   slider continu : plus rapide à ajuster d'un geste, à une main,
+   pendant la révision de flashcards sur mobile.
+   ============================================================ */
+
+/**
+ * Change la vitesse de lecture TTS globale et persiste le choix.
+ * Met à jour l'état visuel des pastilles déjà affichées, sans re-render
+ * complet de la carte (évite d'interrompre une lecture en cours).
+ * @param {number} rate - Une des valeurs de TTS_RATE_TIERS
+ */
+function setTtsRate(rate) {
+  if (TTS_RATE_TIERS.indexOf(rate) === -1) return;
+  _ttsRate = rate;
+  localStorage.setItem('pe_tts_rate_v1', String(rate));
+  document.querySelectorAll('.tts-rate-pill').forEach((btn) => {
+    btn.classList.toggle('active', parseFloat(btn.dataset.rate) === rate);
+  });
+}
+
+/**
+ * Construit le HTML des pastilles de vitesse (5 boutons à taper).
+ * @returns {string}
+ */
+function _buildTtsRateControlsHTML() {
+  const label = L('Sochii sagalee', 'Vitesse');
+  const pills = TTS_RATE_TIERS.map((r) => {
+    const active  = (r === _ttsRate) ? ' active' : '';
+    const display = (r === 1) ? '1×' : r.toFixed(2) + '×';
+    const aria    = label + ' ' + display;
+    return '<button type="button" class="tts-rate-pill' + active + '" data-rate="' + r + '" '
+      + 'aria-label="' + _escAttr(aria) + '" onclick="setTtsRate(' + r + ')">' + display + '</button>';
+  }).join('');
+  return '<div class="tts-row">'
+    + '<span class="tts-row-label">🐢 ' + esc(label) + '</span>'
+    + '<div class="tts-pills">' + pills + '</div>'
+    + '</div>';
+}
+
+/**
+ * Joue la prononciation de la carte flash courante, une ou plusieurs fois
+ * de suite (drill de prononciation), sans avoir à retaper le bouton audio.
+ * Applique le surlignage mot par mot sur le recto de la carte.
+ * Toute navigation (carte suivante/précédente, changement d'onglet…)
+ * annule proprement un drill en cours via _cardAudioToken.
+ * @param {number} [times=1] - Nombre de répétitions : 1, 3 ou 5
+ */
+function playCardAudio(times) {
+  if (!CT || !CT.words) return;
+  times = times || 1;
+  const card = CT.words[fcIdx];
+  const keys = langKeys();
+  const text = card[keys.src];
+  if (!text) return;
+
+  const token = ++_cardAudioToken;
+  const btnId = (times > 1) ? ('fcRepeat' + times) : 'fcAudioBtn';
+  const btn = document.getElementById(btnId);
+  const highlightEl = document.getElementById('fcFrontWord');
+  let remaining = times;
+
+  function step() {
+    if (token !== _cardAudioToken) return; // annulé entre-temps (navigation, nouvelle lecture…)
+    remaining--;
+    speak(text, btn, () => {
+      if (token !== _cardAudioToken) return;
+      if (remaining > 0) setTimeout(step, 650); // courte pause entre deux répétitions
+    }, highlightEl);
+  }
+  step();
+}
+
+/**
+ * Annule tout drill "répéter x fois" en cours et coupe la synthèse vocale.
+ * Appelé à chaque navigation qui quitte ou change la carte affichée, pour
+ * éviter qu'un drill obsolète continue à parler / surligner après coup.
+ */
+function _stopCardAudio() {
+  _cardAudioToken++;
+  if (window.speechSynthesis) speechSynthesis.cancel();
 }
 
 
@@ -645,9 +992,15 @@ function _vibrateFeedback(type) {
 
    Technique : 22 div .conf-p sont créés dynamiquement, reçoivent
    des propriétés CSS personnalisées aléatoires (position X, couleur,
-   taille, délai), puis l'overlay est supprimé du DOM après 2,4 s
-   (durée maximale de l'animation + marge) pour ne laisser aucun
-   résidu visuel.
+   taille, délai), puis l'overlay est supprimé du DOM après 3,2 s
+   (délai d'échelonnement max ~0,6s + durée de chute 2,2s + marge)
+   pour ne laisser aucun résidu visuel.
+
+   Vitesse : la durée de chute (2,2s, cubic-bezier flottant) et la
+   valeur --cd (délai d'échelonnement, PAS la durée) sont définies
+   côté CSS (.conf-p, §CONFETTI dans style.css) — cf. le correctif
+   qui y est documenté pour l'effet "flottement lent et élégant"
+   demandé sur écrans à haute fréquence de rafraîchissement (120Hz).
 
    Les couleurs s'adaptent automatiquement au thème actif :
      • theme-french → palette tricolore FR (bleu, blanc, rouge)
@@ -665,34 +1018,36 @@ function _launchConfetti(isThreeStars) {
   if (typeof document.documentElement.style.setProperty !== 'function') return;
 
   /* Palette selon le thème actif */
-  let isFr   = document.documentElement.classList.contains('theme-french');
-  let colors = isFr
+  const isFr   = document.documentElement.classList.contains('theme-french');
+  const colors = isFr
     ? ['#002395', '#ffffff', '#ED2939', '#FFD700', '#4A6FE3', '#FF6B7A']  /* FR */
     : ['#009A44', '#FED141', '#EF2B2D', '#ffffff', '#52C87A', '#FFE566']; /* OR */
 
   /* Créer l'overlay */
-  let overlay = document.createElement('div');
+  const overlay = document.createElement('div');
   overlay.className = 'confetti-overlay';
   document.body.appendChild(overlay);
 
-  let COUNT = 22;
+  const COUNT = 22;
   for (let i = 0; i < COUNT; i++) {
     const p = document.createElement('div');
     p.className = 'conf-p';
 
     /* Position X : répartie en "zones" pour éviter les regroupements */
-    let zone  = (i / COUNT) * 100;
-    let jitter = (Math.random() - 0.5) * 14;
-    let cx   = Math.max(2, Math.min(98, zone + jitter));
+    const zone  = (i / COUNT) * 100;
+    const jitter = (Math.random() - 0.5) * 14;
+    const cx   = Math.max(2, Math.min(98, zone + jitter));
 
     /* Couleur cyclique dans la palette */
-    let color = colors[i % colors.length];
+    const color = colors[i % colors.length];
 
     /* Scale aléatoire entre 0.7 et 1.5 */
-    let scale = (0.7 + Math.random() * 0.8).toFixed(2);
+    const scale = (0.7 + Math.random() * 0.8).toFixed(2);
 
-    /* Délai échelonné : les 22 particules partent sur ~0.6 s */
-    let delay = (i * 0.028).toFixed(3) + 's';
+    /* Délai échelonné : les 22 particules partent sur ~0.6 s
+       (affecté à animation-delay en CSS — la durée de chute,
+       elle, est fixe et définie dans le @keyframes conf-fall) */
+    const delay = (i * 0.028).toFixed(3) + 's';
 
     p.style.setProperty('--cx',  cx + '%');
     p.style.setProperty('--cr',  color);
@@ -703,10 +1058,10 @@ function _launchConfetti(isThreeStars) {
   }
 
   /* Nettoyer l'overlay après la fin de la dernière animation
-     (délai max ~0.6s + durée animation ~1.4s + marge) */
+     (délai max ~0.6s + durée de chute 2.2s + marge ≈ 3.2s) */
   setTimeout(() => {
-    if (overlay && overlay.parentNode) overlay.parentNode.removeChild(overlay);
-  }, 2400);
+    if (overlay?.parentNode) overlay.parentNode.removeChild(overlay);
+  }, 3200);
 }
 
 
@@ -905,7 +1260,7 @@ function openAndCopyEmail() {
   const domain = 'gmail.com';
   const full   = user + '@' + domain;
 
-  if (navigator.clipboard && navigator.clipboard.writeText) {
+  if (navigator.clipboard?.writeText) {
     navigator.clipboard.writeText(full).then(() => {
       const btn = document.getElementById('btn-copy-email');
       if (btn) {
@@ -934,7 +1289,7 @@ function executeResetProgress() {
   // 2. Détermination du mode actuel pour cibler l'onboarding à réinitialiser
   //    pe_om_fr_done_v1 = interface Oromo, apprentissage Français (learn_french)
   //    pe_fr_om_done_v1 = interface Français, apprentissage Oromo  (learn_oromo)
-  let isLearnFrenchMode = (STORAGE_KEY === 'pe_om_fr_done_v1');
+  const isLearnFrenchMode = (STORAGE_KEY === 'pe_om_fr_done_v1');
 
   // 3. On supprime proprement la progression du mode actif
   localStorage.removeItem(STORAGE_KEY);
@@ -983,7 +1338,7 @@ function markDone(id, pct) {
   const newStars = _calcStars(pct);
   if (newStars === 0) return;
 
-  let existing = done.find((d) => d.id === id);
+  const existing = done.find((d) => d.id === id);
   if (existing) {
     if (newStars <= existing.stars) return; 
     existing.stars = newStars;
@@ -1028,7 +1383,7 @@ function isDone(id) {
  * @returns {0|1|2|3} Nombre d'étoiles obtenues pour ce thème
  */
 function getThemeStars(id) {
-  let found = done.find((d) => d.id === id);
+  const found = done.find((d) => d.id === id);
   return found ? found.stars : 0;
 }
 
@@ -1067,7 +1422,7 @@ const QUIZ_SESSION_KEY = 'quiz_session';
  */
 function _saveQuizSession(quizType) {
   try {
-    let state = {
+    const state = {
       mode     : currentMode,
       themeId  : CT ? CT.id : null,
       quizType : quizType,
@@ -1086,10 +1441,10 @@ function _saveQuizSession(quizType) {
  */
 function _restoreQuizSession() {
   try {
-    let raw = sessionStorage.getItem(QUIZ_SESSION_KEY);
+    const raw = sessionStorage.getItem(QUIZ_SESSION_KEY);
     if (!raw) return false;
 
-    let state = JSON.parse(raw);
+    const state = JSON.parse(raw);
 
     /* Vérifications de cohérence : même mode, même thème, session non terminée */
     if (!state
@@ -1189,7 +1544,7 @@ function showScreen(id, dir) {
     }
   });
 
-  let nextScreen = document.getElementById(id);
+  const nextScreen = document.getElementById(id);
   if (!nextScreen) return;
 
   /* Remonter en haut dès maintenant */
@@ -1218,9 +1573,9 @@ function showScreen(id, dir) {
 
   /* ── Déterminer la direction selon l'ordre des écrans ── */
   if (!dir) {
-    let currentId = currentScreen.id;
-    let iCurrent  = _SCREEN_ORDER.indexOf(currentId);
-    let iNext     = _SCREEN_ORDER.indexOf(id);
+    const currentId = currentScreen.id;
+    const iCurrent  = _SCREEN_ORDER.indexOf(currentId);
+    const iNext     = _SCREEN_ORDER.indexOf(id);
     /* Garde défensif : si un id est absent de _SCREEN_ORDER, indexOf retourne -1.
        -1 > iCurrent serait faux → direction incorrecte. On force 'forward' par défaut. */
     if (iCurrent === -1 || iNext === -1) {
@@ -1231,7 +1586,7 @@ function showScreen(id, dir) {
   }
 
   /* ── Nettoyer toute animation résiduelle ── */
-  let ANIM_CLASSES = ['active','slide-in-right','slide-out-left',
+  const ANIM_CLASSES = ['active','slide-in-right','slide-out-left',
                        'slide-in-left','slide-out-right'];
   document.querySelectorAll('.screen').forEach((s) => {
     s.classList.remove.apply(s.classList, ANIM_CLASSES);
@@ -1251,7 +1606,7 @@ function showScreen(id, dir) {
   nextScreen.classList.add(inClass);
 
   /* ── Finaliser après la durée de l'animation (280ms) ── */
-  let DURATION = 280;
+  const DURATION = 280;
   setTimeout(() => {
     document.querySelectorAll('.screen').forEach((s) => {
       s.classList.remove.apply(s.classList, ANIM_CLASSES);
@@ -1274,19 +1629,19 @@ let _currentThemeLevel = 1;
  * @param {string} screenId
  */
 function _updateLevelTabs(screenId) {
-  let isL1 = (screenId === 'sections-level1');
-  let isL2 = (screenId === 'sections-level2');
+  const isL1 = (screenId === 'sections-level1');
+  const isL2 = (screenId === 'sections-level2');
   if (!isL1 && !isL2) return;
 
   /* Onglets dans sections-level1 */
-  let t1a = document.getElementById('lvlTab1');
-  let t2a = document.getElementById('lvlTab2');
+  const t1a = document.getElementById('lvlTab1');
+  const t2a = document.getElementById('lvlTab2');
   if (t1a) t1a.classList.toggle('active', isL1);
   if (t2a) t2a.classList.toggle('active', isL2);
 
   /* Onglets dans sections-level2 */
-  let t1b = document.getElementById('lvlTab1b');
-  let t2b = document.getElementById('lvlTab2b');
+  const t1b = document.getElementById('lvlTab1b');
+  const t2b = document.getElementById('lvlTab2b');
   if (t1b) t1b.classList.toggle('active', isL1);
   if (t2b) t2b.classList.toggle('active', isL2);
 }
@@ -1296,7 +1651,7 @@ function _updateLevelTabs(screenId) {
  * @param {string} screenId
  */
 function _updateBottomNav(screenId) {
-  let nav = document.getElementById('bottom-nav');
+  const nav = document.getElementById('bottom-nav');
   if (!nav) return;
 
   nav.classList.add('visible');
@@ -1304,16 +1659,16 @@ function _updateBottomNav(screenId) {
   /* Sur le launcher : état neutre, libellés FR par défaut, boutons Guide/Modules grisés */
   if (screenId === 'app-launcher') {
     /* Réinitialiser l'icône langue au globe neutre */
-    let langFlag = document.getElementById('navLangFlag');
+    const langFlag = document.getElementById('navLangFlag');
     if (langFlag) langFlag.textContent = '🌐';
     /* Aucun bouton actif */
     ['navBtnLang','navBtnGuide','navBtnModules','navBtnCredits'].forEach((id) => {
-      let el = document.getElementById(id);
+      const el = document.getElementById(id);
       if (el) el.classList.remove('active');
     });
     /* Griser les boutons non utilisables avant le choix de langue */
-    let btnGuide   = document.getElementById('navBtnGuide');
-    let btnModules = document.getElementById('navBtnModules');
+    const btnGuide   = document.getElementById('navBtnGuide');
+    const btnModules = document.getElementById('navBtnModules');
     if (btnGuide)   btnGuide.style.opacity   = '.35';
     if (btnModules) btnModules.style.opacity  = '.35';
     return;
@@ -1321,7 +1676,7 @@ function _updateBottomNav(screenId) {
 
   /* Rétablir l'opacité normale sur tous les boutons (une fois un mode choisi) */
   ['navBtnGuide','navBtnModules'].forEach((id) => {
-    let el = document.getElementById(id);
+    const el = document.getElementById(id);
     if (el) el.style.opacity = '';
   });
 
@@ -1331,21 +1686,21 @@ function _updateBottomNav(screenId) {
   _setText('navLabelModules', L('Kutaalee',  'Modules'));
   _setText('navLabelCredits', L('Odeeffannoo', 'Infos'));
 
-  let langFlag = document.getElementById('navLangFlag');
+  const langFlag = document.getElementById('navLangFlag');
   if (langFlag) langFlag.textContent = L('🇫🇷', '🇪🇹');
 
   /* Activer le bon bouton */
   ['navBtnLang','navBtnGuide','navBtnModules','navBtnCredits'].forEach((id) => {
-    let el = document.getElementById(id);
+    const el = document.getElementById(id);
     if (el) el.classList.remove('active');
   });
   /* Sur le launcher, aucun bouton n'est actif (état neutre) */
   if (screenId === 'sections-level1' || screenId === 'sections-level2') {
-    let mb = document.getElementById('navBtnModules');
+    const mb = document.getElementById('navBtnModules');
     if (mb) mb.classList.add('active');
   }
   if (screenId === 'home') {
-    let gb = document.getElementById('navBtnGuide');
+    const gb = document.getElementById('navBtnGuide');
     if (gb) gb.classList.add('active');
   }
 }
@@ -1355,13 +1710,14 @@ function _updateBottomNav(screenId) {
  * va sur l'écran du niveau mémorisé (ou niveau 1 par défaut).
  */
 function navGoModules() {
-  let target = (_currentThemeLevel === 2) ? 'sections-level2' : 'sections-level1';
+  _stopCardAudio(); // annule un éventuel drill "répéter x fois" en quittant la leçon
+  const target = (_currentThemeLevel === 2) ? 'sections-level2' : 'sections-level1';
   /* Direction : depuis lesson = back, sinon forward */
   let current = null;
   document.querySelectorAll('.screen').forEach((s) => {
     if (s.classList.contains('active')) current = s.id;
   });
-  let dir = (current === 'lesson') ? 'back' : undefined;
+  const dir = (current === 'lesson') ? 'back' : undefined;
   renderSections(_currentThemeLevel);
   showScreen(target, dir);
 }
@@ -1370,7 +1726,8 @@ function navGoModules() {
  * Bouton retour de l'écran leçon → retourne au bon écran de niveau.
  */
 function lessonGoBack() {
-  let target = (_currentThemeLevel === 2) ? 'sections-level2' : 'sections-level1';
+  _stopCardAudio(); // annule un éventuel drill "répéter x fois" en quittant la leçon
+  const target = (_currentThemeLevel === 2) ? 'sections-level2' : 'sections-level1';
   renderSections(_currentThemeLevel);
   showScreen(target, 'back');
 }
@@ -1387,9 +1744,9 @@ let _lessonNavLocked = false;
 function lessonNav(delta) {
   if (_lessonNavLocked) return;
   if (!CT || !ALL_THEMES.length) return;
-  let levelThemes = ALL_THEMES.filter((t) => t.level === CT.level);
-  let idx = levelThemes.findIndex((t) => t.id === CT.id);
-  let newIdx = idx + delta;
+  const levelThemes = ALL_THEMES.filter((t) => t.level === CT.level);
+  const idx = levelThemes.findIndex((t) => t.id === CT.id);
+  const newIdx = idx + delta;
   if (newIdx < 0 || newIdx >= levelThemes.length) return;
   _lessonNavLocked = true;
   setTimeout(() => { _lessonNavLocked = false; }, 300);
@@ -1401,10 +1758,10 @@ function lessonNav(delta) {
  */
 function _updateLessonNavArrows() {
   if (!CT) return;
-  let levelThemes = ALL_THEMES.filter((t) => t.level === CT.level);
-  let idx = levelThemes.findIndex((t) => t.id === CT.id);
-  let prev = document.getElementById('lessonPrevBtn');
-  let next = document.getElementById('lessonNextBtn');
+  const levelThemes = ALL_THEMES.filter((t) => t.level === CT.level);
+  const idx = levelThemes.findIndex((t) => t.id === CT.id);
+  const prev = document.getElementById('lessonPrevBtn');
+  const next = document.getElementById('lessonNextBtn');
   if (prev) prev.disabled = (idx <= 0);
   if (next) next.disabled = (idx >= levelThemes.length - 1);
 }
@@ -1428,13 +1785,13 @@ function _updateLessonNavArrows() {
  *             starsEarned: number, starsMax: number }}
  */
 function _getProgress() {
-  let total = ALL_THEMES.length;
-  let n     = done.length;
+  const total = ALL_THEMES.length;
+  const n     = done.length;
   return {
     total      : total,
     n          : n,
     pct        : total > 0 ? Math.round(n / total * 100) : 0,
-    starsEarned: done.reduce(function(acc, d) { return acc + d.stars; }, 0),
+    starsEarned: done.reduce((acc, d) => { return acc + d.stars; }, 0),
     starsMax   : total * 3
   };
 }
@@ -1445,18 +1802,18 @@ function renderHome() {
      On garde la fonction pour compatibilité avec les appels existants. */
   if (!ALL_THEMES.length) return;
 
-  let p   = _getProgress();
+  const p   = _getProgress();
 
   /* ── Bouton Commencer / Continuer ── */
-  let btn = document.getElementById('homeStartBtn');
+  const btn = document.getElementById('homeStartBtn');
   if (btn) {
     btn.textContent = p.n > 0
-      ? L('▶ Continuer', '▶ Itti fufi')
+      ? L('▶ Itti fufi', '▶ Continuer')
       : L('▶ Jalqabi', '▶ Commencer');
   }
 
   /* ── Cercle SVG de progression ── */
-  let wrap = document.getElementById('homeProgressCircleWrap');
+  const wrap = document.getElementById('homeProgressCircleWrap');
   if (wrap) {
     if (p.n === 0) {
       /* Première visite : on cache le cercle */
@@ -1465,14 +1822,14 @@ function renderHome() {
       wrap.style.display = 'flex';
 
       /* Circumférence pour r=50 : 2π×50 = 314.159… */
-      let CIRC    = 314.16;
-      let offset  = CIRC - (CIRC * p.pct / 100);
+      const CIRC    = 314.16;
+      const offset  = CIRC - (CIRC * p.pct / 100);
 
-      let arc     = document.getElementById('hpcArc');
-      let pctTxt  = document.getElementById('hpcPct');
-      let subTxt  = document.getElementById('hpcSub');
-      let titleEl = document.getElementById('hpcTitle');
-      let descEl  = document.getElementById('hpcDesc');
+      const arc     = document.getElementById('hpcArc');
+      const pctTxt  = document.getElementById('hpcPct');
+      const subTxt  = document.getElementById('hpcSub');
+      const titleEl = document.getElementById('hpcTitle');
+      const descEl  = document.getElementById('hpcDesc');
 
       /* Léger délai pour déclencher la transition CSS après display:flex */
       setTimeout(() => {
@@ -1483,7 +1840,7 @@ function renderHome() {
       if (subTxt)  subTxt.textContent  = '⭐ ' + p.starsEarned + ' / ' + p.starsMax;
 
       /* Textes accessibles (aria) */
-      let a11yLabel = L(
+      const a11yLabel = L(
         'Ida\'ata Guutuu: modules ' + p.n + ' / ' + p.total + ' — ' + p.pct + '% — urjii ' + p.starsEarned + ' / ' + p.starsMax,
         'Progression globale : ' + p.n + ' / ' + p.total + ' modules — ' + p.pct + '% — ' + p.starsEarned + ' étoiles / ' + p.starsMax
       );
@@ -1509,28 +1866,28 @@ function renderSections(activeLevel) {
   if (!ALL_THEMES.length) return;
   if (!activeLevel) activeLevel = 1;
 
-  let p = _getProgress();
+  const p = _getProgress();
 
   /* ── Libellés de niveau bilingues (avec traduction en sous-titre) ── */
-  let lbl1 = L('Niveau 1 — Vocabulaire',     'Sadarkaa 1 — Jechoota');
-  let lbl2 = L('Niveau 2 — Dialogues', 'Sadarkaa 2 — Dubbii');
+  const lbl1 = L('Niveau 1 — Vocabulaire',     'Sadarkaa 1 — Jechoota');
+  const lbl2 = L('Niveau 2 — Dialogues', 'Sadarkaa 2 — Dubbii');
   /* Traductions pour les onglets */
-  let lbl1transl = L('Sadarkaa 1 — Jechoota', 'Niveau 1 — Vocabulaire');
-  let lbl2transl = L('Sadarkaa 2 — Dubbii',   'Niveau 2 — Dialogues');
+  const lbl1transl = L('Sadarkaa 1 — Jechoota', 'Niveau 1 — Vocabulaire');
+  const lbl2transl = L('Sadarkaa 2 — Dubbii',   'Niveau 2 — Dialogues');
   /* Traduction du titre "Modules" dans le header */
-  let titleTransl = L('📚 Moojuulota', '📚 Modules');
+  const titleTransl = L('📚 Moojuulota', '📚 Modules');
 
   /* ── Helper : remplir les éléments d'un header de sections ── */
   function _fillHeader(suffix) {
-    let s = suffix || '';
-    let titleEl = document.getElementById('sectionsTitle' + s);
+    const s = suffix || '';
+    const titleEl = document.getElementById('sectionsTitle' + s);
     if (titleEl) titleEl.innerHTML =
       L('📚 Modules', '📚 Moojuulota')
       + '<span class="hdr-transl">' + titleTransl + '</span>';
-    let gp = document.getElementById('globalProgress' + s);
+    const gp = document.getElementById('globalProgress' + s);
     if (gp) gp.style.width = p.pct + '%';
 
-    let pl = document.getElementById('progressLabel' + s);
+    const pl = document.getElementById('progressLabel' + s);
     if (pl) pl.innerHTML =
       '<span class="progress-label-text">'
       + p.n + ' / ' + p.total + ' ' + L('📚', '📚') + ' — ' + p.pct + '%'
@@ -1540,12 +1897,12 @@ function renderSections(activeLevel) {
       + ' aria-label="' + L('Tartiiba guutuu haqi', 'Réinitialiser toute la progression') + '"'
       + '>🔄</button>';
 
-    let se = document.getElementById('sectionsStars' + s);
+    const se = document.getElementById('sectionsStars' + s);
     if (se) se.innerHTML =
       '<span class="sections-stars-inner">⭐ '
       + p.starsEarned + ' / ' + p.starsMax + '</span>';
 
-    let fe = document.getElementById('sectionsFlagRight' + s);
+    const fe = document.getElementById('sectionsFlagRight' + s);
     if (fe) fe.textContent = L('🇫🇷', '🇪🇹');
   }
 
@@ -1555,15 +1912,15 @@ function renderSections(activeLevel) {
 
   /* ── Remplir les libellés des onglets de niveau (deux paires : '' et 'B') ── */
   ['', 'B'].forEach((sfx) => {
-    let el1 = document.getElementById('level1Label' + sfx);
-    let el2 = document.getElementById('level2Label' + sfx);
+    const el1 = document.getElementById('level1Label' + sfx);
+    const el2 = document.getElementById('level2Label' + sfx);
     if (el1) el1.innerHTML = lbl1 + '<span class="level-tab-transl">' + lbl1transl + '</span>';
     if (el2) el2.innerHTML = lbl2 + '<span class="level-tab-transl">' + lbl2transl + '</span>';
   });
 
   /* ── Grilles de thèmes ── */
-  let grid1 = document.getElementById('grid1');
-  let grid2 = document.getElementById('grid2');
+  const grid1 = document.getElementById('grid1');
+  const grid2 = document.getElementById('grid2');
   if (grid1) grid1.innerHTML = ALL_THEMES
     .filter((t) => t.level === 1)
     .map((t) => _buildThemeCard(t)).join('');
@@ -1578,20 +1935,20 @@ function renderSections(activeLevel) {
  * @returns {string} HTML de la carte
  */
 function _buildThemeCard(t) {
-  let title     = _themeTitle(t);
-  let mainTitle = title.main
+  const title     = _themeTitle(t);
+  const mainTitle = title.main
     ? title.main.charAt(0).toUpperCase() + title.main.slice(1)
     : '';
 
-  let resetBtn = isDone(t.id)
+  const resetBtn = isDone(t.id)
     ? '<button class="btn-reset-theme" '
       + 'onclick="event.stopPropagation();resetTheme(\'' + escJS(t.id) + '\')">'
       + L('🔄 Irra deebii\'i', '🔄 Recommencer')
       + '</button>'
     : '';
 
-  let currentStars = getThemeStars(t.id);
-  let starsStr = Array.from({ length: 3 }, function(_, i) {
+  const currentStars = getThemeStars(t.id);
+  const starsStr = Array.from({ length: 3 }, (_, i) => {
     return i < currentStars ? '⭐' : '☆';
   }).join('');
 
@@ -1620,7 +1977,7 @@ function _buildThemeCard(t) {
  * @param {string} id - Identifiant du thème
  */
 function openTheme(id, dir) {
-  let found = ALL_THEMES.find((t) => t.id === id);
+  const found = ALL_THEMES.find((t) => t.id === id);
   if (!found) {
     /* Thème introuvable : probablement une typo d'id dans data-fr.js / data-or.js.
        On affiche un message visible plutôt qu'un écran blanc silencieux. */
@@ -1628,6 +1985,7 @@ function openTheme(id, dir) {
     _showToast('⚠️ Thème introuvable : "' + id + '" — vérifiez data-fr.js / data-or.js', 6000);
     return;
   }
+  _stopCardAudio(); // annule un drill "répéter x fois" du thème précédent
   CT = found;
   fcIdx = 0;
   dqStep = 0; dqScore = 0; dqAnswered = false;
@@ -1637,7 +1995,7 @@ function openTheme(id, dir) {
 
   document.getElementById('lessonEmoji').textContent = CT.emoji;
 
-  let title = _themeTitle(CT);
+  const title = _themeTitle(CT);
   // _themeTitle retourne (main=langue source, sub=langue cible).
   // On concatène toujours main + ' — ' + sub, identique dans les deux modes.
   let lessonTitle = title.main + ' — ' + title.sub;
@@ -1647,7 +2005,7 @@ function openTheme(id, dir) {
   document.getElementById('lessonTitle').textContent = lessonTitle;
 
   /* ── Badge niveau cliquable dans le header leçon ── */
-  let badge = document.getElementById('lessonLevelBadge');
+  const badge = document.getElementById('lessonLevelBadge');
   if (badge) {
     badge.textContent = L(
       CT.level === 1 ? 'Niv. 1' : 'Niv. 2',
@@ -1684,7 +2042,7 @@ function openTheme(id, dir) {
     /* L'onglet Quiz n'est affiché que si le thème dispose effectivement
        d'un tableau quiz non vide — évite un crash sur CT.quiz.length si
        un thème Niveau 2 est ajouté dans les données sans son champ quiz. */
-    if (CT.quiz && CT.quiz.length > 0) {
+    if (CT.quiz?.length > 0) {
       tabs.splice(2, 0, { k: 'dquiz', lbl: L('❓ Gaaffilee', '❓ Quiz') });
     }
   } else if (CT.type === 'alpha') {
@@ -1708,8 +2066,8 @@ function openTheme(id, dir) {
   /* ── Bouton d'export PDF : afficher le bon selon le type de thème ──
      Visibilité gérée via .is-hidden (définie dans style.css §25)
      Le label reste simplement "PDF" dans les deux cas.              */
-  let btnVocab = document.getElementById('lessonExportVocab');
-  let btnSit   = document.getElementById('lessonExportSit');
+  const btnVocab = document.getElementById('lessonExportVocab');
+  const btnSit   = document.getElementById('lessonExportSit');
   if (btnVocab && btnSit) {
     if (CT.type === 'dialog') {
       btnVocab.classList.add('is-hidden');
@@ -1731,10 +2089,10 @@ function openTheme(id, dir) {
      Seulement si on était déjà dans lesson (évite la double animation
      avec showScreen qui anime l'écran entier à l'arrivée). */
   if (_alreadyInLesson) {
-    let body = document.getElementById('lessonBody');
+    const body = document.getElementById('lessonBody');
     if (body) {
-      let inClass  = _slideDir === 'back' ? 'lesson-body-slide-in-left'  : 'lesson-body-slide-in-right';
-      let outClass = _slideDir === 'back' ? 'lesson-body-slide-out-right': 'lesson-body-slide-out-left';
+      const inClass  = _slideDir === 'back' ? 'lesson-body-slide-in-left'  : 'lesson-body-slide-in-right';
+      const outClass = _slideDir === 'back' ? 'lesson-body-slide-out-right': 'lesson-body-slide-out-left';
       /* Sortie du contenu actuel */
       body.classList.add(outClass);
       setTimeout(() => {
@@ -1760,17 +2118,20 @@ function switchTab(tab) {
   if (lessonEl) lessonEl.classList.toggle('mode-cartes', tab === 'flash');
 
   if (tab !== 'repeat') _stopRepeat();
+  if (tab !== 'flash')  _stopCardAudio(); // annule un drill "répéter x fois" si on quitte l'onglet Cartes Flash
 
   if      (tab === 'flash')  { renderFlash(); }
   else if (tab === 'quiz10') {
-    /* W4 — Re-clic sur l'onglet Quiz : repart toujours de zéro.
-       On ne restaure PAS la session précédente (contrairement à 'dquiz') afin
-       d'éviter de surprendre l'utilisateur qui revient sur l'onglet quiz10.
-       _q10Questions = null invalide le cache de questions pour forcer
-       un nouveau tirage aléatoire au prochain renderQuiz10(). */
-    _clearQuizSession();
+    /* Reprise de session : si l'apprenant a quitté un quiz10 non terminé sur
+       ce même thème (changement d'onglet, fermeture accidentelle…), on le
+       restaure à la question exacte où il s'était arrêté, avec le même
+       tirage de questions et le même score (voir _restoreQuizSession()).
+       Si le quiz est terminé (ou si aucune session valide n'existe pour ce
+       thème), on repart de zéro : _q10Questions = null force un nouveau
+       tirage aléatoire des questions au prochain renderQuiz10(), comme
+       c'est déjà le cas pour le bouton "Recommencer" de l'écran de score. */
     q10Step = 0; q10Score = 0; q10Answered = false; _q10Questions = null;
-    renderQuiz10();
+    if (!_restoreQuizSession()) renderQuiz10();
   }
   else if (tab === 'dialog') { renderDialog(); }
   else if (tab === 'vocab')  { renderVocab(); }
@@ -1790,9 +2151,9 @@ function switchTab(tab) {
  * Affiche la carte flash courante (ou la grille alphabétique si type 'alpha').
  */
 function renderFlash() {
-  let words = CT.words;
-  let card  = words[fcIdx];
-  let keys  = langKeys(); // Contient keys.src ('fr' ou 'et') et keys.tgt ('et' ou 'fr')
+  const words = CT.words;
+  const card  = words[fcIdx];
+  const keys  = langKeys(); // Contient keys.src ('fr' ou 'et') et keys.tgt ('et' ou 'fr')
 
   /* ── Mode Alphabet : grille de lettres cliquables ── */
   if (CT.type === 'alpha') {
@@ -1800,10 +2161,11 @@ function renderFlash() {
       '<div class="section-label">'
       + L('Qubee dhaggeeffachuuf irratti cuqaasi !', 'Cliquez sur une lettre pour l\'écouter !')
       + '</div>'
+      + '<div id="fcVoiceBadge" class="fc-voice-badge-wrap"></div>'
       + '<div class="alpha-grid">' + words.map((c, i) => {
-          let bigLetter   = c[keys.src];
-          let smallName   = c[keys.tgt];
-          let listenHint  = L('Dhaggeeffachuuf cuqaasi : ', 'Écouter la lettre ') + bigLetter;
+          const bigLetter   = c[keys.src];
+          const smallName   = c[keys.tgt];
+          const listenHint  = L('Dhaggeeffachuuf cuqaasi : ', 'Écouter la lettre ') + bigLetter;
           return '<div class="alpha-card" role="button" tabindex="0" '
             + 'aria-label="' + _escAttr(listenHint) + '" '
             + 'onclick="pickAlpha(' + i + ')">'
@@ -1813,18 +2175,23 @@ function renderFlash() {
         }).join('')
       + '</div>'
       + '<div id="alphaDetail" class="alpha-detail">' + buildAlphaDetail(card) + '</div>';
+    _updateCardVoiceBadge();
     return;
   }
 
   /* ── Mode Cartes Flash standard ── */
-  let emFront = card.em ? '<div class="fc-front-emoji">' + card.em + '</div>' : '';
-  let emBack  = card.em ? '<div class="fc-back-emoji">'  + card.em + '</div>' : '';
-  let hasConj = card.conj && card.conj.et && card.conj.fr;
+  const emFront = card.em ? '<div class="fc-front-emoji">' + card.em + '</div>' : '';
+  const emBack  = card.em ? '<div class="fc-back-emoji">'  + card.em + '</div>' : '';
+  const hasConj = card.conj?.et && card.conj?.fr;
   let frontContent, backContent;
+
+  /* Le mot du recto est enveloppé mot-par-mot (id="fcFrontWord") pour permettre
+     le surlignage synchronisé pendant la lecture audio (voir _attachHighlighting). */
+  const frontWordHTML = _wrapWordsForHighlight(card[keys.src]);
 
   if (hasConj) {
     frontContent = emFront
-      + '<div class="fc-front-word" lang="' + keys.src + '">' + card[keys.src] + '</div>'
+      + '<div class="fc-front-word" id="fcFrontWord" lang="' + keys.src + '">' + frontWordHTML + '</div>'
       + '<div class="fc-conj" lang="' + keys.src + '">' + card.conj[keys.src].map((l) => {
           return '<div class="fc-conj-line">' + l + '</div>';
         }).join('') + '</div>';
@@ -1834,25 +2201,29 @@ function renderFlash() {
           return '<div class="fc-conj-line">' + l + '</div>';
         }).join('') + '</div>';
   } else {
-    let flipHint = L('Hiika isaa Afaan Oromootin arguuf cuqaasi', 'Cliquez pour voir la traduction en français');
+    const flipHint = L('Hiika isaa Afaan Oromootin arguuf cuqaasi', 'Cliquez pour voir la traduction en français');
     frontContent = emFront
-      + '<div class="fc-front-word" lang="' + keys.src + '">' + card[keys.src] + '</div>'
+      + '<div class="fc-front-word" id="fcFrontWord" lang="' + keys.src + '">' + frontWordHTML + '</div>'
       + '<div class="fc-front-hint">👆 ' + flipHint + '</div>';
     backContent  = emBack
       + '<div class="fc-back-word" lang="' + keys.tgt + '">' + card[keys.tgt] + '</div>';
   }
 
-  let sectionLabel = L(
+  const sectionLabel = L(
     'Fuuldura : Français 🇫🇷 — Duuba : Afaan Oromoo 🇪🇹 · Kaardicha garagalchi !',
     'Recto : Afaan Oromoo 🇪🇹 — Verso : Français 🇫🇷 · Cliquez pour retourner !'
   );
-  let flipAria  = L('Garagalchi kaardicha', 'Retourner la carte');
-  let prevLabel = L('← Kan duraa',          '← Précédent');
-  let nextLabel = L('Kan itti aanu →',       'Suivant →');
-  let audioBtn  = L('🔊 Sagalee dhaggeeffadhu', '🔊 Écouter la prononciation');
+  const flipAria    = L('Garagalchi kaardicha', 'Retourner la carte');
+  const prevLabel   = L('← Kan duraa',          '← Précédent');
+  const nextLabel   = L('Kan itti aanu →',       'Suivant →');
+  const audioBtn    = L('🔊 Sagalee dhaggeeffadhu', '🔊 Écouter la prononciation');
+  const repeatLabel = L("Irra deebi'i",         'Répéter');
+  const repeat3Aria = L("Sagalee yeroo 3 irra deebi'i", 'Répéter 3 fois');
+  const repeat5Aria = L("Sagalee yeroo 5 irra deebi'i", 'Répéter 5 fois');
 
   document.getElementById('tabContent').innerHTML =
     '<div class="section-label">' + sectionLabel + '</div>'
+    + '<div id="fcVoiceBadge" class="fc-voice-badge-wrap"></div>'
     + '<div class="fc-wrap"><div class="fc" id="fc" role="button" tabindex="0" '
     + 'aria-label="' + _escAttr(flipAria) + '" onclick="flipCard()">'
     + '<div class="fc-front">' + frontContent + '</div>'
@@ -1863,9 +2234,22 @@ function renderFlash() {
     + '<span class="fc-counter">' + (fcIdx + 1) + ' / ' + words.length + '</span>'
     + '<button onclick="nextCard()">' + nextLabel + '</button>'
     + '</div>'
-    + '<div class="fc-audio-wrap" style="text-align:center;">'
-    + '<button class="audio-btn-big" onclick="speak(\'' + escJS(card[keys.src]) + '\')">' + audioBtn + '</button>'
+    + '<div class="fc-audio-wrap">'
+    + _buildTtsRateControlsHTML()
+    + '<button id="fcAudioBtn" class="audio-btn-big" onclick="playCardAudio(1)">' + audioBtn + '</button>'
+    + '<div class="tts-row tts-repeat-row">'
+    + '<span class="tts-row-label">🔁 ' + esc(repeatLabel) + '</span>'
+    + '<div class="tts-pills">'
+    + '<button type="button" id="fcRepeat3" class="tts-repeat-pill" aria-label="' + _escAttr(repeat3Aria) + '" onclick="playCardAudio(3)">×3</button>'
+    + '<button type="button" id="fcRepeat5" class="tts-repeat-pill" aria-label="' + _escAttr(repeat5Aria) + '" onclick="playCardAudio(5)">×5</button>'
+    + '</div>'
+    + '</div>'
     + '</div>';
+
+  /* Badge de voix TTS — se connecte à _resolveOromoVoice(), même résolveur
+     que le bouton 🔊 ci-dessus, pour que le badge reflète toujours la voix
+     réellement utilisée au clic. */
+  _updateCardVoiceBadge();
 }
 
 /**
@@ -1874,7 +2258,7 @@ function renderFlash() {
  * @returns {string} HTML du panneau de détail
  */
 function buildAlphaDetail(c) {
-  let keys = langKeys();
+  const keys = langKeys();
   return '<div class="alpha-detail-letter" lang="' + keys.src + '">' + c[keys.src] + '</div>'
     + '<div class="alpha-detail-name" lang="' + keys.tgt + '">' + c[keys.tgt] + '</div>'
     + '<button class="alpha-detail-btn" onclick="speak(\'' + escJS(c[keys.src]) + '\')">'
@@ -1888,9 +2272,9 @@ function buildAlphaDetail(c) {
  */
 function pickAlpha(i) {
   fcIdx = i;
-  let card = CT.words[i];
+  const card = CT.words[i];
   speak(_spokenKey(card));
-  let d = document.getElementById('alphaDetail');
+  const d = document.getElementById('alphaDetail');
   if (d) d.innerHTML = buildAlphaDetail(card);
 }
 
@@ -1898,7 +2282,7 @@ function pickAlpha(i) {
  * Retourne la carte flash (animation CSS via la classe 'flipped').
  */
 function flipCard() {
-  let fc = document.getElementById('fc');
+  const fc = document.getElementById('fc');
   if (!fc) return;
   fc.classList.toggle('flipped');
 }
@@ -1907,15 +2291,17 @@ function flipCard() {
  * Passe à la carte suivante et joue automatiquement le son (délai 300ms).
  */
 function nextCard() {
+  _stopCardAudio(); // annule un éventuel drill "répéter x fois" sur la carte quittée
   fcIdx = (fcIdx + 1) % CT.words.length;
   renderFlash();
-  setTimeout(() => { speak(_spokenKey(CT.words[fcIdx])); }, 300);
+  setTimeout(() => { playCardAudio(1); }, 300);
 }
 
 /**
  * Revient à la carte précédente.
  */
 function prevCard() {
+  _stopCardAudio(); // annule un éventuel drill "répéter x fois" sur la carte quittée
   fcIdx = (fcIdx - 1 + CT.words.length) % CT.words.length;
   renderFlash();
 }
@@ -1924,7 +2310,7 @@ function prevCard() {
  * @returns {boolean} true si le thème actif est de type Alphabet
  */
 function isAlphaQuiz() {
-  return CT && CT.type === 'alpha';
+  return CT?.type === 'alpha';
 }
 
 
@@ -1981,7 +2367,7 @@ function isAlphaQuiz() {
  * @returns {3|5|8|10}
  */
 function getQuizTotal(theme) {
-  let n = (theme.words || []).length;
+  const n = (theme.words || []).length;
   if (n < 10)  return 3;
   if (n < 15)  return 5;
   if (n <= 27) return 8;   // seuil 27 : coupure naturelle dans la distribution des thèmes
@@ -2019,25 +2405,25 @@ function _wordLabel(word, lang) {
  * @returns {Array} Tableau de questions { q, opts, ans, audio }
  */
 function _generateQuiz(theme, total) {
-  let words = theme.words || [];
+  const words = theme.words || [];
   if (words.length < 2) return [];
 
-  let keys     = langKeys();
-  let shuffled = _shuffle(words);
-  let selected = shuffled.slice(0, Math.min(total, shuffled.length));
-  let qLabel   = L('Afaan Oromootti akkamitti jedhamaa ?', 'Comment dit-on en français ?');
+  const keys     = langKeys();
+  const shuffled = _shuffle(words);
+  const selected = shuffled.slice(0, Math.min(total, shuffled.length));
+  const qLabel   = L('Afaan Oromootti akkamitti jedhamaa ?', 'Comment dit-on en français ?');
 
   return selected.map((correctWord) => {
-    let qText    = _wordLabel(correctWord, keys.src);
-    let aCorrect = _wordLabel(correctWord, keys.tgt);
+    const qText    = _wordLabel(correctWord, keys.src);
+    const aCorrect = _wordLabel(correctWord, keys.tgt);
 
-    let pool        = words.filter((w) => w !== correctWord);
-    let distractors = _shuffle(pool).slice(0, 3).map((w) => {
+    const pool        = words.filter((w) => w !== correctWord);
+    const distractors = _shuffle(pool).slice(0, 3).map((w) => {
       return _wordLabel(w, keys.tgt);
     });
 
-    let opts   = distractors.slice(0, 3);
-    let ansPos = Math.floor(Math.random() * 4);
+    const opts   = distractors.slice(0, 3);
+    const ansPos = Math.floor(Math.random() * 4);
     opts.splice(ansPos, 0, aCorrect);
 
     return {
@@ -2091,8 +2477,8 @@ function renderQuiz10() {
        la session aura quand même été sauvegardée avec les bonnes questions. */
     _saveQuizSession('q10');
   }
-  let qs    = _q10Questions;
-  let total = qs.length;
+  const qs    = _q10Questions;
+  const total = qs.length;
 
   if (!qs || !total) {
     document.getElementById('tabContent').innerHTML =
@@ -2105,22 +2491,22 @@ function renderQuiz10() {
   /* ── Écran de résultats ── */
   if (q10Step >= total) {
     _clearQuizSession();   /* quiz terminé : on nettoie la session */
-    let pct         = Math.round(q10Score / total * 100);
-    let earnedStars = _calcStars(pct);
+    const pct         = Math.round(q10Score / total * 100);
+    const earnedStars = _calcStars(pct);
 
     /* ── Confetti : uniquement si on atteint 3 étoiles pour la première fois
        (ou si le module était à 1 ou 2 étoiles et passe maintenant à 3).
        On lit le score AVANT markDone() pour comparer. ── */
-    let _prevStars  = getThemeStars(CT.id);
+    const _prevStars  = getThemeStars(CT.id);
     if (earnedStars > 0) markDone(CT.id, pct);
     if (earnedStars === 3 && _prevStars < 3) {
       setTimeout(_launchConfetti, 300); /* léger délai pour laisser le DOM se mettre à jour */
     }
 
-    let r         = _quizResultStrings(pct, 'q10');
-    let isSuccess = earnedStars > 0;
+    const r         = _quizResultStrings(pct, 'q10');
+    const isSuccess = earnedStars > 0;
 
-    let endStars = Array.from({ length: 3 }, function(_, i) {
+    const endStars = Array.from({ length: 3 }, (_, i) => {
       return i < earnedStars ? '⭐' : '☆';
     }).join('');
 
@@ -2137,12 +2523,12 @@ function renderQuiz10() {
     return;
   }
 
-  let q = qs[q10Step];
+  const q = qs[q10Step];
 
   /* ── Quiz Alphabet ── */
   if (isAlphaQuiz()) {
-    let qLabel = L('Gaaffii ', 'Question ') + (q10Step + 1) + '/' + total;
-    let opts = q.opts.map((o, i) => {
+    const qLabel = L('Gaaffii ', 'Question ') + (q10Step + 1) + '/' + total;
+    const opts = q.opts.map((o, i) => {
       return '<button class="quiz-opt" id="q10o' + i + '" onclick="checkQ10(' + i + ',' + q.ans + ')" '
         + 'style="font-size:1.4rem;font-weight:900;letter-spacing:2px">' + o + '</button>';
     }).join('');
@@ -2165,8 +2551,8 @@ function renderQuiz10() {
   }
 
   /* ── Quiz standard ── */
-  let qStdLabel = L('Gaaffii ', 'Question ') + (q10Step + 1) + '/' + total;
-  let stdOpts = q.opts.map((o, i) => {
+  const qStdLabel = L('Gaaffii ', 'Question ') + (q10Step + 1) + '/' + total;
+  const stdOpts = q.opts.map((o, i) => {
     return '<button class="quiz-opt" id="q10o' + i + '" onclick="checkQ10(' + i + ',' + q.ans + ')">' + o + '</button>';
   }).join('');
 
@@ -2185,7 +2571,7 @@ function renderQuiz10() {
  */
 function playAlphaAudio(letter) {
   speak(letter);
-  let btn = document.getElementById('playAudioBtn');
+  const btn = document.getElementById('playAudioBtn');
   if (btn) {
     btn.style.transform = 'scale(0.9)';
     setTimeout(() => { btn.style.transform = 'scale(1)'; }, 200);
@@ -2201,7 +2587,7 @@ function checkQ10(chosen, correct) {
   if (q10Answered) return;
   q10Answered = true;
 
-  let qs = _q10Questions || getQuizQuestions(CT);
+  const qs = _q10Questions || getQuizQuestions(CT);
 
   /* Garde défensif : si qs est vide ou q10Step hors-limites (état incohérent),
      on réinitialise le quiz proprement plutôt que de provoquer un crash. */
@@ -2219,8 +2605,8 @@ function checkQ10(chosen, correct) {
 
   if (chosen === correct) { q10Score++; _vibrateFeedback('correct'); } else { _vibrateFeedback('wrong'); }
 
-  let correctWord = qs[q10Step].opts[correct];
-  let fb  = document.getElementById('q10fb');
+  const correctWord = qs[q10Step].opts[correct];
+  const fb  = document.getElementById('q10fb');
   if (fb) {
     fb.textContent = (chosen === correct)
       ? L('✅ Sirrii dha! Baga gammadde!', '✅ Correct ! Félicitations !')
@@ -2232,7 +2618,7 @@ function checkQ10(chosen, correct) {
     if (chosen !== correct) setTimeout(() => { speak(qs[q10Step].audio); }, 300);
   } else {
     if (CT.words) {
-      let match = CT.words.find((w) => w.et === correctWord || w.fr === correctWord);
+      const match = CT.words.find((w) => w.et === correctWord || w.fr === correctWord);
       if (match) speak(_spokenKey(match));
     }
   }
@@ -2253,15 +2639,15 @@ function checkQ10(chosen, correct) {
  * Affiche le dialogue de la situation courante.
  */
 function renderDialog() {
-  let sits    = CT.situations;
-  let sitBtns = sits.map((s, i) => {
+  const sits    = CT.situations;
+  const sitBtns = sits.map((s, i) => {
     return '<button class="sit-btn' + (i === sitIdx ? ' active' : '') + '" onclick="pickSit(' + i + ')">' + s.label + '</button>';
   }).join('');
-  let sit = sits[sitIdx];
+  const sit = sits[sitIdx];
 
-  let keys = langKeys(); // Contient keys.src ('fr' ou 'et') et keys.tgt ('et' ou 'fr')
-  let bubbles = sit.dialogue.map((ln, i) => {
-    let listenTip = L('Dhaggeeffadhu', 'Écouter');
+  const keys = langKeys(); // Contient keys.src ('fr' ou 'et') et keys.tgt ('et' ou 'fr')
+  const bubbles = sit.dialogue.map((ln, i) => {
+    const listenTip = L('Dhaggeeffadhu', 'Écouter');
     return '<div class="bubble ' + ln.side + '" style="opacity:0;transition:opacity .3s ' + (i * 0.08) + 's" id="bl' + i + '">'
       + '<div class="speaker-name">' + ln.s + '</div>'
       + '<div class="msg-row">'
@@ -2278,7 +2664,7 @@ function renderDialog() {
     + '<div class="scene-img-big">' + sit.img + '</div>'
     + '<div class="bubble-wrap">' + bubbles + '</div>'
     + '</div>'
-    + (CT.quiz && CT.quiz.length > 0
+    + (CT.quiz?.length > 0
       ? '<div class="action-row">'
           + '<button class="btn-start-quiz" onclick="switchTab(\'dquiz\')">'
           + L('Quiz jalqabi ➜', 'Lancer le mini quiz ➜')
@@ -2312,16 +2698,16 @@ function pickSit(i) {
  * Affiche les chips de vocabulaire du thème de dialogue courant.
  */
 function renderVocab() {
-  let keys = langKeys();
-  let chips = CT.vocab.map((v) => {
-    let parts    = v.split('=');
-    let et       = parts[0].trim();
-    let fr       = parts[1] ? parts[1].trim() : '';
+  const keys = langKeys();
+  const chips = CT.vocab.map((v) => {
+    const parts    = v.split('=');
+    const et       = parts[0].trim();
+    const fr       = parts[1] ? parts[1].trim() : '';
     /* On reconstruit un mini-objet { fr, et } pour réutiliser langKeys */
-    let word     = { fr: fr, et: et };
-    let mainWord = word[keys.src];
-    let subWord  = word[keys.tgt];
-    let listenTip = L('Dhaggeeffadhu : ', 'Écouter : ') + mainWord;
+    const word     = { fr: fr, et: et };
+    const mainWord = word[keys.src];
+    const subWord  = word[keys.tgt];
+    const listenTip = L('Dhaggeeffadhu : ', 'Écouter : ') + mainWord;
 
     return '<span class="vocab-chip" role="button" tabindex="0" '
       + 'aria-label="' + _escAttr(listenTip) + '" onclick="speak(\'' + escJS(mainWord) + '\')">'
@@ -2338,7 +2724,7 @@ function renderVocab() {
     + '</div>'
     + '<div class="vocab-grid">' + chips + '</div>'
     + '</div>'
-    + (CT.quiz && CT.quiz.length > 0
+    + (CT.quiz?.length > 0
       ? '<div class="action-row">'
           + '<button class="btn-start-quiz" onclick="switchTab(\'dquiz\')">'
           + L('Quiz jalqabi ➜', 'Lancer le mini quiz ➜')
@@ -2374,6 +2760,7 @@ let _repeatIdx        = 0;       // Index du mot courant dans la liste
 let _repeatWords      = [];      // Liste des mots de la session
 let _repeatScore      = 0;       // Bonnes réponses sur la session
 let _repeatTotal      = 0;       // Total de mots dans la session
+let _repeatSkipped    = 0;       // Mots passés via "Passer" — exclus du score, ni bons ni mauvais
 let _repeatRecognizer = null;    // Instance SpeechRecognition en cours
 let _repeatLangUsed   = null;    // Langue réellement utilisée pour la reco
 let _repeatLangLabel  = null;    // Libellé lisible de cette langue
@@ -2453,7 +2840,7 @@ function _matchRepeat(transcript, expected) {
     return false;
   }
 
-  let t = _normalizeRepeat(transcript);
+  const t = _normalizeRepeat(transcript);
 
   /* Bug 8 — Tester chaque partie séparée par " / " indépendamment.
      Ex. : "ba'uu / hin deemne" → on teste "ba'uu" ET "hin deemne"
@@ -2511,10 +2898,10 @@ function _levenshtein(a, b) {
  * @returns {SpeechRecognition|null}
  */
 function _makeRecognizer(lang) {
-  let SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
   if (!SR) return null;
   try {
-    let r = new SR();
+    const r = new SR();
     r.lang          = lang;
     r.continuous    = false;
     r.interimResults = false;
@@ -2531,25 +2918,25 @@ function _makeRecognizer(lang) {
  *   hint  = traduction (langue cible)
  */
 function _buildRepeatWords() {
-  let keys = langKeys();
-  let list = [];
+  const keys = langKeys();
+  const list = [];
 
   if (CT.type === 'dialog') {
     /* Thème dialogue : on prend le vocabulaire clé (CT.vocab) */
     (CT.vocab || []).forEach((v) => {
-      let parts = v.split('=');
-      let et = parts[0] ? parts[0].trim() : '';
-      let fr = parts[1] ? parts[1].trim() : '';
-      let word = { fr: fr, et: et };
-      let mainWord = word[keys.src];
-      let hintWord = word[keys.tgt];
+      const parts = v.split('=');
+      const et = parts[0] ? parts[0].trim() : '';
+      const fr = parts[1] ? parts[1].trim() : '';
+      const word = { fr: fr, et: et };
+      const mainWord = word[keys.src];
+      const hintWord = word[keys.tgt];
       if (mainWord) list.push({ word: mainWord, hint: hintWord });
     });
   } else {
     /* Thème vocabulaire standard : CT.words */
     (CT.words || []).forEach((w) => {
-      let mainWord = w[keys.src];
-      let hintWord = w[keys.tgt];
+      const mainWord = w[keys.src];
+      const hintWord = w[keys.tgt];
       if (mainWord) list.push({ word: mainWord, hint: hintWord, em: w.em || '' });
     });
   }
@@ -2569,9 +2956,10 @@ function renderRepeat() {
   _repeatWords = _buildRepeatWords();
   _repeatIdx   = 0;
   _repeatScore = 0;
+  _repeatSkipped = 0;
   _repeatTotal = _repeatWords.length;
 
-  let SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
 
   /* ── SpeechRecognition non supporté ── */
   if (!SR) {
@@ -2598,7 +2986,7 @@ function renderRepeat() {
     if (_repeatLangResolving) return;
     _repeatLangResolving = true;
 
-    _resolveRepeatLangOromo(function(lang, label) {
+    _resolveRepeatLangOromo((lang, label) => {
       _repeatLangResolving = false;   /* libérer le verrou dans tous les cas */
       if (!lang) {
         _renderRepeatUnavailable(
@@ -2631,10 +3019,10 @@ function _resolveRepeatLangOromo(callback) {
       callback(null, null);
       return;
     }
-    let candidate = REPEAT_OROMO_LANGS[idx];
+    const candidate = REPEAT_OROMO_LANGS[idx];
     idx++;
 
-    let r = _makeRecognizer(candidate.lang);
+    const r = _makeRecognizer(candidate.lang);
     if (!r) { tryNext(); return; }
 
     /* On teste avec un timeout : si start() ne déclenche pas d'erreur
@@ -2705,7 +3093,7 @@ function _renderRepeatUI(altLangMsg) {
     return;
   }
 
-  let altBanner = altLangMsg
+  const altBanner = altLangMsg
     ? '<div class="repeat-alt-lang">' + altLangMsg + '</div>'
     : '';
 
@@ -2761,9 +3149,9 @@ function _renderRepeatCard() {
     return;
   }
 
-  let item    = _repeatWords[_repeatIdx];
-  let counter = (_repeatIdx + 1) + ' / ' + _repeatTotal;
-  let emoji   = item.em ? '<div class="repeat-card-emoji">' + item.em + '</div>' : '';
+  const item    = _repeatWords[_repeatIdx];
+  const counter = (_repeatIdx + 1) + ' / ' + _repeatTotal;
+  const emoji   = item.em ? '<div class="repeat-card-emoji">' + item.em + '</div>' : '';
 
   /* Carte mot */
   document.getElementById('repeat-card').innerHTML =
@@ -2776,9 +3164,9 @@ function _renderRepeatCard() {
   document.getElementById('repeat-feedback').innerHTML = '';
 
   /* Contrôles */
-  let listenLbl = L('🔊 Dhaggeeffadhu', '🔊 Écouter');
-  let micLbl    = L('🎙️ Dubbadhu',      '🎙️ Parler');
-  let skipLbl   = L('⏭ Irra darbii',   '⏭ Passer');
+  const listenLbl = L('🔊 Dhaggeeffadhu', '🔊 Écouter');
+  const micLbl    = L('🎙️ Dubbadhu',      '🎙️ Parler');
+  const skipLbl   = L('⏭ Irra darbii',   '⏭ Passer');
 
   document.getElementById('repeat-controls').innerHTML =
     '<button class="repeat-btn repeat-btn--listen" onclick="repeatListen()">' + listenLbl + '</button>'
@@ -2786,10 +3174,12 @@ function _renderRepeatCard() {
     + '<button class="repeat-btn repeat-btn--skip"   onclick="repeatSkip()">' + skipLbl + '</button>';
 
   /* Barre de progression */
-  let pct = Math.round(_repeatIdx / _repeatTotal * 100);
+  const pct = Math.round(_repeatIdx / _repeatTotal * 100);
+  /* Tentatives réelles = mots vus - mots passés (le skip ne compte pas comme un essai) */
+  const attemptedSoFar = _repeatIdx - _repeatSkipped;
   document.getElementById('repeat-progress').innerHTML =
     '<div class="repeat-progress-bar"><div class="repeat-progress-fill" style="width:' + pct + '%"></div></div>'
-    + '<div class="repeat-progress-label">' + _repeatScore + ' ✅ / ' + _repeatIdx + ' ' + L('yaaliitiin', 'tentatives') + '</div>';
+    + '<div class="repeat-progress-label">' + _repeatScore + ' ✅ / ' + attemptedSoFar + ' ' + L('yaaliitiin', 'tentatives') + '</div>';
 
   /* Lecture automatique à l'affichage de la première carte */
   if (_repeatIdx === 0) {
@@ -2801,14 +3191,14 @@ function _renderRepeatCard() {
  * Lit le mot courant à voix haute (TTS).
  */
 function repeatListen() {
-  let item = _repeatWords[_repeatIdx];
+  const item = _repeatWords[_repeatIdx];
   if (!item) return;
   speak(item.word);
 
   /* Animation du bouton écoute */
-  let btn = document.getElementById('repeat-controls');
+  const btn = document.getElementById('repeat-controls');
   if (btn) {
-    let listenBtn = btn.querySelector('.repeat-btn--listen');
+    const listenBtn = btn.querySelector('.repeat-btn--listen');
     if (listenBtn) {
       listenBtn.classList.add('repeat-btn--pulse');
       setTimeout(() => { listenBtn.classList.remove('repeat-btn--pulse'); }, 600);
@@ -2822,17 +3212,17 @@ function repeatListen() {
 function repeatRecord() {
   _stopRepeat();
 
-  let item = _repeatWords[_repeatIdx];
+  const item = _repeatWords[_repeatIdx];
   if (!item) return;
 
-  let micBtn = document.getElementById('repeat-mic-btn');
+  const micBtn = document.getElementById('repeat-mic-btn');
   if (micBtn) {
     micBtn.textContent = L('⏺ Sagalee dhageessuu...', '⏺ Écoute en cours...');
     micBtn.classList.add('repeat-btn--recording');
     micBtn.disabled = true;
   }
 
-  let fbEl = document.getElementById('repeat-feedback');
+  const fbEl = document.getElementById('repeat-feedback');
   if (fbEl) {
     fbEl.className = 'repeat-feedback repeat-feedback--listening';
     fbEl.textContent = L('🎙️ Dubbadhu...', '🎙️ Parlez maintenant...');
@@ -2889,7 +3279,7 @@ function repeatRecord() {
     _repeatRecognizer.start();
   } catch(e) {
     _resetMicBtn();
-    let fbElCatch = document.getElementById('repeat-feedback');
+    const fbElCatch = document.getElementById('repeat-feedback');
     if (fbElCatch) {
       fbElCatch.className = 'repeat-feedback repeat-feedback--error';
       fbElCatch.textContent = L('Maaykiroofoona jalqabuu dadhabeera.', 'Impossible de démarrer le microphone.');
@@ -2901,7 +3291,7 @@ function repeatRecord() {
  * Remet le bouton micro dans son état initial.
  */
 function _resetMicBtn() {
-  let micBtn = document.getElementById('repeat-mic-btn');
+  const micBtn = document.getElementById('repeat-mic-btn');
   if (micBtn) {
     micBtn.textContent = L('🎙️ Dubbadhu', '🎙️ Parler');
     micBtn.classList.remove('repeat-btn--recording');
@@ -2916,13 +3306,13 @@ function _resetMicBtn() {
  * @param {string}   expected     - Mot attendu
  */
 function _handleRepeatResult(transcripts, expected) {
-  let matched = transcripts.some((t) => _matchRepeat(t, expected));
+  const matched = transcripts.some((t) => _matchRepeat(t, expected));
   /* SÉCURITÉ : le transcript vient de la Web Speech API (entrée utilisateur).
      Il doit être échappé avant toute injection dans innerHTML pour prévenir
      tout vecteur XSS (ex : navigateur retournant <script>…</script>). */
-  let best    = esc(transcripts[0] || '');
+  const best    = esc(transcripts[0] || '');
 
-  let fbEl = document.getElementById('repeat-feedback');
+  const fbEl = document.getElementById('repeat-feedback');
   if (!fbEl) return;
 
   if (matched) {
@@ -2957,9 +3347,15 @@ function _handleRepeatResult(transcripts, expected) {
 
 /**
  * Passe le mot courant sans le valider.
+ * IMPORTANT : ne touche jamais à _repeatScore, ne déclenche aucune
+ * vibration/couleur d'erreur (_vibrateFeedback('wrong') n'est PAS
+ * appelée) — un mot passé n'est ni une bonne, ni une mauvaise réponse.
+ * Il est seulement compté à part (_repeatSkipped) pour être exclu
+ * du calcul du score final (voir _renderRepeatResult()).
  */
 function repeatSkip() {
   _stopRepeat();
+  _repeatSkipped++;
   _repeatIdx++;
   _renderRepeatCard();
 }
@@ -2968,8 +3364,18 @@ function repeatSkip() {
  * Affiche l'écran de résultats à la fin de la session Répète.
  */
 function _renderRepeatResult() {
-  let pct  = _repeatTotal > 0 ? Math.round(_repeatScore / _repeatTotal * 100) : 0;
-  let emoji = pct === 100 ? '🎉🎉🎉' : pct >= 75 ? '⭐⭐' : pct >= 50 ? '⭐' : '😅';
+  /* Les mots passés ("Passer") sont exclus du calcul : ils ne sont
+     ni une bonne ni une mauvaise réponse, donc ni le score ni le
+     dénominateur du pourcentage ne doivent en tenir compte. */
+  const attempted = _repeatTotal - _repeatSkipped;
+  const pct   = attempted > 0 ? Math.round(_repeatScore / attempted * 100) : 0;
+  const emoji = pct === 100 ? '🎉🎉🎉' : pct >= 75 ? '⭐⭐' : pct >= 50 ? '⭐' : '😅';
+
+  const skippedNote = _repeatSkipped > 0
+    ? '<div style="font-size:.78rem;color:#888;margin-top:2px">'
+      + '⏭ ' + _repeatSkipped + ' ' + L('jechoota irra darbaman', 'mot(s) passé(s)')
+      + '</div>'
+    : '';
 
   document.getElementById('repeat-card').innerHTML = '';
   document.getElementById('repeat-feedback').innerHTML = '';
@@ -2980,10 +3386,11 @@ function _renderRepeatResult() {
     + '<h3 style="color:var(--c-primary)">'
     + L('Shaakallii xumurameera!', 'Exercice terminé !')
     + '</h3>'
-    + '<div class="score-num">' + _repeatScore + ' / ' + _repeatTotal + '</div>'
+    + '<div class="score-num">' + _repeatScore + ' / ' + attempted + '</div>'
     + '<div style="font-size:.85rem;color:#666;margin:8px 0">'
     + pct + '% ' + L('si\'aa sirriin dubbachiiste', 'de réussite')
     + '</div>'
+    + skippedNote
     + '<div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:14px">'
     + '<button class="retry-btn" style="background:#888" onclick="renderRepeat()">'
     + L('🔄 Irra deebi\'i', '🔄 Recommencer')
@@ -3017,24 +3424,24 @@ function renderDialogQuiz() {
     return;
   }
 
-  let qs    = CT.quiz;
-  let total = qs.length;
+  const qs    = CT.quiz;
+  const total = qs.length;
 
   /* ── Écran de résultats ── */
   if (dqStep >= total) {
     _clearQuizSession();   /* quiz terminé : on nettoie la session */
-    let pct         = Math.round(dqScore / total * 100);
-    let earnedStars = _calcStars(pct);
-    let _prevStarsD = getThemeStars(CT.id);
+    const pct         = Math.round(dqScore / total * 100);
+    const earnedStars = _calcStars(pct);
+    const _prevStarsD = getThemeStars(CT.id);
     if (earnedStars > 0) markDone(CT.id, pct);
     if (earnedStars === 3 && _prevStarsD < 3) {
       setTimeout(_launchConfetti, 300);
     }
 
-    let r         = _quizResultStrings(pct, 'dq');
-    let isSuccess = earnedStars > 0;
+    const r         = _quizResultStrings(pct, 'dq');
+    const isSuccess = earnedStars > 0;
 
-    let endStars = Array.from({ length: 3 }, function(_, i) {
+    const endStars = Array.from({ length: 3 }, (_, i) => {
       return i < earnedStars ? '⭐' : '☆';
     }).join('');
 
@@ -3052,10 +3459,10 @@ function renderDialogQuiz() {
   }
 
   /* ── Question courante ── */
-  let q      = qs[dqStep];
-  let qLabel = L('Gaaffii ', 'Question ') + (dqStep + 1) + '/' + total;
+  const q      = qs[dqStep];
+  const qLabel = L('Gaaffii ', 'Question ') + (dqStep + 1) + '/' + total;
 
-  let opts = q.opts.map((o, i) => {
+  const opts = q.opts.map((o, i) => {
     return '<button class="quiz-opt" id="dqo' + i + '" onclick="checkDQ(' + i + ',' + q.ans + ')">' + o + '</button>';
   }).join('');
 
@@ -3092,7 +3499,7 @@ function checkDQ(chosen, correct) {
 
   if (chosen === correct) { dqScore++; _vibrateFeedback('correct'); } else { _vibrateFeedback('wrong'); }
 
-  let fb = document.getElementById('dqfb');
+  const fb = document.getElementById('dqfb');
   if (fb) {
     fb.textContent = (chosen === correct)
       ? L('✅ Deebii sirrii dha!', '✅ Bonne réponse !')
@@ -3116,8 +3523,8 @@ function checkDQ(chosen, correct) {
  * @returns {{ title: string, sub: string, retry: string, finish: string }}
  */
 function _quizResultStrings(pct, type) {
-  let stars     = _calcStars(pct);
-  let isSuccess = stars > 0;
+  const stars     = _calcStars(pct);
+  const isSuccess = stars > 0;
 
   let title = L('Quiz xumurameera!', 'Quiz terminé !');
   if      (stars === 3) title = L('Baay\'ee gaarii dha! 🌟🌟🌟', 'Parfait ! 🌟🌟🌟');
@@ -3152,11 +3559,11 @@ function _quizResultStrings(pct, type) {
 function esc(s) {
   if (!s) return '';
   return s
-    .replaceAll('&',  '&amp;')   // DOIT être en premier (évite de doubler les entités déjà présentes)
-    .replaceAll('<',  '&lt;')    // Bloque toute balise HTML (vecteur XSS)
-    .replaceAll('>',  '&gt;')    // Idem
-    .replaceAll("'",  '&#39;')   // Protège l'apostrophe Oromo dans le DOM HTML
-    .replaceAll('\"',  '&quot;'); // Protège les guillemets
+    .split('&').join('&amp;')   // DOIT être en premier (évite de doubler les entités déjà présentes)
+    .split('<').join('&lt;')    // Bloque toute balise HTML (vecteur XSS)
+    .split('>').join('&gt;')    // Idem
+    .split("'").join('&#39;')   // Protège l'apostrophe Oromo dans le DOM HTML
+    .split('\"').join('&quot;'); // Protège les guillemets
 }
 
 /**
@@ -3172,9 +3579,9 @@ function esc(s) {
 function escJS(s) {
   if (!s) return '';
   return s
-    .replaceAll('\\', '\\\\')
-    .replaceAll("'",  "\\'")     // Apostrophe → séquence JS (pas entité HTML)
-    .replaceAll('"',  '\\"');    // Guillemet   → séquence JS
+    .split('\\').join('\\\\')
+    .split("'").join("\\'")     // Apostrophe → séquence JS (pas entité HTML)
+    .split('"').join('\\"');    // Guillemet   → séquence JS
 }
 
 /**
@@ -3185,10 +3592,10 @@ function escJS(s) {
  */
 function _escAttr(s) {
   return (s || '')
-    .replaceAll('&', '&amp;')
-    .replaceAll('<', '&lt;')
-    .replaceAll('>', '&gt;')
-    .replaceAll('"', '&quot;');
+    .split('&').join('&amp;')
+    .split('<').join('&lt;')
+    .split('>').join('&gt;')
+    .split('"').join('&quot;');
 }
 
 
@@ -3250,13 +3657,13 @@ const _OB_KEY_OR = 'tm_onboarded_or';
  *      badges) et des boutons (Commencer, Export PDF, topbar).
  */
 function _buildHomeGuide() {
-  let isFr = isFrench();
+  const isFr = isFrench();
   /*
    * CONVENTION DE LANGUE :
    * isFr = true  → mode learn_french → apprenant OROMOPHONE → guide en OROMO   → bloc [data-lang="or"]
    * isFr = false → mode learn_oromo  → apprenant FRANCOPHONE → guide en FRANÇAIS → bloc [data-lang="fr"]
    */
-  let activeLang = isFr ? 'or' : 'fr';
+  const activeLang = isFr ? 'or' : 'fr';
 
   /* ── 1. Révèle le bon bloc, masque l'autre ── */
   document.querySelectorAll('.home-lang-block').forEach((el) => {
@@ -3268,41 +3675,48 @@ function _buildHomeGuide() {
   });
 
   /* ── 2. En-tête : drapeaux, titre, sous-titre ── */
-  let flagsEl = document.getElementById('homeGuideFlagsRow');
+  const flagsEl = document.getElementById('homeGuideFlagsRow');
   if (flagsEl) flagsEl.textContent = isFr ? '🇪🇹 → 🇫🇷' : '🇫🇷 → 🇪🇹';
 
-  let titleEl = document.getElementById('homeTitle');
+  const titleEl = document.getElementById('homeTitle');
   if (titleEl) titleEl.textContent = isFr
     ? 'Afaan Faransaayii barachuu 🇫🇷'
     : "Apprendre l'Oromo 🇪🇹";
 
-  let subEl = document.getElementById('homeGuideSubtitle');
+  const subEl = document.getElementById('homeGuideSubtitle');
   if (subEl) subEl.textContent = isFr
     ? "App bilisaa — calqalbaa irraa jalqabuuf ta'e"
     : 'App gratuite — idéale pour débuter depuis zéro';
 
   /* ── 3. Badges de fonctionnalités ── */
-  let badgesEl = document.getElementById('homeGuideBadges');
+  const badgesEl = document.getElementById('homeGuideBadges');
   if (badgesEl) {
-    let badges = isFr
+    const badges = isFr
       ? ['✅ Bilisaa', '🚧 Galmee malee', '📱 Bilbila & Kompiyuutara', '🔊 Sagalee', '🎤 Irra deebii\'i', '📲 Interneetii malee']
       : ['✅ 100% Gratuit', '🚧 Sans inscription', '📱 Mobile & Bureau', '🔊 Audio inclus', '🎤 Répétition orale', '📲 Hors-ligne'];
     badgesEl.innerHTML = badges.map((b) => '<span class="hg-badge">' + b + '</span>').join('');
   }
 
   /* ── 4. Topbar ── */
-  let topbarTitle = document.getElementById('homeTopbarTitle');
+  const topbarTitle = document.getElementById('homeTopbarTitle');
   if (topbarTitle) topbarTitle.textContent = L('Gargaarsa', 'Guide explicatif');
 
   /* ── 5. Bouton Commencer ── */
-  let btn = document.getElementById('homeStartBtn');
+  const btn = document.getElementById('homeStartBtn');
   if (btn) {
     btn.textContent = L('▶ Jalqabi', '▶ Commencer');
-    btn.onclick = () => { showScreen('sections-level1'); };
+    btn.onclick = () => {
+      /* Marque le guide comme "déjà vu" pour CE mode → ne sera plus
+         affiché automatiquement au prochain lancement (voir _maybeShowOnboarding).
+         Reste accessible en un clic via l'icône ❓ de la barre de navigation
+         (showOnboardingGuide() ne consulte jamais ce flag). */
+      localStorage.setItem(isFrench() ? _OB_KEY_FR : _OB_KEY_OR, 'true');
+      showScreen('sections-level1');
+    };
   }
 
   /* ── 6. Bouton export PDF du guide (pill compact dans la barre sticky) ── */
-  let exportBtn = document.getElementById('homeExportBtn');
+  const exportBtn = document.getElementById('homeExportBtn');
   if (exportBtn) {
     exportBtn.textContent = L('📄 PDF', '📄 PDF');
     exportBtn.title = L('Galmee guutuu buusi', 'Télécharger le guide (PDF)');
@@ -3310,9 +3724,20 @@ function _buildHomeGuide() {
 }
 
 
+/**
+ * Appelée par initApp() juste après showScreen('home').
+ * Si le guide a déjà été vu pour le mode actif (flag localStorage posé
+ * par le clic sur "Commencer"), on saute directement à l'écran des
+ * modules — l'utilisateur ne revoit pas le guide à chaque lancement.
+ * Sinon, on ne fait rien : l'écran #home (guide) déjà affiché reste visible.
+ * N'affecte jamais showOnboardingGuide() (icône ❓ de la nav basse),
+ * qui force toujours l'affichage du guide sans consulter ce flag.
+ */
 function _maybeShowOnboarding() {
-  /* Le guide est toujours affiché à l'arrivée — l'utilisateur navigue librement
-     avec la barre de navigation basse. Plus de flag "ne plus afficher". */
+  const key = isFrench() ? _OB_KEY_FR : _OB_KEY_OR;
+  if (localStorage.getItem(key) === 'true') {
+    showScreen('sections-level1');
+  }
 }
 
 /**
@@ -3340,14 +3765,14 @@ function showOnboardingGuide() {
 
 function showCredits() {
   /* Mise à jour bilingue du contenu selon le mode actif */
-  let titleEl = document.getElementById('credits-modal-title');
-  let bodyEl  = document.getElementById('credits-modal-body');
-  let closeEl = document.getElementById('credits-modal-close');
+  const titleEl = document.getElementById('credits-modal-title');
+  const bodyEl  = document.getElementById('credits-modal-body');
+  const closeEl = document.getElementById('credits-modal-close');
 
   if (titleEl) titleEl.textContent = L('Odeeffannoo', 'Infos');
   if (closeEl) closeEl.textContent = L('Cufuu', 'Fermer');
 
-  let lblCopy = L(
+  const lblCopy = L(
     '© Waxabajjii 2026 – Kan Sébastien Godet tolche · AI Claude Sonnet 4.6 fi Gemini 3.5 Flash gargaaramee',
     '© Juin 2026 – Développé par Sébastien Godet · Assisté par IA Claude Sonnet 4.6 et Gemini 3.5 Flash'
   );
@@ -3380,7 +3805,7 @@ function showCredits() {
         + '<p>Merci à mes <strong>parents</strong> pour leur relecture attentive et leurs conseils.</p>';
   }
 
-  let modal = document.getElementById('credits-modal');
+  const modal = document.getElementById('credits-modal');
   if (modal) modal.style.display = 'flex';
 }
 
@@ -3390,7 +3815,7 @@ function showCredits() {
  * avec la convention de délégation HTML → app.js (I7).
  */
 function closeCreditsModal() {
-  let modal = document.getElementById('credits-modal');
+  const modal = document.getElementById('credits-modal');
   if (modal) modal.style.display = 'none';
 }
 
@@ -3401,8 +3826,8 @@ function closeCreditsModal() {
 
 /* Afficher la nav dès le chargement — visible sur toutes les pages
    y compris le launcher (état neutre : aucun bouton actif) */
-(function() {
-  let nav = document.getElementById('bottom-nav');
+(() => {
+  const nav = document.getElementById('bottom-nav');
   if (nav) nav.classList.add('visible');
 })();
 
@@ -3440,7 +3865,7 @@ document.addEventListener('keydown', e => {
  */
 function _showLoadingSpinner() {
   if (document.getElementById('app-loading')) return; /* déjà visible */
-  let el = document.createElement('div');
+  const el = document.createElement('div');
   el.id        = 'app-loading';
   el.className = 'app-loading';
   el.setAttribute('role', 'status');
@@ -3463,7 +3888,7 @@ function _showLoadingSpinner() {
  * Retire le spinner de chargement avec une transition de sortie.
  */
 function _hideLoadingSpinner() {
-  let el = document.getElementById('app-loading');
+  const el = document.getElementById('app-loading');
   if (!el) return;
   el.classList.remove('app-loading--visible');
   setTimeout(() => { if (el.parentNode) el.parentNode.removeChild(el); }, 300);
@@ -3570,7 +3995,7 @@ if ('serviceWorker' in navigator) {
 
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('./sw.js')
-      .catch(function(err) {
+      .catch((err) => {
         /* Échec silencieux : l'app fonctionne quand même en ligne */
         console.warn('[SW] Enregistrement échoué :', err);
       });
@@ -3781,27 +4206,27 @@ function _printDocFooter() {
    ============================================================ */
 
 function _exportGuide() {
-  let isFr = isFrench();
-  let primary = isFr ? '#002395' : '#009A44';
-  let accent  = isFr ? '#ED2939' : '#EF2B2D';
-  let flag    = isFr ? '\ud83c\uddeb\ud83c\uddf7' : '\ud83c\uddea\ud83c\uddf9';
-  let langPair = isFr ? 'Fran\u00e7ais \u2194 Afaan Oromoo' : 'Afaan Oromoo \u2194 Fran\u00e7ais';
-  let modeLabel = isFr ? 'Mode : Apprendre le Fran\u00e7ais' : 'Mode : Afaan Oromoo Barachuu';
+  const isFr = isFrench();
+  const primary = isFr ? '#002395' : '#009A44';
+  const accent  = isFr ? '#ED2939' : '#EF2B2D';
+  const flag    = isFr ? '\ud83c\uddeb\ud83c\uddf7' : '\ud83c\uddea\ud83c\uddf9';
+  const langPair = isFr ? 'Fran\u00e7ais \u2194 Afaan Oromoo' : 'Afaan Oromoo \u2194 Fran\u00e7ais';
+  const modeLabel = isFr ? 'Mode : Apprendre le Fran\u00e7ais' : 'Mode : Afaan Oromoo Barachuu';
 
-  let bodyEl = document.getElementById('homeGuideBody');
+  const bodyEl = document.getElementById('homeGuideBody');
   let sectionsHTML = '';
 
   if (bodyEl) {
-    let details = bodyEl.querySelectorAll('details.hg-section');
+    const details = bodyEl.querySelectorAll('details.hg-section');
     details.forEach((det) => {
-      let summaryEl = det.querySelector('.hg-summary');
-      let detailEl  = det.querySelector('.hg-detail');
+      const summaryEl = det.querySelector('.hg-summary');
+      const detailEl  = det.querySelector('.hg-detail');
       if (!summaryEl || !detailEl) return;
 
-      let icon  = summaryEl.querySelector('.hg-icon')  ? summaryEl.querySelector('.hg-icon').textContent  : '';
-      let label = summaryEl.querySelector('.hg-label') ? summaryEl.querySelector('.hg-label').textContent : '';
+      const icon  = summaryEl.querySelector('.hg-icon')  ? summaryEl.querySelector('.hg-icon').textContent  : '';
+      const label = summaryEl.querySelector('.hg-label') ? summaryEl.querySelector('.hg-label').textContent : '';
 
-      let tempDiv = document.createElement('div');
+      const tempDiv = document.createElement('div');
       tempDiv.innerHTML = detailEl.innerHTML;
       /* Nettoyer les liens internes non fonctionnels en PDF */
       tempDiv.querySelectorAll('a[href="#"]').forEach((a) => {
@@ -3816,7 +4241,7 @@ function _exportGuide() {
         b.style.cursor = 'default';
         b.style.opacity = '0.6';
       });
-      let cleanBody = tempDiv.innerHTML;
+      const cleanBody = tempDiv.innerHTML;
 
       sectionsHTML +=
         '<div class="guide-section">'
@@ -3826,7 +4251,7 @@ function _exportGuide() {
     });
   }
 
-  let css = _printBaseCSS(primary, accent)
+  const css = _printBaseCSS(primary, accent)
     + '<style>'
     + '.guide-section{margin-bottom:14pt;padding-bottom:10pt;border-bottom:0.5pt solid #e0e0e0;break-inside:avoid}'
     + '.guide-section:last-child{border-bottom:none}'
@@ -3862,7 +4287,7 @@ function _exportGuide() {
     + 'h2{page-break-after:avoid}'
     + '</style>';
 
-  let html = '<!DOCTYPE html><html lang="' + (isFr ? 'om' : 'fr') + '"><head>'
+  const html = '<!DOCTYPE html><html lang="' + (isFr ? 'om' : 'fr') + '"><head>'
     + '<meta charset="UTF-8">'
     + '<title>Taphad\'Meuh \u2014 Guide</title>'
     + css
@@ -3888,29 +4313,29 @@ function _exportGuide() {
 
 function _exportVocab() {
   if (!CT || !CT.words || CT.words.length === 0) {
-    _showToast(L('\u26a0\ufe0f Aucun vocabulaire \u00e0 exporter.', '\u26a0\ufe0f Jechoota hin jiran.'), 3000);
+    _showToast(L('\u26a0\ufe0f Jechoota hin jiran.', '\u26a0\ufe0f Aucun vocabulaire \u00e0 exporter.'), 3000);
     return;
   }
 
-  let keys    = langKeys();
-  let primary = isFrench() ? '#002395' : '#009A44';
-  let accent  = isFrench() ? '#ED2939' : '#EF2B2D';
-  let flag    = isFrench() ? '\ud83c\uddeb\ud83c\uddf7' : '\ud83c\uddea\ud83c\uddf9';
-  let title   = _themeTitle(CT);
+  const keys    = langKeys();
+  const primary = isFrench() ? '#002395' : '#009A44';
+  const accent  = isFrench() ? '#ED2939' : '#EF2B2D';
+  const flag    = isFrench() ? '\ud83c\uddeb\ud83c\uddf7' : '\ud83c\uddea\ud83c\uddf9';
+  const title   = _themeTitle(CT);
 
-  let colSrc = isFrench() ? 'Fran\u00e7ais \ud83c\uddeb\ud83c\uddf7' : 'Afaan Oromoo \ud83c\uddea\ud83c\uddf9';
-  let colTgt = isFrench() ? 'Afaan Oromoo \ud83c\uddea\ud83c\uddf9' : 'Fran\u00e7ais \ud83c\uddeb\ud83c\uddf7';
+  const colSrc = isFrench() ? 'Fran\u00e7ais \ud83c\uddeb\ud83c\uddf7' : 'Afaan Oromoo \ud83c\uddea\ud83c\uddf9';
+  const colTgt = isFrench() ? 'Afaan Oromoo \ud83c\uddea\ud83c\uddf9' : 'Fran\u00e7ais \ud83c\uddeb\ud83c\uddf7';
 
-  let rows = CT.words.map((w, i) => {
-    let mainWord = w[keys.src] || '';
-    let subWord  = w[keys.tgt] || '';
-    let em       = w.em || '';
-    let bg       = (i % 2 === 0) ? '#ffffff' : '#f8f8ff';
+  const rows = CT.words.map((w, i) => {
+    const mainWord = w[keys.src] || '';
+    const subWord  = w[keys.tgt] || '';
+    const em       = w.em || '';
+    const bg       = (i % 2 === 0) ? '#ffffff' : '#f8f8ff';
     let conjHTML = '';
 
-    if (w.conj && w.conj[keys.src] && w.conj[keys.tgt]) {
-      let conjSrc = w.conj[keys.src].join(' \xb7 ');
-      let conjTgt = w.conj[keys.tgt].join(' \xb7 ');
+    if (w.conj?.[keys.src] && w.conj?.[keys.tgt]) {
+      const conjSrc = w.conj[keys.src].join(' \xb7 ');
+      const conjTgt = w.conj[keys.tgt].join(' \xb7 ');
       conjHTML = '<div class="conj">'
         + '\u2514 ' + conjSrc + '<br>'
         + '\u2514 ' + conjTgt
@@ -3925,11 +4350,11 @@ function _exportVocab() {
       + '</tr>';
   }).join('');
 
-  let noteHTML = CT.note
+  const noteHTML = CT.note
     ? '<div class="vocab-note">\ud83d\udca1 ' + CT.note + '</div>'
     : '';
 
-  let css = _printBaseCSS(primary, accent)
+  const css = _printBaseCSS(primary, accent)
     + '<style>'
     + 'table{width:100%;border-collapse:collapse;margin-top:8pt;font-size:10.5pt}'
     + 'thead tr{background:' + primary + ';color:#fff}'
@@ -3946,9 +4371,9 @@ function _exportVocab() {
     + 'thead{display:table-header-group}'
     + '</style>';
 
-  let themeLabel = CT.emoji + ' ' + title.main + ' \u2014 ' + title.sub;
+  const themeLabel = CT.emoji + ' ' + title.main + ' \u2014 ' + title.sub;
 
-  let html = '<!DOCTYPE html><html lang="' + (isFrench() ? 'om' : 'fr') + '"><head>'
+  const html = '<!DOCTYPE html><html lang="' + (isFrench() ? 'om' : 'fr') + '"><head>'
     + '<meta charset="UTF-8">'
     + '<title>Taphad\'Meuh \u2014 ' + title.main + '</title>'
     + css
@@ -3984,22 +4409,22 @@ function _exportVocab() {
 
 function _exportSituation() {
   if (!CT || CT.type !== 'dialog' || !CT.situations) {
-    _showToast(L('\u26a0\ufe0f Aucune situation \u00e0 exporter.', '\u26a0\ufe0f Haala hin jiru.'), 3000);
+    _showToast(L('\u26a0\ufe0f Haala hin jiru.', '\u26a0\ufe0f Aucune situation \u00e0 exporter.'), 3000);
     return;
   }
 
-  let sit = CT.situations[sitIdx];
+  const sit = CT.situations[sitIdx];
   if (!sit) { _showToast(L('\u26a0\ufe0f Haalli hin argamne.', '\u26a0\ufe0f Situation introuvable.'), 3000); return; }
 
-  let keys    = langKeys();
-  let primary = isFrench() ? '#002395' : '#009A44';
-  let accent  = isFrench() ? '#ED2939' : '#EF2B2D';
-  let title   = _themeTitle(CT);
+  const keys    = langKeys();
+  const primary = isFrench() ? '#002395' : '#009A44';
+  const accent  = isFrench() ? '#ED2939' : '#EF2B2D';
+  const title   = _themeTitle(CT);
 
-  let bubblesHTML = sit.dialogue.map((ln) => {
-    let mainText = ln[keys.src] || '';
-    let subText  = ln[keys.tgt] || '';
-    let isLeft   = (ln.side === 'left');
+  const bubblesHTML = sit.dialogue.map((ln) => {
+    const mainText = ln[keys.src] || '';
+    const subText  = ln[keys.tgt] || '';
+    const isLeft   = (ln.side === 'left');
     return '<tr class="brow ' + (isLeft ? 'bleft' : 'bright') + '">'
       + '<td class="speaker">' + ln.s + '</td>'
       + '<td class="line-src">' + mainText + '</td>'
@@ -4008,14 +4433,14 @@ function _exportSituation() {
   }).join('');
 
   let vocabHTML = '';
-  if (CT.vocab && CT.vocab.length > 0) {
-    let vocabRows = CT.vocab.map((v, i) => {
-      let parts  = v.split('=');
-      let et     = parts[0] ? parts[0].trim() : '';
-      let fr     = parts[1] ? parts[1].trim() : '';
-      let src    = keys.src === 'et' ? et : fr;
-      let tgt    = keys.tgt === 'et' ? et : fr;
-      let bg     = (i % 2 === 0) ? '#ffffff' : '#f5fdf5';
+  if (CT.vocab?.length > 0) {
+    const vocabRows = CT.vocab.map((v, i) => {
+      const parts  = v.split('=');
+      const et     = parts[0] ? parts[0].trim() : '';
+      const fr     = parts[1] ? parts[1].trim() : '';
+      const src    = keys.src === 'et' ? et : fr;
+      const tgt    = keys.tgt === 'et' ? et : fr;
+      const bg     = (i % 2 === 0) ? '#ffffff' : '#f5fdf5';
       return '<tr style="background:' + bg + '">'
         + '<td class="v-num">' + (i + 1) + '</td>'
         + '<td class="v-src"><strong>' + src + '</strong></td>'
@@ -4023,8 +4448,8 @@ function _exportSituation() {
         + '</tr>';
     }).join('');
 
-    let vColSrc = isFrench() ? 'Fran\u00e7ais \ud83c\uddeb\ud83c\uddf7'     : 'Afaan Oromoo \ud83c\uddea\ud83c\uddf9';
-    let vColTgt = isFrench() ? 'Afaan Oromoo \ud83c\uddea\ud83c\uddf9'  : 'Fran\u00e7ais \ud83c\uddeb\ud83c\uddf7';
+    const vColSrc = isFrench() ? 'Fran\u00e7ais \ud83c\uddeb\ud83c\uddf7'     : 'Afaan Oromoo \ud83c\uddea\ud83c\uddf9';
+    const vColTgt = isFrench() ? 'Afaan Oromoo \ud83c\uddea\ud83c\uddf9'  : 'Fran\u00e7ais \ud83c\uddeb\ud83c\uddf7';
 
     vocabHTML = '<h2>' + (isFrench() ? '\ud83d\udcda Jechoota murteessoo' : '\ud83d\udcda Lexique essentiel') + '</h2>'
       + '<table class="vtable">'
@@ -4037,15 +4462,15 @@ function _exportSituation() {
       + '</table>';
   }
 
-  let noteHTML = CT.note
+  const noteHTML = CT.note
     ? '<div class="sit-note">\ud83d\udca1 ' + CT.note + '</div>'
     : '';
 
-  let sitBadge = (CT.situations.length > 1)
+  const sitBadge = (CT.situations.length > 1)
     ? '<span class="badge">' + sit.label + '</span> '
     : '';
 
-  let css = _printBaseCSS(primary, accent)
+  const css = _printBaseCSS(primary, accent)
     + '<style>'
     + '.sit-meta{font-size:10.5pt;color:#333;margin:4pt 0 10pt;font-weight:500}'
     + '.scene-icon{font-size:28pt;text-align:center;margin:6pt 0 10pt}'
@@ -4071,18 +4496,18 @@ function _exportSituation() {
     + 'h2{margin-top:14pt;page-break-after:avoid}'
     + '</style>';
 
-  let sitCount = CT.situations.length > 1
+  const sitCount = CT.situations.length > 1
     ? (isFrench()
         ? (sitIdx + 1) + ' sur ' + CT.situations.length + ' situations'
         : (sitIdx + 1) + ' / ' + CT.situations.length + ' haala')
     : '';
 
-  let dColSrc = isFrench() ? 'Fran\u00e7ais \ud83c\uddeb\ud83c\uddf7'    : 'Afaan Oromoo \ud83c\uddea\ud83c\uddf9';
-  let dColTgt = isFrench() ? 'Afaan Oromoo \ud83c\uddea\ud83c\uddf9'  : 'Fran\u00e7ais \ud83c\uddeb\ud83c\uddf7';
+  const dColSrc = isFrench() ? 'Fran\u00e7ais \ud83c\uddeb\ud83c\uddf7'    : 'Afaan Oromoo \ud83c\uddea\ud83c\uddf9';
+  const dColTgt = isFrench() ? 'Afaan Oromoo \ud83c\uddea\ud83c\uddf9'  : 'Fran\u00e7ais \ud83c\uddeb\ud83c\uddf7';
   // W9.1 — isFrench() = mode learn_french = UI en Français → 'Locuteur' ; sinon UI en Oromo → 'Dubbataa'
-  let locLabel = isFrench() ? 'Locuteur' : 'Dubbataa';
+  const locLabel = isFrench() ? 'Locuteur' : 'Dubbataa';
 
-  let html = '<!DOCTYPE html><html lang="' + (isFrench() ? 'om' : 'fr') + '"><head>'
+  const html = '<!DOCTYPE html><html lang="' + (isFrench() ? 'om' : 'fr') + '"><head>'
     + '<meta charset="UTF-8">'
     + '<title>Taphad\'Meuh \u2014 ' + title.main + '</title>'
     + css

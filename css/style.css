@@ -1092,6 +1092,65 @@ html.theme-french .btn-reset-theme:hover{
   border-radius:0 0 13px 13px;
 }
 
+/* ── Contrôles audio TTS : vitesse (5 paliers) + répétition (×3/×5) ──
+   Boutons à taper plutôt qu'un slider continu — plus rapide à ajuster
+   d'un geste, à une main, pendant la révision de flashcards sur mobile.
+   Une pastille "active" (vitesse sélectionnée) est persistée entre
+   sessions (voir setTtsRate() dans app.js). */
+.tts-row{
+  display:flex;
+  align-items:center;
+  gap:6px;
+  margin-bottom:6px;
+}
+.tts-row-label{
+  font-size:.66rem;
+  font-weight:700;
+  color:#888;
+  flex-shrink:0;
+  min-width:58px;
+  white-space:nowrap;
+}
+.tts-pills{
+  display:flex;
+  gap:4px;
+  flex:1;
+}
+.tts-rate-pill,.tts-repeat-pill{
+  flex:1;
+  background:#fff;
+  border:2px solid var(--c-primary);
+  color:var(--c-primary);
+  border-radius:50px;
+  padding:6px 2px;
+  font-size:.7rem;
+  font-weight:700;
+  cursor:pointer;
+  min-height:36px;
+  transition:background .15s,color .15s;
+}
+.tts-rate-pill.active,.tts-repeat-pill.active{
+  background:var(--c-primary);
+  color:#fff;
+}
+.tts-rate-pill:active{background:var(--c-fc-nav-hover)}
+.tts-repeat-pill:active{background:var(--c-fc-nav-hover)}
+.tts-rate-pill.active:active,.tts-repeat-pill.active:active{background:var(--c-primary-dark)}
+.tts-repeat-row{margin-top:8px;margin-bottom:0}
+
+/* Surlignage mot par mot pendant la lecture TTS (voir _attachHighlighting
+   dans app.js). Dégradé silencieux si l'événement 'boundary' n'est pas
+   supporté par le navigateur/la voix — le mot reste simplement non surligné. */
+.tts-word{
+  border-radius:5px;
+  padding:0 2px;
+  transition:background .12s ease,color .12s ease;
+}
+.tts-word-active{
+  background:var(--c-primary);
+  color:#fff;
+}
+
 
 /* ══════════════════════════════════════════════════════════════════
    §10 — COMPOSANT : ALPHABET
@@ -1691,6 +1750,26 @@ footer a:hover{text-decoration:underline}
   opacity:.82;
   margin-top:3px;
   line-height:1.4;
+}
+
+/* ── Badge de voix TTS — onglet Cartes (duplication du composant Répète) ──
+   Même palette de classes (.repeat-lang-info / -native / -fallback), simplement
+   recentré : le layout des Cartes Flash est centré, contrairement à Répète
+   qui aligne son bandeau à droite sous le titre. ── */
+.fc-voice-badge-wrap{
+  margin: 2px 0 10px;
+  text-align:center;
+}
+.fc-voice-badge-wrap .repeat-lang-info{
+  display:inline-block;
+  text-align:center;
+  margin-bottom:0;
+  padding-right:0;
+}
+.fc-voice-badge-wrap .repeat-lang-info.repeat-lang-native,
+.fc-voice-badge-wrap .repeat-lang-info.repeat-lang-fallback{
+  text-align:left;
+  max-width:340px;
 }
 
 /* ── Carte du mot à répéter ────────────────────────────────────── */
@@ -2965,6 +3044,68 @@ footer a:hover{text-decoration:underline}
 }
 
 /* ══════════════════════════════════════════════════════════════════
+   §24c — RESPONSIVE : MODE PAYSAGE MOBILE
+   ══════════════════════════════════════════════════════════════════
+   Cible les téléphones en orientation paysage (hauteur d'écran
+   réduite, ex. 360×740 tourné → ~360px de hauteur utile).
+   Le header coloré + la barre de nav basse fixe laissaient très peu
+   de place au contenu → on compresse fortement les en-têtes, les
+   cartes et la police, et on masque les éléments décoratifs non
+   essentiels (grande bannière logo) pour maximiser la zone de lecture.
+   Le défilement vertical est déjà géré par overflow-y:auto sur
+   chaque écran (#home, #sections, #lesson) — on s'assure juste qu'il
+   reste fluide et qu'aucun contenu ne se retrouve caché sous la nav
+   basse fixe (padding-bottom conservé/renforcé).
+   ══════════════════════════════════════════════════════════════════ */
+@media (max-height:520px) and (orientation:landscape){
+
+  /* ── Police globale réduite pour gagner de la place partout ── */
+  body{font-size:14px}
+
+  /* ── Défilement fluide, contenu jamais masqué ── */
+  .screen{min-height:100%}
+  #home, #sections-level1, #sections-level2, #lesson{
+    -webkit-overflow-scrolling:touch;
+    padding-bottom:64px; /* espace de sécurité au-dessus de la nav basse compressée */
+  }
+
+  /* ── Lanceur : titre et cartes de langue resserrés ── */
+  .launcher-title{font-size:1.15rem;margin-bottom:10px}
+  .lang-card{padding:10px 14px}
+
+  /* ── Guide/Home : en-tête très compressé, logo masqué ── */
+  .home-guide-header{padding:14px 20px 8px}
+  .home-guide-logo-wrap{display:none} /* bannière décorative — non essentielle en paysage */
+  .home-guide-flags{font-size:1.5rem;margin-bottom:3px}
+  .home-guide-title{font-size:1.2rem}
+  .home-guide-subtitle{font-size:.78rem}
+  .home-guide-badges{margin-top:4px}
+  .hg-badge{font-size:.62rem;padding:3px 8px}
+
+  .home-start-sticky{top:0;padding:6px 16px}
+  .btn-start-main{padding:9px 28px;font-size:.9rem;min-height:38px}
+  .home-start-row .btn-pdf-pill{height:36px;font-size:.75rem}
+
+  /* ── Sections / modules : header et cartes compressés ── */
+  .sections-header{padding:8px 14px 10px}
+  .sections-header-left h2{font-size:.82rem}
+  .level-tab{padding:5px 8px;font-size:.7rem}
+  .theme-card{padding:8px 6px 7px}
+  .t-emoji{font-size:1.6rem}
+  .t-name{font-size:.76rem;margin-top:3px}
+  .t-sub{font-size:.64rem}
+
+  /* ── Leçon : header et onglets compressés ── */
+  .lesson-header{padding:6px 14px 5px;gap:4px}
+  .lesson-header-top h3{font-size:.82rem}
+
+  /* ── Barre de navigation basse : moins haute pour rendre de l'espace ── */
+  .nav-btn{min-height:38px;padding:4px 4px 6px}
+  .nav-icon{font-size:1.05rem}
+  .nav-label{font-size:.55rem}
+}
+
+/* ══════════════════════════════════════════════════════════════════
    §25 — BOUTONS D'EXPORT PDF
    ══════════════════════════════════════════════════════════════════
    .btn-export-pdf : bouton générique (ancien style, conservé pour compatibilité)
@@ -3398,13 +3539,15 @@ footer a:hover{text-decoration:underline}
    max-height pour que la carte n'occupe pas toute la hauteur disponible.
    flex:1 (requis) : donne à fc-wrap une hauteur résolue par le moteur
    flex → height:100% sur les faces (.fc-front/.fc-back) se calcule bien.
-   max-height:--app-h - 400px : réduit légèrement la carte vs flex pur
-   et laisse un souffle naturel entre "Écouter" et "Télécharger". */
+   max-height:--app-h - 470px : réduit légèrement la carte vs flex pur
+   et laisse un souffle naturel entre "Écouter" et "Télécharger".
+   (470px = 400px de base + ~70px pour les rangées vitesse/répétition,
+   compactées ci-dessous, ajoutées sous le bouton Écouter.) */
 #lesson.mode-cartes .fc-wrap{
   flex:1;
   min-height:0;
   overflow:hidden;
-  max-height: calc(var(--app-h, 100dvh) - 400px);
+  max-height: calc(var(--app-h, 100dvh) - 470px);
   margin-bottom:0;
   perspective:900px;
 }
@@ -3470,6 +3613,17 @@ footer a:hover{text-decoration:underline}
   font-size:.9rem;
 }
 
+/* Contrôles vitesse/répétition compactés en mode Cartes Flash plein écran */
+#lesson.mode-cartes .tts-row{margin-bottom:5px}
+#lesson.mode-cartes .tts-repeat-row{margin-top:6px}
+#lesson.mode-cartes .tts-row-label{font-size:.6rem;min-width:46px}
+#lesson.mode-cartes .tts-rate-pill,
+#lesson.mode-cartes .tts-repeat-pill{
+  min-height:30px;
+  padding:4px 2px;
+  font-size:.64rem;
+}
+
 /* ════════════════════════════════════════════════════════════════
    §20e — GRILLE DE THÈMES DANS LES ÉCRANS LEVEL  (sans <details>)
    ════════════════════════════════════════════════════════════════ */
@@ -3525,7 +3679,19 @@ footer a:hover{text-decoration:underline}
   background: var(--cr, #FFD700);
   transform: rotate(0deg) scale(1);
   opacity: 1;
-  animation: conf-fall var(--cd, 1.4s) ease-in forwards;
+  /* CORRECTIF (ralentissement) : --cd est le délai d'échelonnement
+     (~0 à 0.6s, cf. _launchConfetti en JS) et non la durée de chute.
+     Il était utilisé par erreur comme durée dans le raccourci
+     "animation", ce qui donnait à la plupart des particules une
+     chute quasi instantanée (0 à 0.6s au lieu de ~1.4s prévu) —
+     d'où l'effet "trop rapide" sur écran 120Hz. --cd est maintenant
+     bien affecté à animation-delay, et la durée de chute est fixe,
+     allongée (2.2s) et adoucie par une courbe qui démarre en
+     douceur (vitesse initiale réduite) façon "flottement élégant"
+     plutôt qu'une chute qui accélère brutalement (ancienne gravité
+     ease-in). */
+  animation: conf-fall 2.2s cubic-bezier(.22,.61,.36,1) forwards;
+  animation-delay: var(--cd, 0s);
 }
 
 /* Quelques particules rondes pour la variété */
@@ -3534,9 +3700,10 @@ footer a:hover{text-decoration:underline}
 .conf-p:nth-child(5n) { width: 12px; height: 5px; border-radius: 1px; }
 
 @keyframes conf-fall {
-  0%   { transform: translateY(0)    rotate(0deg)   scale(var(--cs,1)); opacity: 1; }
-  70%  { opacity: 1; }
-  100% { transform: translateY(105vh) rotate(720deg) scale(var(--cs,1)); opacity: 0; }
+  0%   { transform: translateY(0)     rotate(0deg)   scale(var(--cs,1)); opacity: 1; }
+  15%  { transform: translateY(4vh)   rotate(70deg)  scale(var(--cs,1)); opacity: 1; } /* départ lent — vitesse initiale réduite */
+  80%  { opacity: 1; }
+  100% { transform: translateY(105vh) rotate(560deg) scale(var(--cs,1)); opacity: 0; }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -3826,5 +3993,119 @@ footer a:hover{text-decoration:underline}
     animation: none;
     outline: 2px solid var(--c-primary);
     outline-offset: 2px;
+  }
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   §29 — CORRECTIFS ACCESSIBILITÉ MODE SOMBRE  (WCAG 2.1 AA — 4.5:1)
+   ══════════════════════════════════════════════════════════════════
+   AUDIT : plusieurs éléments passaient sous le seuil de contraste
+   requis en mode sombre, pour trois raisons distinctes :
+
+   a) Texte resté sur une couleur "mode clair" (#333/#444/#555)
+      alors que son fond était devenu sombre plus haut dans le
+      fichier — ex. .quiz-q .q-text, .vocab-title, .fc-counter.
+
+   b) Règles à spécificité CSS plus élevée que le correctif déjà
+      présent, qui les rendait donc inopérantes malgré son existence
+      — ex. .fc-front .fc-conj-line (bat .fc-conj-line), .hg-detail
+      strong (bat .hg-detail), .modal-content h3/p (battent
+      .modal-content).
+
+   c) var(--c-primary) utilisé comme COULEUR DE TEXTE sur une
+      surface devenue sombre. Sans incidence en thème Oromo (vert
+      #009A44, ~4.1–4.7:1, déjà limite), mais illisible en thème
+      Français (bleu #002395, ~1.4:1 de contraste sur fond sombre) —
+      ex. .score-num, .repeat-card-word, .nav-btn.active,
+      les libellés d'onglets Guide (.ob-*).
+      → Ces cas passent par un nouvel accent --c-accent-dark,
+      dédié au TEXTE sur fond sombre uniquement. Les boutons/en-têtes
+      qui utilisent var(--c-primary) comme FOND (texte blanc dessus)
+      restent inchangés : leur contraste était déjà correct.
+
+   Ce bloc est volontairement placé en fin de fichier : à spécificité
+   CSS égale, la déclaration la plus tardive gagne — ce qui permet de
+   corriger ces règles sans dupliquer/réécrire les blocs
+   @media (prefers-color-scheme:dark) existants plus haut.
+   ══════════════════════════════════════════════════════════════════ */
+@media (prefers-color-scheme: dark) {
+
+  /* ── Accent accessible dédié au texte/icônes sur fond sombre ──
+     FR bleu #002395 → #60A5FA (contraste ≈ 5.9–6.8:1 selon le fond)
+     OR vert #009A44 → #4ADE80 (contraste ≈ 7.8–9.8:1)             */
+  html.theme-french{ --c-accent-dark:#60A5FA; }
+  html.theme-oromo { --c-accent-dark:#4ADE80; }
+
+  /* ── 1. Textes restés en gris foncé (#333/#444/#555) sur un fond
+     devenu sombre (#tabContent, .modal-content, .hg-detail…) ── */
+  .quiz-q .q-text,
+  .quiz-feedback,
+  .vocab-title,
+  .vocab-item-fr,
+  .fc-counter{
+    color:#e9ecef;   /* blanc cassé — ≥ 8:1 sur #1a1a1f */
+  }
+  .fc-front .fc-conj-line,
+  .fc-back .fc-conj-line{
+    color:#c9c9d1;   /* spécificité alignée sur la règle d'origine */
+  }
+  .modal-content h3{ color:#f8f9fa; }
+  .modal-content p{  color:#e0e0e0; }
+  .hg-detail strong{ color:#f8f9fa; }
+
+  /* ── 2. var(--c-primary) comme texte sur surface sombre
+     → remplacé par l'accent accessible --c-accent-dark ── */
+  .result-box h3,
+  .score-num,
+  .repeat-card-word,
+  .ob-detail strong,
+  .ob-compare-head,
+  .ob-audio-head,
+  .ob-audio-tip,
+  .ob-bio-name,
+  .ob-bio-contact-title,
+  .ob-reread-hint a,
+  .ob-flow-arrow,
+  .modal-content a,
+  .nav-btn.active{
+    color:var(--c-accent-dark);
+  }
+  .app-loading-spinner{
+    border-top-color:var(--c-accent-dark);
+  }
+
+  /* ── 3. Icônes/libellés de la nav basse inactifs : #666 sur
+     #1f1f28 ≈ 2.8:1 (insuffisant). #9a9aa6 ≈ 5.9:1. ── */
+  .nav-btn{ color:#9a9aa6; }
+
+  /* ── 4. Onglets Niveau 1 / Niveau 2 : blanc à 38 % d'opacité
+     tombait à ≈ 3.75–4:1 sur le fond dégradé du header. 70 %
+     remonte à ≈ 4.9–8.5:1 selon le thème (FR/OR). ── */
+  .level-tab{ color:rgba(255,255,255,.7); }
+
+  /* ── 5. Bordures trop proches du fond (#38383f / #444 sur
+     #26262e ≈ 1.1:1) : éclaircies pour se détacher nettement du
+     fond sombre (WCAG 1.4.11, ≥ 3:1), sans passer au blanc pur. ── */
+  .theme-card,
+  .fc-front,
+  .fc-back{
+    border-color:#4c4c56;
+  }
+  .quiz-opt,
+  .vocab-chip{
+    border-color:#55555f;
+  }
+
+  /* ── 6. Cartes restées en blanc pur (alphabet, situations,
+     onglet Répète) : le texte/bordure thème y est déjà très
+     contrasté, mais le blanc pur (#fff) au milieu d'une interface
+     sombre est agressif pour l'œil. Adouci en blanc cassé — le
+     contraste avec le texte coloré (bleu/vert) reste inchangé. ── */
+  .alpha-card,
+  .alpha-detail,
+  .sit-btn,
+  .repeat-btn,
+  .repeat-unavailable{
+    background:#eef0f4;
   }
 }

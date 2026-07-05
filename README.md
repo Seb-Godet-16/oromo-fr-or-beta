@@ -5,6 +5,7 @@
 
 [![PWA](https://img.shields.io/badge/PWA-ready-blueviolet)](#)
 [![Vanilla JS](https://img.shields.io/badge/JS-Vanilla-yellow)](#)
+[![ES2020](https://img.shields.io/badge/ES-2020-orange)](#)
 [![No dependencies](https://img.shields.io/badge/dependencies-0-brightgreen)](#)
 [![Offline](https://img.shields.io/badge/offline-ready-blue)](#)
 [![License](https://img.shields.io/badge/license-MIT-lightgrey)](#)
@@ -40,7 +41,7 @@ Taphad'Meuh/
 │   └── style.css           ← All styles — dual theme system (theme-french / theme-oromo)
 │
 ├── js/
-│   ├── app.js              ← Full application engine (4 096 lines, 21 sections)
+│   ├── app.js              ← Full application engine (4 538 lines, 21 sections)
 │   ├── data-fr.js          ← Dataset — "Learn French" mode (48 themes, 1 427 lines)
 │   └── data-or.js          ← Dataset — "Learn Oromo" mode  (48 themes, 1 382 lines)
 │
@@ -48,9 +49,9 @@ Taphad'Meuh/
 ├── manifest.json           ← PWA manifest — icons, theme colors, orientation
 │
 ├── img/
-│   └── Logo-appli-or-fr.png
-└── icons/
-    └── icon-*.png          ← PWA icons (72 → 512 px, maskable variants)
+│   ├── Logo-appli-or-fr.png
+│   └── icons/
+│       └── icon-*.png      ← PWA icons (72 → 512 px, maskable variants)
 ```
 
 ---
@@ -81,7 +82,7 @@ Taphad'Meuh/
 
 | Topic | Choice | Why |
 |---|---|---|
-| Framework | **None** — vanilla JS (ES5) | Zero build step, works on any host, maximum compatibility |
+| Framework | **None** — vanilla JS (**ES2020 max.**) | Zero build step, works on any host ; ES2020 = plafond de compatibilité choisi pour rester natif sur iOS Safari 14.5+ sans bundler ni transpileur |
 | Data loading | **Dynamic `<script>` injection** | Only the chosen mode's dataset (~100 KB) is loaded into memory |
 | Theme system | **CSS class on `<html>`** (`theme-french` / `theme-oromo`) | Single toggle switches every colour via `var(--c-*)` tokens |
 | Persistence | **localStorage** (stars ⭐) + **sessionStorage** (quiz state) | Stars survive restarts; quiz state survives accidental tab switches |
@@ -198,7 +199,7 @@ Cache name is auto-versioned by GitHub Actions (`GITHUB_RUN_NUMBER`) on every de
 
 ### `app.js` — fichier unique volontairement monolithique
 
-Le moteur applicatif tient dans un seul fichier (4 096 lignes, 21 sections commentées).
+Le moteur applicatif tient dans un seul fichier (4 538 lignes, 21 sections commentées).
 Ce choix est délibéré : zéro étape de build, compatibilité maximale, hébergement statique sans bundler.
 
 Si le projet grossit significativement, une migration vers des modules ES (`import`/`export`) est envisageable. Elle nécessiterait :
@@ -207,6 +208,14 @@ Si le projet grossit significativement, une migration vers des modules ES (`impo
 - de reprendre les fonctions exposées globalement (ex : `onclick="flipCard()"` dans le HTML généré dynamiquement)
 
 Pour l'instant, la section `SECTIONS DE CE FICHIER` en tête de `app.js` et les commentaires `// §N` suffisent à naviguer rapidement.
+
+### Cible JS — ES2020 maximum, aucun transpileur
+
+L'ensemble des fichiers `.js` du projet (`app.js`, `sw.js`, `data-fr.js`, `data-or.js`) est écrit en **ES2020 strict** : `const`/`let` uniquement (plus aucun `var`), fonctions fléchées pour tous les callbacks anonymes, et optional chaining (`?.`) partout où une chaîne de vérifications `a && a.b` existait auparavant.
+
+**Pourquoi ES2020 et pas plus récent ?** C'est le plafond de compatibilité qui garantit un fonctionnement natif sur **iOS Safari 14.5+**, sans navigateur intermédiaire, bundler ou transpileur (Babel, etc.) — cohérent avec le choix "zéro dépendance" du projet. Les apprenants du mode Oromo utilisent majoritairement des smartphones récents ; c'est côté Français que la compatibilité descendante est surveillée. Cette règle est rappelée en commentaire en tête de chaque fichier `.js` concerné.
+
+**Pour les futurs contributeurs :** avant d'introduire une syntaxe plus récente (`replaceAll`, `??=`, `Array.prototype.at`, classes avec champs privés `#x`, etc.), vérifier sa disponibilité sur Safari 14.5 (voir [caniuse.com](https://caniuse.com)) ou repousser volontairement le plafond de compatibilité — mais alors mettre à jour ce paragraphe et les en-têtes de fichiers en conséquence.
 
 ### Alphabet — quiz `quiz10[]` statique vs génération dynamique
 

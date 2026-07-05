@@ -434,7 +434,20 @@
               <li><strong>Android / Chrome</strong> : ⋮ cuqaasi → <em>"Fuula jalqabarratti ida'i"</em></li>
               <li><strong>iOS / Safari</strong> : 🔗 cuqaasi → <em>"Fuula jalqabarratti"</em></li>
             </ul>
-            <p>Erga buufamee booda, interneetii malee <strong>hojjeta</strong> — iddoo kamittiyyuu !</p>
+
+            <div class="ob-compare">
+              <div class="ob-compare-col">
+                <div class="ob-compare-head">✅ Buusuu</div>
+                <ul><li>📱 Appii dhugaa kan ofiin dhaabbatu</li><li>🖥️ Gutuu-fuula (browser malee)</li><li>💾 Service Worker-tu barnoota kuusa</li><li>📴 Interneetii malee hojjeta</li><li>🔁 Erga deebi'ee banamee illee</li></ul>
+              </div>
+              <div class="ob-compare-col">
+                <div class="ob-compare-head">🔗 Gabatee ittiin argamu uumuu</div>
+                <ul><li>⭐ Bookmark salphaa</li><li>🌐 Browser (Brave) deebisee banu</li><li>💾 Kuusaa (cache) browser irratti hirkata</li><li>⚠️ Interneetii malee amansiisaa miti</li><li>⚡ Dafanii argamuuf qofa gaarii</li></ul>
+              </div>
+            </div>
+            <div class="ob-tip">💡 Yeroo hunda <strong>"Buusuu"</strong> filadhu interneetii malee amansiisaa argachuuf.</div>
+
+            <p>Erga appichi <strong>buufamee</strong> (gabatee ittiin argamu qofa utuu hin taane) booda, inni interneetii malee <strong>guutummaatti hojjeta</strong> — iddoo kamittiyyuu !</p>
             <div class="ob-tip">💡 App yeroo yeroodhaan diriirfama — browser irratti bantu, version haaraan ofumaatti buufama.</div>
 
             <h4 style="margin:.8em 0 .3em;font-size:.95em;border-top:1px solid var(--color-border);padding-top:.6em">📄 Galmee PDF buusuuf</h4>
@@ -733,7 +746,20 @@
               <li><strong>Android / Chrome</strong> : menu ⋮ → <em>"Ajouter à l'écran d'accueil"</em></li>
               <li><strong>iOS / Safari</strong> : 🔗 → <em>"Sur l'écran d'accueil"</em></li>
             </ul>
-            <p>Une fois installée, l'app fonctionne <strong>entièrement hors ligne</strong>.</p>
+
+            <div class="ob-compare">
+              <div class="ob-compare-col">
+                <div class="ob-compare-head">✅ Installer</div>
+                <ul><li>📱 Vraie appli autonome</li><li>🖥️ Plein écran (sans navigateur)</li><li>💾 Le Service Worker met les leçons en cache</li><li>📴 Fonctionne sans réseau</li><li>🔁 Même après redémarrage</li></ul>
+              </div>
+              <div class="ob-compare-col">
+                <div class="ob-compare-head">🔗 Créer un raccourci</div>
+                <ul><li>⭐ Simple favori</li><li>🌐 Rouvre le navigateur (Brave)</li><li>💾 Dépend du cache du navigateur</li><li>⚠️ Moins fiable hors-ligne</li><li>⚡ Utile pour un accès rapide</li></ul>
+              </div>
+            </div>
+            <div class="ob-tip">💡 Toujours choisir <strong>Installer</strong> pour un accès hors-ligne fiable.</div>
+
+            <p>Une fois <strong>installée</strong> (et non simplement en raccourci), l'app fonctionne <strong>entièrement hors ligne</strong>.</p>
             <div class="ob-tip">💡 L'app se met à jour automatiquement à chaque nouvelle version — il suffit de la rouvrir dans le navigateur pour que le cache soit rafraîchi.</div>
 
             <h4 style="margin:.8em 0 .3em;font-size:.95em;border-top:1px solid var(--color-border);padding-top:.6em">📄 Téléchargement en PDF</h4>
@@ -837,6 +863,7 @@
   <div id="sections-level1" class="screen">
     <div class="sections-header">
       <div class="sections-header-left">
+        <button class="back-btn" id="sectionsBackBtn" onclick="showScreen('home','back')" aria-label="Retour"></button>
         <h2 id="sectionsTitle"></h2>
         <div class="progress-bar-wrap">
           <div class="progress-bar" id="globalProgress" style="width:0%"></div>
@@ -865,6 +892,7 @@
   <div id="sections-level2" class="screen">
     <div class="sections-header">
       <div class="sections-header-left">
+        <button class="back-btn" id="sectionsBackBtn2" onclick="showScreen('home','back')" aria-label="Retour"></button>
         <h2 id="sectionsTitle2"></h2>
         <div class="progress-bar-wrap">
           <div class="progress-bar" id="globalProgress2" style="width:0%"></div>

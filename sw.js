@@ -6,7 +6,7 @@
  * ║  Version  : Juin 2026                                           ║
  * ╠══════════════════════════════════════════════════════════════════╣
  * ║  STRATÉGIE DE CACHE HYBRIDE                                     ║
- * ║                                                                 ║
+ * ║  Cible : ES2020 max. — iOS Safari 14.5+ natif, sans transpileur ║
  * ║  • Ressources locales (html, css, js, png, icons)               ║
  * ║    → Cache First : on sert depuis le cache, réseau en fallback  ║
  * ║    → Objectif : fonctionnement 100% hors-ligne après install    ║
@@ -73,16 +73,16 @@ const PRECACHE_URLS = [
   /* Logo principal affiché sur l'écran lanceur */
   './img/Logo-appli-or-fr.png',
   /* Icônes PWA */
-  './icons/icon-72x72.png',
-  './icons/icon-96x96.png',
-  './icons/icon-128x128.png',
-  './icons/icon-144x144.png',
-  './icons/icon-152x152.png',
-  './icons/icon-192x192.png',
-  './icons/icon-192x192-maskable.png',
-  './icons/icon-384x384.png',
-  './icons/icon-512x512.png',
-  './icons/icon-512x512-maskable.png'
+  './img/icons/icon-72x72.png',
+  './img/icons/icon-96x96.png',
+  './img/icons/icon-128x128.png',
+  './img/icons/icon-144x144.png',
+  './img/icons/icon-152x152.png',
+  './img/icons/icon-192x192.png',
+  './img/icons/icon-192x192-maskable.png',
+  './img/icons/icon-384x384.png',
+  './img/icons/icon-512x512.png',
+  './img/icons/icon-512x512-maskable.png'
 ];
 
 /*
@@ -113,7 +113,7 @@ const EXTERNAL_PREFIXES = [
 const IMAGE_EXTENSIONS = ['.png', '.jpg', '.jpeg', '.webp', '.gif'];
 
 /* Chemin du dossier des icônes PWA */
-const ICONS_PATH = '/icons/';
+const ICONS_PATH = '/img/icons/';
 
 
 /* ──────────────────────────────────────────────────────────────────
@@ -215,7 +215,7 @@ self.addEventListener('activate', (event) => {
    ──────────────────────────────────────────────────────────────────
    Dispatch vers la stratégie appropriée selon le type de ressource.
    ────────────────────────────────────────────────────────────────── */
-self.addEventListener('fetch', function(event) {
+self.addEventListener('fetch', (event) => {
   if (!_shouldHandle(event.request)) return;
 
   if (_isExternal(event.request.url)) {
@@ -236,23 +236,23 @@ self.addEventListener('fetch', function(event) {
    ────────────────────────────────────────────────────────────────── */
 function cacheFirst(request) {
   return caches.match(request)
-    .then(function(cached) {
+    .then((cached) => {
       if (cached) return cached;
 
       return fetch(request)
-        .then(function(networkResponse) {
+        .then((networkResponse) => {
           if (!networkResponse || networkResponse.status !== 200
               || networkResponse.type === 'error') {
             return networkResponse;
           }
           /* clone() obligatoire : une Response ne peut être lue qu'une fois */
-          var toCache = networkResponse.clone();
-          caches.open(CACHE_NAME).then(function(cache) {
+          const toCache = networkResponse.clone();
+          caches.open(CACHE_NAME).then((cache) => {
             cache.put(request, toCache);
           });
           return networkResponse;
         })
-        .catch(function() {
+        .catch(() => {
           /* ── Réseau KO + cache vide : fallback typé ── */
           return _offlineFallback(request);
         });
@@ -269,7 +269,7 @@ function cacheFirst(request) {
    ────────────────────────────────────────────────────────────────── */
 function networkFirst(request) {
   return fetch(request)
-    .then(function(networkResponse) {
+    .then((networkResponse) => {
       /* Rejeter les réponses invalides, erreurs, ET opaques.
          Les réponses opaques (type 'opaque', status 0) proviennent de requêtes
          cross-origin sans CORS — elles ne doivent pas être mises en cache :
@@ -280,14 +280,14 @@ function networkFirst(request) {
           || networkResponse.type === 'opaque') {
         return networkResponse;
       }
-      var toCache = networkResponse.clone();
-      caches.open(CACHE_NAME).then(function(cache) {
+      const toCache = networkResponse.clone();
+      caches.open(CACHE_NAME).then((cache) => {
         cache.put(request, toCache);
       });
       return networkResponse;
     })
-    .catch(function() {
-      return caches.match(request).then(function(cached) {
+    .catch(() => {
+      return caches.match(request).then((cached) => {
         if (cached) return cached;
         /* Ressource externe absente du cache → fallback SVG si image.
          * Couvre : Google Fonts, CDN Twemoji, GitHub raw (raw.githubusercontent.com).
@@ -309,7 +309,7 @@ function networkFirst(request) {
      • Tout le reste      → réponse vide 503 (CSS, JS : rien à faire)
    ────────────────────────────────────────────────────────────────── */
 function _offlineFallback(request) {
-  var url = request.url;
+  const url = request.url;
 
   if (_isNavigation(request)) {
     return new Response(offlinePage(), {
@@ -356,7 +356,7 @@ function _respondSvgIcon() {
    *   - Taches      : ellipses irrégulières en blanc semi-transparent
    *   - Oreilles    : demi-cercles latéraux
    */
-  var svg = [
+  const svg = [
     '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512" role="img" aria-label="Taphad\'Meuh — icône vache bicolore">',
     '  <defs>',
     '    <linearGradient id="gFR" x1="0" y1="0" x2="0" y2="1">',
@@ -453,7 +453,7 @@ function _respondSvgIcon() {
    globe de l'app, sans texte pour rester universellement lisible.
    ────────────────────────────────────────────────────────────────── */
 function _respondSvgLocalImage() {
-  var svg = [
+  const svg = [
     '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 200" width="320" height="200" role="img" aria-label="Image non disponible hors-ligne">',
     '  <rect width="320" height="200" rx="12" fill="#e8ecf8"/>',
     '  <!-- Cadre image cassée -->',
@@ -488,7 +488,7 @@ function _respondSvgLocalImage() {
    (dégradé vert-or au lieu de bleu — rappel du thème Oromo).
    ────────────────────────────────────────────────────────────────── */
 function _respondSvgExternalImage() {
-  var svg = [
+  const svg = [
     '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 200" width="320" height="200" role="img" aria-label="Ressource externe non disponible">',
     '  <defs>',
     '    <linearGradient id="gExt" x1="0" y1="0" x2="1" y2="1">',
