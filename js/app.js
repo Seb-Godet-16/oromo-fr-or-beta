@@ -181,6 +181,25 @@ function isFrench() {
 }
 
 /**
+ * 🆕 Détecte si l'app tourne en mode standalone sur iOS (ajoutée à l'écran
+ * d'accueil via le menu Partager de Safari), par opposition à un onglet
+ * Safari classique.
+ *
+ * `navigator.standalone` est une propriété non-standard Apple, disponible
+ * sur tous les Safari iOS depuis iOS 2.1 — `undefined` sur Android/desktop.
+ *
+ * Utilité : plusieurs API web sont bridées par Apple/WebKit dans ce mode
+ * précis (non liées entre elles, mais toutes contournées via ce même test) :
+ *   • window.open() est bloqué                → voir _openPrintWindow()
+ *   • SpeechRecognition échoue en 'service-not-allowed' → voir renderRepeat()
+ * Centralisé ici pour éviter de dupliquer le test brut à chaque usage.
+ * @returns {boolean}
+ */
+function _isIosPwaStandalone() {
+  return navigator.standalone === true;
+}
+
+/**
  * Retourne la clé de la langue "source" (langue affichée en premier)
  * et celle de la langue "cible" (traduction / réponse), selon le mode.
  * @returns {{ src: 'fr'|'et', tgt: 'et'|'fr' }}
@@ -938,11 +957,18 @@ function _clearHighlighting(highlightEl) {
 
 
 /* ============================================================
-   3a3. VITESSE DE LECTURE — paliers à taper (Cartes Flash)
+   3a3. VITESSE DE LECTURE — paliers à taper
    ============================================================
    5 paliers fixes (0.55 / 0.70 / 0.85 / 1.00 / 1.20) plutôt qu'un
    slider continu : plus rapide à ajuster d'un geste, à une main,
-   pendant la révision de flashcards sur mobile.
+   pendant la révision sur mobile.
+   🆕 (07/07/2026) Widget partagé : appelé depuis tous les onglets qui
+   font entendre de l'audio d'apprentissage (Cartes, Alphabet, Répète,
+   Dialogue, Lexique) — pas seulement Cartes Flash comme à l'origine.
+   Réglage global (_ttsRate, persisté), donc changer la vitesse depuis
+   n'importe quel onglet l'applique aussi partout ailleurs.
+   Volontairement PAS ajouté aux quiz audio (alphabet, dialogue) : y
+   ralentir le son donnerait un indice qui fausserait l'évaluation.
    ============================================================ */
 
 /**
@@ -961,7 +987,10 @@ function setTtsRate(rate) {
 }
 
 /**
- * Construit le HTML des pastilles de vitesse (5 boutons à taper).
+ * Construit le HTML des pastilles de vitesse (5 boutons à taper),
+ * encadrées par 🐢 (lent) avant et 🐇 (rapide) après le dernier palier —
+ * repère visuel immédiat du sens de la gradation, sans avoir à lire les
+ * chiffres. Widget partagé, voir commentaire de section ci-dessus.
  * @returns {string}
  */
 function _buildTtsRateControlsHTML() {
@@ -975,7 +1004,9 @@ function _buildTtsRateControlsHTML() {
   }).join('');
   return '<div class="tts-row">'
     + '<span class="tts-row-label">🐢 ' + esc(label) + '</span>'
-    + '<div class="tts-pills">' + pills + '</div>'
+    + '<div class="tts-pills">' + pills
+    + '<span class="tts-row-icon-fast" aria-hidden="true">🐇</span>'
+    + '</div>'
     + '</div>';
 }
 
@@ -985,7 +1016,7 @@ function _buildTtsRateControlsHTML() {
  * Applique le surlignage mot par mot sur le recto de la carte.
  * Toute navigation (carte suivante/précédente, changement d'onglet…)
  * annule proprement un drill en cours via _cardAudioToken.
- * @param {number} [times=1] - Nombre de répétitions : 1, 3 ou 5
+ * @param {number} [times=1] - Nombre de répétitions : 1, 2 ou 3
  */
 function playCardAudio(times) {
   if (!CT || !CT.words) return;
@@ -2210,8 +2241,25 @@ function openTheme(id, dir) {
     ];
   }
 
+  /* 🆕 Avertissement précoce sur l'onglet Répète en mode standalone iOS —
+     voir _isIosPwaStandalone() (§Utilitaire bilingue) et renderRepeat().
+     L'apprenant voit un ⚠️ directement sur l'onglet, avant même de le
+     toucher, plutôt que de le découvrir après une demande de permission
+     micro qui échouera de toute façon. Le `title` fournit le détail complet
+     pour les lecteurs d'écran / survol souris (desktop Safari en mode
+     standalone via "Ajouter au Dock" sur macOS, par exemple) ; sur iPhone
+     le message complet reste de toute façon affiché à l'ouverture de
+     l'onglet (voir renderRepeat()). */
+  const repeatWarnTitle = L(
+    '⚠️ App fe\'amte keessatti sagaleen hin danda\'amu — Safari keessatti bani.',
+    '⚠️ Non disponible dans l\'app installée sur iPhone/iPad — ouvrez ce site dans Safari.'
+  );
+
   document.getElementById('lessonTabs').innerHTML = tabs.map((t, i) => {
-    return '<button class="tab' + (i === 0 ? ' active' : '') + '" data-tab="' + t.k + '" onclick="switchTab(\'' + t.k + '\')">' + t.lbl + '</button>';
+    const isRepeatWarn = (t.k === 'repeat' && _isIosPwaStandalone());
+    const lbl   = isRepeatWarn ? t.lbl + ' ⚠️' : t.lbl;
+    const title = isRepeatWarn ? ' title="' + repeatWarnTitle + '"' : '';
+    return '<button class="tab' + (i === 0 ? ' active' : '') + '"' + title + ' data-tab="' + t.k + '" onclick="switchTab(\'' + t.k + '\')">' + lbl + '</button>';
   }).join('');
 
 
@@ -2314,6 +2362,7 @@ function renderFlash() {
       + L('Qubee dhaggeeffachuuf irratti cuqaasi !', 'Cliquez sur une lettre pour l\'écouter !')
       + '</div>'
       + '<div id="fcVoiceBadge" class="fc-voice-badge-wrap"></div>'
+      + '<div class="tab-tts-row-wrap">' + _buildTtsRateControlsHTML() + '</div>'
       + '<div class="alpha-grid">' + words.map((c, i) => {
           const bigLetter   = c[keys.src];
           const smallName   = c[keys.tgt];
@@ -2370,8 +2419,8 @@ function renderFlash() {
   const nextLabel   = L('Kan itti aanu →',       'Suivant →');
   const audioBtn    = L('🔊 Sagalee dhaggeeffadhu', '🔊 Écouter la prononciation');
   const repeatLabel = L("Irra deebi'i",         'Répéter');
+  const repeat2Aria = L("Sagalee yeroo 2 irra deebi'i", 'Répéter 2 fois');
   const repeat3Aria = L("Sagalee yeroo 3 irra deebi'i", 'Répéter 3 fois');
-  const repeat5Aria = L("Sagalee yeroo 5 irra deebi'i", 'Répéter 5 fois');
 
   document.getElementById('tabContent').innerHTML =
     '<div class="section-label">' + sectionLabel + '</div>'
@@ -2392,8 +2441,8 @@ function renderFlash() {
     + '<div class="tts-row tts-repeat-row">'
     + '<span class="tts-row-label">🔁 ' + esc(repeatLabel) + '</span>'
     + '<div class="tts-pills">'
+    + '<button type="button" id="fcRepeat2" class="tts-repeat-pill" aria-label="' + _escAttr(repeat2Aria) + '" onclick="playCardAudio(2)">×2</button>'
     + '<button type="button" id="fcRepeat3" class="tts-repeat-pill" aria-label="' + _escAttr(repeat3Aria) + '" onclick="playCardAudio(3)">×3</button>'
-    + '<button type="button" id="fcRepeat5" class="tts-repeat-pill" aria-label="' + _escAttr(repeat5Aria) + '" onclick="playCardAudio(5)">×5</button>'
     + '</div>'
     + '</div>'
     + '</div>';
@@ -2812,6 +2861,7 @@ function renderDialog() {
 
   document.getElementById('tabContent').innerHTML =
     '<div class="sit-nav">' + sitBtns + '</div>'
+    + '<div class="tab-tts-row-wrap">' + _buildTtsRateControlsHTML() + '</div>'
     + '<div class="dialogue-box">'
     + '<div class="scene-img-big">' + sit.img + '</div>'
     + '<div class="bubble-wrap">' + bubbles + '</div>'
@@ -2874,6 +2924,7 @@ function renderVocab() {
     + L('📚 Jechoota murteessoo — Sagalee dhaggeeffachuuf cuqaasi !',
         '📚 Lexique essentiel — Cliquez pour écouter l\'Oromo !')
     + '</div>'
+    + '<div class="tab-tts-row-wrap">' + _buildTtsRateControlsHTML() + '</div>'
     + '<div class="vocab-grid">' + chips + '</div>'
     + '</div>'
     + (CT.quiz?.length > 0
@@ -3124,6 +3175,31 @@ function renderRepeat() {
     return;
   }
 
+  /* ── 🆕 iOS : app installée sur l'écran d'accueil (mode standalone) ──
+     Limitation Apple/WebKit CONFIRMÉE et documentée par un ingénieur WebKit
+     (bug public bugs.webkit.org #225298, ouvert depuis 2021, toujours non
+     résolu mi-2026) : la classe SpeechRecognition existe bel et bien dans
+     l'objet window (donc le test `!SR` ci-dessus passe), MAIS tout appel à
+     `.start()` échoue systématiquement avec l'erreur 'service-not-allowed'
+     dès que le site tourne en mode standalone (ajouté à l'écran d'accueil
+     via le menu Partager). La même URL ouverte dans un onglet Safari
+     classique fonctionne normalement — ce n'est donc pas un bug de l'appli,
+     mais une restriction plateforme non contournable côté code.
+     On détecte ce cas EN AMONT (avant de demander la permission micro) pour
+     éviter à l'utilisateur un message d'erreur cryptique après une demande
+     de permission inutile — voir aussi _openPrintWindow() plus bas dans ce
+     fichier, qui utilise la même détection `navigator.standalone` pour un
+     problème similaire (window.open bloqué en mode standalone). */
+  if (_isIosPwaStandalone()) {
+    _renderRepeatUnavailable(
+      L('🎙️ Tajaajilli sagalee kun app fe\'amte (home screen) irratti hin danda\'amu — daangaa Apple/WebKit.',
+        '🎙️ La reconnaissance vocale n\'est pas disponible dans l\'app installée sur l\'écran d\'accueil (limitation Apple/WebKit, pas un bug de l\'appli).'),
+      L('Safari keessatti (tuqaa app irraa utuu hin taane) URL kana banii itti fufi.',
+        'Ouvrez ce site directement dans Safari (pas depuis l\'icône sur votre écran d\'accueil) pour utiliser cette fonctionnalité.')
+    );
+    return;
+  }
+
   if (isFrench()) {
     /* ── Mode learn_french : fr-FR uniquement ── */
     _repeatLangUsed  = 'fr-FR';
@@ -3260,13 +3336,24 @@ function _renderRepeatUI(altLangMsg) {
       + 'Reconnaissance audio : '
       + '<strong>' + _repeatLangLabel + '</strong></div>';
   } else if (_repeatLangUsed === 'om-ET') {
-    /* Cas 2 — Oromo natif supporté : pill verte, message positif */
-    langInfo = '<div class="repeat-lang-info repeat-lang-native">'
-      + '<div class="repeat-lang-fallback-line1">✅ '
+    /* Cas 2 — 🆕 (07/07/2026) om-ET accepté par le navigateur pour la
+       RECONNAISSANCE vocale (STT). ATTENTION : contrairement à la voix de
+       SYNTHÈSE (TTS, badge Cartes ci-dessus dans ce fichier), il n'existe
+       aucun équivalent de speechSynthesis.getVoices() pour la reconnaissance
+       vocale — donc aucune liste consultable des langues réellement
+       supportées. _resolveRepeatLangOromo() ne fait qu'un test heuristique
+       (start() sans erreur immédiate = "accepté"). Sur Android, le moteur
+       cloud de Google est connu pour accepter presque n'importe quel code de
+       langue sans vérification réelle derrière (voir Bilan technique §6.13
+       et discussion recettage 07/07). Un ✅ affirmatif serait donc trompeur :
+       message neutre + pill informative plutôt qu'une confirmation. */
+    langInfo = '<div class="repeat-lang-info repeat-lang-unverified">'
+      + '<div class="repeat-lang-fallback-line1">🎤 '
       + 'Reconnaissance audio : '
       + '<strong>' + _repeatLangLabel + '</strong></div>'
       + '<div class="repeat-lang-fallback-line2">'
-      + L('— Afaan Oromoo sirnaan deeggararama', '— Oromo reconnu nativement par votre appareil')
+      + L('— Sirriitti argachuun isaa mirkanaa\'aa miti — meeshaa irratti hundaa\'a',
+          '— Précision non garantie : peut varier selon l\'appareil')
       + '</div>'
       + '</div>';
   } else {
@@ -3284,6 +3371,7 @@ function _renderRepeatUI(altLangMsg) {
   document.getElementById('tabContent').innerHTML =
     altBanner
     + langInfo
+    + '<div class="tab-tts-row-wrap">' + _buildTtsRateControlsHTML() + '</div>'
     + '<div id="repeat-card" class="repeat-card"></div>'
     + '<div id="repeat-feedback" class="repeat-feedback"></div>'
     + '<div id="repeat-controls" class="repeat-controls"></div>'
@@ -3416,6 +3504,18 @@ function repeatRecord() {
       fbEl2.innerHTML = L(
         '⚠️ Afaan kuni browser keetin hin deeggararamu.',
         '⚠️ Langue non supportée par ce navigateur pour la reconnaissance.'
+      );
+    } else if (e.error === 'service-not-allowed') {
+      /* 🆕 Filet de sécurité : normalement intercepté en amont par le test
+         `isIosPwaStandalone` dans renderRepeat(). Ce cas résiduel couvre les
+         autres origines possibles de 'service-not-allowed' sur iOS/Safari :
+         navigation privée, Dictée désactivée (Réglages > Général > Clavier),
+         ou app hébergée dans le navigateur intégré d'une autre appli
+         (SafariViewController), également non supporté par Apple/WebKit. */
+      fbEl2.className = 'repeat-feedback repeat-feedback--error';
+      fbEl2.innerHTML = L(
+        '🔒 Tajaajilli sagalee kun iOS irraa hin hayyamamne. Safari (tab qofa, navigation dhoksaa hin taane) keessatti yaali, Dictée Réglages > Général > Clavier keessatti banaa ta\'uu mirkaneessi.',
+        '🔒 Le service de reconnaissance vocale est refusé par iOS. Vérifiez que vous êtes bien dans un onglet Safari classique (pas en navigation privée, pas dans une app tierce), et que la Dictée est activée : Réglages > Général > Clavier > Activer la dictée.'
       );
     } else {
       fbEl2.className = 'repeat-feedback repeat-feedback--neutral';
@@ -4190,10 +4290,8 @@ if ('serviceWorker' in navigator) {
  * @param {string} htmlContent - Document HTML complet à imprimer / télécharger
  */
 function _openPrintWindow(htmlContent) {
-  /* ── Détection iOS PWA standalone ── */
-  const isIosPwaStandalone = (navigator.standalone === true);
-
-  if (isIosPwaStandalone) {
+  /* ── Détection iOS PWA standalone (voir _isIosPwaStandalone() §Utilitaire bilingue) ── */
+  if (_isIosPwaStandalone()) {
     _downloadAsHtml(htmlContent);
     return;
   }

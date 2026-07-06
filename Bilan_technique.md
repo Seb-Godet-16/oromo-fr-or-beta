@@ -16,7 +16,7 @@
 | Thèmes par mode | 48 (32 Niveau 1 Vocabulaire + 16 Niveau 2 Dialogue) |
 | Mots/expressions par mode | ~387 entrées (Français) · ~396 entrées (Oromo) |
 | Fonctionnement hors-ligne | ✅ 100 % après première visite (Service Worker) |
-| Taille totale du code source | ~635 Ko (6 fichiers principaux, 13 412 lignes) |
+| Taille totale du code source | ~636 Ko (6 fichiers principaux, 13 483 lignes) |
 
 ---
 
@@ -26,7 +26,7 @@
 
 | Fichier | Taille | Lignes | Rôle |
 |---|---|---|---|
-| `js/app.js` | 191 Ko | 4 690 | Moteur applicatif complet (121 fonctions) |
+| `js/app.js` | 196 Ko | 4 761 | Moteur applicatif complet (123 fonctions) |
 | `css/style.css` | 135 Ko | 4 193 | Styles + système de thèmes dual |
 | `js/data-fr.js` | 106 Ko | 1 427 | Dataset mode "Apprendre le Français" |
 | `js/data-or.js` | 103 Ko | 1 382 | Dataset mode "Apprendre l'Oromo" |
@@ -66,40 +66,42 @@ Depuis l'écran Sections, deux icônes remplacent l'ancien bouton retour unique 
 | # | Section | Fonctions clés | Ligne exacte |
 |---|---|---|---|
 | 1 | Variables d'état globales | `currentMode`, `CT`, `done`, `q10Step`, `_TOTAL_THEMES_PER_MODE`… | **93** |
-| — | Utilitaire bilingue | `L()`, `isFrench()`, `langKeys()` | **148 / 179 / 188** |
-| 2 | Point d'entrée | `_loadDataScript()`, `initApp(mode)` | **250 / 280** |
-| 3 | Synthèse vocale TTS | `_resolveOromoVoice()`, `speak()`, `_doSpeak()` | **505 / 682 / 766** |
-| 3b | Retour haptique | `_vibrateFeedback()` | **1038** |
-| 3b2 | Confetti | `_launchConfetti()` | **1076** |
-| 3c | Interruption audio | `visibilitychange` (écouteur) | **1158** (section **1129**) |
-| 3d | KeepAlive watchdog | `_startTtsKeepAlive()`, `_stopTtsKeepAlive()` | **1189 / 1201** |
-| 4 | Persistance progression | `loadDone()`, `saveDone()`, `markDone()` | **1225 / 1237 / 1398** |
-| 4c | Réinitialisation | `confirmResetProgress()`, `executeResetProgress()` | **1288 / 1342** (dans §4) |
-| 4b | Session quiz | `_saveQuizSession()`, `_restoreQuizSession()` | **1484 / 1503** |
-| 5 | Navigation | `showScreen()` | **1589** |
-| 5b | Navigation basse | `_updateBottomNav()`, `navGoModules()`, `lessonGoBack()` | **1714 / 1773 / 1789** |
-| 5b | **🆕 Icônes retour Sections** | `goToAccueil()`, `goToGuide()` | **1801 / 1811** |
-| 5b | Navigation leçon | `lessonNav()` | **1824** |
-| 6 | Écran Home — progression | `_computeProgressFrom()`, `_getProgress()`, `_getOtherModeProgress()` | **1871 / 1888 / 1902** |
-| 6 | Écran Home — rendu | `renderHome()`, `_buildProgressCardHTML()` | **1915 / 1979** |
-| 7 | Écran Sections | `renderSections()`, `_buildThemeCard()` | **2017 / 2089** |
-| 8 | Ouverture thème | `openTheme()`, `switchTab()` | **2131 / 2264** |
-| 9 | Cartes Flash | `renderFlash()`, `flipCard()`, `nextCard()` | **2305 / 2436 / 2445** |
-| 10 | Quiz 10 questions | `_generateQuiz()`, `renderQuiz10()`, `checkQ10()` | **2559 / 2623 / 2738** |
-| 11 | Dialogue | `renderDialog()`, `pickSit()` | **2793 / 2836** |
-| 12 | Vocabulaire | `renderVocab()` | **2852** |
-| 13b | Onglet Répète | `_matchRepeat()`, `renderRepeat()`, `repeatRecord()` | **2977 / 3106 / 3364** |
-| 13 | Quiz Dialogue | `renderDialogQuiz()`, `checkDQ()` | **3567 / 3635** |
-| 14 | Utilitaires | `_quizResultStrings()`, `esc()`, `escJS()` | **3677 / 3711 / 3731** |
-| 17 | Guide / Onboarding | `_buildHomeGuide()`, `_maybeShowOnboarding()` | **3811 / 3888** |
-| 18 | Crédits | `showCredits()`, `closeCreditsModal()` | **3918 / 3969** |
-| 15 | Launcher init | Initialisation au chargement | **3975** |
-| 16 | Accessibilité clavier | Navigation clavier globale | **3993** |
-| 19 | Spinner / Viewport | `_showLoadingSpinner()`, fix Android Chrome | **4018 / 4048** |
-| 20 | Service Worker | Enregistrement PWA | **4110** |
-| 21 | Exports PDF | `_exportGuide()`, `_exportVocab()`, `_exportSituation()` | **4360 / 4466 / 4562** |
+| — | Utilitaire bilingue | `L()`, `isFrench()`, **🆕 `_isIosPwaStandalone()`**, `langKeys()` | **149 / 179 / 198 / 207** |
+| 2 | Point d'entrée | `_loadDataScript()`, `initApp(mode)` | **269 / 299** |
+| 3 | Synthèse vocale TTS | `_resolveOromoVoice()`, `speak()`, `_doSpeak()` | **524 / 701 / 785** |
+| 3b | Retour haptique | `_vibrateFeedback()` | **1057** |
+| 3b2 | Confetti | `_launchConfetti()` | **1095** |
+| 3c | Interruption audio | `visibilitychange` (écouteur) | **1177** (section **1149**) |
+| 3d | KeepAlive watchdog | `_startTtsKeepAlive()`, `_stopTtsKeepAlive()` | **1208 / 1220** |
+| 4 | Persistance progression | `loadDone()`, `saveDone()`, `markDone()` | **1244 / 1256 / 1417** |
+| 4c | Réinitialisation | `confirmResetProgress()`, `executeResetProgress()` | **1307 / 1361** (dans §4) |
+| 4b | Session quiz | `_saveQuizSession()`, `_restoreQuizSession()` | **1503 / 1522** |
+| 5 | Navigation | `showScreen()` | **1608** |
+| 5b | Navigation basse | `_updateBottomNav()`, `navGoModules()`, `lessonGoBack()` | **1733 / 1792 / 1808** |
+| 5b | Icônes retour Sections | `goToAccueil()`, `goToGuide()` | **1820 / 1830** |
+| 5b | Navigation leçon | `lessonNav()` | **1843** |
+| 6 | Écran Home — progression | `_computeProgressFrom()`, `_getProgress()`, `_getOtherModeProgress()` | **1890 / 1907 / 1921** |
+| 6 | Écran Home — rendu | `renderHome()`, `_buildProgressCardHTML()` | **1934 / 1998** |
+| 7 | Écran Sections | `renderSections()`, `_buildThemeCard()` | **2036 / 2108** |
+| 8 | Ouverture thème | `openTheme()`, **🆕 badge ⚠️ onglet Répète** (`repeatWarnTitle`), `switchTab()` | **2150 / 2241 / 2300** |
+| 9 | Cartes Flash | `renderFlash()`, `flipCard()`, `nextCard()` | **2341 / 2472 / 2481** |
+| 10 | Quiz 10 questions | `_generateQuiz()`, `renderQuiz10()`, `checkQ10()` | **2595 / 2659 / 2774** |
+| 11 | Dialogue | `renderDialog()`, `pickSit()` | **2829 / 2872** |
+| 12 | Vocabulaire | `renderVocab()` | **2888** |
+| 13b | Onglet Répète | `_matchRepeat()`, `renderRepeat()`, **🆕 garde iOS standalone** (ligne 3178), `repeatRecord()` | **3013 / 3142 / 3425** |
+| 13 | Quiz Dialogue | `renderDialogQuiz()`, `checkDQ()` | **3640 / 3708** |
+| 14 | Utilitaires | `_quizResultStrings()`, `esc()`, `escJS()` | **3750 / 3784 / 3804** |
+| 17 | Guide / Onboarding | `_buildHomeGuide()`, `_maybeShowOnboarding()` | **3884 / 3961** |
+| 18 | Crédits | `showCredits()`, `closeCreditsModal()` | **3991 / 4042** |
+| 15 | Launcher init | Initialisation au chargement | **4049** |
+| 16 | Accessibilité clavier | Navigation clavier globale | **4067** |
+| 19 | Spinner / Viewport | `_showLoadingSpinner()`, fix Android Chrome | **4091 / 4122** |
+| 20 | Service Worker | Enregistrement PWA | **4184** |
+| 21 | Exports PDF | `_exportGuide()`, `_exportVocab()`, `_exportSituation()` | **4431 / 4537 / 4633** |
 
-*Nouveautés 05–06/07/2026 (voir Historique, §9) : `_TOTAL_THEMES_PER_MODE` (ligne 131), `_setAttrBi()` (ligne 406), `goToAccueil()` / `goToGuide()` (icônes 🏠/❓), `_computeProgressFrom()` / `_getOtherModeProgress()` / `_buildProgressCardHTML()` (carte(s) de progression Home).*
+*Nouveautés 05–06/07/2026 (voir Historique, §9) : `_TOTAL_THEMES_PER_MODE` (ligne 131), `_setAttrBi()` (ligne 425), `goToAccueil()` / `goToGuide()` (icônes 🏠/❓), `_computeProgressFrom()` / `_getOtherModeProgress()` / `_buildProgressCardHTML()` (carte(s) de progression Home).*
+
+*🆕 Nouveauté 06/07/2026 (suite recettage iPhone, voir §6.13 et §8) : `_isIosPwaStandalone()` — utilitaire centralisé, réutilisé dans `renderRepeat()` (message d'indisponibilité précoce), dans `repeatRecord()` (filet de sécurité `onerror`) et dans `_openPrintWindow()` (refactor, comportement inchangé). Toutes les lignes ci-dessus sont décalées de +19 à +73 par rapport à la version précédente selon leur position dans le fichier — voir le détail exact dans chaque commentaire du code.*
 
 ---
 
@@ -204,6 +206,23 @@ L'ancien bouton unique `← Retour` de l'écran Sections est remplacé par deux 
 
 Aucun nouvel écran n'a été créé : les deux icônes réutilisent des cibles de navigation déjà existantes (`showScreen('app-launcher', …)` / `showScreen('home', …)`), ce qui limite le risque de régression.
 
+### 6.13 🆕 Reconnaissance vocale indisponible en app installée sur iOS (06/07/2026)
+
+**Constat du recettage iPhone (Point 5)** : l'onglet 🎙️ Répète affichait `Erreur : service-not-allowed` dès que l'utilisateur appuyait sur le bouton micro.
+
+**Cause identifiée** : ce n'est pas un bug de l'application. Un ingénieur WebKit confirme publiquement (bug officiel [webkit.org #225298](https://bugs.webkit.org/show_bug.cgi?id=225298), ouvert depuis 2021, toujours non résolu mi-2026) que l'API `SpeechRecognition` est volontairement bridée par Apple/WebKit lorsqu'un site tourne en **mode standalone** (ajouté à l'écran d'accueil via le menu Partager de Safari) : la classe existe bien dans `window` (donc indétectable par un simple test de support), mais tout appel à `.start()` échoue systématiquement avec `service-not-allowed`. La même URL ouverte dans un **onglet Safari classique** fonctionne normalement — aucun contournement côté code n'est possible, Apple bloque le service lui-même.
+
+**Correctifs appliqués** (aucune solution de contournement n'existant, l'objectif est d'informer clairement l'apprenant plutôt que de le laisser face à une erreur cryptique) :
+
+| Emplacement | Comportement |
+|---|---|
+| `_isIosPwaStandalone()` (utilitaire centralisé, ligne 198) | Détecte `navigator.standalone === true`, réutilisé partout où cette limitation s'applique |
+| Onglet **Répète** — barre d'onglets (`openTheme()`, ligne 2241) | 🆕 Badge `⚠️` ajouté directement sur le libellé de l'onglet + `title` explicatif, visible **avant même que l'apprenant ne touche l'onglet** |
+| Onglet **Répète** — ouverture (`renderRepeat()`, ligne 3178) | Message d'indisponibilité clair affiché **avant** la demande de permission micro (évite une demande inutile qui échouera de toute façon) |
+| Bouton micro (`repeatRecord()` → `onerror`, ligne ~3446) | Filet de sécurité : si `service-not-allowed` survient quand même (navigation privée, Dictée désactivée, app tierce type SafariViewController), message spécifique au lieu du texte brut de l'erreur |
+
+**Limite assumée** : sur iPhone/iPad, l'onglet Répète ne fonctionnera **jamais** dans l'app installée sur l'écran d'accueil — seulement dans un onglet Safari classique. C'est communiqué à l'apprenant, pas corrigé (aucune correction possible côté web).
+
 ### 6.12 🆕 Carte(s) de progression sur l'écran Home (06/07/2026)
 Le cercle SVG unique de l'écran Home est remplacé par 0, 1 ou 2 « cartes » (drapeau + cercle % + étoiles + nombre de modules), selon les parcours ayant de la progression :
 
@@ -224,6 +243,7 @@ Le nombre total de thèmes de l'AUTRE parcours (48, identique dans les deux mode
 | `app.js` monolithique | ⚠️ Moyen | 4 690 lignes, 121 fonctions — maintenable grâce aux `§` mais migration ES modules complexe (handlers `onclick` inline) |
 | `unsafe-inline` CSP | ⚠️ Moyen | Nécessaire pour les `onclick` générés dynamiquement par `innerHTML` et pour GitHub Pages (pas de headers HTTP customs) |
 | Voix Oromo TTS | ⚠️ Moyen | `om-ET` absente sur la plupart des appareils — l'utilisateur entend souvent du Somali ou de l'Amharique |
+| 🆕 Reconnaissance vocale (mic) en app installée iOS | ⚠️ Bloquant non corrigeable, ✅ communiqué | Limitation Apple/WebKit confirmée (bug #225298) : `service-not-allowed` systématique en mode standalone. Aucune solution côté code — badge ⚠️ sur l'onglet + message clair avant la demande de permission (voir §6.13) |
 | Quiz dynamique (Fisher-Yates) | ✅ OK | Bien implémenté — cache `_q10Questions` évite le re-shuffle si on revient sur l'onglet |
 | Mode sombre | ✅ OK | `prefers-color-scheme` supporté (§24b) + correctifs WCAG AA (§29) |
 | Accessibilité | ✅ Partiel | `aria-*` présents sur les éléments critiques — navigation clavier supportée (§18 CSS / §16 JS) |
@@ -243,6 +263,7 @@ Le nombre total de thèmes de l'AUTRE parcours (48, identique dans les deux mode
 | 04/07/2026 | Sébastien Godet + Gemini 3.5 Flash Extended | Brave Android — Samsung Galaxy A55 5G (appli Oromo) | Liste de correctifs identifiée, traitée via prompts |
 | 05/07/2026 | Sébastien Godet + Claude Sonnet 5 | Appli Oromo | Correctifs appliqués |
 | 06/07/2026 | Sébastien Godet + Claude Sonnet 5 | Appli Oromo | Correctifs appliqués (fin) — dont icônes retour 🏠/❓ et carte(s) de progression Home |
+| 06/07/2026 | Sébastien Godet + Claude Sonnet 5 | iPhone (recettage terrain) | **Point 5 KO** : `Erreur : service-not-allowed` sur le micro (onglet Répète). Cause identifiée : limitation Apple/WebKit en mode standalone (bug #225298), non corrigeable côté code. Traité par une information claire à l'apprenant (badge ⚠️ sur l'onglet + message avant demande de permission) — voir §6.13 |
 
 *Détail complet du retour de recettage du 03/07/2026 disponible en commentaire d'en-tête de `app.js` (bloc HISTORIQUE).*
 

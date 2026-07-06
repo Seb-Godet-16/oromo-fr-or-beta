@@ -1171,6 +1171,26 @@ html.theme-french .btn-reset-theme:hover{
 .tts-rate-pill.active:active,.tts-repeat-pill.active:active{background:var(--c-primary-dark)}
 .tts-repeat-row{margin-top:8px;margin-bottom:0}
 
+/* 🆕 (07/07/2026) Icône "rapide" en bout de rangée — pendant du 🐢 en tête,
+   pour lire le sens lent→rapide d'un coup d'œil sans déchiffrer les
+   chiffres. Purement décoratif (aria-hidden côté HTML) : l'information
+   accessible est déjà portée par tts-row-label + les aria-label des pastilles. */
+.tts-row-icon-fast{
+  flex-shrink:0;
+  align-self:center;
+  font-size:1rem;
+  line-height:1;
+  margin-left:2px;
+}
+
+/* 🆕 (07/07/2026) Enrobage du widget de vitesse partagé quand il est inséré
+   en haut d'un onglet (Alphabet, Lexique, Dialogue, Répète) plutôt que
+   directement sous une carte flash comme à l'origine — juste un peu d'air
+   avant le contenu qui suit. */
+.tab-tts-row-wrap{
+  margin-bottom:12px;
+}
+
 /* Surlignage mot par mot pendant la lecture TTS (voir _attachHighlighting
    dans app.js). Dégradé silencieux si l'événement 'boundary' n'est pas
    supporté par le navigateur/la voix — le mot reste simplement non surligné. */
@@ -1759,7 +1779,8 @@ footer a:hover{text-decoration:underline}
   font-size:.76rem;
 }
 
-/* Cas Oromo natif supporté : pill verte rassurante */
+/* Cas Oromo natif supporté (TTS — badge Cartes uniquement, vérifié via
+   speechSynthesis.getVoices()) : pill verte rassurante, à juste titre */
 .repeat-lang-info.repeat-lang-native{
   text-align:left;
   background:#f0faf2;
@@ -1767,6 +1788,22 @@ footer a:hover{text-decoration:underline}
   border-radius:10px;
   padding:8px 12px;
   color:#1b5e20;
+  font-size:.76rem;
+}
+
+/* 🆕 (07/07/2026) Cas om-ET accepté par le navigateur pour la RECONNAISSANCE
+   vocale (STT — onglet Répète uniquement) : contrairement au cas ci-dessus,
+   cette acceptation n'est PAS vérifiable (pas d'équivalent de getVoices()
+   pour la reconnaissance), donc pill neutre bleu-gris "information" plutôt
+   que verte "confirmée" — évite de laisser croire à une garantie qui n'existe
+   pas. Voir commentaire détaillé dans app.js, _renderRepeatUI(). */
+.repeat-lang-info.repeat-lang-unverified{
+  text-align:left;
+  background:#eef2fa;
+  border:1.5px solid #5c7cad;
+  border-radius:10px;
+  padding:8px 12px;
+  color:#2c3e5c;
   font-size:.76rem;
 }
 
@@ -3652,6 +3689,7 @@ footer a:hover{text-decoration:underline}
 #lesson.mode-cartes .tts-row{margin-bottom:5px}
 #lesson.mode-cartes .tts-repeat-row{margin-top:6px}
 #lesson.mode-cartes .tts-row-label{font-size:.6rem;min-width:46px}
+#lesson.mode-cartes .tts-row-icon-fast{font-size:.85rem}
 #lesson.mode-cartes .tts-rate-pill,
 #lesson.mode-cartes .tts-repeat-pill{
   min-height:30px;
