@@ -29,15 +29,15 @@
   ╠══════════════════════════════════════════════════════════════════╣
   ║  PLAN DU FICHIER                                                ║
   ║   <head>    Métadonnées, PWA, Open Graph, feuille de styles     ║
-  ║   Écran 0   Lanceur (#app-launcher)           ligne ~   89      ║
-  ║   Écran 1   Guide / Onboarding (#home)        ligne ~  182      ║
-  ║   Écran 2a  Niveau 1 Modules (#sections-l1)   ligne ~  239      ║
-  ║   Écran 2b  Niveau 2 Modules (#sections-l2)   ligne ~  267      ║
-  ║   Écran 3   Leçon (#lesson)                   ligne ~  296      ║
-  ║   Modale    Remerciements (#credits-modal)    ligne ~  358      ║
-  ║   Modale    Confirmation suppression          ligne ~  394      ║
-  ║   Nav       Barre de navigation basse         ligne ~  414      ║
-  ║   Scripts   Chargement de app.js              ligne ~  441      ║
+  ║   Écran 0   Lanceur (#app-launcher)           ligne    117      ║
+  ║   Écran 1   Guide / Onboarding (#home)        ligne    220      ║
+  ║   Écran 2a  Niveau 1 Modules (#sections-l1)   ligne    855      ║
+  ║   Écran 2b  Niveau 2 Modules (#sections-l2)   ligne    887      ║
+  ║   Écran 3   Leçon (#lesson)                   ligne    924      ║
+  ║   Modale    Remerciements (#credits-modal)    ligne   1003      ║
+  ║   Modale    Confirmation suppression          ligne   1036      ║
+  ║   Nav       Barre de navigation basse         ligne   1052      ║
+  ║   Scripts   Chargement de app.js              ligne   1094      ║
   ╚══════════════════════════════════════════════════════════════════╝
 -->
 <html lang="fr">
@@ -243,19 +243,11 @@
       <p class="home-guide-subtitle" id="homeGuideSubtitle"></p>
       <div class="home-guide-badges" id="homeGuideBadges"></div>
 
-      <!-- Cercle SVG de progression (visible une fois des modules complétés) -->
-      <div class="home-progress-circle-wrap" id="homeProgressCircleWrap" style="display:none">
-        <svg class="home-progress-circle" viewBox="0 0 120 120"
-             width="120" height="120"
-             role="img" aria-labelledby="hpcTitle" aria-describedby="hpcDesc">
-          <title id="hpcTitle"></title>
-          <desc id="hpcDesc"></desc>
-          <circle class="hpc-track" cx="60" cy="60" r="50"/>
-          <circle class="hpc-fill"  cx="60" cy="60" r="50" id="hpcArc"/>
-          <text class="hpc-pct"  x="60" y="56" id="hpcPct">0%</text>
-          <text class="hpc-sub"  x="60" y="74" id="hpcSub">⭐ 0</text>
-        </svg>
-      </div>
+      <!-- Carte(s) de progression (visible une fois des modules complétés) —
+           1 carte si un seul parcours a été commencé, 2 cartes si les deux
+           parcours (Français ET Oromo) ont de la progression. Rempli et
+           peuplé dynamiquement par renderHome() dans app.js. -->
+      <div class="home-progress-wrap" id="homeProgressWrap" style="display:none"></div>
     </div><!-- /.home-guide-header -->
 
     <!-- Bouton Commencer + bouton PDF Guide côte à côte dans la barre sticky -->
@@ -863,7 +855,10 @@
   <div id="sections-level1" class="screen">
     <div class="sections-header">
       <div class="sections-header-left">
-        <button class="back-btn" id="sectionsBackBtn" onclick="showScreen('home','back')" aria-label="Retour"></button>
+        <div class="back-btn-group">
+          <button class="back-btn-icon" id="sectionsBackHomeBtn" onclick="goToAccueil()" aria-label="Accueil">🏠</button>
+          <button class="back-btn-icon" id="sectionsBackGuideBtn" onclick="goToGuide()" aria-label="Guide">❓</button>
+        </div>
         <h2 id="sectionsTitle"></h2>
         <div class="progress-bar-wrap">
           <div class="progress-bar" id="globalProgress" style="width:0%"></div>
@@ -892,7 +887,10 @@
   <div id="sections-level2" class="screen">
     <div class="sections-header">
       <div class="sections-header-left">
-        <button class="back-btn" id="sectionsBackBtn2" onclick="showScreen('home','back')" aria-label="Retour"></button>
+        <div class="back-btn-group">
+          <button class="back-btn-icon" id="sectionsBackHomeBtn2" onclick="goToAccueil()" aria-label="Accueil">🏠</button>
+          <button class="back-btn-icon" id="sectionsBackGuideBtn2" onclick="goToGuide()" aria-label="Guide">❓</button>
+        </div>
         <h2 id="sectionsTitle2"></h2>
         <div class="progress-bar-wrap">
           <div class="progress-bar" id="globalProgress2" style="width:0%"></div>

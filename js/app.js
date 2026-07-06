@@ -12,43 +12,81 @@
      └─ app.js       → Ce fichier : logique applicative complète
 
    SECTIONS DE CE FICHIER (ordre d'apparition réel) :
-      1.   Variables d'état globales (let/const)             ligne    54
-      —    Utilitaire bilingue L() / langKeys()              ligne    88
-      2.   Point d'entrée — initApp(mode)                    ligne   158
-      3.   Synthèse vocale + prononciation Oromo             ligne   339
-      3b.  Retour haptique — _vibrateFeedback()              ligne   617
-      3b2. Confetti — animation de félicitations (stars)     ligne   639
-      3c.  Interruption audio — visibilitychange / focus     ligne   712
-      3d.  KeepAlive watchdog — Chrome / Android             ligne   753
-      4.   Persistance de la progression (étoiles)           ligne   795
-      4c.  Réinitialisation — confirmResetProgress()         ligne   871  (dans §4)
-      4b.  Restauration de session quiz (sessionStorage)     ligne  1036
-      5.   Navigation entre écrans                           ligne  1148
-      5b.  Navigation basse — helpers                        ligne  1263
-      6.   Écran Home — barre de progression globale         ligne  1414
-      7.   Écran Sections — grille des thèmes                ligne  1496
-      8.   Ouverture d'un thème (écran Lesson + onglets)     ligne  1609
-           switchTab() : onglets + repositionnement          ligne  1753
+      1.   Variables d'état globales (let/const)             ligne    93
+      —    Utilitaire bilingue L() / langKeys()              ligne   148
+      2.   Point d'entrée — initApp(mode)                    ligne   218
+      3.   Synthèse vocale + prononciation Oromo             ligne   416
+      3a2. Surlignage mot par mot — pendant la lecture TTS   ligne   805
+      3a3. Vitesse de lecture — paliers (Cartes Flash)       ligne   940
+      3b.  Retour haptique — _vibrateFeedback()              ligne  1026
+      3b2. Confetti — animation de félicitations (stars)     ligne  1048
+      3c.  Interruption audio — visibilitychange / focus     ligne  1129
+      3d.  KeepAlive watchdog — Chrome / Android             ligne  1170
+      4.   Persistance de la progression (étoiles)           ligne  1212
+      4c.  Réinitialisation — confirmResetProgress()         ligne  1288  (dans §4)
+      4b.  Restauration de session quiz (sessionStorage)     ligne  1453
+      5.   Navigation entre écrans                           ligne  1565
+      5b.  Navigation basse — helpers                        ligne  1680
+           dont goToAccueil() / goToGuide() — icônes 🏠 / ❓   ligne  1801
+           du header Sections (choix Lanceur vs Écran Home)
+      6.   Écran Home — bouton Commencer + carte(s) de       ligne  1852
+           progression (1 par parcours ayant des modules
+           réussis — _getOtherModeProgress(), voir plus bas)
+      7.   Écran Sections — grille des thèmes                ligne  2006
+      8.   Ouverture d'un thème (écran Lesson + onglets)     ligne  2119
+           switchTab() : onglets + repositionnement          ligne  2264
            du bouton PDF en mode Cartes (fixed via JS)
-      9.   Cartes Flash — vocabulaire interactif             ligne  1781
-     10.   Quiz 10 questions — avec étoiles progressives     ligne  1930
-     11.   Dialogue — scènes de situation                    ligne  2244
-     12.   Vocabulaire — lexique visuel cliquable            ligne  2303
-     13b.  Onglet Répète — reconnaissance vocale             ligne  2350
-     13.   Quiz Dialogue — questions sur le dialogue         ligne  2997
-     14.   Utilitaires & chaînes de résultats bilingues      ligne  3107
-     17.   Guide utilisateur — Onboarding                    ligne  3194
-      —    Écran Home — _buildHomeGuide()                    ligne  3219
-     18.   Crédits — showCredits()                           ligne  3336
-     15.   Initialisation du launcher                        ligne  3397
-     16.   Accessibilité clavier                             ligne  3415
-     19.   Spinner de chargement des données                 ligne  3427
-     19b.  Viewport height fix — Android Chrome / Brave      ligne  3470
-     20.   Enregistrement du Service Worker (PWA)            ligne  3532
-     21.   Exports PDF — window.print() + @media print       ligne  3579
-     21a.  Export Guide (écran Home)                         ligne  3778
-     21b.  Export Vocabulaire (leçon Niveau 1)               ligne  3884
-     21c.  Export Situation (leçon Niveau 2 — dialogue)      ligne  3980
+      9.   Cartes Flash — vocabulaire interactif             ligne  2295
+     10.   Quiz 10 questions — avec étoiles progressives     ligne  2469
+     11.   Dialogue — scènes de situation                    ligne  2783
+     12.   Vocabulaire — lexique visuel cliquable            ligne  2842
+     13b.  Onglet Répète — reconnaissance vocale             ligne  2889
+     13.   Quiz Dialogue — questions sur le dialogue         ligne  3557
+     14.   Utilitaires & chaînes de résultats bilingues      ligne  3667
+     17.   Guide utilisateur — Onboarding                    ligne  3754
+      —    Écran Home — _buildHomeGuide()                    ligne  3811
+     18.   Crédits — showCredits()                           ligne  3918
+     15.   Initialisation du launcher                        ligne  3975
+     16.   Accessibilité clavier                             ligne  3993
+     19.   Spinner de chargement des données                 ligne  4018
+     19b.  Viewport height fix — Android Chrome / Brave      ligne  4048
+     20.   Enregistrement du Service Worker (PWA)            ligne  4110
+     21.   Exports PDF — window.print() + @media print       ligne  4157
+     21a.  Export Guide (écran Home)                         ligne  4356
+     21b.  Export Vocabulaire (leçon Niveau 1)               ligne  4462
+     21c.  Export Situation (leçon Niveau 2 — dialogue)      ligne  4558
+   ============================================================
+
+   HISTORIQUE DE L'APPLICATION
+   ============================================================
+   Du 07/06/2026 au 29/06/2026 : Version Bêta créée avec IA Claude
+                                  Sonnet 4.6 et Gemini 3.5 Flash.
+
+   03/07/2026 : Recettage par Sébastien Godet avec Gemini 3.5 Flash
+                pour les fichiers retours de tests sur desktop Chrome
+                — OK (suite aux fichiers retours de mon pote développeur
+                Fédérico, faits le 30/06). Retour de recettage :
+                  "C'est un super retour de test ! Ton ami a fait un
+                   recettage très propre et structuré (en local, sous
+                   Chrome desktop). L'excellente nouvelle, c'est qu'il
+                   n'y a aucune erreur JavaScript dans la console sur
+                   les deux applications. Le moteur global (le "core"
+                   du code) a l'air très sain. Cependant, comme le test
+                   a été fait en local et sur ordinateur, une bonne
+                   partie des fonctionnalités liées au mobile (PWA,
+                   micro, hors-ligne) n'a pas pu être testée (notée
+                   N/A), et plusieurs actions ont été passées."
+
+   04/07/2026 : Recettage par Sébastien Godet avec Gemini 3.5 Flash
+                Extended, sur Brave Android (Samsung Galaxy A55 5G),
+                pour l'appli Oromo → liste de correctifs identifiés,
+                traités ensuite via prompts.
+
+   05/07/2026 : Correctifs par Sébastien Godet avec Claude Sonnet 5,
+                pour l'appli Oromo.
+
+   06/07/2026 : Correctifs par Sébastien Godet avec Claude Sonnet 5,
+                pour l'appli Oromo (fin).
    ============================================================ */
 
 
@@ -84,6 +122,13 @@ let _q10Questions = null;   // Cache des questions générées pour le quiz en c
 
 /* ── Progression persistante ── */
 let done = [];              // Tableau d'objets { id, stars } sauvegardé dans localStorage
+
+/* Nombre total de thèmes par parcours — identique dans les deux modes
+   (32 Niveau 1 + 16 Niveau 2 = 48). Constante volontairement figée ici :
+   permet de calculer le % / les étoiles de l'AUTRE parcours (celui non
+   actif) depuis son seul localStorage, sans injecter son dataset complet
+   juste pour compter ses thèmes (voir _getOtherModeProgress, écran Home). */
+const _TOTAL_THEMES_PER_MODE = 48;
 
 /* ── Réglages audio TTS (Cartes Flash) ──────────────────────────────
    Paliers de vitesse à TAPER (pas de slider continu) : plus rapide à
@@ -295,7 +340,8 @@ function initApp(mode) {
     _setUI({
       homeTitle      : L('Apprendre le Français',  'Afaan Oromoo barachuu'),
       homeStartBtn   : L('▶ Jalqabi',              '▶ Commencer'),
-      sectionsBackBtn: L('← Gara duubaatti',       '← Retour'),
+      sectionsBackHomeBtn : L('Fuula Jalqabaa',     'Accueil'),
+      sectionsBackGuideBtn: L('Gargaarsa',          'Guide'),
       sectionsTitle  : L('📚 Modules',              '📚 Moojuulota'),
       lessonBackBtn  : L('← Moojuulota',            '← Modules'),
       level1Label    : L('Niveau 1 — Vocabulaire',  'Sadarkaa 1 — Jechoota'),
@@ -326,8 +372,10 @@ function initApp(mode) {
 function _setUI(t) {
   _setText('homeTitle',       t.homeTitle);
   _setText('homeStartBtn',    t.homeStartBtn);
-  _setText('sectionsBackBtn', t.sectionsBackBtn);
-  _setText('sectionsBackBtn2', t.sectionsBackBtn);
+  _setAttrBi('sectionsBackHomeBtn',   t.sectionsBackHomeBtn);
+  _setAttrBi('sectionsBackHomeBtn2',  t.sectionsBackHomeBtn);
+  _setAttrBi('sectionsBackGuideBtn',  t.sectionsBackGuideBtn);
+  _setAttrBi('sectionsBackGuideBtn2', t.sectionsBackGuideBtn);
   _setText('sectionsTitle',   t.sectionsTitle);
   _setText('lessonBackBtn',   t.lessonBackBtn);
   _setText('level1Label',     t.level1Label);
@@ -347,6 +395,19 @@ function _setUI(t) {
 function _setText(id, val) {
   const el = document.getElementById(id);
   if (el) el.textContent = val;
+}
+
+/**
+ * Pose aria-label ET title sur un bouton-icône (sans texte visible),
+ * pour l'accessibilité (lecteurs d'écran) et l'info-bulle au survol.
+ * @param {string} id
+ * @param {string} val
+ */
+function _setAttrBi(id, val) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.setAttribute('aria-label', val);
+  el.setAttribute('title', val);
 }
 
 /* W2: _setFooters() supprimée — footers intégrés dans la modale Infos (showCredits). */
@@ -1733,6 +1794,25 @@ function lessonGoBack() {
 }
 
 /**
+ * Icône "🏠" du header Sections → retour à l'écran de LANCEMENT
+ * (#app-launcher, choix Français / Oromo). Même mécanisme que le
+ * bouton "Changer de langue" de la nav basse (navBtnLang).
+ */
+function goToAccueil() {
+  showScreen('app-launcher', 'back');
+}
+
+/**
+ * Icône "❓" du header Sections → retour à l'écran Home (dashboard :
+ * bouton Commencer/Continuer + carte(s) de progression + guide
+ * explicatif juste en dessous). Identique à showOnboardingGuide()
+ * (bouton "Guide" de la nav basse), avec l'animation "back".
+ */
+function goToGuide() {
+  showScreen('home', 'back');
+}
+
+/**
  * Navigation prev/next entre modules du même niveau.
  * @param {number} delta - +1 (suivant) ou -1 (précédent)
  */
@@ -1779,21 +1859,57 @@ function _updateLessonNavArrows() {
  * Met à jour la barre de progression et le compteur d'étoiles sur l'écran home.
  */
 /**
- * Calcule la progression globale en un seul endroit.
+ * Calcule un objet de progression à partir d'un tableau `done` brut
+ * et d'un total de thèmes. Factorisé pour être utilisable aussi bien
+ * sur le parcours actif (en mémoire) que sur l'AUTRE parcours (lu
+ * directement depuis son localStorage, voir _getOtherModeProgress).
+ * @param {Array<{id:string,stars:number}>} doneArr
+ * @param {number} total
+ * @returns {{ total: number, n: number, pct: number,
+ *             starsEarned: number, starsMax: number }}
+ */
+function _computeProgressFrom(doneArr, total) {
+  const n = doneArr.length;
+  return {
+    total      : total,
+    n          : n,
+    pct        : total > 0 ? Math.round(n / total * 100) : 0,
+    starsEarned: doneArr.reduce((acc, d) => { return acc + d.stars; }, 0),
+    starsMax   : total * 3
+  };
+}
+
+/**
+ * Calcule la progression globale du parcours ACTIF (mode courant).
  * Utilisé par renderHome() ET renderSections() pour éviter la duplication.
  * @returns {{ total: number, n: number, pct: number,
  *             starsEarned: number, starsMax: number }}
  */
 function _getProgress() {
-  const total = ALL_THEMES.length;
-  const n     = done.length;
-  return {
-    total      : total,
-    n          : n,
-    pct        : total > 0 ? Math.round(n / total * 100) : 0,
-    starsEarned: done.reduce((acc, d) => { return acc + d.stars; }, 0),
-    starsMax   : total * 3
-  };
+  return _computeProgressFrom(done, ALL_THEMES.length);
+}
+
+/**
+ * Calcule la progression de l'AUTRE parcours (celui non actif),
+ * en lisant directement sa clé localStorage — sans injecter son
+ * dataset (data-fr.js / data-or.js), inutile juste pour un total
+ * de thèmes qui est fixe et identique dans les deux modes (48).
+ * Utilisé par renderHome() pour savoir s'il faut afficher une
+ * 2ᵉ carte de progression sur l'écran Accueil.
+ * @returns {{ total: number, n: number, pct: number,
+ *             starsEarned: number, starsMax: number }}
+ */
+function _getOtherModeProgress() {
+  const otherKey = (STORAGE_KEY === 'pe_om_fr_done_v1')
+    ? 'pe_fr_om_done_v1'
+    : 'pe_om_fr_done_v1';
+  let otherDone = [];
+  try {
+    otherDone = JSON.parse(localStorage.getItem(otherKey) || '[]');
+  } catch (e) {
+    otherDone = [];
+  }
+  return _computeProgressFrom(otherDone, _TOTAL_THEMES_PER_MODE);
 }
 
 function renderHome() {
@@ -1802,7 +1918,8 @@ function renderHome() {
      On garde la fonction pour compatibilité avec les appels existants. */
   if (!ALL_THEMES.length) return;
 
-  const p   = _getProgress();
+  const p     = _getProgress();          // parcours actif (mode courant)
+  const other = _getOtherModeProgress(); // l'AUTRE parcours (Français ↔ Oromo)
 
   /* ── Bouton Commencer / Continuer ── */
   const btn = document.getElementById('homeStartBtn');
@@ -1812,42 +1929,77 @@ function renderHome() {
       : L('▶ Jalqabi', '▶ Commencer');
   }
 
-  /* ── Cercle SVG de progression ── */
-  const wrap = document.getElementById('homeProgressCircleWrap');
-  if (wrap) {
-    if (p.n === 0) {
-      /* Première visite : on cache le cercle */
-      wrap.style.display = 'none';
-    } else {
-      wrap.style.display = 'flex';
+  /* ── Carte(s) de progression ──
+     0 carte  : aucun des deux parcours n'a de module réussi (1ère visite)
+                → on cache tout, pas de barre vide qui surcharge l'écran.
+     1 carte  : un seul des deux parcours a de la progression → on ne
+                montre QUE celui-là (qu'il soit actif ou non).
+     2 cartes : les DEUX parcours ont de la progression → on montre les
+                deux côte à côte, car les chiffres diffèrent d'un
+                parcours à l'autre. */
+  const wrap = document.getElementById('homeProgressWrap');
+  if (!wrap) return;
 
-      /* Circumférence pour r=50 : 2π×50 = 314.159… */
-      const CIRC    = 314.16;
-      const offset  = CIRC - (CIRC * p.pct / 100);
+  const cards = [];
+  if (p.n > 0)     cards.push({ progress: p,     isFrenchTarget: isFrench()  });
+  if (other.n > 0) cards.push({ progress: other, isFrenchTarget: !isFrench() });
 
-      const arc     = document.getElementById('hpcArc');
-      const pctTxt  = document.getElementById('hpcPct');
-      const subTxt  = document.getElementById('hpcSub');
-      const titleEl = document.getElementById('hpcTitle');
-      const descEl  = document.getElementById('hpcDesc');
-
-      /* Léger délai pour déclencher la transition CSS après display:flex */
-      setTimeout(() => {
-        if (arc) arc.style.strokeDashoffset = offset;
-      }, 50);
-
-      if (pctTxt)  pctTxt.textContent  = p.pct + '%';
-      if (subTxt)  subTxt.textContent  = '⭐ ' + p.starsEarned + ' / ' + p.starsMax;
-
-      /* Textes accessibles (aria) */
-      const a11yLabel = L(
-        'Ida\'ata Guutuu: modules ' + p.n + ' / ' + p.total + ' — ' + p.pct + '% — urjii ' + p.starsEarned + ' / ' + p.starsMax,
-        'Progression globale : ' + p.n + ' / ' + p.total + ' modules — ' + p.pct + '% — ' + p.starsEarned + ' étoiles / ' + p.starsMax
-      );
-      if (titleEl) titleEl.textContent = a11yLabel;
-      if (descEl)  descEl.textContent  = a11yLabel;
-    }
+  if (!cards.length) {
+    wrap.style.display = 'none';
+    wrap.innerHTML = '';
+    return;
   }
+
+  wrap.style.display = 'flex';
+  wrap.classList.toggle('home-progress-wrap--single', cards.length === 1);
+
+  wrap.innerHTML = cards.map((c, i) => _buildProgressCardHTML(c, i)).join('');
+
+  /* Léger délai pour déclencher la transition CSS de l'arc après le rendu
+     (même logique que l'ancien cercle unique, dupliquée pour chaque carte) */
+  const CIRC = 314.16; // circonférence pour r=50 : 2π×50
+  setTimeout(() => {
+    cards.forEach((c, i) => {
+      const arc = document.getElementById('hpcArc' + i);
+      if (arc) arc.style.strokeDashoffset = CIRC - (CIRC * c.progress.pct / 100);
+    });
+  }, 50);
+}
+
+/**
+ * Construit le HTML d'une carte de progression (drapeau + cercle SVG
+ * % + étoiles + nombre de modules) pour UN parcours. Une carte par
+ * parcours ayant de la progression — voir renderHome() pour la logique
+ * d'affichage (0, 1 ou 2 cartes).
+ * @param {{progress: Object, isFrenchTarget: boolean}} card
+ * @param {number} idx - index (0 ou 1) pour générer des IDs uniques
+ *                        quand 2 cartes sont affichées simultanément
+ * @returns {string}
+ */
+function _buildProgressCardHTML(card, idx) {
+  const p     = card.progress;
+  const flag  = card.isFrenchTarget ? '🇫🇷' : '🇪🇹';
+  const label = card.isFrenchTarget
+    ? L('Afaan Faransaayii', 'Français')
+    : L('Afaan Oromoo',      'Oromo');
+  const modulesTxt = p.n + ' / ' + p.total + ' 📚';
+  const starsTxt   = '⭐ ' + p.starsEarned + ' / ' + p.starsMax;
+  const a11yLabel  = esc(label + ' — ' + modulesTxt + ' — ' + p.pct + '% — ' + starsTxt);
+
+  return ''
+    + '<div class="home-progress-card">'
+    +   '<span class="hpc-flag" aria-hidden="true">' + flag + '</span>'
+    +   '<svg class="home-progress-circle" viewBox="0 0 120 120" role="img" '
+    +     'aria-labelledby="hpcTitle' + idx + '" aria-describedby="hpcDesc' + idx + '">'
+    +     '<title id="hpcTitle' + idx + '">' + a11yLabel + '</title>'
+    +     '<desc id="hpcDesc' + idx + '">' + a11yLabel + '</desc>'
+    +     '<circle class="hpc-track" cx="60" cy="60" r="50"/>'
+    +     '<circle class="hpc-fill" cx="60" cy="60" r="50" id="hpcArc' + idx + '"/>'
+    +     '<text class="hpc-pct" x="60" y="56" id="hpcPct' + idx + '">' + p.pct + '%</text>'
+    +     '<text class="hpc-sub" x="60" y="74" id="hpcSub' + idx + '">' + esc(starsTxt) + '</text>'
+    +   '</svg>'
+    +   '<span class="hpc-modules">' + esc(modulesTxt) + '</span>'
+    + '</div>';
 }
 
 

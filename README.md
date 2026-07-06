@@ -41,7 +41,7 @@ Taphad'Meuh/
 │   └── style.css           ← All styles — dual theme system (theme-french / theme-oromo)
 │
 ├── js/
-│   ├── app.js              ← Full application engine (4 538 lines, 21 sections)
+│   ├── app.js              ← Full application engine (4 690 lines, 21 sections)
 │   ├── data-fr.js          ← Dataset — "Learn French" mode (48 themes, 1 427 lines)
 │   └── data-or.js          ← Dataset — "Learn Oromo" mode  (48 themes, 1 382 lines)
 │
@@ -74,6 +74,15 @@ Taphad'Meuh/
               ├── 🎯 Quiz           (10 MCQ, auto-generated)
               ├── 💬 Dialogue       (Niveau 2 only — scripted scenes)
               └── 🎤 Répète         (Speech Recognition — mic required)
+```
+
+**Back navigation (Sections screen)** — two dedicated icons instead of a single "← Back" button, so the learner can jump straight to either destination :
+
+```
+[Sections]  ──🏠──▶  [Launcher]   (choose Français / Oromo again — same as the
+                                   bottom-nav "Change language" button)
+            ──❓──▶  [Home]       (dashboard : Start/Continue button +
+                                   progress card(s) + explanatory guide below)
 ```
 
 ---
@@ -174,6 +183,22 @@ Storage key  : 'pe_om_fr_done_v1'  (learn_french mode)
 Format       : [{ id: 'theme_id', stars: 1|2|3 }, …]
 ```
 
+**Home screen — progress card(s).** The dashboard shows one circular progress
+card (flag + % + stars + modules count) per learning path that has at least
+one completed module — read from *both* `localStorage` keys, regardless of
+which mode is currently active :
+
+```
+No path started        →  no card at all (nothing to show yet)
+Only 1 path started    →  1 card, for that path (active OR the other one)
+Both paths started     →  2 cards side by side (🇫🇷 and 🇪🇹), since the
+                           numbers differ between the two
+```
+
+The "other" path's total theme count (48) is a fixed constant
+(`_TOTAL_THEMES_PER_MODE` in `app.js`) rather than read from its dataset —
+avoids injecting the other mode's `data-*.js` file just to display a stat.
+
 ---
 
 ## 🛠️ Service Worker strategy
@@ -199,7 +224,7 @@ Cache name is auto-versioned by GitHub Actions (`GITHUB_RUN_NUMBER`) on every de
 
 ### `app.js` — fichier unique volontairement monolithique
 
-Le moteur applicatif tient dans un seul fichier (4 538 lignes, 21 sections commentées).
+Le moteur applicatif tient dans un seul fichier (4 690 lignes, 21 sections commentées).
 Ce choix est délibéré : zéro étape de build, compatibilité maximale, hébergement statique sans bundler.
 
 Si le projet grossit significativement, une migration vers des modules ES (`import`/`export`) est envisageable. Elle nécessiterait :
@@ -232,14 +257,26 @@ Les autres thèmes de Niveau 1 génèrent leurs questions à la volée depuis `w
 
 ---
 
+## 🕓 Historique du projet
 
+| Période | Étape |
+|---|---|
+| 07/06 → 29/06/2026 | Version Bêta créée avec Claude Sonnet 4.6 et Gemini 3.5 Flash |
+| 30/06/2026 | Recettage terrain par Fédérico Calo (retours de test) |
+| 03/07/2026 | Recettage desktop Chrome (Sébastien + Gemini 3.5 Flash) — aucune erreur JS, cœur applicatif sain ; fonctionnalités mobiles (PWA, micro, hors-ligne) non testables en local (N/A) |
+| 04/07/2026 | Recettage mobile — Brave Android, Samsung Galaxy A55 5G (Sébastien + Gemini 3.5 Flash Extended) — liste de correctifs identifiée |
+| 05–06/07/2026 | Correctifs appliqués (Sébastien + Claude Sonnet 5) |
+
+*Journal détaillé (dont le retour de recettage complet du 03/07) disponible en commentaire d'en-tête dans `app.js`.*
+
+---
 
 **Sébastien Godet** — sebastien.godet16@gmail.com · [LinkedIn](https://www.linkedin.com/in/sébastien-godet-142ba6145)
 
-Built with the assistance of **Claude Sonnet 4.6** (Anthropic) and **Gemini 3.5 Flash** (Google).
+Built with the assistance of **Claude Sonnet 4.6**, **Claude Sonnet 5** (Anthropic) and **Gemini 3.5 Flash** (Google).
 
 Special thanks to **Fédérico Calo** (web architecture) and **Mussa Sembro** (Oromo translations & linguistic review).
 
 ---
 
-*© Juin 2026 — Sébastien Godet*
+*© Juin–Juillet 2026 — Sébastien Godet*

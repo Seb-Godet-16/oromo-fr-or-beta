@@ -22,40 +22,45 @@
  * ║  rendu visuel.                                                  ║
  * ╠══════════════════════════════════════════════════════════════════╣
  * ║  PLAN DU FICHIER                                                ║
- * ║   §1        Reset & base                          ligne    62  ║
- * ║   §2        Variables de thème (:root / fallback) ligne   186  ║
- * ║   §3        Thème Français (html.theme-french)    ligne   249  ║
- * ║   §4        Thème Oromo (html.theme-oromo)        ligne   289  ║
- * ║   §5        Écran 0 — Lanceur                     ligne   324  ║
- * ║   §6        Écran 1 — Accueil #home               ligne   530  ║
- * ║   §7        Écran 2 — Sections                    ligne   596  ║
- * ║   §8        Écran 3 — Leçon                       ligne   721  ║
- * ║   §9        Composants : Flashcards               ligne   972  ║
- * ║   §10       Composants : Alphabet                 ligne  1095  ║
- * ║   §11       Composants : Quiz                     ligne  1195  ║
- * ║   §12       Composants : Dialogues / Situations   ligne  1300  ║
- * ║   §13       Composants : Vocabulaire              ligne  1405  ║
- * ║   §14       Modale Remerciements                  ligne  1473  ║
- * ║   §15       Footer commun                         ligne  1560  ║
- * ║   §16       Toast notification                    ligne  1580  ║
- * ║   §17       Onglet Répète                         ligne  1616  ║
- * ║   §18       Focus clavier                         ligne  1865  ║
- * ║   §19       Guide utilisateur (.ob-*)             ligne  1883  ║
- * ║   §20       Spinner de chargement                 ligne  2339  ║
- * ║   §22       Écran Home redesigné                  ligne  2376  ║
- * ║   §23       Écran Sections redesigné              ligne  2637  ║
- * ║   §24       Responsive : tablette & desktop       ligne  2765  ║
- * ║   §24b      Mode sombre                           ligne  2855  ║
- * ║   §25       Boutons d'export PDF                  ligne  2966  ║
- * ║   §26       Barre de navigation basse             ligne  3066  ║
- * ║   §27       Onglets niveau 1 / 2                  ligne  3193  ║
- * ║   §28       Écrans sections level (no-scroll)     ligne  3288  ║
- * ║   §20e      Grille thèmes écrans level            ligne  3472  ║
- * ║   §CONFETTI Animation de félicitations ⭐⭐⭐      ligne  3493  ║
- * ║   §PROGRESS Cercle SVG de progression (Home)      ligne  3551  ║
- * ║   §CONFIRM  Modale confirmation suppression       ligne  3627  ║
- * ║   §ANTISPAM E-mail affiché à l'envers (CSS RTL)  ligne  3746  ║
- * ║   §SPEAKING Feedback visuel bouton audio (TTS)    ligne  3773  ║
+ * ║   §1        Reset & base                          ligne    69  ║
+ * ║   §2        Variables de thème (:root / fallback) ligne   193  ║
+ * ║   §3        Thème Français (html.theme-french)    ligne   256  ║
+ * ║   §4        Thème Oromo (html.theme-oromo)        ligne   296  ║
+ * ║   §5        Écran 0 — Lanceur                     ligne   331  ║
+ * ║   §6        Écran 1 — Accueil #home               ligne   537  ║
+ * ║   §7        Écran 2 — Sections                    ligne   603  ║
+ * ║   §8        Écran 3 — Leçon (dont .back-btn-icon  ligne   728  ║
+ * ║             icônes 🏠/❓, voir ligne 946)                       ║
+ * ║   §9        Composants : Flashcards               ligne  1007  ║
+ * ║   §10       Composants : Alphabet                 ligne  1189  ║
+ * ║   §11       Composants : Quiz                     ligne  1289  ║
+ * ║   §12       Composants : Dialogues / Situations   ligne  1394  ║
+ * ║   §13       Composants : Vocabulaire              ligne  1499  ║
+ * ║   §14       Modale Remerciements                  ligne  1567  ║
+ * ║   §15       Footer commun                         ligne  1654  ║
+ * ║   §16       Toast notification                    ligne  1674  ║
+ * ║   §17       Onglet Répète                         ligne  1710  ║
+ * ║   §18       Focus clavier                         ligne  1979  ║
+ * ║   §19       Guide utilisateur (.ob-*)             ligne  1997  ║
+ * ║   §20       Spinner de chargement                 ligne  2453  ║
+ * ║   §22       Écran Home redesigné                  ligne  2490  ║
+ * ║   §23       Écran Sections redesigné (dont        ligne  2751  ║
+ * ║             .back-btn-group, voir ligne 2776)                  ║
+ * ║   §24       Responsive : tablette & desktop       ligne  2881  ║
+ * ║   §24b      Mode sombre                           ligne  2971  ║
+ * ║   §24c      Responsive : mode paysage mobile      ligne  3082  ║
+ * ║   §25       Boutons d'export PDF                  ligne  3144  ║
+ * ║   §26       Barre de navigation basse             ligne  3244  ║
+ * ║   §27       Onglets niveau 1 / 2                  ligne  3371  ║
+ * ║   §28       Écrans sections level (no-scroll)     ligne  3466  ║
+ * ║   §20e      Grille thèmes écrans level            ligne  3663  ║
+ * ║   §CONFETTI Animation de félicitations ⭐⭐⭐      ligne  3684  ║
+ * ║   §PROGRESS Carte(s) de progression (Home,        ligne  3755  ║
+ * ║             1 ou 2 selon les parcours commencés)                ║
+ * ║   §CONFIRM  Modale confirmation suppression       ligne  3878  ║
+ * ║   §ANTISPAM E-mail affiché à l'envers (CSS RTL)  ligne  3997  ║
+ * ║   §SPEAKING Feedback visuel bouton audio (TTS)    ligne  4024  ║
+ * ║   §29       Correctifs accessibilité mode sombre  ligne  4082  ║
  * ╚══════════════════════════════════════════════════════════════════╝
  */
 
@@ -915,8 +920,12 @@ html.theme-french .btn-reset-theme:hover{
   padding:4px 8px;
   line-height:1;
 }
-.sections-header .back-btn,
 .lesson-header .back-btn{
+  font-size:1rem!important;
+  font-weight:800!important;
+  color:#fff!important;
+}
+.sections-header .back-btn-icon{
   font-size:1rem!important;
   font-weight:800!important;
   color:#fff!important;
@@ -924,6 +933,30 @@ html.theme-french .btn-reset-theme:hover{
 
 /* Hint bilingue dans les boutons retour (ex. "← Retour / Duubatti") */
 .fr-hint{font-size:.65rem;color:#ffffff99;font-weight:400}
+
+/*
+  Groupe de deux icônes de retour (🏠 Accueil / ❓ Guide) — remplace
+  l'ancien bouton retour unique ("← Retour") sur les écrans Sections,
+  pour laisser l'apprenant choisir sa destination.
+*/
+.back-btn-group{
+  display:flex;
+  gap:6px;
+}
+.back-btn-icon{
+  background:rgba(255,255,255,.16);
+  border:none;
+  color:#fff;
+  font-size:1rem;
+  line-height:1;
+  padding:6px 10px;
+  border-radius:9px;
+  cursor:pointer;
+}
+.back-btn-icon:active{
+  background:rgba(255,255,255,.32);
+  transform:scale(.94);
+}
 
 /* ── Onglets ─────────────────────────────────────────────────────── */
 /*
@@ -2740,9 +2773,11 @@ footer a:hover{text-decoration:underline}
 }
 
 /* Retour + titre sur la même ligne */
-.sections-header-left .back-btn{
+.sections-header-left .back-btn-group{
   align-self:flex-start;
   margin-bottom:4px;
+}
+.sections-header-left .back-btn-icon{
   font-size:.85rem !important;
 }
 
@@ -3717,11 +3752,19 @@ footer a:hover{text-decoration:underline}
 }
 
 /* ════════════════════════════════════════════════════════════════
-   §PROGRESS-CIRCLE — Cercle SVG de progression sur l'écran Home
+   §PROGRESS-CIRCLE — Carte(s) de progression sur l'écran Home
    ════════════════════════════════════════════════════════════════
-   Le cercle SVG est inline dans index.html ; le JS (renderHome)
-   pilote stroke-dashoffset et les textes au chargement et après
-   chaque quiz.
+   renderHome() (app.js) injecte 1 ou 2 cartes ".home-progress-card"
+   dans ".home-progress-wrap" selon les parcours ayant de la
+   progression :
+     • 0 carte  → aucun module réussi dans aucun des 2 parcours
+                  (wrap masqué, rien à afficher — pas de barre vide)
+     • 1 carte  → un seul parcours a de la progression (le sien,
+                  qu'il s'agisse du parcours actif ou de l'autre)
+     • 2 cartes → les DEUX parcours (Français ET Oromo) ont de la
+                  progression → chacun affiché avec son drapeau
+
+   Chaque carte = drapeau + cercle SVG (%, étoiles) + nb de modules.
 
    r = 50 → circonférence = 2π×50 ≈ 314.16 px.
    stroke-dashoffset : 314.16  = 0% rempli.
@@ -3735,10 +3778,49 @@ footer a:hover{text-decoration:underline}
    % est toujours lue par les lecteurs d'écran via aria).
    ════════════════════════════════════════════════════════════════ */
 
-.home-progress-circle-wrap {
+.home-progress-wrap {
   display: flex;
   justify-content: center;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 22px;
   margin: 10px auto 4px;
+}
+
+.home-progress-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+/* Drapeau identifiant le parcours (Français 🇫🇷 / Oromo 🇪🇹) */
+.hpc-flag {
+  font-size: 1.15rem;
+  line-height: 1;
+}
+
+/* Nb de modules réussis, affiché sous le cercle (ex. "12 / 48 📚") */
+.hpc-modules {
+  font-family: system-ui, -apple-system, sans-serif;
+  font-size: .72rem;
+  font-weight: 600;
+  color: #fff;
+  opacity: .9;
+  white-space: nowrap;
+}
+
+/* Taille du cercle : plus grand quand seul, plus compact à deux
+   (pour rester confortable sur petit écran, cf. iPhone SE ~360px).
+   Classe modificatrice posée par renderHome() — pas de :has() ici,
+   non supporté sur Safari < 15.4 (hors cible iOS 14.5+ du projet). */
+.home-progress-card .home-progress-circle {
+  width: 100px;
+  height: 100px;
+}
+.home-progress-wrap--single .home-progress-circle {
+  width: 116px;
+  height: 116px;
 }
 
 .home-progress-circle {
