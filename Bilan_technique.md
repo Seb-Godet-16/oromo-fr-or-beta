@@ -16,7 +16,7 @@
 | Thèmes par mode | 48 (32 Niveau 1 Vocabulaire + 16 Niveau 2 Dialogue) |
 | Mots/expressions par mode | ~387 entrées (Français) · ~396 entrées (Oromo) |
 | Fonctionnement hors-ligne | ✅ 100 % après première visite (Service Worker) |
-| Taille totale du code source | ~636 Ko (6 fichiers principaux, 13 483 lignes) |
+| Taille totale du code source | ~646 Ko (6 fichiers principaux, 13 618 lignes) |
 
 ---
 
@@ -26,8 +26,8 @@
 
 | Fichier | Taille | Lignes | Rôle |
 |---|---|---|---|
-| `js/app.js` | 196 Ko | 4 761 | Moteur applicatif complet (123 fonctions) |
-| `css/style.css` | 135 Ko | 4 193 | Styles + système de thèmes dual |
+| `js/app.js` | 200 Ko | 4 845 | Moteur applicatif complet (123 fonctions) |
+| `css/style.css` | 137 Ko | 4 244 | Styles + système de thèmes dual |
 | `js/data-fr.js` | 106 Ko | 1 427 | Dataset mode "Apprendre le Français" |
 | `js/data-or.js` | 103 Ko | 1 382 | Dataset mode "Apprendre l'Oromo" |
 | `index.html` | 68 Ko | 1 096 | Structure HTML — 5 écrans + 2 modales |
@@ -65,43 +65,43 @@ Depuis l'écran Sections, deux icônes remplacent l'ancien bouton retour unique 
 
 | # | Section | Fonctions clés | Ligne exacte |
 |---|---|---|---|
-| 1 | Variables d'état globales | `currentMode`, `CT`, `done`, `q10Step`, `_TOTAL_THEMES_PER_MODE`… | **93** |
-| — | Utilitaire bilingue | `L()`, `isFrench()`, **🆕 `_isIosPwaStandalone()`**, `langKeys()` | **149 / 179 / 198 / 207** |
-| 2 | Point d'entrée | `_loadDataScript()`, `initApp(mode)` | **269 / 299** |
-| 3 | Synthèse vocale TTS | `_resolveOromoVoice()`, `speak()`, `_doSpeak()` | **524 / 701 / 785** |
-| 3b | Retour haptique | `_vibrateFeedback()` | **1057** |
-| 3b2 | Confetti | `_launchConfetti()` | **1095** |
-| 3c | Interruption audio | `visibilitychange` (écouteur) | **1177** (section **1149**) |
-| 3d | KeepAlive watchdog | `_startTtsKeepAlive()`, `_stopTtsKeepAlive()` | **1208 / 1220** |
-| 4 | Persistance progression | `loadDone()`, `saveDone()`, `markDone()` | **1244 / 1256 / 1417** |
-| 4c | Réinitialisation | `confirmResetProgress()`, `executeResetProgress()` | **1307 / 1361** (dans §4) |
-| 4b | Session quiz | `_saveQuizSession()`, `_restoreQuizSession()` | **1503 / 1522** |
-| 5 | Navigation | `showScreen()` | **1608** |
-| 5b | Navigation basse | `_updateBottomNav()`, `navGoModules()`, `lessonGoBack()` | **1733 / 1792 / 1808** |
-| 5b | Icônes retour Sections | `goToAccueil()`, `goToGuide()` | **1820 / 1830** |
-| 5b | Navigation leçon | `lessonNav()` | **1843** |
-| 6 | Écran Home — progression | `_computeProgressFrom()`, `_getProgress()`, `_getOtherModeProgress()` | **1890 / 1907 / 1921** |
-| 6 | Écran Home — rendu | `renderHome()`, `_buildProgressCardHTML()` | **1934 / 1998** |
-| 7 | Écran Sections | `renderSections()`, `_buildThemeCard()` | **2036 / 2108** |
-| 8 | Ouverture thème | `openTheme()`, **🆕 badge ⚠️ onglet Répète** (`repeatWarnTitle`), `switchTab()` | **2150 / 2241 / 2300** |
-| 9 | Cartes Flash | `renderFlash()`, `flipCard()`, `nextCard()` | **2341 / 2472 / 2481** |
-| 10 | Quiz 10 questions | `_generateQuiz()`, `renderQuiz10()`, `checkQ10()` | **2595 / 2659 / 2774** |
-| 11 | Dialogue | `renderDialog()`, `pickSit()` | **2829 / 2872** |
-| 12 | Vocabulaire | `renderVocab()` | **2888** |
-| 13b | Onglet Répète | `_matchRepeat()`, `renderRepeat()`, **🆕 garde iOS standalone** (ligne 3178), `repeatRecord()` | **3013 / 3142 / 3425** |
-| 13 | Quiz Dialogue | `renderDialogQuiz()`, `checkDQ()` | **3640 / 3708** |
-| 14 | Utilitaires | `_quizResultStrings()`, `esc()`, `escJS()` | **3750 / 3784 / 3804** |
-| 17 | Guide / Onboarding | `_buildHomeGuide()`, `_maybeShowOnboarding()` | **3884 / 3961** |
-| 18 | Crédits | `showCredits()`, `closeCreditsModal()` | **3991 / 4042** |
-| 15 | Launcher init | Initialisation au chargement | **4049** |
-| 16 | Accessibilité clavier | Navigation clavier globale | **4067** |
-| 19 | Spinner / Viewport | `_showLoadingSpinner()`, fix Android Chrome | **4091 / 4122** |
-| 20 | Service Worker | Enregistrement PWA | **4184** |
-| 21 | Exports PDF | `_exportGuide()`, `_exportVocab()`, `_exportSituation()` | **4431 / 4537 / 4633** |
+| 1 | Variables d'état globales | `currentMode`, `CT`, `done`, `q10Step`, `_TOTAL_THEMES_PER_MODE`… | **86 / 92 / 108 / 101 / 115** |
+| — | Utilitaire bilingue | `L()`, `isFrench()`, `_isIosPwaStandalone()`, `langKeys()` | **156 / 163 / 182 / 191** |
+| 2 | Point d'entrée | `_loadDataScript()`, `initApp(mode)` | **253 / 283** |
+| 3 | Synthèse vocale TTS | `_resolveOromoVoice()`, `speak()`, `_doSpeak()` | **508 / 720 / 804** |
+| 3b | Retour haptique | `_vibrateFeedback()` | **1093** |
+| 3b2 | Confetti | `_launchConfetti()` | **1131** |
+| 3c | Interruption audio | `visibilitychange` (écouteur) | **1213** (section **1185**) |
+| 3d | KeepAlive watchdog | `_startTtsKeepAlive()`, `_stopTtsKeepAlive()` | **1244 / 1256** |
+| 4 | Persistance progression | `loadDone()`, `saveDone()`, `markDone()` | **1280 / 1292 / 1453** |
+| 4c | Réinitialisation | `confirmResetProgress()`, `executeResetProgress()` | **1343 / 1397** (dans §4) |
+| 4b | Session quiz | `_saveQuizSession()`, `_restoreQuizSession()` | **1539 / 1558** |
+| 5 | Navigation | `showScreen()` | **1644** |
+| 5b | Navigation basse | `_updateBottomNav()`, `navGoModules()`, `lessonGoBack()` | **1769 / 1828 / 1844** |
+| 5b | Icônes retour Sections | `goToAccueil()`, `goToGuide()` | **1856 / 1866** |
+| 5b | Navigation leçon | `lessonNav()` | **1879** |
+| 6 | Écran Home — progression | `_computeProgressFrom()`, `_getProgress()`, `_getOtherModeProgress()` | **1926 / 1943 / 1957** |
+| 6 | Écran Home — rendu | `renderHome()`, `_buildProgressCardHTML()` | **1970 / 2034** |
+| 7 | Écran Sections | `renderSections()`, `_buildThemeCard()` | **2072 / 2144** |
+| 8 | Ouverture thème | `openTheme()`, badge ⚠️ onglet Répète (`repeatWarnTitle`), `switchTab()` | **2186 / 2277 / 2336** |
+| 9 | Cartes Flash | `renderFlash()`, `flipCard()`, `nextCard()` | **2377 / 2509 / 2518** |
+| 10 | Quiz 10 questions | `_generateQuiz()`, `renderQuiz10()`, `checkQ10()` | **2632 / 2696 / 2816** |
+| 11 | Dialogue | `renderDialog()`, `pickSit()` | **2871 / 2915** |
+| 12 | Vocabulaire | `renderVocab()` | **2931** |
+| 13b | Onglet Répète | `_matchRepeat()`, `renderRepeat()`, garde iOS standalone (ligne 3222), `repeatRecord()` | **3057 / 3186 / 3509** |
+| 13 | Quiz Dialogue | `renderDialogQuiz()`, `checkDQ()` | **3724 / 3792** |
+| 14 | Utilitaires | `_quizResultStrings()`, `esc()`, `escJS()` | **3834 / 3868 / 3888** |
+| 17 | Guide / Onboarding | `_buildHomeGuide()`, `_maybeShowOnboarding()` | **3968 / 4045** |
+| 18 | Crédits | `showCredits()`, `closeCreditsModal()` | **4075 / 4126** |
+| 15 | Launcher init | Initialisation au chargement | **4133** |
+| 16 | Accessibilité clavier | Navigation clavier globale | **4151** |
+| 19 | Spinner / Viewport | `_showLoadingSpinner()`, `setAppHeight()` (fix Android Chrome) | **4175 / 4233** |
+| 20 | Service Worker | Enregistrement PWA (`navigator.serviceWorker.register`) | **4268** (appel : **4306**) |
+| 21 | Exports PDF | `_exportGuide()`, `_exportVocab()`, `_exportSituation()` | **4515 / 4621 / 4717** |
 
-*Nouveautés 05–06/07/2026 (voir Historique, §9) : `_TOTAL_THEMES_PER_MODE` (ligne 131), `_setAttrBi()` (ligne 425), `goToAccueil()` / `goToGuide()` (icônes 🏠/❓), `_computeProgressFrom()` / `_getOtherModeProgress()` / `_buildProgressCardHTML()` (carte(s) de progression Home).*
+*Table entièrement revérifiée et resynchronisée avec le code le 08/07/2026 — toutes les lignes ci-dessus ont été confirmées par recherche directe dans `app.js` (4 845 lignes actuelles). Elles avaient dérivé de -16 à +51 lignes par rapport à la précédente version de ce tableau, sans que le code lui-même soit en cause : le plan interne en en-tête de `app.js` (`SECTIONS DE CE FICHIER`), lui, est resté exact tout du long et a servi de référence pour cette mise à jour.*
 
-*🆕 Nouveauté 06/07/2026 (suite recettage iPhone, voir §6.13 et §8) : `_isIosPwaStandalone()` — utilitaire centralisé, réutilisé dans `renderRepeat()` (message d'indisponibilité précoce), dans `repeatRecord()` (filet de sécurité `onerror`) et dans `_openPrintWindow()` (refactor, comportement inchangé). Toutes les lignes ci-dessus sont décalées de +19 à +73 par rapport à la version précédente selon leur position dans le fichier — voir le détail exact dans chaque commentaire du code.*
+*Repères utiles pour les prochaines évolutions (voir §6.11 à §6.13) : `_TOTAL_THEMES_PER_MODE` (ligne 115), `_setAttrBi()` (ligne 409), `_isIosPwaStandalone()` (ligne 182, réutilisé dans `renderRepeat()` ligne 3222, `repeatRecord()` ligne 3545 et `_openPrintWindow()` ligne 4351).*
 
 ---
 
@@ -109,44 +109,44 @@ Depuis l'écran Sections, deux icônes remplacent l'ancien bouton retour unique 
 
 | § | Section | Ligne |
 |---|---|---|
-| §1 | Reset & base globale | 69 |
-| §2 | Variables de thème `:root` (fallback) | 193 |
-| §3 | Thème Français `html.theme-french` | 256 |
-| §4 | Thème Oromo `html.theme-oromo` | 296 |
-| §5 | Écran 0 — Lanceur | 331 |
-| §6 | Écran 1 — Accueil #home | 537 |
-| §7 | Écran 2 — Sections | 603 |
-| §8 | Écran 3 — Leçon (dont `.back-btn-icon`, 🏠/❓) | 728 (icônes : 946) |
-| §9 | Flashcards | 1007 |
-| §10 | Alphabet | 1189 |
-| §11 | Quiz | 1289 |
-| §12 | Dialogues / Situations | 1394 |
-| §13 | Vocabulaire | 1499 |
-| §14 | Modale Remerciements | 1567 |
-| §15 | Footer commun | 1654 |
-| §16 | Toast notification | 1674 |
-| §17 | Onglet Répète | 1710 |
-| §18 | Focus clavier | 1979 |
-| §19 | Guide utilisateur `.ob-*` | 1997 |
-| §20 | Spinner de chargement | 2453 |
-| §22 | Écran Home redesigné | 2490 |
-| §23 | Écran Sections redesigné (dont `.back-btn-group`) | 2751 (groupe : 2776) |
-| §24 | Responsive tablette & desktop | 2881 |
-| §24b | Mode sombre `prefers-color-scheme` | 2971 |
-| §24c | Responsive mode paysage mobile | 3082 |
-| §25 | Boutons export PDF | 3144 |
-| §26 | Barre de navigation basse | 3244 |
-| §27 | Onglets Niveau 1 / 2 | 3371 |
-| §28 | Écrans sections (no-scroll fix) | 3466 |
-| §20e | Grille thèmes dans les écrans level | 3663 |
-| §CONFETTI | Animation ⭐⭐⭐ | 3684 |
-| §PROGRESS | 🆕 Carte(s) de progression Home (1 ou 2 selon parcours) | 3755 |
-| §CONFIRM | Modale confirmation suppression | 3878 |
-| §ANTISPAM | Email affiché à l'envers (RTL CSS) | 3997 |
-| §SPEAKING | Feedback visuel bouton audio (TTS) | 4024 |
-| §29 | Correctifs accessibilité mode sombre (WCAG AA) | 4082 |
+| §1 | Reset & base globale | 70 |
+| §2 | Variables de thème `:root` (fallback) | 194 |
+| §3 | Thème Français `html.theme-french` | 257 |
+| §4 | Thème Oromo `html.theme-oromo` | 297 |
+| §5 | Écran 0 — Lanceur | 332 |
+| §6 | Écran 1 — Accueil #home | 538 |
+| §7 | Écran 2 — Sections | 604 |
+| §8 | Écran 3 — Leçon (dont `.back-btn-icon`, 🏠/❓) | 729 (icônes : 947) |
+| §9 | Flashcards | 1008 |
+| §10 | Alphabet | 1210 |
+| §11 | Quiz | 1310 |
+| §12 | Dialogues / Situations | 1415 |
+| §13 | Vocabulaire | 1520 |
+| §14 | Modale Remerciements | 1588 |
+| §15 | Footer commun | 1675 |
+| §16 | Toast notification | 1695 |
+| §17 | Onglet Répète | 1731 |
+| §18 | Focus clavier | 2029 |
+| §19 | Guide utilisateur `.ob-*` | 2047 |
+| §20 | Spinner de chargement | 2503 |
+| §22 | Écran Home redesigné | 2540 |
+| §23 | Écran Sections redesigné (dont `.back-btn-group`) | 2801 (groupe : 2826) |
+| §24 | Responsive tablette & desktop | 2931 |
+| §24b | Mode sombre `prefers-color-scheme` | 3021 |
+| §24c | Responsive mode paysage mobile | 3132 |
+| §25 | Boutons export PDF | 3194 |
+| §26 | Barre de navigation basse | 3294 |
+| §27 | Onglets Niveau 1 / 2 | 3421 |
+| §28 | Écrans sections (no-scroll fix) | 3516 |
+| §20e | Grille thèmes dans les écrans level | 3714 |
+| §CONFETTI | Animation ⭐⭐⭐ | 3735 |
+| §PROGRESS | Carte(s) de progression Home (1 ou 2 selon parcours) | 3806 |
+| §CONFIRM | Modale confirmation suppression | 3929 |
+| §ANTISPAM | Email affiché à l'envers (RTL CSS) | 4048 |
+| §SPEAKING | Feedback visuel bouton audio (TTS) | 4075 |
+| §29 | Correctifs accessibilité mode sombre (WCAG AA) | 4133 |
 
-*§PROGRESS a été entièrement réécrit le 06/07/2026 : l'ancien cercle SVG unique (`.home-progress-circle-wrap`) est remplacé par `.home-progress-wrap` + `.home-progress-card`, capable d'afficher 1 ou 2 cartes.*
+*Table resynchronisée le 08/07/2026 (elle avait dérivé de +1 à +51 lignes selon la position dans le fichier — `style.css` a continué de grossir sans que ce tableau soit remis à jour). §PROGRESS reste la refonte du 06/07/2026 : l'ancien cercle SVG unique (`.home-progress-circle-wrap`) est remplacé par `.home-progress-wrap` + `.home-progress-card`, capable d'afficher 1 ou 2 cartes. Pour rappel, le plan interne en en-tête de `style.css` (`PLAN DU FICHIER`) est resté exact tout du long et a servi de référence pour cette mise à jour.*
 
 ---
 
@@ -176,31 +176,31 @@ Une seule classe sur `<html>` (`theme-french` ou `theme-oromo`) bascule l'intég
 `initApp(mode)` injecte dynamiquement `<script src="data-fr.js">` ou `<script src="data-or.js">` dans le DOM. Seul le dataset du mode choisi (~100 Ko) est chargé en mémoire JS — l'autre reste en cache disque Service Worker.
 
 ### 6.3 Cascade TTS pour l'Oromo
-La voix Oromo native (`om-ET`) est quasi absente des appareils. `_resolveOromoVoice()` tente : `om-ET` → `so-SO` → `am-ET` → `ha-NG` → `sw-KE` → `es-ES`. L'onglet Répète a sa propre cascade `_resolveRepeatLangOromo()` (ligne 3166) avec le même ordre.
+La voix Oromo native (`om-ET`) est quasi absente des appareils. `_resolveOromoVoice()` tente : `om-ET` → `so-SO` → `am-ET` → `ha-NG` → `sw-KE` → `es-ES`. L'onglet Répète a sa propre cascade `_resolveRepeatLangOromo()` (ligne 3271) avec le même ordre.
 
 ### 6.4 Algorithme de correspondance Répète
-`_matchRepeat()` combine correspondance exacte + distance de Levenshtein (`_levenshtein()`, **ligne 3022**) pour tolérer les erreurs de prononciation mineures lors de la reconnaissance vocale.
+`_matchRepeat()` combine correspondance exacte + distance de Levenshtein (`_levenshtein()`, **ligne 3102**) pour tolérer les erreurs de prononciation mineures lors de la reconnaissance vocale.
 
 ### 6.5 Persistance de progression
 Deux clés localStorage indépendantes : `pe_om_fr_done_v1` (mode Français) et `pe_fr_om_done_v1` (mode Oromo). Les étoiles ne décroissent jamais — seul le meilleur score est conservé. Seuils : ≥ 50 % → ⭐ · ≥ 75 % → ⭐⭐ · 100 % → ⭐⭐⭐.
 
 ### 6.6 Quiz alphabet — statique vs dynamique
-Le thème `alpha` seul utilise un tableau `quiz10[]` codé en dur dans les données, car le quiz est **audio** (phonétique) : les distracteurs doivent être phonétiquement proches (ex : C / K / CH / G). Tous les autres thèmes utilisent `_generateQuiz()` (Fisher-Yates, **ligne 2559**).
+Le thème `alpha` seul utilise un tableau `quiz10[]` codé en dur dans les données, car le quiz est **audio** (phonétique) : les distracteurs doivent être phonétiquement proches (ex : C / K / CH / G). Tous les autres thèmes utilisent `_generateQuiz()` (Fisher-Yates, **ligne 2632**).
 
 ### 6.7 Session quiz (sessionStorage)
-`_saveQuizSession()` / `_restoreQuizSession()` (**lignes 1484 / 1503**) sauvegardent l'état du quiz en cours dans `sessionStorage` — survit à un changement d'onglet accidentel, mais s'efface à la fermeture du navigateur.
+`_saveQuizSession()` / `_restoreQuizSession()` (**lignes 1539 / 1558**) sauvegardent l'état du quiz en cours dans `sessionStorage` — survit à un changement d'onglet accidentel, mais s'efface à la fermeture du navigateur.
 
 ### 6.8 Versioning de cache automatisé
 `sw.js` contient le placeholder `GITHUB_RUN_NUMBER`, remplacé par `sed` dans `deploy.yml` à chaque déploiement. Chaque build produit un nom de cache unique — aucune intervention manuelle requise.
 
 ### 6.9 Fix viewport Android
-`--app-h` et `--bottom-nav-h` sont recalculées via `window.innerHeight` à chaque `resize`/`orientationchange` (**ligne 4048**) pour contourner le bug `100dvh` incluant la barre d'URL sur Android Chrome/Brave.
+`--app-h` et `--bottom-nav-h` sont recalculées via `window.innerHeight` dans `setAppHeight()` (**ligne 4233**), appelée à chaque `resize`/`orientationchange`, pour contourner le bug `100dvh` incluant la barre d'URL sur Android Chrome/Brave.
 
 ### 6.10 Anti-spam email
 L'adresse email est affichée en écriture RTL CSS dans `index.html` (**ligne 187**) et dans les guides onboarding (lignes **525** et **838**), masquant la vraie adresse aux scrapers. Le clic copie l'adresse corrigée dans le presse-papier.
 
 ### 6.11 🆕 Navigation retour Sections — deux destinations distinctes (06/07/2026)
-L'ancien bouton unique `← Retour` de l'écran Sections est remplacé par deux icônes (`goToAccueil()` ligne 1801, `goToGuide()` ligne 1811) :
+L'ancien bouton unique `← Retour` de l'écran Sections est remplacé par deux icônes (`goToAccueil()` ligne 1856, `goToGuide()` ligne 1866) :
 - **🏠** renvoie au **Lanceur** (`#app-launcher`), pas à l'écran Home — c'est le même écran que celui affiché au tout premier lancement de l'app, où l'on choisit Français ou Oromo.
 - **❓** renvoie à l'écran **Home** (dashboard + guide), sans scroll forcé — comportement strictement identique au bouton "Guide" déjà présent dans la nav basse (`showOnboardingGuide()`).
 
@@ -216,10 +216,10 @@ Aucun nouvel écran n'a été créé : les deux icônes réutilisent des cibles 
 
 | Emplacement | Comportement |
 |---|---|
-| `_isIosPwaStandalone()` (utilitaire centralisé, ligne 198) | Détecte `navigator.standalone === true`, réutilisé partout où cette limitation s'applique |
-| Onglet **Répète** — barre d'onglets (`openTheme()`, ligne 2241) | 🆕 Badge `⚠️` ajouté directement sur le libellé de l'onglet + `title` explicatif, visible **avant même que l'apprenant ne touche l'onglet** |
-| Onglet **Répète** — ouverture (`renderRepeat()`, ligne 3178) | Message d'indisponibilité clair affiché **avant** la demande de permission micro (évite une demande inutile qui échouera de toute façon) |
-| Bouton micro (`repeatRecord()` → `onerror`, ligne ~3446) | Filet de sécurité : si `service-not-allowed` survient quand même (navigation privée, Dictée désactivée, app tierce type SafariViewController), message spécifique au lieu du texte brut de l'erreur |
+| `_isIosPwaStandalone()` (utilitaire centralisé, ligne 182) | Détecte `navigator.standalone === true`, réutilisé partout où cette limitation s'applique |
+| Onglet **Répète** — barre d'onglets (`openTheme()`, ligne 2277) | Badge `⚠️` ajouté directement sur le libellé de l'onglet + `title` explicatif, visible **avant même que l'apprenant ne touche l'onglet** |
+| Onglet **Répète** — ouverture (`renderRepeat()`, ligne 3222) | Message d'indisponibilité clair affiché **avant** la demande de permission micro (évite une demande inutile qui échouera de toute façon) |
+| Bouton micro (`repeatRecord()` → `onerror`, ligne 3545) | Filet de sécurité : si `service-not-allowed` survient quand même (navigation privée, Dictée désactivée, app tierce type SafariViewController), message spécifique au lieu du texte brut de l'erreur |
 
 **Limite assumée** : sur iPhone/iPad, l'onglet Répète ne fonctionnera **jamais** dans l'app installée sur l'écran d'accueil — seulement dans un onglet Safari classique. C'est communiqué à l'apprenant, pas corrigé (aucune correction possible côté web).
 
@@ -232,7 +232,7 @@ Le cercle SVG unique de l'écran Home est remplacé par 0, 1 ou 2 « cartes » (
 | Un seul parcours a de la progression | 1 carte, pour ce parcours (actif **ou** l'autre) |
 | Les deux parcours ont de la progression | 2 cartes côte à côte (🇫🇷 et 🇪🇹) |
 
-Le nombre total de thèmes de l'AUTRE parcours (48, identique dans les deux modes) est une constante figée (`_TOTAL_THEMES_PER_MODE`, ligne 131) plutôt que lu depuis son dataset — évite d'injecter le `data-*.js` de l'autre mode juste pour afficher une statistique. La progression elle-même est lue directement dans son `localStorage` (`_getOtherModeProgress()`, ligne 1902).
+Le nombre total de thèmes de l'AUTRE parcours (48, identique dans les deux modes) est une constante figée (`_TOTAL_THEMES_PER_MODE`, ligne 115) plutôt que lu depuis son dataset — évite d'injecter le `data-*.js` de l'autre mode juste pour afficher une statistique. La progression elle-même est lue directement dans son `localStorage` (`_getOtherModeProgress()`, ligne 1957).
 
 ---
 
@@ -240,7 +240,7 @@ Le nombre total de thèmes de l'AUTRE parcours (48, identique dans les deux mode
 
 | Point | Niveau | Détail |
 |---|---|---|
-| `app.js` monolithique | ⚠️ Moyen | 4 690 lignes, 121 fonctions — maintenable grâce aux `§` mais migration ES modules complexe (handlers `onclick` inline) |
+| `app.js` monolithique | ⚠️ Moyen | 4 845 lignes, 123 fonctions — maintenable grâce aux `§` mais migration ES modules complexe (handlers `onclick` inline) |
 | `unsafe-inline` CSP | ⚠️ Moyen | Nécessaire pour les `onclick` générés dynamiquement par `innerHTML` et pour GitHub Pages (pas de headers HTTP customs) |
 | Voix Oromo TTS | ⚠️ Moyen | `om-ET` absente sur la plupart des appareils — l'utilisateur entend souvent du Somali ou de l'Amharique |
 | 🆕 Reconnaissance vocale (mic) en app installée iOS | ⚠️ Bloquant non corrigeable, ✅ communiqué | Limitation Apple/WebKit confirmée (bug #225298) : `service-not-allowed` systématique en mode standalone. Aucune solution côté code — badge ⚠️ sur l'onglet + message clair avant la demande de permission (voir §6.13) |
@@ -279,5 +279,6 @@ Le nombre total de thèmes de l'AUTRE parcours (48, identique dans les deux mode
 | 04/07/2026 | Recettage mobile (Brave Android / Galaxy A55 5G) — Sébastien Godet + Gemini 3.5 Flash Extended |
 | 05/07/2026 | Correctifs — Sébastien Godet + Claude Sonnet 5 |
 | 06/07/2026 | Correctifs (fin) — Sébastien Godet + Claude Sonnet 5 |
+| 08/07/2026 | Vérification et resynchronisation de toute la documentation (README + ce Bilan) avec les numéros de ligne réels du code — Sébastien Godet + Claude Sonnet 5 |
 
 *Journal détaillé (dont la citation complète du retour de recettage du 03/07) : voir le bloc de commentaire `HISTORIQUE DE L'APPLICATION` en tête de `app.js`.*

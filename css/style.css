@@ -22,45 +22,46 @@
  * ║  rendu visuel.                                                  ║
  * ╠══════════════════════════════════════════════════════════════════╣
  * ║  PLAN DU FICHIER                                                ║
- * ║   §1        Reset & base                          ligne    69  ║
- * ║   §2        Variables de thème (:root / fallback) ligne   193  ║
- * ║   §3        Thème Français (html.theme-french)    ligne   256  ║
- * ║   §4        Thème Oromo (html.theme-oromo)        ligne   296  ║
- * ║   §5        Écran 0 — Lanceur                     ligne   331  ║
- * ║   §6        Écran 1 — Accueil #home               ligne   537  ║
- * ║   §7        Écran 2 — Sections                    ligne   603  ║
- * ║   §8        Écran 3 — Leçon (dont .back-btn-icon  ligne   728  ║
- * ║             icônes 🏠/❓, voir ligne 946)                       ║
- * ║   §9        Composants : Flashcards               ligne  1007  ║
- * ║   §10       Composants : Alphabet                 ligne  1189  ║
- * ║   §11       Composants : Quiz                     ligne  1289  ║
- * ║   §12       Composants : Dialogues / Situations   ligne  1394  ║
- * ║   §13       Composants : Vocabulaire              ligne  1499  ║
- * ║   §14       Modale Remerciements                  ligne  1567  ║
- * ║   §15       Footer commun                         ligne  1654  ║
- * ║   §16       Toast notification                    ligne  1674  ║
- * ║   §17       Onglet Répète                         ligne  1710  ║
- * ║   §18       Focus clavier                         ligne  1979  ║
- * ║   §19       Guide utilisateur (.ob-*)             ligne  1997  ║
- * ║   §20       Spinner de chargement                 ligne  2453  ║
- * ║   §22       Écran Home redesigné                  ligne  2490  ║
- * ║   §23       Écran Sections redesigné (dont        ligne  2751  ║
- * ║             .back-btn-group, voir ligne 2776)                  ║
- * ║   §24       Responsive : tablette & desktop       ligne  2881  ║
- * ║   §24b      Mode sombre                           ligne  2971  ║
- * ║   §24c      Responsive : mode paysage mobile      ligne  3082  ║
- * ║   §25       Boutons d'export PDF                  ligne  3144  ║
- * ║   §26       Barre de navigation basse             ligne  3244  ║
- * ║   §27       Onglets niveau 1 / 2                  ligne  3371  ║
- * ║   §28       Écrans sections level (no-scroll)     ligne  3466  ║
- * ║   §20e      Grille thèmes écrans level            ligne  3663  ║
- * ║   §CONFETTI Animation de félicitations ⭐⭐⭐      ligne  3684  ║
- * ║   §PROGRESS Carte(s) de progression (Home,        ligne  3755  ║
+ * ║   §1        Reset & base                          ligne    70  ║
+ * ║   §2        Variables de thème (:root / fallback) ligne   194  ║
+ * ║   §3        Thème Français (html.theme-french)    ligne   257  ║
+ * ║   §4        Thème Oromo (html.theme-oromo)        ligne   297  ║
+ * ║   §5        Écran 0 — Lanceur                     ligne   332  ║
+ * ║   §6        Écran 1 — Accueil #home               ligne   538  ║
+ * ║   §7        Écran 2 — Sections                    ligne   604  ║
+ * ║   §8        Écran 3 — Leçon (dont .back-btn-icon  ligne   729  ║
+ * ║             icônes 🏠/❓, voir ligne 947)                       ║
+ * ║   §9        Composants : Flashcards               ligne  1008  ║
+ * ║   §10       Composants : Alphabet                 ligne  1210  ║
+ * ║   §11       Composants : Quiz                     ligne  1310  ║
+ * ║   §12       Composants : Dialogues / Situations   ligne  1415  ║
+ * ║   §13       Composants : Vocabulaire              ligne  1520  ║
+ * ║   §14       Modale Remerciements                  ligne  1588  ║
+ * ║   §15       Footer commun                         ligne  1675  ║
+ * ║   §16       Toast notification                    ligne  1695  ║
+ * ║   §17       Onglet Répète (dont 🆕 .repeat-        ligne  1731  ║
+ * ║             badges-intro, phrase d'intro 2 badges)              ║
+ * ║   §18       Focus clavier                         ligne  2029  ║
+ * ║   §19       Guide utilisateur (.ob-*)             ligne  2047  ║
+ * ║   §20       Spinner de chargement                 ligne  2503  ║
+ * ║   §22       Écran Home redesigné                  ligne  2540  ║
+ * ║   §23       Écran Sections redesigné (dont        ligne  2801  ║
+ * ║             .back-btn-group, voir ligne 2826)                  ║
+ * ║   §24       Responsive : tablette & desktop       ligne  2931  ║
+ * ║   §24b      Mode sombre                           ligne  3021  ║
+ * ║   §24c      Responsive : mode paysage mobile      ligne  3132  ║
+ * ║   §25       Boutons d'export PDF                  ligne  3194  ║
+ * ║   §26       Barre de navigation basse             ligne  3294  ║
+ * ║   §27       Onglets niveau 1 / 2                  ligne  3421  ║
+ * ║   §28       Écrans sections level (no-scroll)     ligne  3516  ║
+ * ║   §20e      Grille thèmes écrans level            ligne  3714  ║
+ * ║   §CONFETTI Animation de félicitations ⭐⭐⭐      ligne  3735  ║
+ * ║   §PROGRESS Carte(s) de progression (Home,        ligne  3806  ║
  * ║             1 ou 2 selon les parcours commencés)                ║
- * ║   §CONFIRM  Modale confirmation suppression       ligne  3878  ║
- * ║   §ANTISPAM E-mail affiché à l'envers (CSS RTL)  ligne  3997  ║
- * ║   §SPEAKING Feedback visuel bouton audio (TTS)    ligne  4024  ║
- * ║   §29       Correctifs accessibilité mode sombre  ligne  4082  ║
+ * ║   §CONFIRM  Modale confirmation suppression       ligne  3929  ║
+ * ║   §ANTISPAM E-mail affiché à l'envers (CSS RTL)  ligne  4048  ║
+ * ║   §SPEAKING Feedback visuel bouton audio (TTS)    ligne  4075  ║
+ * ║   §29       Correctifs accessibilité mode sombre  ligne  4133  ║
  * ╚══════════════════════════════════════════════════════════════════╝
  */
 
@@ -1755,6 +1756,18 @@ footer a:hover{text-decoration:underline}
   font-size:.78rem;
   color:#888;
   line-height:1.5;
+}
+
+/* 🆕 (08/07/2026) Phrase d'intro, une seule fois au-dessus des 2 badges
+   (voix TTS 🔊 + reconnaissance STT 🎙️) — même style discret que le badge
+   "cas normal" ci-dessous, pour ne pas surcharger l'écran mobile. */
+.repeat-badges-intro{
+  font-size:.72rem;
+  color:#888;
+  text-align:right;
+  margin-bottom:6px;
+  padding-right:2px;
+  line-height:1.4;
 }
 
 /* ── Info langue utilisée ──────────────────────────────────────── */

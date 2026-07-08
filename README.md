@@ -41,7 +41,7 @@ Taphad'Meuh/
 │   └── style.css           ← All styles — dual theme system (theme-french / theme-oromo)
 │
 ├── js/
-│   ├── app.js              ← Full application engine (4 690 lines, 21 sections)
+│   ├── app.js              ← Full application engine (4 845 lines, 21 sections)
 │   ├── data-fr.js          ← Dataset — "Learn French" mode (48 themes, 1 427 lines)
 │   └── data-or.js          ← Dataset — "Learn Oromo" mode  (48 themes, 1 382 lines)
 │
@@ -224,7 +224,7 @@ Cache name is auto-versioned by GitHub Actions (`GITHUB_RUN_NUMBER`) on every de
 
 ### `app.js` — fichier unique volontairement monolithique
 
-Le moteur applicatif tient dans un seul fichier (4 690 lignes, 21 sections commentées).
+Le moteur applicatif tient dans un seul fichier (4 845 lignes, 21 sections commentées).
 Ce choix est délibéré : zéro étape de build, compatibilité maximale, hébergement statique sans bundler.
 
 Si le projet grossit significativement, une migration vers des modules ES (`import`/`export`) est envisageable. Elle nécessiterait :
@@ -266,6 +266,7 @@ Les autres thèmes de Niveau 1 génèrent leurs questions à la volée depuis `w
 | 03/07/2026 | Recettage desktop Chrome (Sébastien + Gemini 3.5 Flash) — aucune erreur JS, cœur applicatif sain ; fonctionnalités mobiles (PWA, micro, hors-ligne) non testables en local (N/A) |
 | 04/07/2026 | Recettage mobile — Brave Android, Samsung Galaxy A55 5G (Sébastien + Gemini 3.5 Flash Extended) — liste de correctifs identifiée |
 | 05–06/07/2026 | Correctifs appliqués (Sébastien + Claude Sonnet 5) |
+| 08/07/2026 | Documentation (README + Bilan technique) resynchronisée avec le code réel (Sébastien + Claude Sonnet 5) |
 
 *Journal détaillé (dont le retour de recettage complet du 03/07) disponible en commentaire d'en-tête dans `app.js`.*
 

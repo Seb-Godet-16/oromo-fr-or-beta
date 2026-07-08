@@ -12,49 +12,52 @@
      └─ app.js       → Ce fichier : logique applicative complète
 
    SECTIONS DE CE FICHIER (ordre d'apparition réel) :
-      1.   Variables d'état globales (let/const)             ligne    93
-      —    Utilitaire bilingue L() / langKeys()              ligne   148
-      2.   Point d'entrée — initApp(mode)                    ligne   218
-      3.   Synthèse vocale + prononciation Oromo             ligne   416
-      3a2. Surlignage mot par mot — pendant la lecture TTS   ligne   805
-      3a3. Vitesse de lecture — paliers (Cartes Flash)       ligne   940
-      3b.  Retour haptique — _vibrateFeedback()              ligne  1026
-      3b2. Confetti — animation de félicitations (stars)     ligne  1048
-      3c.  Interruption audio — visibilitychange / focus     ligne  1129
-      3d.  KeepAlive watchdog — Chrome / Android             ligne  1170
-      4.   Persistance de la progression (étoiles)           ligne  1212
-      4c.  Réinitialisation — confirmResetProgress()         ligne  1288  (dans §4)
-      4b.  Restauration de session quiz (sessionStorage)     ligne  1453
-      5.   Navigation entre écrans                           ligne  1565
-      5b.  Navigation basse — helpers                        ligne  1680
-           dont goToAccueil() / goToGuide() — icônes 🏠 / ❓   ligne  1801
+      1.   Variables d'état globales (let/const)             ligne    78
+      —    Utilitaire bilingue L() / langKeys()              ligne   133
+      2.   Point d'entrée — initApp(mode)                    ligne   222
+      3.   Synthèse vocale + prononciation Oromo             ligne   420
+      3a2. Surlignage mot par mot — pendant la lecture TTS   ligne   844
+      3a3. Vitesse de lecture — paliers (Cartes Flash,       ligne   979
+           Répète, Dialogue, Vocabulaire, Quiz Vocabulaire)
+      3b.  Retour haptique — _vibrateFeedback()              ligne  1082
+      3b2. Confetti — animation de félicitations (stars)     ligne  1104
+      3c.  Interruption audio — visibilitychange / focus     ligne  1185
+      3d.  KeepAlive watchdog — Chrome / Android             ligne  1226
+      4.   Persistance de la progression (étoiles)           ligne  1268
+      4c.  Réinitialisation — confirmResetProgress()         ligne  1343  (dans §4)
+      4b.  Restauration de session quiz (sessionStorage)     ligne  1509
+      5.   Navigation entre écrans                           ligne  1621
+      5b.  Navigation basse — helpers                        ligne  1736
+           dont goToAccueil() / goToGuide() — icônes 🏠 / ❓   ligne  1856
            du header Sections (choix Lanceur vs Écran Home)
-      6.   Écran Home — bouton Commencer + carte(s) de       ligne  1852
+      6.   Écran Home — bouton Commencer + carte(s) de       ligne  1908
            progression (1 par parcours ayant des modules
            réussis — _getOtherModeProgress(), voir plus bas)
-      7.   Écran Sections — grille des thèmes                ligne  2006
-      8.   Ouverture d'un thème (écran Lesson + onglets)     ligne  2119
-           switchTab() : onglets + repositionnement          ligne  2264
+      7.   Écran Sections — grille des thèmes                ligne  2062
+      8.   Ouverture d'un thème (écran Lesson + onglets)     ligne  2175
+           switchTab() : onglets + repositionnement          ligne  2336
            du bouton PDF en mode Cartes (fixed via JS)
-      9.   Cartes Flash — vocabulaire interactif             ligne  2295
-     10.   Quiz 10 questions — avec étoiles progressives     ligne  2469
-     11.   Dialogue — scènes de situation                    ligne  2783
-     12.   Vocabulaire — lexique visuel cliquable            ligne  2842
-     13b.  Onglet Répète — reconnaissance vocale             ligne  2889
-     13.   Quiz Dialogue — questions sur le dialogue         ligne  3557
-     14.   Utilitaires & chaînes de résultats bilingues      ligne  3667
-     17.   Guide utilisateur — Onboarding                    ligne  3754
-      —    Écran Home — _buildHomeGuide()                    ligne  3811
-     18.   Crédits — showCredits()                           ligne  3918
-     15.   Initialisation du launcher                        ligne  3975
-     16.   Accessibilité clavier                             ligne  3993
-     19.   Spinner de chargement des données                 ligne  4018
-     19b.  Viewport height fix — Android Chrome / Brave      ligne  4048
-     20.   Enregistrement du Service Worker (PWA)            ligne  4110
-     21.   Exports PDF — window.print() + @media print       ligne  4157
-     21a.  Export Guide (écran Home)                         ligne  4356
-     21b.  Export Vocabulaire (leçon Niveau 1)               ligne  4462
-     21c.  Export Situation (leçon Niveau 2 — dialogue)      ligne  4558
+      9.   Cartes Flash — vocabulaire interactif             ligne  2368
+     10.   Quiz 10 questions — avec étoiles progressives     ligne  2543
+           (dont Quiz Alphabet, sans barre de vitesse — voir §3a3)
+     11.   Dialogue — scènes de situation                    ligne  2862
+     12.   Vocabulaire — lexique visuel cliquable            ligne  2922
+     13b.  Onglet Répète — badges voix (🔊) + reconnaissance   ligne  2970
+           vocale (🎙️), vitesse dédiée — voir §3a3
+     13.   Quiz Dialogue — questions sur le dialogue         ligne  3715
+     14.   Utilitaires & chaînes de résultats bilingues      ligne  3825
+     17.   Guide utilisateur — Onboarding                    ligne  3912
+      —    Écran Home — _buildHomeGuide()                    ligne  3968
+     18.   Crédits — showCredits()                           ligne  4072
+     15.   Initialisation du launcher                        ligne  4133
+     16.   Accessibilité clavier                             ligne  4151
+     19.   Spinner de chargement des données                 ligne  4163
+     19b.  Viewport height fix — Android Chrome / Brave      ligne  4206
+     20.   Enregistrement du Service Worker (PWA)            ligne  4268
+     21.   Exports PDF — window.print() + @media print       ligne  4315
+     21a.  Export Guide (écran Home)                         ligne  4512
+     21b.  Export Vocabulaire (leçon Niveau 1)               ligne  4618
+     21c.  Export Situation (leçon Niveau 2 — dialogue)      ligne  4714
    ============================================================
 
    HISTORIQUE DE L'APPLICATION
@@ -62,31 +65,12 @@
    Du 07/06/2026 au 29/06/2026 : Version Bêta créée avec IA Claude
                                   Sonnet 4.6 et Gemini 3.5 Flash.
 
-   03/07/2026 : Recettage par Sébastien Godet avec Gemini 3.5 Flash
-                pour les fichiers retours de tests sur desktop Chrome
-                — OK (suite aux fichiers retours de mon pote développeur
-                Fédérico, faits le 30/06). Retour de recettage :
-                  "C'est un super retour de test ! Ton ami a fait un
-                   recettage très propre et structuré (en local, sous
-                   Chrome desktop). L'excellente nouvelle, c'est qu'il
-                   n'y a aucune erreur JavaScript dans la console sur
-                   les deux applications. Le moteur global (le "core"
-                   du code) a l'air très sain. Cependant, comme le test
-                   a été fait en local et sur ordinateur, une bonne
-                   partie des fonctionnalités liées au mobile (PWA,
-                   micro, hors-ligne) n'a pas pu être testée (notée
-                   N/A), et plusieurs actions ont été passées."
-
-   04/07/2026 : Recettage par Sébastien Godet avec Gemini 3.5 Flash
-                Extended, sur Brave Android (Samsung Galaxy A55 5G),
-                pour l'appli Oromo → liste de correctifs identifiés,
-                traités ensuite via prompts.
-
-   05/07/2026 : Correctifs par Sébastien Godet avec Claude Sonnet 5,
-                pour l'appli Oromo.
-
-   06/07/2026 : Correctifs par Sébastien Godet avec Claude Sonnet 5,
-                pour l'appli Oromo (fin).
+   Du 29/06/2026 au 08/07/2026 :
+     - Tests :
+         · Desktop (auto) et iPhone (manuel) par Fédérico
+         · Android (manuel) par Sébastien Godet (aidé par Gemini 3.5
+           Flash Extended)
+     - Correctifs par Sébastien Godet (aidé par Claude Sonnet 5)
    ============================================================ */
 
 
@@ -611,18 +595,24 @@ function _resolveOromoVoice(callback) {
 }
 
 /**
- * Construit le HTML du badge indiquant la voix TTS active dans l'onglet Cartes.
- * Duplique le composant visuel de l'onglet Répète (mêmes classes CSS
- * .repeat-lang-info / .repeat-lang-native / .repeat-lang-fallback), mais
- * affiche la voix de SYNTHÈSE (bouton 🔊) plutôt que la langue de
- * RECONNAISSANCE (Répète) — les deux mécanismes sont distincts.
+ * Construit le HTML du badge indiquant la voix TTS active (bouton 🔊 Écouter).
+ * Utilisé par l'onglet Cartes (ctx='cards', libellé "Voix :") ET par l'onglet
+ * Répète (ctx='repeat', libellé "Tu entends :" 🆕 08/07/2026) — même mécanisme
+ * de résolution (_resolveOromoVoice / _oromoVoiceLabel), seul le vocabulaire
+ * affiché change, pour que l'apprenant distingue bien ce badge (la voix qui
+ * PARLE) du badge 🎙️ juste en-dessous dans Répète (le micro qui ÉCOUTE).
  * @param {boolean} loading - true tant que la résolution async est en cours
+ * @param {string} [ctx='cards'] - 'cards' ou 'repeat' : change uniquement le libellé
  * @returns {string} HTML du badge
  */
-function _buildCardVoiceBadgeHTML(loading) {
+function _buildCardVoiceBadgeHTML(loading, ctx) {
+  const lbl = (ctx === 'repeat')
+    ? L('Ati dhageessa : ', 'Tu entends : ')
+    : L('Sagalee : ', 'Voix : ');
+
   if (isFrench()) {
     return '<div class="repeat-lang-info fc-voice-badge">🔊 '
-      + L('Sagalee : ', 'Voix : ')
+      + lbl
       + '<strong>Français (fr-FR)</strong></div>';
   }
 
@@ -636,7 +626,7 @@ function _buildCardVoiceBadgeHTML(loading) {
     /* Voix Oromo native trouvée — pill verte, même traitement que Répète */
     return '<div class="repeat-lang-info repeat-lang-native fc-voice-badge">'
       + '<div class="repeat-lang-fallback-line1">✅ '
-      + L('Sagalee : ', 'Voix : ')
+      + lbl
       + '<strong>Afaan Oromoo (om-ET)</strong></div>'
       + '<div class="repeat-lang-fallback-line2">'
       + L('— Afaan Oromoo sirnaan deeggarama', '— Oromo reconnu nativement par votre appareil')
@@ -646,7 +636,7 @@ function _buildCardVoiceBadgeHTML(loading) {
   /* Voix de repli (Somali, Amharique, Haoussa, Swahili, phonétique…) — pill ambre */
   return '<div class="repeat-lang-info repeat-lang-fallback fc-voice-badge">'
     + '<div class="repeat-lang-fallback-line1">⚠️ '
-    + L('Sagalee : ', 'Voix : ')
+    + lbl
     + '<strong>' + _oromoVoiceLabel + '</strong></div>'
     + '<div class="repeat-lang-fallback-line2">'
     + L('— Afaan Oromoo hin deeggaramu — sagalee kana fayyadamaa',
@@ -682,6 +672,35 @@ function _updateCardVoiceBadge() {
   _resolveOromoVoice(() => {
     const el2 = document.getElementById('fcVoiceBadge');
     if (el2) el2.innerHTML = _buildCardVoiceBadgeHTML(false);
+  });
+}
+
+/**
+ * 🆕 (08/07/2026) Met à jour dynamiquement le badge de voix TTS (🔊 "Tu
+ * entends") affiché dans l'onglet Répète, juste au-dessus du badge de
+ * reconnaissance (🎙️ "Le micro comprend"). Duplique exactement le
+ * fonctionnement de _updateCardVoiceBadge() (même résolveur, même cache
+ * _oromoVoice/_oromoVoiceLabel) mais cible #repeatVoiceBadge et utilise le
+ * vocabulaire ctx='repeat' — voir _buildCardVoiceBadgeHTML().
+ */
+function _updateRepeatVoiceBadge() {
+  const el = document.getElementById('repeatVoiceBadge');
+  if (!el) return;
+
+  if (isFrench()) {
+    el.innerHTML = _buildCardVoiceBadgeHTML(false, 'repeat');
+    return;
+  }
+
+  if (_oromoVoice !== undefined) {
+    el.innerHTML = _buildCardVoiceBadgeHTML(false, 'repeat');
+    return;
+  }
+
+  el.innerHTML = _buildCardVoiceBadgeHTML(true, 'repeat');
+  _resolveOromoVoice(() => {
+    const el2 = document.getElementById('repeatVoiceBadge');
+    if (el2) el2.innerHTML = _buildCardVoiceBadgeHTML(false, 'repeat');
   });
 }
 
@@ -967,8 +986,13 @@ function _clearHighlighting(highlightEl) {
    Dialogue, Lexique) — pas seulement Cartes Flash comme à l'origine.
    Réglage global (_ttsRate, persisté), donc changer la vitesse depuis
    n'importe quel onglet l'applique aussi partout ailleurs.
-   Volontairement PAS ajouté aux quiz audio (alphabet, dialogue) : y
-   ralentir le son donnerait un indice qui fausserait l'évaluation.
+   Volontairement PAS ajouté au Quiz Alphabet (audio joué AVANT la réponse,
+   pour tester la reconnaissance du son à vitesse normale) : y ralentir
+   donnerait un indice qui fausserait l'évaluation.
+   🆕 (08/07/2026) En revanche AJOUTÉ au Quiz Vocabulaire standard
+   (renderQuiz10, cas non-alpha) : là, l'audio ne joue qu'APRÈS la réponse
+   (confirmation du bon mot), donc ralentir ne peut pas avantager l'élève
+   sur la question en cours — aucun risque pour l'évaluation.
    ============================================================ */
 
 /**
@@ -1881,9 +1905,9 @@ function _updateLessonNavArrows() {
 
 
 /* ============================================================
-   6. ÉCRAN HOME — BARRE DE PROGRESSION GLOBALE
+   6. ÉCRAN HOME — CARTE(S) DE PROGRESSION PAR PARCOURS
    ============================================================
-   Affiche le pourcentage de thèmes validés et le total d'étoiles.
+   Affiche 0, 1 ou 2 carte(s) de progression (% + étoiles + modules), une par parcours ayant un module réussi.
    ============================================================ */
 
 /**
@@ -2759,6 +2783,11 @@ function renderQuiz10() {
 
   document.getElementById('tabContent').innerHTML =
     '<div class="dialog-quiz-wrap">'
+    /* 🆕 (08/07/2026) Barre de vitesse — sans risque ici : contrairement au
+       Quiz Alphabet, l'audio de ce quiz ne joue qu'APRÈS la réponse (voir
+       checkQ10), donc ralentir ne peut pas avantager l'apprenant sur la
+       question en cours. Voir commentaire §3a3 plus haut dans ce fichier. */
+    + '<div class="tab-tts-row-wrap">' + _buildTtsRateControlsHTML() + '</div>'
     + '<div class="quiz-q"><div class="q-text">' + qStdLabel + '<br><b>' + q.q + '</b></div></div>'
     + '<div class="quiz-options" style="grid-template-columns:1fr">' + stdOpts + '</div>'
     + '<div class="quiz-feedback" id="q10fb"></div>'
@@ -3309,7 +3338,10 @@ function _renderRepeatUnavailable(mainMsg, tip) {
 /**
  * Affiche l'interface principale de l'onglet Répète.
  * Le paramètre altLangMsg est conservé pour compatibilité mais toujours null :
- * la langue de reconnaissance est affichée via la ligne "🌐 Reconnaissance : …".
+ * 🆕 (08/07/2026) la langue est désormais affichée via 2 badges distincts —
+ * 🔊 "Tu entends" (voix TTS, #repeatVoiceBadge) et 🎙️ "Le micro comprend"
+ * (reconnaissance STT) — précédés d'une phrase d'intro qui explique la
+ * différence entre les deux en langage simple.
  * @param {string|null} altLangMsg  - (inutilisé) ancien bandeau d'alerte
  */
 function _renderRepeatUI(altLangMsg) {
@@ -3325,20 +3357,39 @@ function _renderRepeatUI(altLangMsg) {
     ? '<div class="repeat-alt-lang">' + altLangMsg + '</div>'
     : '';
 
-  /* Affichage langue — 3 cas distincts :
+  /* 🆕 (08/07/2026) Phrase d'intro courte, affichée UNE FOIS au-dessus des 2
+     badges ci-dessous. But pédagogique demandé en recettage : dans cet
+     onglet, l'apprenant ENTEND un mot (synthèse vocale / TTS) PUIS le
+     RÉPÈTE, et sa prononciation est VÉRIFIÉE (reconnaissance vocale / STT).
+     Ce sont deux mécanismes distincts, avec chacun leur propre "langue"
+     potentiellement différente (ex : la voix qui parle peut être en Oromo
+     natif pendant que le micro, lui, doit se rabattre sur le Somali) — d'où
+     les 2 badges séparés qui suivent. */
+  const introLine = '<div class="repeat-badges-intro">'
+    + L('Sagaleen tokko si dubbisa, kan biraa immoo dubbii kee dhaggeeffata:',
+        '🔊 Une voix te fait entendre le mot, 🎙️ un micro vérifie ce que tu dis :')
+    + '</div>';
+
+  /* Libellé du badge 🎙️ (reconnaissance/STT) — une seule constante réutilisée
+     dans les 3 cas ci-dessous (vocabulaire simple, cohérent, et — 🆕
+     08/07/2026 — désormais bien traduit dans les 2 modes, y compris le cas 1
+     qui n'utilisait jusqu'ici que du texte français en dur). */
+  const micLbl = L('Af-dubbii sagalee : ', 'Le micro comprend : ');
+
+  /* Affichage langue reconnaissance — 3 cas distincts :
      1. Mode learn_french (fr-FR)   → discret gris, aucune confusion possible
-     2. Oromo natif (om-ET)         → pill verte, confirmation rassurante
+     2. Oromo natif (om-ET)         → pill neutre (non vérifiable, voir §6.13)
      3. Fallback (ha-NG, so-SO…)    → pill ambre ⚠️ deux lignes explicatives   */
   let langInfo;
   if (isFrench()) {
     /* Cas 1 — Français natif : mention discrète en bas à droite */
     langInfo = '<div class="repeat-lang-info">🎤 '
-      + 'Reconnaissance audio : '
+      + micLbl
       + '<strong>' + _repeatLangLabel + '</strong></div>';
   } else if (_repeatLangUsed === 'om-ET') {
     /* Cas 2 — 🆕 (07/07/2026) om-ET accepté par le navigateur pour la
        RECONNAISSANCE vocale (STT). ATTENTION : contrairement à la voix de
-       SYNTHÈSE (TTS, badge Cartes ci-dessus dans ce fichier), il n'existe
+       SYNTHÈSE (TTS, badge 🔊 "Tu entends" juste au-dessus), il n'existe
        aucun équivalent de speechSynthesis.getVoices() pour la reconnaissance
        vocale — donc aucune liste consultable des langues réellement
        supportées. _resolveRepeatLangOromo() ne fait qu'un test heuristique
@@ -3346,10 +3397,13 @@ function _renderRepeatUI(altLangMsg) {
        cloud de Google est connu pour accepter presque n'importe quel code de
        langue sans vérification réelle derrière (voir Bilan technique §6.13
        et discussion recettage 07/07). Un ✅ affirmatif serait donc trompeur :
-       message neutre + pill informative plutôt qu'une confirmation. */
+       message neutre + pill informative plutôt qu'une confirmation —
+       contrairement au badge 🔊 ci-dessus qui, lui, PEUT légitimement
+       afficher un ✅ (vérifié via getVoices()). Cette différence de
+       traitement est intentionnelle, pas un oubli. */
     langInfo = '<div class="repeat-lang-info repeat-lang-unverified">'
       + '<div class="repeat-lang-fallback-line1">🎤 '
-      + 'Reconnaissance audio : '
+      + micLbl
       + '<strong>' + _repeatLangLabel + '</strong></div>'
       + '<div class="repeat-lang-fallback-line2">'
       + L('— Sirriitti argachuun isaa mirkanaa\'aa miti — meeshaa irratti hundaa\'a',
@@ -3360,7 +3414,7 @@ function _renderRepeatUI(altLangMsg) {
     /* Cas 3 — Fallback : pill ambre ⚠️, deux lignes explicatives */
     langInfo = '<div class="repeat-lang-info repeat-lang-fallback">'
       + '<div class="repeat-lang-fallback-line1">⚠️ '
-      + L('Af-dubbii sagalee : ', 'Reconnaissance audio : ')
+      + micLbl
       + '<strong>' + _repeatLangLabel + '</strong></div>'
       + '<div class="repeat-lang-fallback-line2">'
       + L('— Oromo hin deeggararamu — afaan kana fayyadamaa', '— Oromo non supporté — langue «\u00a0' + _repeatLangLabel + '\u00a0» utilisée à la place')
@@ -3370,6 +3424,8 @@ function _renderRepeatUI(altLangMsg) {
 
   document.getElementById('tabContent').innerHTML =
     altBanner
+    + introLine
+    + '<div id="repeatVoiceBadge" class="repeat-voice-badge-wrap"></div>'
     + langInfo
     + '<div class="tab-tts-row-wrap">' + _buildTtsRateControlsHTML() + '</div>'
     + '<div id="repeat-card" class="repeat-card"></div>'
@@ -3377,6 +3433,7 @@ function _renderRepeatUI(altLangMsg) {
     + '<div id="repeat-controls" class="repeat-controls"></div>'
     + '<div id="repeat-progress" class="repeat-progress-wrap"></div>';
 
+  _updateRepeatVoiceBadge();
   _renderRepeatCard();
 }
 
