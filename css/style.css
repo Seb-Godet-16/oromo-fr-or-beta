@@ -22,46 +22,49 @@
  * ║  rendu visuel.                                                  ║
  * ╠══════════════════════════════════════════════════════════════════╣
  * ║  PLAN DU FICHIER                                                ║
- * ║   §1        Reset & base                          ligne    70  ║
- * ║   §2        Variables de thème (:root / fallback) ligne   194  ║
- * ║   §3        Thème Français (html.theme-french)    ligne   257  ║
- * ║   §4        Thème Oromo (html.theme-oromo)        ligne   297  ║
- * ║   §5        Écran 0 — Lanceur                     ligne   332  ║
- * ║   §6        Écran 1 — Accueil #home               ligne   538  ║
- * ║   §7        Écran 2 — Sections                    ligne   604  ║
- * ║   §8        Écran 3 — Leçon (dont .back-btn-icon  ligne   729  ║
- * ║             icônes 🏠/❓, voir ligne 947)                       ║
- * ║   §9        Composants : Flashcards               ligne  1008  ║
- * ║   §10       Composants : Alphabet                 ligne  1210  ║
- * ║   §11       Composants : Quiz                     ligne  1310  ║
- * ║   §12       Composants : Dialogues / Situations   ligne  1415  ║
- * ║   §13       Composants : Vocabulaire              ligne  1520  ║
- * ║   §14       Modale Remerciements                  ligne  1588  ║
- * ║   §15       Footer commun                         ligne  1675  ║
- * ║   §16       Toast notification                    ligne  1695  ║
- * ║   §17       Onglet Répète (dont 🆕 .repeat-        ligne  1731  ║
+ * ║   §1        Reset & base                          ligne    73  ║
+ * ║   §2        Variables de thème (:root / fallback) ligne   197  ║
+ * ║   §3        Thème Français (html.theme-french)    ligne   260  ║
+ * ║   §4        Thème Oromo (html.theme-oromo)        ligne   300  ║
+ * ║   §5        Écran 0 — Lanceur                     ligne   335  ║
+ * ║   §6        Écran 1 — Accueil #home               ligne   541  ║
+ * ║   §7        Écran 2 — Sections                    ligne   607  ║
+ * ║   §8        Écran 3 — Leçon (dont .back-btn-icon  ligne   732  ║
+ * ║             icônes 🏠/❓, voir ligne 950)                       ║
+ * ║   §9        Composants : Flashcards               ligne  1011  ║
+ * ║   §10       Composants : Alphabet                 ligne  1213  ║
+ * ║   §11       Composants : Quiz                     ligne  1313  ║
+ * ║   §12       Composants : Dialogues / Situations   ligne  1418  ║
+ * ║   §13       Composants : Vocabulaire              ligne  1523  ║
+ * ║   §14       Modale Remerciements                  ligne  1591  ║
+ * ║   §15       Footer commun                         ligne  1678  ║
+ * ║   §16       Toast notification                    ligne  1698  ║
+ * ║   §16b   🆕 Bandeau hors-ligne persistant          ligne  1734  ║
+ * ║   §17       Onglet Répète (dont 🆕 .repeat-        ligne  1798  ║
  * ║             badges-intro, phrase d'intro 2 badges)              ║
- * ║   §18       Focus clavier                         ligne  2029  ║
- * ║   §19       Guide utilisateur (.ob-*)             ligne  2047  ║
- * ║   §20       Spinner de chargement                 ligne  2503  ║
- * ║   §22       Écran Home redesigné                  ligne  2540  ║
- * ║   §23       Écran Sections redesigné (dont        ligne  2801  ║
- * ║             .back-btn-group, voir ligne 2826)                  ║
- * ║   §24       Responsive : tablette & desktop       ligne  2931  ║
- * ║   §24b      Mode sombre                           ligne  3021  ║
- * ║   §24c      Responsive : mode paysage mobile      ligne  3132  ║
- * ║   §25       Boutons d'export PDF                  ligne  3194  ║
- * ║   §26       Barre de navigation basse             ligne  3294  ║
- * ║   §27       Onglets niveau 1 / 2                  ligne  3421  ║
- * ║   §28       Écrans sections level (no-scroll)     ligne  3516  ║
- * ║   §20e      Grille thèmes écrans level            ligne  3714  ║
- * ║   §CONFETTI Animation de félicitations ⭐⭐⭐      ligne  3735  ║
- * ║   §PROGRESS Carte(s) de progression (Home,        ligne  3806  ║
+ * ║   §18       Focus clavier                         ligne  2096  ║
+ * ║   §19       Guide utilisateur (.ob-*, dont 🆕      ligne  2114  ║
+ * ║             "Quel navigateur choisir ?", voir ligne 2356)      ║
+ * ║   §20       Spinner de chargement                 ligne  2582  ║
+ * ║   §22       Écran Home redesigné                  ligne  2619  ║
+ * ║   §23       Écran Sections redesigné (dont        ligne  2930  ║
+ * ║             .back-btn-group, voir ligne 2955)                  ║
+ * ║   §24       Responsive : tablette & desktop       ligne  3060  ║
+ * ║   §24b      Mode sombre                           ligne  3150  ║
+ * ║   §24c      Responsive : mode paysage mobile      ligne  3261  ║
+ * ║   §25       Boutons d'export PDF                  ligne  3323  ║
+ * ║   §26       Barre de navigation basse             ligne  3423  ║
+ * ║   §27       Onglets niveau 1 / 2                  ligne  3550  ║
+ * ║   §28       Écrans sections level (no-scroll)     ligne  3645  ║
+ * ║   §20e      Grille thèmes écrans level            ligne  3843  ║
+ * ║   §CONFETTI Animation de félicitations ⭐⭐⭐      ligne  3864  ║
+ * ║   §PROGRESS Carte(s) de progression (Home,        ligne  3935  ║
  * ║             1 ou 2 selon les parcours commencés)                ║
- * ║   §CONFIRM  Modale confirmation suppression       ligne  3929  ║
- * ║   §ANTISPAM E-mail affiché à l'envers (CSS RTL)  ligne  4048  ║
- * ║   §SPEAKING Feedback visuel bouton audio (TTS)    ligne  4075  ║
- * ║   §29       Correctifs accessibilité mode sombre  ligne  4133  ║
+ * ║   §CONFIRM  Modale confirmation suppression       ligne  4058  ║
+ * ║   §ANTISPAM E-mail affiché à l'envers (CSS RTL)  ligne  4177  ║
+ * ║   §SPEAKING Feedback visuel bouton audio (TTS)    ligne  4204  ║
+ * ║   §29       Correctifs accessibilité mode sombre  ligne  4262  ║
+ * ║  ── Plan resynchronisé le 10/07/2026 (voir Bilan technique §6.15) ║
  * ╚══════════════════════════════════════════════════════════════════╝
  */
 
@@ -1728,6 +1731,70 @@ footer a:hover{text-decoration:underline}
 
 
 /* ══════════════════════════════════════════════════════════════════
+   §16b — 🆕 BANDEAU HORS-LIGNE PERSISTANT (#offline-banner)
+   ══════════════════════════════════════════════════════════════════
+   Affiché par app.js (§3e) tant que navigator.onLine === false, sur
+   TOUS les écrans (overlay fixe en haut), pour prévenir l'apprenant
+   AVANT qu'il ne découvre un échec silencieux ou une erreur cryptique
+   en tapant sur 🎤 Répète ou 🔊 Écouter.
+   • Résumé toujours visible, une seule ligne compacte.
+   • Détail dépliable au tap (_toggleOfflineBannerDetail() dans app.js)
+     pour ne pas monopoliser l'écran en permanence.
+   • Palette ambre volontairement neutre (ni bleu FR ni vert OR) :
+     un état de connectivité n'appartient à aucun des deux thèmes.
+   • z-index 9500 : au-dessus de la bottom-nav (1000) et des écrans,
+     mais SOUS les modales (9998+) pour ne jamais les obstruer.
+   ══════════════════════════════════════════════════════════════════ */
+.offline-banner{
+  position:fixed;
+  top:0; left:0; right:0;
+  z-index:9500;
+  background:#3a2a05;
+  color:#ffe8a3;
+  padding-top:env(safe-area-inset-top, 0px);
+  box-shadow:0 2px 10px rgba(0,0,0,.25);
+}
+.offline-banner-summary{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  width:100%;
+  border:none;
+  background:none;
+  color:inherit;
+  cursor:pointer;
+  padding:8px 14px;
+  font-size:.76rem;
+  font-weight:700;
+  text-align:center;
+  line-height:1.4;
+}
+.offline-banner-text{flex:1}
+.offline-banner-chevron{
+  font-size:.6rem;
+  opacity:.8;
+  transition:transform .2s;
+  flex-shrink:0;
+}
+.offline-banner.expanded .offline-banner-chevron{transform:rotate(180deg)}
+.offline-banner-detail{
+  padding:10px 16px 12px;
+  font-size:.74rem;
+  line-height:1.55;
+  color:#ffe8a3;
+  border-top:1px solid rgba(255,255,255,.15);
+  text-align:left;
+}
+.offline-banner-detail p{margin:0 0 8px}
+.offline-banner-detail p:last-child{margin-bottom:0}
+.offline-banner-detail strong{color:#fff}
+@media(prefers-color-scheme:dark){
+  .offline-banner{background:#241a04}
+}
+
+
+/* ══════════════════════════════════════════════════════════════════
    §17 — ONGLET RÉPÈTE  (.repeat-*)
    ══════════════════════════════════════════════════════════════════
    Interface de répétition vocale : carte du mot, boutons écouter /
@@ -2286,6 +2353,18 @@ footer a:hover{text-decoration:underline}
   line-height:1.55;
   padding:2px 0;
 }
+/* 🆕 Listes à puces (✅/⚠️/❌) — section "Quel navigateur choisir ?" (10/07/2026) :
+   même traitement visuel que les <ol> d'instructions ci-dessus, pour que les
+   deux types de liste restent cohérents à l'intérieur d'un même .ob-audio-block. */
+.ob-audio-block ul{
+  margin:0;
+  padding-left:18px;
+}
+.ob-audio-block ul li{
+  font-size:.8rem;
+  line-height:1.55;
+  padding:2px 0;
+}
 .ob-audio-block p{
   font-size:.8rem;
   line-height:1.55;
@@ -2626,6 +2705,56 @@ footer a:hover{text-decoration:underline}
   font-weight:700;
   color:var(--c-home-title);
   white-space:nowrap;
+}
+
+/* ── 🆕 Bouton d'installation PWA en un tap (Android/Chrome/Edge) ───────
+   Masqué par défaut (style inline dans index.html) ; affiché par
+   _updateInstallUI() dans app.js uniquement quand le navigateur a émis
+   l'évènement natif 'beforeinstallprompt' et que l'app n'est pas déjà
+   installée. Légère pulsation pour attirer l'œil sans être agressive —
+   objectif : remplacer la recherche manuelle dans les menus du
+   navigateur par un seul tap direct et visible dès l'arrivée sur l'app. */
+.home-install-btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:7px;
+  margin:2px auto 10px;
+  background:rgba(255,255,255,.95);
+  border:1.5px solid rgba(255,255,255,.7);
+  border-radius:50px;
+  padding:8px 20px;
+  font-size:.82rem;
+  font-weight:800;
+  color:var(--c-primary);
+  cursor:pointer;
+  box-shadow:0 3px 12px rgba(0,0,0,.18);
+  animation:homeInstallPulse 2.4s ease-in-out infinite;
+}
+.home-install-btn:hover{opacity:.92}
+.home-install-btn:active{transform:scale(.96)}
+@keyframes homeInstallPulse{
+  0%,100%{box-shadow:0 3px 12px rgba(0,0,0,.18)}
+  50%{box-shadow:0 3px 18px rgba(0,0,0,.34)}
+}
+@media(prefers-reduced-motion:reduce){
+  .home-install-btn{animation:none}
+}
+
+/* ── 🆕 Repère iOS : rappel manuel affiché directement, hors accordéon ──
+   Sur iOS/Safari, aucune API d'installation programmée n'existe côté web
+   (limitation Apple) — ce bloc remplace le bouton pour ces appareils. */
+.home-install-ios-hint{
+  margin:2px auto 10px;
+  max-width:340px;
+  background:rgba(255,255,255,.22);
+  border:1.5px dashed rgba(255,255,255,.55);
+  border-radius:12px;
+  padding:8px 14px;
+  font-size:.74rem;
+  font-weight:600;
+  color:var(--c-home-title);
+  line-height:1.4;
 }
 
 /* ── Corps des accordéons ── */

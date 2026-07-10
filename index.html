@@ -103,6 +103,35 @@
 -->
 <div class="app">
 
+  <!-- ════════════════════════════════════════════════════════════════
+       🆕 BANDEAU HORS-LIGNE PERSISTANT (#offline-banner)
+       ────────────────────────────────────────────────────────────────
+       Affiché/masqué automatiquement par app.js (§3e, écoute des
+       évènements 'online'/'offline') SUR TOUS LES ÉCRANS, dès que
+       l'appareil perd la connexion — pas seulement au clic sur un
+       bouton audio/micro qui échouerait silencieusement ou avec une
+       erreur cryptique.
+       Couvre les DEUX limitations distinctes du mode hors-ligne :
+         • 🎤 Répète (SpeechRecognition) : jamais disponible hors-ligne,
+           sur AUCUN navigateur (Chrome/Edge/Safari envoient l'audio à
+           un serveur distant pour le transcrire) — limite de l'API
+           elle-même, pas un bug de cette application.
+         • 🔊 Écouter (speechSynthesis) : peut fonctionner hors-ligne SI
+           une voix est déjà installée sur l'appareil, mais peut alors
+           utiliser la langue par défaut du système plutôt que le
+           français/l'oromo précisément attendu.
+       Résumé toujours visible ; détail dépliable au tap (voir
+       _toggleOfflineBannerDetail() dans app.js) pour ne pas monopoliser
+       l'espace écran en permanence.
+       ════════════════════════════════════════════════════════════════ -->
+  <div id="offline-banner" class="offline-banner" style="display:none" role="status" aria-live="polite">
+    <button type="button" class="offline-banner-summary" id="offlineBannerToggle" onclick="_toggleOfflineBannerDetail()">
+      <span class="offline-banner-text" id="offlineBannerShortText"></span>
+      <span class="offline-banner-chevron" id="offlineBannerChevron" aria-hidden="true">▼</span>
+    </button>
+    <div class="offline-banner-detail" id="offlineBannerDetail" style="display:none"></div>
+  </div>
+
 
   <!-- ════════════════════════════════════════════════════════════════
        ÉCRAN 0 — LANCEUR D'APPLICATION  (#app-launcher)
@@ -242,6 +271,19 @@
       <div class="home-guide-flags" id="homeGuideFlagsRow"></div>
       <p class="home-guide-subtitle" id="homeGuideSubtitle"></p>
       <div class="home-guide-badges" id="homeGuideBadges"></div>
+
+      <!--
+        🆕 Installation hors-ligne — mise en avant directe (recettage utilisateur :
+        les instructions étaient invisibles, enfouies dans l'accordéon "Hors ligne").
+        • #homeInstallBtn      : bouton natif "un seul tap" (Android/Chrome/Edge) —
+          masqué par défaut, affiché par _updateInstallUI() dans app.js UNIQUEMENT
+          si le navigateur a capté l'évènement 'beforeinstallprompt'.
+        • #homeInstallIosHint  : rappel manuel visible directement (pas d'accordéon)
+          pour iOS/Safari, où aucune installation programmée n'est possible côté web.
+        Les deux restent masqués si l'app tourne déjà en mode installé (standalone).
+      -->
+      <button type="button" class="home-install-btn" id="homeInstallBtn" style="display:none" onclick="_promptInstallApp()"></button>
+      <div class="home-install-ios-hint" id="homeInstallIosHint" style="display:none"></div>
 
       <!-- Carte(s) de progression (visible une fois des modules complétés) —
            1 carte si un seul parcours a été commencé, 2 cartes si les deux
@@ -452,7 +494,60 @@
           </div>
         </details>
 
-        <!-- 6. Comparaison -->
+        <!-- 6. 🆕 Browser kam filachuu qaba ? (10/07/2026)
+             ⚠️ TRADUCTION OROMO : dalagaa jalqabaa, jechoota appii kana
+             keessatti duraan mirkanaa'an irratti hundaa'e (browser, filatamaa,
+             hin danda'amu…). Akkuma bandeau hors-ligne (§3e), sirriitti
+             mirkaneessuuf dubbataa uumamaa (Mussa Sembro, ilaali
+             Remerciements) dubbisuu qaba utuu hin gadi lakkifamin.
+             ⚠️ CORRIGÉ guyyaa walfakkaataa (deebii barataa, Brave Android,
+             suuraa qabame) : Edge/Opera/Brave/Vivaldi "✅ Filatamoo" jedhamanii
+             deebi'anii ramadaman Android irratti — ilaali §6.15 Bilan
+             technique bal'inaan. -->
+        <details class="hg-section">
+          <summary class="hg-summary">
+            <span class="hg-icon">🌐</span>
+            <span class="hg-label">Browser kam filachuu qaba?</span>
+            <span class="hg-chevron">▼</span>
+          </summary>
+          <div class="hg-detail">
+            <p>Hojiiwwan appii kanaa sadii — 🔊 <strong>Dhaggeeffachuu</strong>, 🎤 <strong>Irra deebʼi</strong> fi 📲 <strong>interneetii malee buusuu</strong> — browser fayyadamtu irratti hirkatu. Kunoo browser addunyaa irratti baay'ee fayyadamaman, akkaataa amansiisummaa isaaniitiin walbira qabame.</p>
+
+            <div class="ob-audio-block">
+              <div class="ob-audio-head">🤖 Android irratti</div>
+              <p>Android irratti, kompiitera wajjin walbira qabamee, sagalee hubachuun (🎤 Irra deebʼi) tajaajila bilbila keessatti durumaan jiru ("Services vocaux Google" jedhamu yeroo baay'ee) fayyadama, browser tokkoon tokkoon keessatti utuu hin kaa'amin. Kanaafuu, browser Chromium irratti hundaa'an baay'een isaanii sirriitti hojjetu — kan iccitii fayyadamtootaa eeguuf beekaman dabalatee.</p>
+              <p style="margin:.3em 0 .5em"><strong>✅ Filatamoo</strong> — qorannoodhaan mirkanaa'e (🔊 Dhaggeeffachuu, 🎤 Irra deebʼi, 📲 Buusuu) :</p>
+              <ul>
+                <li><strong>Chrome</strong> — kan hunda caalu, daangaan hin beekamne.</li>
+                <li><strong>Samsung Internet</strong> — bilbila Samsung irratti durumaan jira, Chrome wajjin wal qixa amansiisaa dha.</li>
+                <li><strong>Edge, Opera, Brave, Vivaldi</strong> — mootora wal fakkaataa (Chromium) fayyadamu, sagalee hubachuunis bilbilatti dabarsu : akka idileetti hojjetu, 🎤 Irra deebʼi dabalatee (Brave Android irratti mirkanaa'e — deebii barataa 10/07/2026).</li>
+              </ul>
+              <p style="margin:.6em 0 .5em"><strong>⚠️ Gahaatti hin qoratamne</strong> :</p>
+              <ul>
+                <li><strong>DuckDuckGo, UC Browser</strong> — walumaagalatti gaarii dha garuu hojii kana irratti gahaatti hin qoratamne ; UC Browser mootora dur fi haaromsa tikaa (security) yeroo hedduu hin taasifamne fayyadama.</li>
+              </ul>
+              <p style="margin:.6em 0 .5em"><strong>❌ Hin gorfamu</strong> :</p>
+              <ul>
+                <li><strong>Firefox</strong> — 🔊 Dhaggeeffachuun akka gaariitti hojjeta, 🎤 Irra deebʼi garuu <strong>gonkumaa</strong> hin hojjetu : Mozilla teeknooloojii kana browser isaanii keessatti kaa'uu filachuu dide (kompiitera fi bilbila lamaan irratti dhugaa dha). Buusuun interneetii malee illee yeroo tokko tokko gabatee salphaa qofa uuma, appii dhugaa utuu hin ta'in.</li>
+              </ul>
+            </div>
+
+            <div class="ob-audio-block">
+              <div class="ob-audio-head">🍎 iPhone / iPad (iOS) irratti</div>
+              <p>iOS irratti, Apple browser <strong>hunda</strong> (Chrome, Firefox, Edge, Brave, Opera, DuckDuckGo…) akka moottora ishee (kan Safari) fayyadaman dirqama. Kanaafuu, dhugumatti, wal fakkaataadha.</p>
+              <ul>
+                <li><strong>✅ Safari</strong> — browser 100% amansiisaa qofa : fuula jalqabaarratti buusuu fi 🔊 Dhaggeeffachuun yeroo hunda hojjetu.</li>
+                <li><strong>⚠️ Chrome, Edge, Opera, Brave, DuckDuckGo</strong> — erga iOS 17 irraa, isaanis fuula jalqabaarratti buusuu fi sagalee dhageessisuu ni danda'u, garuu Safari caalaa xiqqoo salphaa miti (tarkaanfiin buusuu caancala isaanii keessatti argachuun xiqqoo rakkisaa ta'uu danda'a).</li>
+                <li><strong>❌ Firefox, UC Browser</strong> — fuula jalqabaarratti buusuun xiqqoo yookiin gonkumaa hin argamu ; interneetii malee amansiisaadhaaf hin filatamani.</li>
+              </ul>
+              <div class="ob-audio-tip">💡 <strong>🎤 Irra deebʼi</strong> iPhone/iPad irratti <strong>onglet</strong> idileessaa keessatti qofa hojjeta (fuula jalqabaarratti buufamee hin jiru yoo ta'e) — browser kamiyyuu ta'us, Safari dabalatee. Kun daangaa Apple mirkanaa'aa dha (kutaa "Galmee malee" armaan olii ilaali), dogoggora appii kanaa miti.</div>
+            </div>
+
+            <div class="ob-tip">💡 Cuunfaa : Android irratti, browser Chromium baay'een (Chrome, Samsung Internet, Edge, Opera, Brave, Vivaldi) ni ta'u — Firefox qofa 🎤 Irra deebʼiif rakkoo qaba. iPhone/iPad irratti, <strong>Safari</strong> fayyadami — 100% amansiisaa argachuuf.</div>
+          </div>
+        </details>
+
+        <!-- 7. Comparaison -->
         <details class="hg-section">
           <summary class="hg-summary">
             <span class="hg-icon">⚖️</span>
@@ -483,7 +578,7 @@
           </div>
         </details>
 
-        <!-- 7. Remerciements -->
+        <!-- 8. Remerciements -->
         <details class="hg-section">
           <summary class="hg-summary">
             <span class="hg-icon">🙏</span>
@@ -500,7 +595,7 @@
           </div>
         </details>
 
-        <!-- 8. À propos -->
+        <!-- 9. À propos -->
         <details class="hg-section">
           <summary class="hg-summary">
             <span class="hg-icon">🙋</span>
@@ -764,7 +859,62 @@
           </div>
         </details>
 
-        <!-- 6. Comparaison -->
+        <!-- 6. 🆕 Quel navigateur choisir ? (10/07/2026)
+             Comparatif des 10 navigateurs les plus utilisés au monde (classement
+             par part de marché mondiale), sur les 3 fonctionnalités sensibles au
+             navigateur : 🔊 Écouter (speechSynthesis), 🎤 Répète (SpeechRecognition)
+             et 📲 Installation hors-ligne (Service Worker + manifest). Sources
+             vérifiées via caniuse.com et les pages de compatibilité officielles
+             (juillet 2026) — voir aussi §6.11/§6.13/§6.14 du Bilan technique.
+             ⚠️ CORRIGÉ le même jour suite à un retour terrain (Brave Android,
+             capture d'écran) : Edge/Opera/Brave/Vivaldi reclassés "✅ Recommandés"
+             sur Android (la limitation initialement documentée concerne surtout
+             la version ordinateur de ces navigateurs) — voir §6.15 du Bilan
+             technique pour le détail complet de la correction. -->
+        <details class="hg-section">
+          <summary class="hg-summary">
+            <span class="hg-icon">🌐</span>
+            <span class="hg-label">Quel navigateur choisir ?</span>
+            <span class="hg-chevron">▼</span>
+          </summary>
+          <div class="hg-detail">
+            <p>Trois fonctionnalités de l'appli dépendent directement du navigateur utilisé : 🔊 <strong>Écouter</strong>, 🎤 <strong>Répète</strong> et 📲 <strong>l'installation hors-ligne</strong>. Voici un comparatif des navigateurs les plus utilisés dans le monde, classés par fiabilité.</p>
+
+            <div class="ob-audio-block">
+              <div class="ob-audio-head">🤖 Sur Android</div>
+              <p>Sur Android, contrairement à un ordinateur, la reconnaissance vocale (🎤 Répète) passe par le service vocal déjà installé sur le téléphone (généralement les "Services vocaux Google"), et non par une fonction propre à chaque navigateur. Résultat : la plupart des navigateurs basés sur Chromium fonctionnent bien pour les 3 fonctionnalités — y compris ceux réputés plus stricts sur la vie privée.</p>
+              <p style="margin:.3em 0 .5em"><strong>✅ Recommandés</strong> — testés et fiables (🔊 Écouter, 🎤 Répète, 📲 Installation) :</p>
+              <ul>
+                <li><strong>Chrome</strong> — la référence, aucune limite connue.</li>
+                <li><strong>Samsung Internet</strong> — préinstallé sur les téléphones Samsung, aussi fiable que Chrome.</li>
+                <li><strong>Edge, Opera, Brave, Vivaldi</strong> — basés sur le même moteur (Chromium) et délèguent la reconnaissance vocale au téléphone : fonctionnent normalement, 🎤 Répète compris (confirmé en conditions réelles sur Brave Android — retour apprenant du 10/07/2026).</li>
+              </ul>
+              <p style="margin:.6em 0 .5em"><strong>⚠️ Moins éprouvés</strong> :</p>
+              <ul>
+                <li><strong>DuckDuckGo, UC Browser</strong> — fonctionnement globalement correct mais moins testé sur cette fonctionnalité précise ; UC Browser utilise en plus un moteur ancien et des mises à jour de sécurité peu fréquentes.</li>
+              </ul>
+              <p style="margin:.6em 0 .5em"><strong>❌ Déconseillé</strong> :</p>
+              <ul>
+                <li><strong>Firefox</strong> — 🔊 Écouter fonctionne très bien, mais 🎤 Répète ne fonctionnera <strong>jamais</strong> : Mozilla n'a jamais activé cette technologie dans son navigateur, par choix (vrai sur ordinateur comme sur mobile). L'installation hors-ligne y crée aussi parfois un simple raccourci plutôt qu'une vraie app.</li>
+              </ul>
+            </div>
+
+            <div class="ob-audio-block">
+              <div class="ob-audio-head">🍎 Sur iPhone / iPad (iOS)</div>
+              <p>Sur iOS, Apple impose à <strong>tous</strong> les navigateurs (Chrome, Firefox, Edge, Brave, Opera, DuckDuckGo…) d'utiliser son propre moteur — celui de Safari. Dans les grandes lignes, ils se comportent donc tous de façon proche en coulisses.</p>
+              <ul>
+                <li><strong>✅ Safari</strong> — le seul navigateur garanti à 100% : installation sur l'écran d'accueil et 🔊 Écouter fonctionnent toujours.</li>
+                <li><strong>⚠️ Chrome, Edge, Opera, Brave, DuckDuckGo</strong> — depuis iOS 17, peuvent eux aussi installer l'app sur l'écran d'accueil et lire le son, mais un peu moins directement que Safari (le geste d'installation est parfois moins visible dans leur menu).</li>
+                <li><strong>❌ Firefox, UC Browser</strong> — installation sur l'écran d'accueil peu ou pas proposée ; à éviter pour un usage hors-ligne fiable.</li>
+              </ul>
+              <div class="ob-audio-tip">💡 <strong>🎤 Répète</strong> ne fonctionne, sur iPhone/iPad, que dans un <strong>onglet classique</strong> (pas encore installé sur l'écran d'accueil) — et ce quel que soit le navigateur, y compris Safari. C'est une limitation d'Apple confirmée (voir section "Hors ligne" ci-dessus), pas un bug de cette application.</div>
+            </div>
+
+            <div class="ob-tip">💡 En résumé : sur Android, la plupart des navigateurs Chromium (Chrome, Samsung Internet, Edge, Opera, Brave, Vivaldi) conviennent — seul Firefox pose problème pour 🎤 Répète. Sur iPhone/iPad, utilisez <strong>Safari</strong> pour une expérience garantie à 100%.</div>
+          </div>
+        </details>
+
+        <!-- 7. Comparaison -->
         <details class="hg-section">
           <summary class="hg-summary">
             <span class="hg-icon">⚖️</span>
@@ -795,7 +945,7 @@
           </div>
         </details>
 
-        <!-- 7. Remerciements -->
+        <!-- 8. Remerciements -->
         <details class="hg-section">
           <summary class="hg-summary">
             <span class="hg-icon">🙏</span>
@@ -813,7 +963,7 @@
           </div>
         </details>
 
-        <!-- 8. À propos -->
+        <!-- 9. À propos -->
         <details class="hg-section">
           <summary class="hg-summary">
             <span class="hg-icon">🙋</span>

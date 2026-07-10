@@ -184,6 +184,31 @@ function _isIosPwaStandalone() {
 }
 
 /**
+ * 🆕 Détecte si l'app tourne déjà en mode installé/standalone, tous
+ * navigateurs confondus (iOS via `navigator.standalone`, Android/desktop
+ * via le media query standard `display-mode: standalone`).
+ * Utilisé par le bouton d'installation (§20b) pour se masquer une fois
+ * l'app effectivement installée.
+ * @returns {boolean}
+ */
+function _isRunningStandalone() {
+  return _isIosPwaStandalone() ||
+    (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches);
+}
+
+/**
+ * 🆕 Détecte un appareil iOS (iPhone/iPad), y compris iPadOS 13+ qui se
+ * présente comme "MacIntel" mais reste tactile (contrairement à un vrai Mac).
+ * Utilisé pour afficher le rappel d'installation manuel : Apple ne fournit
+ * aucune API `beforeinstallprompt`, donc aucun bouton natif n'est possible.
+ * @returns {boolean}
+ */
+function _isIosDevice() {
+  return /iphone|ipad|ipod/i.test(navigator.userAgent) ||
+    (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+}
+
+/**
  * Retourne la clé de la langue "source" (langue affichée en premier)
  * et celle de la langue "cible" (traduction / réponse), selon le mode.
  * @returns {{ src: 'fr'|'et', tgt: 'et'|'fr' }}
@@ -1265,6 +1290,118 @@ _startTtsKeepAlive();
 
 
 /* ============================================================
+   3e. 🆕 BANDEAU HORS-LIGNE — connectivité (navigator.onLine)
+   ============================================================
+   BUG UX signalé en recettage : quand l'apprenant perd sa connexion,
+   deux fonctionnalités sont affectées, mais de façon différente — et
+   aucune des deux ne le prévenait avant l'échec :
+
+     • 🎤 Répète (SpeechRecognition) — ne fonctionne JAMAIS hors ligne,
+       sur AUCUN navigateur. Chrome, Edge et Safari envoient tous
+       l'enregistrement audio à un serveur distant (Google/Apple) pour
+       le transcrire ; aucune de ces implémentations ne fait la
+       reconnaissance directement sur l'appareil. C'est une limite de
+       l'API Web Speech elle-même — vraie sur n'importe quel site qui
+       utilise le micro, pas quelque chose que ce code contrôle.
+
+     • 🔊 Écouter (speechSynthesis) — PEUT fonctionner hors ligne, mais
+       seulement si une voix est déjà installée localement sur
+       l'appareil (souvent le cas). Le risque n'est donc pas le silence
+       total, mais une bascule silencieuse vers la langue PAR DÉFAUT du
+       système au lieu du français/oromo précisément attendu (la
+       cascade de voix — voir §3 plus haut — ne peut plus interroger
+       d'éventuelles voix distantes).
+
+   CORRECTIF : un bandeau persistant (#offline-banner, index.html),
+   piloté ici via les évènements natifs 'online'/'offline', informe
+   l'apprenant PROACTIVEMENT dès la perte de connexion — sur tous les
+   écrans, avant même qu'il ne touche un bouton audio/micro qui aurait
+   échoué silencieusement ou avec un message cryptique.
+
+   ⚠️ TRADUCTION OROMO : première version rédigée à partir du
+   vocabulaire déjà présent ailleurs dans l'app (cascade de termes déjà
+   validés : "interneetii malee", "hin danda'amu"…). Comme le reste des
+   textes oromo du projet, elle gagnerait à être relue par un locuteur
+   natif (voir remerciements du README — Mussa Sembro) avant mise en
+   production définitive.
+   ============================================================ */
+
+/**
+ * Texte court du bandeau hors-ligne (résumé toujours visible, 1 ligne).
+ * @returns {string}
+ */
+function _offlineBannerShortText() {
+  return L(
+    "📴 Interneetii malee — 🎤 Irraddeessi hin danda'amu · 🔊 Dhaggeeffachuun ni danda'ama, afaan mirkanaa'aa miti",
+    '📴 Hors ligne — 🎤 Répète indisponible · 🔊 Écouter possible, langue non garantie'
+  );
+}
+
+/**
+ * Détail dépliable (HTML) du bandeau hors-ligne : explique séparément
+ * les deux limitations (reconnaissance vs synthèse vocale), pour que
+ * l'apprenant comprenne POURQUOI, pas juste QUOI.
+ * @returns {string}
+ */
+function _offlineBannerDetailHTML() {
+  return L(
+    "<p><strong>🎤 Irraddeessi</strong> — interneetii malee yeroo hunda hin danda'amu, barawuzarii kamiyyuu keessatti (Chrome, Edge, Safari) : sagaleen sirbame gara sarvaraa interneetii tokkootti ergama, akka barreeffamuuf. Kun daangaa teeknoolojii sanaati (marsariitii mikirofoonii fayyadamu kamiyyuu irratti dhugaa), dogoggora app kanaa miti.</p>"
+    + "<p><strong>🔊 Dhaggeeffachuu</strong> — interneetii malee ni danda'ama, garuu bilbilli kee sagalee (voice) sirna irratti durumaan qabaate qofa. Yoo kun jiraachuu baate, afaan durtii bilbila keetii dhageessa — Faransaayii ykn Afaan Oromoo barbaadame irra.</p>"
+    + "<p>💡 Interneetii deebisii qunnamuun tajaajiloota lamaan hunda deebi'anii sirriitti argachuu dandeessa.</p>",
+
+    '<p><strong>🎤 Répète</strong> — ne fonctionne jamais hors ligne, sur aucun navigateur : Chrome, Edge et Safari envoient l\'enregistrement à un serveur en ligne pour le transcrire. C\'est une limite de la technologie elle-même (vraie sur n\'importe quel site utilisant le micro), pas un bug de l\'application.</p>'
+    + '<p><strong>🔊 Écouter</strong> — peut fonctionner hors ligne, mais seulement si votre téléphone a déjà une voix installée sur le système. Si ce n\'est pas le cas, vous entendrez la langue par défaut de votre appareil au lieu du français ou de l\'oromo attendu.</p>'
+    + '<p>💡 Reconnectez-vous pour retrouver les deux fonctionnalités normalement.</p>'
+  );
+}
+
+/**
+ * Affiche/masque le bandeau hors-ligne et rafraîchit ses textes.
+ * Appelée : une fois au chargement du script, sur chaque évènement
+ * 'online'/'offline', et à chaque rendu de l'écran Home (_buildHomeGuide)
+ * pour resynchroniser la langue si le mode a changé pendant que
+ * l'appareil était déjà hors ligne.
+ */
+function _updateOfflineBanner() {
+  const banner = document.getElementById('offline-banner');
+  if (!banner) return;
+
+  const offline = !navigator.onLine;
+  banner.style.display = offline ? '' : 'none';
+  if (!offline) return;
+
+  const shortEl = document.getElementById('offlineBannerShortText');
+  if (shortEl) shortEl.textContent = _offlineBannerShortText();
+
+  const detailEl = document.getElementById('offlineBannerDetail');
+  if (detailEl) detailEl.innerHTML = _offlineBannerDetailHTML();
+}
+
+/**
+ * Déplie/replie le détail du bandeau hors-ligne (tap sur le résumé).
+ * Appelée par #offlineBannerToggle (onclick="_toggleOfflineBannerDetail()").
+ */
+function _toggleOfflineBannerDetail() {
+  const banner = document.getElementById('offline-banner');
+  const detail = document.getElementById('offlineBannerDetail');
+  if (!banner || !detail) return;
+  const isOpen = detail.style.display !== 'none';
+  detail.style.display = isOpen ? 'none' : '';
+  banner.classList.toggle('expanded', !isOpen);
+}
+
+/* Écouter les changements de connectivité en direct */
+window.addEventListener('online',  _updateOfflineBanner);
+window.addEventListener('offline', _updateOfflineBanner);
+
+/* État initial dès le chargement du script. À ce stade currentMode vaut
+   encore '' (aucun mode choisi) : isFrench() renvoie donc false et L()
+   affiche le texte français par défaut — même convention que le reste
+   de l'app pour son état neutre (voir _updateBottomNav, cas 'app-launcher'). */
+_updateOfflineBanner();
+
+
+/* ============================================================
    4. PERSISTANCE DE LA PROGRESSION (SYSTÈME D'ÉTOILES ⭐)
    ============================================================
    Chaque thème complété est sauvegardé sous la forme :
@@ -1769,6 +1906,30 @@ function _updateLevelTabs(screenId) {
 function _updateBottomNav(screenId) {
   const nav = document.getElementById('bottom-nav');
   if (!nav) return;
+
+  /* 🆕 BUG-FIX (recettage utilisateur) : à la toute première visite d'un
+     mode, l'écran #home affiche le guide d'onboarding — mais la bottom-nav
+     était déjà pleinement active en dessous, avec un bouton "Modules"
+     cliquable. Un nouvel utilisateur tapait dessus immédiatement et
+     court-circuitait tout le parcours de découverte (guide jamais lu,
+     flag 'tm_onboarded_*' jamais posé), ce qui créait une confusion :
+     l'app "semblait" bloquée puisque le guide réapparaissait à chaque
+     relance tant que "Commencer" n'avait pas été cliqué.
+     CORRECTIF : sur #home, tant que le flag onboarding de CE mode n'est
+     pas posé (= première visite jamais terminée), la bottom-nav entière
+     reste masquée. Elle réapparaît dès que l'apprenant clique sur
+     "Commencer" (_buildHomeGuide → homeStartBtn), qui pose le flag AVANT
+     de naviguer vers l'écran Modules. Lors des visites suivantes de
+     #home (bouton ❓ Guide, une fois le flag déjà posé), la nav reste
+     normalement visible — seul le tout premier passage est concerné. */
+  if (screenId === 'home') {
+    const obKey = isFrench() ? 'tm_onboarded_fr' : 'tm_onboarded_or';
+    const firstEverVisit = localStorage.getItem(obKey) !== 'true';
+    if (firstEverVisit) {
+      nav.classList.remove('visible');
+      return;
+    }
+  }
 
   nav.classList.add('visible');
 
@@ -4030,6 +4191,18 @@ function _buildHomeGuide() {
     exportBtn.textContent = L('📄 PDF', '📄 PDF');
     exportBtn.title = L('Galmee guutuu buusi', 'Télécharger le guide (PDF)');
   }
+
+  /* ── 7. Bouton d'installation en un tap / rappel iOS (voir §20b) ──
+     Rafraîchit à la fois la visibilité (dépend de _deferredInstallPrompt,
+     déjà capté ou non au moment du rendu) et la langue du libellé
+     (dépend du mode actif, qui vient de changer via _buildHomeGuide). */
+  _updateInstallUI();
+
+  /* ── 8. 🆕 Bandeau hors-ligne (voir §3e) ──
+     Resynchronise la langue du bandeau si le mode vient de changer
+     pendant que l'appareil était déjà hors ligne (le bandeau lui-même
+     reste affiché en continu tant que navigator.onLine est faux). */
+  _updateOfflineBanner();
 }
 
 
@@ -4309,6 +4482,107 @@ if ('serviceWorker' in navigator) {
         console.warn('[SW] Enregistrement échoué :', err);
       });
   });
+}
+
+/* ============================================================
+   20b. INSTALLATION PWA — bouton natif "Installer l'app"
+   ============================================================
+   🆕 CORRECTIF (recettage utilisateur) : les instructions manuelles
+   ("menu ⋮ → Ajouter à l'écran d'accueil") étaient noyées tout en bas
+   d'un accordéon replié de l'écran Home — la plupart des apprenants
+   ne les trouvaient jamais et restaient sur un simple onglet de
+   navigateur, jamais fiable hors-ligne.
+
+   SOLUTION :
+   • Android / Chrome / Edge / desktop Chrome : ces navigateurs émettent
+     un évènement natif 'beforeinstallprompt'. On l'intercepte et on le
+     rejoue nous-mêmes derrière un bouton bien visible sur l'écran Home
+     (#homeInstallBtn) → installation réelle en UN SEUL TAP, sans passer
+     par aucun menu.
+   • iOS / Safari : Apple ne fournit AUCUNE API d'installation programmée
+     (pas de 'beforeinstallprompt'). Le bouton reste donc masqué et on
+     affiche à la place un rappel visuel direct, non replié dans un
+     accordéon (#homeInstallIosHint), pointant vers le geste manuel
+     "🔗 Partager → Sur l'écran d'accueil".
+   • Firefox mobile / navigateurs sans support : ni l'un ni l'autre ne
+     s'affichent ; les instructions détaillées restent disponibles dans
+     l'accordéon "Hors ligne" du guide, pour ne rien retirer.
+   ============================================================ */
+
+/** Évènement 'beforeinstallprompt' intercepté, rejoué depuis le bouton. */
+let _deferredInstallPrompt = null;
+
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();          /* empêche la mini-infobar automatique du navigateur */
+  _deferredInstallPrompt = e;  /* on la redéclenche nous-mêmes depuis #homeInstallBtn */
+  _updateInstallUI();
+});
+
+window.addEventListener('appinstalled', () => {
+  _deferredInstallPrompt = null;
+  _updateInstallUI();
+  _showToast(L('✅ Fuula jalqabaarratti milkaa\'inaan dabalame !', "✅ App installée avec succès !"));
+});
+
+/**
+ * Affiche/masque le bouton d'installation en un tap et le rappel iOS,
+ * selon ce qui est réellement disponible sur l'appareil courant.
+ * Appelée : au captage de 'beforeinstallprompt', après 'appinstalled',
+ * et à chaque rendu de l'écran Home (_buildHomeGuide) pour rafraîchir
+ * la langue du libellé selon le mode actif.
+ */
+function _updateInstallUI() {
+  const btn     = document.getElementById('homeInstallBtn');
+  const iosHint = document.getElementById('homeInstallIosHint');
+  if (!btn && !iosHint) return;
+
+  const standalone = _isRunningStandalone();
+  const canPrompt   = !!_deferredInstallPrompt && !standalone;
+
+  if (btn) {
+    btn.style.display = canPrompt ? '' : 'none';
+    if (canPrompt) {
+      btn.textContent = L('📲 Fuula jalqabaarratti dabali', "📲 Installer l'app");
+    }
+  }
+
+  if (iosHint) {
+    /* Rappel iOS affiché seulement si : appareil iOS, pas déjà installée,
+       et pas de bouton natif possible (jamais le cas sur iOS de toute
+       façon, mais la condition reste explicite pour la lisibilité). */
+    const showIosHint = !standalone && !canPrompt && _isIosDevice();
+    iosHint.style.display = showIosHint ? '' : 'none';
+    if (showIosHint) {
+      iosHint.innerHTML = L(
+        '📲 iPhone/iPad : 🔗 <strong>Rabsi</strong> cuqaasi (gubbaa fuula) → <strong>"Fuula jalqabarratti"</strong> — interneetii malee amansiisaa argachuuf',
+        '📲 iPhone/iPad : appuyez sur 🔗 <strong>Partager</strong> (en haut de l\'écran) → <strong>"Sur l\'écran d\'accueil"</strong> pour un accès hors-ligne fiable'
+      );
+    }
+  }
+}
+
+/**
+ * Déclenche la boîte de dialogue native d'installation du navigateur.
+ * Appelée par #homeInstallBtn (onclick="_promptInstallApp()").
+ * Un évènement 'beforeinstallprompt' ne peut être consommé qu'une seule
+ * fois : on le vide immédiatement pour éviter tout double-appel.
+ */
+async function _promptInstallApp() {
+  if (!_deferredInstallPrompt) return;
+  const promptEvent = _deferredInstallPrompt;
+  _deferredInstallPrompt = null;
+  _updateInstallUI();
+
+  promptEvent.prompt();
+  try {
+    await promptEvent.userChoice;
+    /* Si l'apprenant refuse, on ne relance rien nous-mêmes : le
+       navigateur ne réémet pas l'évènement dans la même session,
+       et l'insistance serait contre-productive. L'accordéon "Hors
+       ligne" reste disponible pour réessayer manuellement plus tard. */
+  } catch (err) {
+    console.warn('[Install] Erreur prompt installation :', err);
+  }
 }
 
 /* ============================================================

@@ -224,7 +224,7 @@ Cache name is auto-versioned by GitHub Actions (`GITHUB_RUN_NUMBER`) on every de
 
 ### `app.js` — fichier unique volontairement monolithique
 
-Le moteur applicatif tient dans un seul fichier (4 845 lignes, 21 sections commentées).
+Le moteur applicatif tient dans un seul fichier (5 119 lignes, 21 sections commentées).
 Ce choix est délibéré : zéro étape de build, compatibilité maximale, hébergement statique sans bundler.
 
 Si le projet grossit significativement, une migration vers des modules ES (`import`/`export`) est envisageable. Elle nécessiterait :
@@ -267,6 +267,8 @@ Les autres thèmes de Niveau 1 génèrent leurs questions à la volée depuis `w
 | 04/07/2026 | Recettage mobile — Brave Android, Samsung Galaxy A55 5G (Sébastien + Gemini 3.5 Flash Extended) — liste de correctifs identifiée |
 | 05–06/07/2026 | Correctifs appliqués (Sébastien + Claude Sonnet 5) |
 | 08/07/2026 | Documentation (README + Bilan technique) resynchronisée avec le code réel (Sébastien + Claude Sonnet 5) |
+| 09-10/07/2026 | Bandeau hors-ligne persistant (§6.14) + section Guide "Quel navigateur choisir ?" — comparatif Android/iOS des 10 navigateurs les plus utilisés au monde, corrigé suite à un retour terrain (Sébastien + Claude Sonnet 5) |
+| 10/07/2026 | Resynchronisation complète des commentaires à numéros de ligne dans `index.html` et `style.css` (plan de fichier de ce dernier entièrement recalculé) + correction d'une taille obsolète de `app.js` dans ce README (Sébastien + Claude Sonnet 5) |
 
 *Journal détaillé (dont le retour de recettage complet du 03/07) disponible en commentaire d'en-tête dans `app.js`.*
 
@@ -280,4 +282,4 @@ Special thanks to **Fédérico Calo** (web architecture) and **Mussa Sembro** (O
 
 ---
 
-*© Juin–Juillet 2026 — Sébastien Godet*
+*© Juin–Juillet 2026 — Sébastien Godet*
