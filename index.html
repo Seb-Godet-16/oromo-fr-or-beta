@@ -29,15 +29,20 @@
   ╠══════════════════════════════════════════════════════════════════╣
   ║  PLAN DU FICHIER                                                ║
   ║   <head>    Métadonnées, PWA, Open Graph, feuille de styles     ║
-  ║   Écran 0   Lanceur (#app-launcher)           ligne    117      ║
-  ║   Écran 1   Guide / Onboarding (#home)        ligne    220      ║
-  ║   Écran 2a  Niveau 1 Modules (#sections-l1)   ligne    855      ║
-  ║   Écran 2b  Niveau 2 Modules (#sections-l2)   ligne    887      ║
-  ║   Écran 3   Leçon (#lesson)                   ligne    924      ║
-  ║   Modale    Remerciements (#credits-modal)    ligne   1003      ║
-  ║   Modale    Confirmation suppression          ligne   1036      ║
-  ║   Nav       Barre de navigation basse         ligne   1052      ║
-  ║   Scripts   Chargement de app.js              ligne   1094      ║
+  ║   Écran 0   Lanceur (#app-launcher)           ligne    150      ║
+  ║   Écran 1   Guide / Onboarding (#home)        ligne    253      ║
+  ║   Écran 2a  Niveau 1 Modules (#sections-l1)   ligne   1056      ║
+  ║   Écran 2b  Niveau 2 Modules (#sections-l2)   ligne   1088      ║
+  ║   Écran 3   Leçon (#lesson)                   ligne   1125      ║
+  ║   Modale    Remerciements (#credits-modal)    ligne   1204      ║
+  ║   Modale    Confirmation suppression          ligne   1237      ║
+  ║   Nav       Barre de navigation basse         ligne   1253      ║
+  ║   Scripts   Chargement de app.js              ligne   1295      ║
+  ║  🆕 11/07/2026 : plan resynchronisé après réorganisation des    ║
+  ║  rubriques du Guide (Écran 1), ajout du paragraphe "Limites     ║
+  ║  audio hors ligne" (rubrique Hors ligne) et ajout du bloc       ║
+  ║  "En bref" (résumé + navigateurs) en tête du Guide — voir       ║
+  ║  Bilan_technique.md §6.17.                                      ║
   ╚══════════════════════════════════════════════════════════════════╝
 -->
 <html lang="fr">
@@ -316,6 +321,22 @@
            ───────────────────────────────────────────────────────── -->
       <div class="home-lang-block home-lang-hidden" data-lang="or">
 
+        <!-- 🆕 Kutaa "Cuunfaa" — cuunfaa dafamee mul'atu, akkasumas hin
+             baname (accordion miti). Barataan haaraan hojii appichaa fi
+             addatti hafte (interneetii malee, browser) daqiiqaa muraasa
+             keessatti akka hubatu gargaara. Gargaarsi bal'aan armaan
+             gaditti ni argama. Ilaali Bilan_technique.md §6.17. -->
+        <div class="hg-tldr">
+          <h3 class="hg-tldr-title">🚀 Daqiiqaa 30 keessatti waan beekuu qabdu</h3>
+          <ul class="hg-tldr-list">
+            <li>📚 Sadarkaa lama : Jechoota (mata duree 32) ergasii Dubbii (16) — Kaardota, Quiz, Irra deebʼi</li>
+            <li>🔊 Sagaleen ni jira ; Faransaayiif sagaleen bilbila hedduu irratti argama — rakkoo addaa hin qabu</li>
+            <li>📴 Buufamee interneetii malee ni hojjeta — 🎤 Irra deebʼi malee, kun yeroo hunda interneetii barbaada, erga buufamees</li>
+            <li>🌐 Browser — Android : Chrome, Samsung Internet, Edge, Opera fi Brave hundi ni ta'u ; Firefox 🎤 Irra deebʼiif gonkumaa hin hojjetu ; DuckDuckGo fi UC Browser hin mirkanaa'ini. iPhone/iPad : Safari fayyadami — 100% amansiisaa argachuuf</li>
+          </ul>
+          <p class="hg-tldr-footer">Ibsi guutuun armaan gaditti, yookiin booda caancala ❓ Gargaarsa irraa.</p>
+        </div>
+
         <!-- 1. Comment ça marche -->
         <details class="hg-section">
           <summary class="hg-summary">
@@ -369,6 +390,90 @@
               <li>⭐ <strong>Tartiiba urjii</strong> — madaala keessan kan darbee ni eegama ; caalmaan argatte ol ni ba'a, gad bu'u hin beeku</li>
             </ul>
             <div class="ob-tip">💡 Appiin kun meeshaa tokkicha hin taʼu — Duolingo fi barsiisaa waliin itti fayyadami !</div>
+          </div>
+        </details>
+
+        <!-- 7. Comparaison -->
+        <details class="hg-section">
+          <summary class="hg-summary">
+            <span class="hg-icon">⚖️</span>
+            <span class="hg-label">Walbira qabuu — meeshaalee barachuu</span>
+            <span class="hg-chevron">▼</span>
+          </summary>
+          <div class="hg-detail">
+            <p>Meeshaa tokko qofti gahaa miti — walitti makuun saffisaan barata !</p>
+            <div class="ob-compare">
+              <div class="ob-compare-col">
+                <div class="ob-compare-head">📱 App tana</div>
+                <ul><li>💸 Bilisaa guutuu</li><li>🚫 Galmee malee</li><li>🗂️ Jechota sirna qabsiifte</li><li>🔊 Sagalee</li><li>🎤 Dubbii shaakali</li><li>📴 Interneetii malee</li></ul>
+              </div>
+              <div class="ob-compare-col">
+                <div class="ob-compare-head">🦉 Duolingo / Babbel</div>
+                <ul><li>🎮 Taphataa kan kakaasu</li><li>🌐 Afaanota baay'ee</li><li>🎯 Karaa kan of madaaluu</li><li>👥 Hawaasa fi dorgommii</li><li>📐 Caasluga tartiibaan</li></ul>
+              </div>
+              <div class="ob-compare-col">
+                <div class="ob-compare-head">🏫 Mana barumsaa</div>
+                <ul><li>🧑‍🏫 Barsiisaa namaa</li><li>📋 Sirna barnootaa</li><li>🗣️ Hirmaachiisa</li><li>🎓 Ragaa beekamaa</li><li>📐 Caasluga gadi-fagoo</li></ul>
+              </div>
+              <div class="ob-compare-col">
+                <div class="ob-compare-head">🗣️ Hiriyoota Oromoo</div>
+                <ul><li>🌍 Afaan jireenya dhugaa</li><li>🎙️ Sagalee uumamaa</li><li>🛒 Jechota guyyaa guyyaa</li><li>💪 Amantaa of-keessaa</li><li>🤝 Waljijjiirraa aadaa</li></ul>
+              </div>
+            </div>
+            <div class="ob-tip">💡 Gorsa keenya : app kana jechota irratti hojjechuuf fayyadami — booda Duolingo yookiin barsiisaa caaslugaaf fayyadami, fi hiriyoota uumamaa waliin dubbii dhugaa shaakali. Meeshaaleen hunduu wal-cimsu !</div>
+          </div>
+        </details>
+
+        <!-- 6. 🆕 Browser kam filachuu qaba ? (10/07/2026)
+             ⚠️ TRADUCTION OROMO : dalagaa jalqabaa, jechoota appii kana
+             keessatti duraan mirkanaa'an irratti hundaa'e (browser, filatamaa,
+             hin danda'amu…). Akkuma bandeau hors-ligne (§3e), sirriitti
+             mirkaneessuuf dubbataa uumamaa (Mussa Sembro, ilaali
+             Remerciements) dubbisuu qaba utuu hin gadi lakkifamin.
+             ⚠️ CORRIGÉ guyyaa walfakkaataa (deebii barataa, Brave Android,
+             suuraa qabame) : Edge/Opera/Brave/Vivaldi "✅ Filatamoo" jedhamanii
+             deebi'anii ramadaman Android irratti — ilaali §6.15 Bilan
+             technique bal'inaan. -->
+        <details class="hg-section">
+          <summary class="hg-summary">
+            <span class="hg-icon">🌐</span>
+            <span class="hg-label">Browser kam filachuu qaba?</span>
+            <span class="hg-chevron">▼</span>
+          </summary>
+          <div class="hg-detail">
+            <p>Hojiiwwan appii kanaa sadii — 🔊 <strong>Dhaggeeffachuu</strong>, 🎤 <strong>Irra deebʼi</strong> fi 📲 <strong>interneetii malee buusuu</strong> — browser fayyadamtu irratti hirkatu. Kunoo browser addunyaa irratti baay'ee fayyadamaman, akkaataa amansiisummaa isaaniitiin walbira qabame.</p>
+
+            <div class="ob-audio-block">
+              <div class="ob-audio-head">🤖 Android irratti</div>
+              <p>Android irratti, kompiitera wajjin walbira qabamee, sagalee hubachuun (🎤 Irra deebʼi) tajaajila bilbila keessatti durumaan jiru ("Services vocaux Google" jedhamu yeroo baay'ee) fayyadama, browser tokkoon tokkoon keessatti utuu hin kaa'amin. Kanaafuu, browser Chromium irratti hundaa'an baay'een isaanii sirriitti hojjetu — kan iccitii fayyadamtootaa eeguuf beekaman dabalatee.</p>
+              <p style="margin:.3em 0 .5em"><strong>✅ Filatamoo</strong> — qorannoodhaan mirkanaa'e (🔊 Dhaggeeffachuu, 🎤 Irra deebʼi, 📲 Buusuu) :</p>
+              <ul>
+                <li><strong>Chrome</strong> — kan hunda caalu, daangaan hin beekamne.</li>
+                <li><strong>Samsung Internet</strong> — bilbila Samsung irratti durumaan jira, Chrome wajjin wal qixa amansiisaa dha.</li>
+                <li><strong>Edge, Opera, Brave, Vivaldi</strong> — mootora wal fakkaataa (Chromium) fayyadamu, sagalee hubachuunis bilbilatti dabarsu : akka idileetti hojjetu, 🎤 Irra deebʼi dabalatee (Brave Android irratti mirkanaa'e — deebii barataa 10/07/2026).</li>
+              </ul>
+              <p style="margin:.6em 0 .5em"><strong>⚠️ Gahaatti hin qoratamne</strong> :</p>
+              <ul>
+                <li><strong>DuckDuckGo, UC Browser</strong> — walumaagalatti gaarii dha garuu hojii kana irratti gahaatti hin qoratamne ; UC Browser mootora dur fi haaromsa tikaa (security) yeroo hedduu hin taasifamne fayyadama.</li>
+              </ul>
+              <p style="margin:.6em 0 .5em"><strong>❌ Hin gorfamu</strong> :</p>
+              <ul>
+                <li><strong>Firefox</strong> — 🔊 Dhaggeeffachuun akka gaariitti hojjeta, 🎤 Irra deebʼi garuu <strong>gonkumaa</strong> hin hojjetu : Mozilla teeknooloojii kana browser isaanii keessatti kaa'uu filachuu dide (kompiitera fi bilbila lamaan irratti dhugaa dha). Buusuun interneetii malee illee yeroo tokko tokko gabatee salphaa qofa uuma, appii dhugaa utuu hin ta'in.</li>
+              </ul>
+            </div>
+
+            <div class="ob-audio-block">
+              <div class="ob-audio-head">🍎 iPhone / iPad (iOS) irratti</div>
+              <p>iOS irratti, Apple browser <strong>hunda</strong> (Chrome, Firefox, Edge, Brave, Opera, DuckDuckGo…) akka moottora ishee (kan Safari) fayyadaman dirqama. Kanaafuu, dhugumatti, wal fakkaataadha.</p>
+              <ul>
+                <li><strong>✅ Safari</strong> — browser 100% amansiisaa qofa : fuula jalqabaarratti buusuu fi 🔊 Dhaggeeffachuun yeroo hunda hojjetu.</li>
+                <li><strong>⚠️ Chrome, Edge, Opera, Brave, DuckDuckGo</strong> — erga iOS 17 irraa, isaanis fuula jalqabaarratti buusuu fi sagalee dhageessisuu ni danda'u, garuu Safari caalaa xiqqoo salphaa miti (tarkaanfiin buusuu caancala isaanii keessatti argachuun xiqqoo rakkisaa ta'uu danda'a).</li>
+                <li><strong>❌ Firefox, UC Browser</strong> — fuula jalqabaarratti buusuun xiqqoo yookiin gonkumaa hin argamu ; interneetii malee amansiisaadhaaf hin filatamani.</li>
+              </ul>
+              <div class="ob-audio-tip">💡 <strong>🎤 Irra deebʼi</strong> iPhone/iPad irratti <strong>onglet</strong> idileessaa keessatti qofa hojjeta (fuula jalqabaarratti buufamee hin jiru yoo ta'e) — browser kamiyyuu ta'us, Safari dabalatee. Kun daangaa Apple mirkanaa'aa dha (kutaa "Galmee malee" armaan olii ilaali), dogoggora appii kanaa miti.</div>
+            </div>
+
+            <div class="ob-tip">💡 Cuunfaa : Android irratti, browser Chromium baay'een (Chrome, Samsung Internet, Edge, Opera, Brave, Vivaldi) ni ta'u — Firefox qofa 🎤 Irra deebʼiif rakkoo qaba. iPhone/iPad irratti, <strong>Safari</strong> fayyadami — 100% amansiisaa argachuuf.</div>
           </div>
         </details>
 
@@ -438,23 +543,6 @@
           </div>
         </details>
 
-        <!-- 4. Réinitialiser -->
-        <details class="hg-section">
-          <summary class="hg-summary">
-            <span class="hg-icon">🔄</span>
-            <span class="hg-label">Moojuula irra deebi'uu (⭐ haquuu)</span>
-            <span class="hg-chevron">▼</span>
-          </summary>
-          <div class="hg-detail">
-            <p>Moojuula tokko irra deebi'uu barbaaddaa? Urjiilee haquun <strong>jalqaba irraa jalqabuu</strong> ni dandaa'ama.</p>
-            <ul>
-              <li>Fuula <strong>Moojuulota</strong> irratti moojuula xumurame barbaacha baha — kaardii isaa irratti caancalli <strong>🔄 Irra deebi'i</strong> mul'ata.</li>
-              <li>Caancala sana cuqaasi — mirkaneeffannaa ni gaafata.</li>
-              <li>Urjiilee ni dhaban — garuu Quiz irra deebi'uun urjii haaraa argachuu ni dandaa'ama.</li>
-            </ul>
-          </div>
-        </details>
-
         <!-- 5. Hors ligne -->
         <details class="hg-section">
           <summary class="hg-summary">
@@ -484,6 +572,14 @@
             <p>Erga appichi <strong>buufamee</strong> (gabatee ittiin argamu qofa utuu hin taane) booda, inni interneetii malee <strong>guutummaatti hojjeta</strong> — iddoo kamittiyyuu !</p>
             <div class="ob-tip">💡 App yeroo yeroodhaan diriirfama — browser irratti bantu, version haaraan ofumaatti buufama.</div>
 
+            <h4 style="margin:.8em 0 .3em;font-size:.95em;border-top:1px solid var(--color-border);padding-top:.6em">⚠️ Daangaa sagalee interneetii malee</h4>
+            <p>Interneetii malee, hojiiwwan sagalee lamaan wal fakkaatanii hin hojjetan :</p>
+            <ul>
+              <li><strong>🎤 Irraddeessi</strong> — interneetii malee yeroo hunda <strong>hin danda'amu</strong>, barawuzarii kamiyyuu keessatti (Chrome, Edge, Safari) : sagaleen sirbame gara sarvaraa interneetii tokkootti ergama, akka barreeffamuuf. Kun daangaa teeknoolojii sanaati, dogoggora app kanaa miti.</li>
+              <li><strong>🔊 Dhaggeeffachuu</strong> — interneetii malee ni danda'ama, garuu bilbilli kee sagalee (voice) sirna irratti durumaan qabaate qofa. Yoo kun jiraachuu baate, afaan durtii bilbila keetii dhageessa — Faransaayii ykn Afaan Oromoo barbaadame irra.</li>
+            </ul>
+            <div class="ob-tip">💡 Interneetii yeroo dhabdu, bandeau xiqqaan ofumaan si beeksisa, daangaa lamaan kanas si yaadachiisa.</div>
+
             <h4 style="margin:.8em 0 .3em;font-size:.95em;border-top:1px solid var(--color-border);padding-top:.6em">📄 Galmee PDF buusuuf</h4>
             <p>Barnoota kee gara meeshaa keetiitti qusachuuf, PDFota sadii ni argatta :</p>
             <ul>
@@ -494,87 +590,20 @@
           </div>
         </details>
 
-        <!-- 6. 🆕 Browser kam filachuu qaba ? (10/07/2026)
-             ⚠️ TRADUCTION OROMO : dalagaa jalqabaa, jechoota appii kana
-             keessatti duraan mirkanaa'an irratti hundaa'e (browser, filatamaa,
-             hin danda'amu…). Akkuma bandeau hors-ligne (§3e), sirriitti
-             mirkaneessuuf dubbataa uumamaa (Mussa Sembro, ilaali
-             Remerciements) dubbisuu qaba utuu hin gadi lakkifamin.
-             ⚠️ CORRIGÉ guyyaa walfakkaataa (deebii barataa, Brave Android,
-             suuraa qabame) : Edge/Opera/Brave/Vivaldi "✅ Filatamoo" jedhamanii
-             deebi'anii ramadaman Android irratti — ilaali §6.15 Bilan
-             technique bal'inaan. -->
+        <!-- 4. Réinitialiser -->
         <details class="hg-section">
           <summary class="hg-summary">
-            <span class="hg-icon">🌐</span>
-            <span class="hg-label">Browser kam filachuu qaba?</span>
+            <span class="hg-icon">🔄</span>
+            <span class="hg-label">Moojuula irra deebi'uu (⭐ haquuu)</span>
             <span class="hg-chevron">▼</span>
           </summary>
           <div class="hg-detail">
-            <p>Hojiiwwan appii kanaa sadii — 🔊 <strong>Dhaggeeffachuu</strong>, 🎤 <strong>Irra deebʼi</strong> fi 📲 <strong>interneetii malee buusuu</strong> — browser fayyadamtu irratti hirkatu. Kunoo browser addunyaa irratti baay'ee fayyadamaman, akkaataa amansiisummaa isaaniitiin walbira qabame.</p>
-
-            <div class="ob-audio-block">
-              <div class="ob-audio-head">🤖 Android irratti</div>
-              <p>Android irratti, kompiitera wajjin walbira qabamee, sagalee hubachuun (🎤 Irra deebʼi) tajaajila bilbila keessatti durumaan jiru ("Services vocaux Google" jedhamu yeroo baay'ee) fayyadama, browser tokkoon tokkoon keessatti utuu hin kaa'amin. Kanaafuu, browser Chromium irratti hundaa'an baay'een isaanii sirriitti hojjetu — kan iccitii fayyadamtootaa eeguuf beekaman dabalatee.</p>
-              <p style="margin:.3em 0 .5em"><strong>✅ Filatamoo</strong> — qorannoodhaan mirkanaa'e (🔊 Dhaggeeffachuu, 🎤 Irra deebʼi, 📲 Buusuu) :</p>
-              <ul>
-                <li><strong>Chrome</strong> — kan hunda caalu, daangaan hin beekamne.</li>
-                <li><strong>Samsung Internet</strong> — bilbila Samsung irratti durumaan jira, Chrome wajjin wal qixa amansiisaa dha.</li>
-                <li><strong>Edge, Opera, Brave, Vivaldi</strong> — mootora wal fakkaataa (Chromium) fayyadamu, sagalee hubachuunis bilbilatti dabarsu : akka idileetti hojjetu, 🎤 Irra deebʼi dabalatee (Brave Android irratti mirkanaa'e — deebii barataa 10/07/2026).</li>
-              </ul>
-              <p style="margin:.6em 0 .5em"><strong>⚠️ Gahaatti hin qoratamne</strong> :</p>
-              <ul>
-                <li><strong>DuckDuckGo, UC Browser</strong> — walumaagalatti gaarii dha garuu hojii kana irratti gahaatti hin qoratamne ; UC Browser mootora dur fi haaromsa tikaa (security) yeroo hedduu hin taasifamne fayyadama.</li>
-              </ul>
-              <p style="margin:.6em 0 .5em"><strong>❌ Hin gorfamu</strong> :</p>
-              <ul>
-                <li><strong>Firefox</strong> — 🔊 Dhaggeeffachuun akka gaariitti hojjeta, 🎤 Irra deebʼi garuu <strong>gonkumaa</strong> hin hojjetu : Mozilla teeknooloojii kana browser isaanii keessatti kaa'uu filachuu dide (kompiitera fi bilbila lamaan irratti dhugaa dha). Buusuun interneetii malee illee yeroo tokko tokko gabatee salphaa qofa uuma, appii dhugaa utuu hin ta'in.</li>
-              </ul>
-            </div>
-
-            <div class="ob-audio-block">
-              <div class="ob-audio-head">🍎 iPhone / iPad (iOS) irratti</div>
-              <p>iOS irratti, Apple browser <strong>hunda</strong> (Chrome, Firefox, Edge, Brave, Opera, DuckDuckGo…) akka moottora ishee (kan Safari) fayyadaman dirqama. Kanaafuu, dhugumatti, wal fakkaataadha.</p>
-              <ul>
-                <li><strong>✅ Safari</strong> — browser 100% amansiisaa qofa : fuula jalqabaarratti buusuu fi 🔊 Dhaggeeffachuun yeroo hunda hojjetu.</li>
-                <li><strong>⚠️ Chrome, Edge, Opera, Brave, DuckDuckGo</strong> — erga iOS 17 irraa, isaanis fuula jalqabaarratti buusuu fi sagalee dhageessisuu ni danda'u, garuu Safari caalaa xiqqoo salphaa miti (tarkaanfiin buusuu caancala isaanii keessatti argachuun xiqqoo rakkisaa ta'uu danda'a).</li>
-                <li><strong>❌ Firefox, UC Browser</strong> — fuula jalqabaarratti buusuun xiqqoo yookiin gonkumaa hin argamu ; interneetii malee amansiisaadhaaf hin filatamani.</li>
-              </ul>
-              <div class="ob-audio-tip">💡 <strong>🎤 Irra deebʼi</strong> iPhone/iPad irratti <strong>onglet</strong> idileessaa keessatti qofa hojjeta (fuula jalqabaarratti buufamee hin jiru yoo ta'e) — browser kamiyyuu ta'us, Safari dabalatee. Kun daangaa Apple mirkanaa'aa dha (kutaa "Galmee malee" armaan olii ilaali), dogoggora appii kanaa miti.</div>
-            </div>
-
-            <div class="ob-tip">💡 Cuunfaa : Android irratti, browser Chromium baay'een (Chrome, Samsung Internet, Edge, Opera, Brave, Vivaldi) ni ta'u — Firefox qofa 🎤 Irra deebʼiif rakkoo qaba. iPhone/iPad irratti, <strong>Safari</strong> fayyadami — 100% amansiisaa argachuuf.</div>
-          </div>
-        </details>
-
-        <!-- 7. Comparaison -->
-        <details class="hg-section">
-          <summary class="hg-summary">
-            <span class="hg-icon">⚖️</span>
-            <span class="hg-label">Walbira qabuu — meeshaalee barachuu</span>
-            <span class="hg-chevron">▼</span>
-          </summary>
-          <div class="hg-detail">
-            <p>Meeshaa tokko qofti gahaa miti — walitti makuun saffisaan barata !</p>
-            <div class="ob-compare">
-              <div class="ob-compare-col">
-                <div class="ob-compare-head">📱 App tana</div>
-                <ul><li>💸 Bilisaa guutuu</li><li>🚫 Galmee malee</li><li>🗂️ Jechota sirna qabsiifte</li><li>🔊 Sagalee</li><li>🎤 Dubbii shaakali</li><li>📴 Interneetii malee</li></ul>
-              </div>
-              <div class="ob-compare-col">
-                <div class="ob-compare-head">🦉 Duolingo / Babbel</div>
-                <ul><li>🎮 Taphataa kan kakaasu</li><li>🌐 Afaanota baay'ee</li><li>🎯 Karaa kan of madaaluu</li><li>👥 Hawaasa fi dorgommii</li><li>📐 Caasluga tartiibaan</li></ul>
-              </div>
-              <div class="ob-compare-col">
-                <div class="ob-compare-head">🏫 Mana barumsaa</div>
-                <ul><li>🧑‍🏫 Barsiisaa namaa</li><li>📋 Sirna barnootaa</li><li>🗣️ Hirmaachiisa</li><li>🎓 Ragaa beekamaa</li><li>📐 Caasluga gadi-fagoo</li></ul>
-              </div>
-              <div class="ob-compare-col">
-                <div class="ob-compare-head">🗣️ Hiriyoota Oromoo</div>
-                <ul><li>🌍 Afaan jireenya dhugaa</li><li>🎙️ Sagalee uumamaa</li><li>🛒 Jechota guyyaa guyyaa</li><li>💪 Amantaa of-keessaa</li><li>🤝 Waljijjiirraa aadaa</li></ul>
-              </div>
-            </div>
-            <div class="ob-tip">💡 Gorsa keenya : app kana jechota irratti hojjechuuf fayyadami — booda Duolingo yookiin barsiisaa caaslugaaf fayyadami, fi hiriyoota uumamaa waliin dubbii dhugaa shaakali. Meeshaaleen hunduu wal-cimsu !</div>
+            <p>Moojuula tokko irra deebi'uu barbaaddaa? Urjiilee haquun <strong>jalqaba irraa jalqabuu</strong> ni dandaa'ama.</p>
+            <ul>
+              <li>Fuula <strong>Moojuulota</strong> irratti moojuula xumurame barbaacha baha — kaardii isaa irratti caancalli <strong>🔄 Irra deebi'i</strong> mul'ata.</li>
+              <li>Caancala sana cuqaasi — mirkaneeffannaa ni gaafata.</li>
+              <li>Urjiilee ni dhaban — garuu Quiz irra deebi'uun urjii haaraa argachuu ni dandaa'ama.</li>
+            </ul>
           </div>
         </details>
 
@@ -623,7 +652,6 @@
             </div>
           </div>
         </details>
-
       </div><!-- /.home-lang-block[data-lang="or"] -->
 
 
@@ -633,6 +661,22 @@
            Langue maternelle de l'apprenant = Français → guide en Français.
            ───────────────────────────────────────────────────────── -->
       <div class="home-lang-block home-lang-hidden" data-lang="fr">
+
+        <!-- 🆕 Bloc "En bref" — résumé visible sans dépliage, ajouté pour
+             qu'un nouvel apprenant comprenne le fonctionnement ET les
+             spécificités (hors-ligne, navigateur) en un coup d'œil, sans
+             avoir à ouvrir un seul accordéon. Le guide détaillé reste
+             entièrement disponible juste en-dessous. Voir Bilan_technique.md §6.17. -->
+        <div class="hg-tldr">
+          <h3 class="hg-tldr-title">🚀 L'essentiel en 30 secondes</h3>
+          <ul class="hg-tldr-list">
+            <li>📚 2 niveaux : Vocabulaire (32 thèmes) puis Dialogues (16) — Cartes, Quiz, Répète</li>
+            <li>🔊 Audio inclus ; en Oromo, la voix « idéale » est parfois remplacée par une voix proche (Somali, Amharique…) — normal, pas un bug</li>
+            <li>📴 Installable et utilisable hors-ligne — sauf 🎤 Répète, qui a toujours besoin d'internet, même une fois installée</li>
+            <li>🌐 Navigateur — Android : Chrome, Samsung Internet, Edge, Opera et Brave conviennent tous ; Firefox ne permet jamais 🎤 Répète ; DuckDuckGo et UC Browser sont moins éprouvés. iPhone/iPad : utilisez Safari pour une expérience garantie à 100%</li>
+          </ul>
+          <p class="hg-tldr-footer">Détails complets ci-dessous, ou plus tard via le bouton ❓ Guide.</p>
+        </div>
 
         <!-- 1. Comment ça marche -->
         <details class="hg-section">
@@ -687,6 +731,92 @@
               <li>⭐ <strong>Progression sauvegardée</strong> — vos étoiles ne diminuent jamais, votre meilleur score est conservé</li>
             </ul>
             <div class="ob-tip">💡 Cette appli n'est pas un outil unique — combinez-la avec Duolingo, un cours ou des amis natifs pour progresser plus vite !</div>
+          </div>
+        </details>
+
+        <!-- 7. Comparaison -->
+        <details class="hg-section">
+          <summary class="hg-summary">
+            <span class="hg-icon">⚖️</span>
+            <span class="hg-label">Comparaison — cette appli vs. les autres</span>
+            <span class="hg-chevron">▼</span>
+          </summary>
+          <div class="hg-detail">
+            <p>Pas de meilleure méthode unique — chacune a ses forces. <strong>L'idéal, c'est de les combiner !</strong></p>
+            <div class="ob-compare">
+              <div class="ob-compare-col">
+                <div class="ob-compare-head">📱 Cette appli</div>
+                <ul><li>💸 100% gratuit</li><li>🚫 Sans inscription</li><li>🗂️ Vocabulaire structuré</li><li>🔊 Audio intégré</li><li>🎤 Répétition orale</li><li>📴 Hors-ligne</li></ul>
+              </div>
+              <div class="ob-compare-col">
+                <div class="ob-compare-head">🦉 Duolingo / Babbel</div>
+                <ul><li>🎮 Gamification motivante</li><li>🌐 Large catalogue</li><li>🎯 Parcours adaptatif</li><li>👥 Communauté</li><li>📐 Grammaire progressive</li></ul>
+              </div>
+              <div class="ob-compare-col">
+                <div class="ob-compare-head">🏫 École de langue</div>
+                <ul><li>🧑‍🏫 Enseignant humain</li><li>📋 Structure pédagogique</li><li>🗣️ Pratique entre apprenants</li><li>🎓 Certification reconnue</li><li>📐 Grammaire approfondie</li></ul>
+              </div>
+              <div class="ob-compare-col">
+                <div class="ob-compare-head">🗣️ Immersion / Amis natifs</div>
+                <ul><li>🌍 Langue authentique</li><li>🎙️ Accent naturel</li><li>🛒 Vocabulaire du quotidien</li><li>💪 Confiance en soi</li><li>🤝 Échanges culturels</li></ul>
+              </div>
+            </div>
+            <div class="ob-tip">💡 Notre conseil : utilise cette appli pour construire ta base de vocabulaire dès le premier jour — puis appuie-toi sur Duolingo ou une école pour la grammaire, et pratique avec des natifs pour la fluidité. Chaque outil renforce les autres !</div>
+          </div>
+        </details>
+
+        <!-- 6. 🆕 Quel navigateur choisir ? (10/07/2026)
+             Comparatif des 10 navigateurs les plus utilisés au monde (classement
+             par part de marché mondiale), sur les 3 fonctionnalités sensibles au
+             navigateur : 🔊 Écouter (speechSynthesis), 🎤 Répète (SpeechRecognition)
+             et 📲 Installation hors-ligne (Service Worker + manifest). Sources
+             vérifiées via caniuse.com et les pages de compatibilité officielles
+             (juillet 2026) — voir aussi §6.11/§6.13/§6.14 du Bilan technique.
+             ⚠️ CORRIGÉ le même jour suite à un retour terrain (Brave Android,
+             capture d'écran) : Edge/Opera/Brave/Vivaldi reclassés "✅ Recommandés"
+             sur Android (la limitation initialement documentée concerne surtout
+             la version ordinateur de ces navigateurs) — voir §6.15 du Bilan
+             technique pour le détail complet de la correction. -->
+        <details class="hg-section">
+          <summary class="hg-summary">
+            <span class="hg-icon">🌐</span>
+            <span class="hg-label">Quel navigateur choisir ?</span>
+            <span class="hg-chevron">▼</span>
+          </summary>
+          <div class="hg-detail">
+            <p>Trois fonctionnalités de l'appli dépendent directement du navigateur utilisé : 🔊 <strong>Écouter</strong>, 🎤 <strong>Répète</strong> et 📲 <strong>l'installation hors-ligne</strong>. Voici un comparatif des navigateurs les plus utilisés dans le monde, classés par fiabilité.</p>
+
+            <div class="ob-audio-block">
+              <div class="ob-audio-head">🤖 Sur Android</div>
+              <p>Sur Android, contrairement à un ordinateur, la reconnaissance vocale (🎤 Répète) passe par le service vocal déjà installé sur le téléphone (généralement les "Services vocaux Google"), et non par une fonction propre à chaque navigateur. Résultat : la plupart des navigateurs basés sur Chromium fonctionnent bien pour les 3 fonctionnalités — y compris ceux réputés plus stricts sur la vie privée.</p>
+              <p style="margin:.3em 0 .5em"><strong>✅ Recommandés</strong> — testés et fiables (🔊 Écouter, 🎤 Répète, 📲 Installation) :</p>
+              <ul>
+                <li><strong>Chrome</strong> — la référence, aucune limite connue.</li>
+                <li><strong>Samsung Internet</strong> — préinstallé sur les téléphones Samsung, aussi fiable que Chrome.</li>
+                <li><strong>Edge, Opera, Brave, Vivaldi</strong> — basés sur le même moteur (Chromium) et délèguent la reconnaissance vocale au téléphone : fonctionnent normalement, 🎤 Répète compris (confirmé en conditions réelles sur Brave Android — retour apprenant du 10/07/2026).</li>
+              </ul>
+              <p style="margin:.6em 0 .5em"><strong>⚠️ Moins éprouvés</strong> :</p>
+              <ul>
+                <li><strong>DuckDuckGo, UC Browser</strong> — fonctionnement globalement correct mais moins testé sur cette fonctionnalité précise ; UC Browser utilise en plus un moteur ancien et des mises à jour de sécurité peu fréquentes.</li>
+              </ul>
+              <p style="margin:.6em 0 .5em"><strong>❌ Déconseillé</strong> :</p>
+              <ul>
+                <li><strong>Firefox</strong> — 🔊 Écouter fonctionne très bien, mais 🎤 Répète ne fonctionnera <strong>jamais</strong> : Mozilla n'a jamais activé cette technologie dans son navigateur, par choix (vrai sur ordinateur comme sur mobile). L'installation hors-ligne y crée aussi parfois un simple raccourci plutôt qu'une vraie app.</li>
+              </ul>
+            </div>
+
+            <div class="ob-audio-block">
+              <div class="ob-audio-head">🍎 Sur iPhone / iPad (iOS)</div>
+              <p>Sur iOS, Apple impose à <strong>tous</strong> les navigateurs (Chrome, Firefox, Edge, Brave, Opera, DuckDuckGo…) d'utiliser son propre moteur — celui de Safari. Dans les grandes lignes, ils se comportent donc tous de façon proche en coulisses.</p>
+              <ul>
+                <li><strong>✅ Safari</strong> — le seul navigateur garanti à 100% : installation sur l'écran d'accueil et 🔊 Écouter fonctionnent toujours.</li>
+                <li><strong>⚠️ Chrome, Edge, Opera, Brave, DuckDuckGo</strong> — depuis iOS 17, peuvent eux aussi installer l'app sur l'écran d'accueil et lire le son, mais un peu moins directement que Safari (le geste d'installation est parfois moins visible dans leur menu).</li>
+                <li><strong>❌ Firefox, UC Browser</strong> — installation sur l'écran d'accueil peu ou pas proposée ; à éviter pour un usage hors-ligne fiable.</li>
+              </ul>
+              <div class="ob-audio-tip">💡 <strong>🎤 Répète</strong> ne fonctionne, sur iPhone/iPad, que dans un <strong>onglet classique</strong> (pas encore installé sur l'écran d'accueil) — et ce quel que soit le navigateur, y compris Safari. C'est une limitation d'Apple confirmée (voir section "Hors ligne" ci-dessus), pas un bug de cette application.</div>
+            </div>
+
+            <div class="ob-tip">💡 En résumé : sur Android, la plupart des navigateurs Chromium (Chrome, Samsung Internet, Edge, Opera, Brave, Vivaldi) conviennent — seul Firefox pose problème pour 🎤 Répète. Sur iPhone/iPad, utilisez <strong>Safari</strong> pour une expérience garantie à 100%.</div>
           </div>
         </details>
 
@@ -803,23 +933,6 @@
           </div>
         </details>
 
-        <!-- 4. Réinitialiser -->
-        <details class="hg-section">
-          <summary class="hg-summary">
-            <span class="hg-icon">🔄</span>
-            <span class="hg-label">Réinitialiser un module</span>
-            <span class="hg-chevron">▼</span>
-          </summary>
-          <div class="hg-detail">
-            <p>Envie de recommencer un module à zéro ? Vous pouvez <strong>effacer vos étoiles</strong> et repartir de la base.</p>
-            <ul>
-              <li>Depuis l'écran <strong>Modules</strong>, repérez le thème déjà complété — le bouton <strong>🔄 Recommencer</strong> apparaît directement sur sa carte.</li>
-              <li>Appuyez sur ce bouton — une confirmation vous sera demandée.</li>
-              <li>Vos étoiles sont supprimées — rejouez le Quiz pour en regagner.</li>
-            </ul>
-          </div>
-        </details>
-
         <!-- 5. Hors ligne -->
         <details class="hg-section">
           <summary class="hg-summary">
@@ -849,6 +962,14 @@
             <p>Une fois <strong>installée</strong> (et non simplement en raccourci), l'app fonctionne <strong>entièrement hors ligne</strong>.</p>
             <div class="ob-tip">💡 L'app se met à jour automatiquement à chaque nouvelle version — il suffit de la rouvrir dans le navigateur pour que le cache soit rafraîchi.</div>
 
+            <h4 style="margin:.8em 0 .3em;font-size:.95em;border-top:1px solid var(--color-border);padding-top:.6em">⚠️ Limites audio en mode hors ligne</h4>
+            <p>Une fois hors connexion, les deux fonctions vocales de l'app ne se comportent pas de la même façon :</p>
+            <ul>
+              <li><strong>🎤 Répète</strong> — ne fonctionne <strong>jamais</strong> hors ligne, sur aucun navigateur (Chrome, Edge, Safari…) : l'enregistrement doit être envoyé à un serveur en ligne pour être transcrit. C'est une limite de la technologie elle-même, pas un bug de l'application.</li>
+              <li><strong>🔊 Écouter</strong> — peut fonctionner hors ligne, mais seulement si une voix est déjà installée sur votre appareil. Si ce n'est pas le cas, vous entendrez la langue par défaut de votre téléphone au lieu du français ou de l'oromo attendu.</li>
+            </ul>
+            <div class="ob-tip">💡 Un bandeau discret vous prévient automatiquement dès que vous perdez la connexion, en rappelant ces deux limites.</div>
+
             <h4 style="margin:.8em 0 .3em;font-size:.95em;border-top:1px solid var(--color-border);padding-top:.6em">📄 Téléchargement en PDF</h4>
             <p>Vous pouvez sauvegarder trois types de contenus en PDF :</p>
             <ul>
@@ -859,89 +980,20 @@
           </div>
         </details>
 
-        <!-- 6. 🆕 Quel navigateur choisir ? (10/07/2026)
-             Comparatif des 10 navigateurs les plus utilisés au monde (classement
-             par part de marché mondiale), sur les 3 fonctionnalités sensibles au
-             navigateur : 🔊 Écouter (speechSynthesis), 🎤 Répète (SpeechRecognition)
-             et 📲 Installation hors-ligne (Service Worker + manifest). Sources
-             vérifiées via caniuse.com et les pages de compatibilité officielles
-             (juillet 2026) — voir aussi §6.11/§6.13/§6.14 du Bilan technique.
-             ⚠️ CORRIGÉ le même jour suite à un retour terrain (Brave Android,
-             capture d'écran) : Edge/Opera/Brave/Vivaldi reclassés "✅ Recommandés"
-             sur Android (la limitation initialement documentée concerne surtout
-             la version ordinateur de ces navigateurs) — voir §6.15 du Bilan
-             technique pour le détail complet de la correction. -->
+        <!-- 4. Réinitialiser -->
         <details class="hg-section">
           <summary class="hg-summary">
-            <span class="hg-icon">🌐</span>
-            <span class="hg-label">Quel navigateur choisir ?</span>
+            <span class="hg-icon">🔄</span>
+            <span class="hg-label">Réinitialiser un module</span>
             <span class="hg-chevron">▼</span>
           </summary>
           <div class="hg-detail">
-            <p>Trois fonctionnalités de l'appli dépendent directement du navigateur utilisé : 🔊 <strong>Écouter</strong>, 🎤 <strong>Répète</strong> et 📲 <strong>l'installation hors-ligne</strong>. Voici un comparatif des navigateurs les plus utilisés dans le monde, classés par fiabilité.</p>
-
-            <div class="ob-audio-block">
-              <div class="ob-audio-head">🤖 Sur Android</div>
-              <p>Sur Android, contrairement à un ordinateur, la reconnaissance vocale (🎤 Répète) passe par le service vocal déjà installé sur le téléphone (généralement les "Services vocaux Google"), et non par une fonction propre à chaque navigateur. Résultat : la plupart des navigateurs basés sur Chromium fonctionnent bien pour les 3 fonctionnalités — y compris ceux réputés plus stricts sur la vie privée.</p>
-              <p style="margin:.3em 0 .5em"><strong>✅ Recommandés</strong> — testés et fiables (🔊 Écouter, 🎤 Répète, 📲 Installation) :</p>
-              <ul>
-                <li><strong>Chrome</strong> — la référence, aucune limite connue.</li>
-                <li><strong>Samsung Internet</strong> — préinstallé sur les téléphones Samsung, aussi fiable que Chrome.</li>
-                <li><strong>Edge, Opera, Brave, Vivaldi</strong> — basés sur le même moteur (Chromium) et délèguent la reconnaissance vocale au téléphone : fonctionnent normalement, 🎤 Répète compris (confirmé en conditions réelles sur Brave Android — retour apprenant du 10/07/2026).</li>
-              </ul>
-              <p style="margin:.6em 0 .5em"><strong>⚠️ Moins éprouvés</strong> :</p>
-              <ul>
-                <li><strong>DuckDuckGo, UC Browser</strong> — fonctionnement globalement correct mais moins testé sur cette fonctionnalité précise ; UC Browser utilise en plus un moteur ancien et des mises à jour de sécurité peu fréquentes.</li>
-              </ul>
-              <p style="margin:.6em 0 .5em"><strong>❌ Déconseillé</strong> :</p>
-              <ul>
-                <li><strong>Firefox</strong> — 🔊 Écouter fonctionne très bien, mais 🎤 Répète ne fonctionnera <strong>jamais</strong> : Mozilla n'a jamais activé cette technologie dans son navigateur, par choix (vrai sur ordinateur comme sur mobile). L'installation hors-ligne y crée aussi parfois un simple raccourci plutôt qu'une vraie app.</li>
-              </ul>
-            </div>
-
-            <div class="ob-audio-block">
-              <div class="ob-audio-head">🍎 Sur iPhone / iPad (iOS)</div>
-              <p>Sur iOS, Apple impose à <strong>tous</strong> les navigateurs (Chrome, Firefox, Edge, Brave, Opera, DuckDuckGo…) d'utiliser son propre moteur — celui de Safari. Dans les grandes lignes, ils se comportent donc tous de façon proche en coulisses.</p>
-              <ul>
-                <li><strong>✅ Safari</strong> — le seul navigateur garanti à 100% : installation sur l'écran d'accueil et 🔊 Écouter fonctionnent toujours.</li>
-                <li><strong>⚠️ Chrome, Edge, Opera, Brave, DuckDuckGo</strong> — depuis iOS 17, peuvent eux aussi installer l'app sur l'écran d'accueil et lire le son, mais un peu moins directement que Safari (le geste d'installation est parfois moins visible dans leur menu).</li>
-                <li><strong>❌ Firefox, UC Browser</strong> — installation sur l'écran d'accueil peu ou pas proposée ; à éviter pour un usage hors-ligne fiable.</li>
-              </ul>
-              <div class="ob-audio-tip">💡 <strong>🎤 Répète</strong> ne fonctionne, sur iPhone/iPad, que dans un <strong>onglet classique</strong> (pas encore installé sur l'écran d'accueil) — et ce quel que soit le navigateur, y compris Safari. C'est une limitation d'Apple confirmée (voir section "Hors ligne" ci-dessus), pas un bug de cette application.</div>
-            </div>
-
-            <div class="ob-tip">💡 En résumé : sur Android, la plupart des navigateurs Chromium (Chrome, Samsung Internet, Edge, Opera, Brave, Vivaldi) conviennent — seul Firefox pose problème pour 🎤 Répète. Sur iPhone/iPad, utilisez <strong>Safari</strong> pour une expérience garantie à 100%.</div>
-          </div>
-        </details>
-
-        <!-- 7. Comparaison -->
-        <details class="hg-section">
-          <summary class="hg-summary">
-            <span class="hg-icon">⚖️</span>
-            <span class="hg-label">Comparaison — cette appli vs. les autres</span>
-            <span class="hg-chevron">▼</span>
-          </summary>
-          <div class="hg-detail">
-            <p>Pas de meilleure méthode unique — chacune a ses forces. <strong>L'idéal, c'est de les combiner !</strong></p>
-            <div class="ob-compare">
-              <div class="ob-compare-col">
-                <div class="ob-compare-head">📱 Cette appli</div>
-                <ul><li>💸 100% gratuit</li><li>🚫 Sans inscription</li><li>🗂️ Vocabulaire structuré</li><li>🔊 Audio intégré</li><li>🎤 Répétition orale</li><li>📴 Hors-ligne</li></ul>
-              </div>
-              <div class="ob-compare-col">
-                <div class="ob-compare-head">🦉 Duolingo / Babbel</div>
-                <ul><li>🎮 Gamification motivante</li><li>🌐 Large catalogue</li><li>🎯 Parcours adaptatif</li><li>👥 Communauté</li><li>📐 Grammaire progressive</li></ul>
-              </div>
-              <div class="ob-compare-col">
-                <div class="ob-compare-head">🏫 École de langue</div>
-                <ul><li>🧑‍🏫 Enseignant humain</li><li>📋 Structure pédagogique</li><li>🗣️ Pratique entre apprenants</li><li>🎓 Certification reconnue</li><li>📐 Grammaire approfondie</li></ul>
-              </div>
-              <div class="ob-compare-col">
-                <div class="ob-compare-head">🗣️ Immersion / Amis natifs</div>
-                <ul><li>🌍 Langue authentique</li><li>🎙️ Accent naturel</li><li>🛒 Vocabulaire du quotidien</li><li>💪 Confiance en soi</li><li>🤝 Échanges culturels</li></ul>
-              </div>
-            </div>
-            <div class="ob-tip">💡 Notre conseil : utilise cette appli pour construire ta base de vocabulaire dès le premier jour — puis appuie-toi sur Duolingo ou une école pour la grammaire, et pratique avec des natifs pour la fluidité. Chaque outil renforce les autres !</div>
+            <p>Envie de recommencer un module à zéro ? Vous pouvez <strong>effacer vos étoiles</strong> et repartir de la base.</p>
+            <ul>
+              <li>Depuis l'écran <strong>Modules</strong>, repérez le thème déjà complété — le bouton <strong>🔄 Recommencer</strong> apparaît directement sur sa carte.</li>
+              <li>Appuyez sur ce bouton — une confirmation vous sera demandée.</li>
+              <li>Vos étoiles sont supprimées — rejouez le Quiz pour en regagner.</li>
+            </ul>
           </div>
         </details>
 

@@ -4306,11 +4306,26 @@ function closeCreditsModal() {
    15. INITIALISATION DU LAUNCHER
    ============================================================ */
 
-/* Afficher la nav dès le chargement — visible sur toutes les pages
-   y compris le launcher (état neutre : aucun bouton actif) */
+/* 🆕 CORRECTIF (retour utilisateur) : la nav bar était rendue visible
+   dès le chargement du script, y compris sur le tout premier écran
+   (#app-launcher) avant même que l'apprenant ait choisi une langue ou
+   terminé un seul parcours. Un nouvel utilisateur voyait donc 4 boutons
+   cliquables (Langue / Guide / Modules / Infos) avant d'avoir rien
+   commencé — confus dès la découverte de l'app.
+   CORRECTIF : au tout premier lancement (aucun des deux modes jamais
+   terminé — flags 'tm_onboarded_fr' ET 'tm_onboarded_or' absents), la
+   nav reste masquée jusqu'à ce qu'un premier parcours soit achevé
+   (clic sur "Commencer" dans _buildHomeGuide, qui pose le flag).
+   Dès qu'au moins un mode a été complété une fois, la nav réapparaît
+   normalement dès le chargement — y compris sur le launcher, en état
+   neutre (voir _updateBottomNav, cas 'app-launcher'), comme avant. */
 (() => {
   const nav = document.getElementById('bottom-nav');
-  if (nav) nav.classList.add('visible');
+  if (!nav) return;
+  const hasCompletedAnyOnboarding =
+    localStorage.getItem(_OB_KEY_FR) === 'true' ||
+    localStorage.getItem(_OB_KEY_OR) === 'true';
+  if (hasCompletedAnyOnboarding) nav.classList.add('visible');
 })();
 
 document.querySelectorAll('.lang-card[data-lang]').forEach((card) => {

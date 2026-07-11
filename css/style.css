@@ -2827,6 +2827,37 @@ footer a:hover{text-decoration:underline}
   font-size:.78rem;
 }
 
+/* ── 🆕 Bloc "En bref" — résumé visible sans dépliage, en tête du guide ──
+   Donne le fonctionnement + les spécificités (hors-ligne, navigateur) en
+   un coup d'œil, avant les 9 rubriques en accordéon. Voir Bilan_technique.md §6.17. */
+.hg-tldr{
+  margin:14px 14px 6px;
+  padding:14px 16px;
+  background:var(--c-vocab-chip-bg);
+  border:1.5px solid var(--c-primary);
+  border-radius:14px;
+}
+.hg-tldr-title{
+  margin:0 0 .55em;
+  font-size:1rem;
+  color:var(--c-primary);
+}
+.hg-tldr-list{
+  margin:0 0 .6em;
+  padding-left:1.15em;
+  font-size:.83rem;
+  line-height:1.55;
+  color:#444;
+}
+.hg-tldr-list li{margin-bottom:.4em}
+.hg-tldr-list li:last-child{margin-bottom:0}
+.hg-tldr-footer{
+  margin:0;
+  font-size:.76rem;
+  color:var(--c-primary);
+  opacity:.8;
+}
+
 /* ── Schéma de parcours utilisateur ── */
 .ob-flow{
   display:flex;
@@ -3243,6 +3274,8 @@ footer a:hover{text-decoration:underline}
   .hg-summary:hover{background:#2e2e3a;}
   .hg-detail{background:#1f1f28;color:#ccc;}
   .hg-section{border-bottom-color:rgba(255,255,255,.08);}
+  .hg-tldr{background:#26262e;border-color:var(--c-primary);}
+  .hg-tldr-list{color:#ccc;}
   .noshow-label{background:rgba(30,30,38,.8);color:#e0e0e0;border-color:rgba(255,255,255,.2);}
   #home footer{color:rgba(255,255,255,.4);}
   #home footer a{color:rgba(255,255,255,.55);}
