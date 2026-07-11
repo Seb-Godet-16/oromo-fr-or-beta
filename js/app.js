@@ -87,6 +87,9 @@ let currentMode = '';       // 'learn_french' | 'learn_oromo'
 let voiceLang   = 'fr-FR';  // Langue de la synthèse vocale (mise à jour par initApp)
 let ALL_THEMES  = [];       // Tableau des thèmes actifs, rempli par initApp() depuis data-fr.js ou data-or.js
 let STORAGE_KEY = '';       // Clé localStorage séparée par mode (deux progressions indépendantes)
+let OPENED_KEY   = '';      // 🆕 Clé localStorage — modules déjà OUVERTS au moins une fois (indépendant des étoiles)
+                            // sert uniquement au badge "Nouveau" (§7) : un module ouvert mais raté
+                            // (0 étoile) ne doit plus être signalé comme "jamais essayé".
 
 /* ── Session en cours (réinitialisées à chaque ouverture de thème) ── */
 let CT           = null;    // Current Theme : objet thème actuellement ouvert
@@ -106,6 +109,7 @@ let _q10Questions = null;   // Cache des questions générées pour le quiz en c
 
 /* ── Progression persistante ── */
 let done = [];              // Tableau d'objets { id, stars } sauvegardé dans localStorage
+let openedThemes = [];      // 🆕 Tableau d'ids de thèmes déjà ouverts au moins une fois (voir OPENED_KEY)
 
 /* Nombre total de thèmes par parcours — identique dans les deux modes
    (32 Niveau 1 + 16 Niveau 2 = 48). Constante volontairement figée ici :
@@ -329,6 +333,7 @@ function initApp(mode) {
     document.documentElement.lang = 'om';
     voiceLang   = 'fr-FR';
     STORAGE_KEY = 'pe_om_fr_done_v1';
+    OPENED_KEY  = 'pe_om_fr_opened_v1';
     /* Synchroniser la meta theme-color avec la couleur française */
     const tcMeta = document.getElementById('meta-theme-color');
     if (tcMeta) tcMeta.setAttribute('content', '#002395');
@@ -341,6 +346,7 @@ function initApp(mode) {
     document.documentElement.lang = 'fr';
     voiceLang   = 'om-ET';
     STORAGE_KEY = 'pe_fr_om_done_v1';
+    OPENED_KEY  = 'pe_fr_om_opened_v1';
     /* Synchroniser la meta theme-color avec la couleur oromo */
     const tcMeta = document.getElementById('meta-theme-color');
     if (tcMeta) tcMeta.setAttribute('content', '#009A44');
@@ -381,6 +387,7 @@ function initApp(mode) {
 
     /* Charger la progression sauvegardée pour ce mode */
     loadDone();
+    loadOpened(); /* 🆕 modules déjà ouverts — badge "Nouveau" (§7) */
 
     /* Masquer le spinner de chargement avant d'afficher l'écran home */
     _hideLoadingSpinner();
@@ -1433,6 +1440,48 @@ function saveDone() {
 }
 
 /**
+ * 🆕 Charge la liste des thèmes déjà OUVERTS (indépendante des étoiles).
+ * Sert uniquement à savoir si un module est "Nouveau" (jamais ouvert)
+ * pour le badge de la grille de modules (voir _buildThemeCard).
+ */
+function loadOpened() {
+  try {
+    openedThemes = JSON.parse(localStorage.getItem(OPENED_KEY) || '[]');
+  } catch (e) {
+    openedThemes = [];
+  }
+}
+
+/**
+ * 🆕 Sauvegarde la liste des thèmes ouverts. Ignore silencieusement
+ * les erreurs (ex : mode privé), comme saveDone().
+ */
+function saveOpened() {
+  try {
+    localStorage.setItem(OPENED_KEY, JSON.stringify(openedThemes));
+  } catch (e) {}
+}
+
+/**
+ * 🆕 Marque un thème comme ouvert (appelé par openTheme()). Idempotent :
+ * n'écrit dans localStorage que la première fois pour ce thème.
+ * @param {string} id
+ */
+function markOpened(id) {
+  if (openedThemes.indexOf(id) !== -1) return;
+  openedThemes.push(id);
+  saveOpened();
+}
+
+/**
+ * 🆕 @param {string} id
+ * @returns {boolean} true si ce thème a déjà été ouvert au moins une fois
+ */
+function isOpened(id) {
+  return openedThemes.indexOf(id) !== -1 || isDone(id);
+}
+
+/**
  * Ouvre la modale de confirmation personnalisée (générique).
  * Injecte le titre, le message et le callback de validation,
  * puis affiche la modale. Remplace window.confirm() partout.
@@ -1546,6 +1595,11 @@ function executeResetProgress() {
 
   // 3. On supprime proprement la progression du mode actif
   localStorage.removeItem(STORAGE_KEY);
+
+  // 3b. 🆕 On supprime aussi le suivi "modules déjà ouverts" : une
+  //     réinitialisation complète doit redonner le badge "Nouveau" à
+  //     tous les modules, comme au tout premier lancement (§7).
+  localStorage.removeItem(OPENED_KEY);
 
   // 4. On supprime l'onboarding du mode actif pour réafficher le guide au redémarrage
   if (isLearnFrenchMode) {
@@ -2082,16 +2136,21 @@ function _updateLessonNavArrows() {
  * @param {Array<{id:string,stars:number}>} doneArr
  * @param {number} total
  * @returns {{ total: number, n: number, pct: number,
- *             starsEarned: number, starsMax: number }}
+ *             starsEarned: number, starsMax: number, nComplete: number }}
  */
 function _computeProgressFrom(doneArr, total) {
   const n = doneArr.length;
+  /* 🆕 nComplete : modules maîtrisés à 100% (3 étoiles), distinct de `n`
+     qui compte tout module NE serait-ce QUE commencé (≥1 étoile, ≥50%).
+     Sert au compteur "✅ X / total terminés" de la grille (§7). */
+  const nComplete = doneArr.filter((d) => d.stars === 3).length;
   return {
     total      : total,
     n          : n,
     pct        : total > 0 ? Math.round(n / total * 100) : 0,
     starsEarned: doneArr.reduce((acc, d) => { return acc + d.stars; }, 0),
-    starsMax   : total * 3
+    starsMax   : total * 3,
+    nComplete  : nComplete
   };
 }
 
@@ -2268,7 +2327,12 @@ function renderSections(activeLevel) {
     const se = document.getElementById('sectionsStars' + s);
     if (se) se.innerHTML =
       '<span class="sections-stars-inner">⭐ '
-      + p.starsEarned + ' / ' + p.starsMax + '</span>';
+      + p.starsEarned + ' / ' + p.starsMax + '</span>'
+      /* 🆕 Compteur "modules terminés à 100%" — distinct du % global ci-dessus
+         qui compte tout module NE serait-ce QUE commencé (≥50%). Aide
+         l'apprenant à distinguer "entamé" de "vraiment maîtrisé". */
+      + '<span class="sections-stars-inner sections-complete-pill">✅ '
+      + p.nComplete + ' / ' + p.total + ' ' + L('xumurame', 'terminés') + '</span>';
 
     const fe = document.getElementById('sectionsFlagRight' + s);
     if (fe) fe.textContent = L('🇫🇷', '🇪🇹');
@@ -2299,6 +2363,16 @@ function renderSections(activeLevel) {
 
 /**
  * Génère le HTML d'une carte de thème (titre, étoiles, bouton reset).
+ *
+ * 🆕 SYSTÈME À 3 ÉTATS (en plus des étoiles ⭐, voir Bilan technique) :
+ *   • state-new      : jamais ouvert, 0 étoile → badge "Nouveau"
+ *   • state-progress : ouvert au moins une fois mais pas encore maîtrisé
+ *                       à 100% (0, 1 ou 2 étoiles) → fond légèrement teinté
+ *   • state-complete : 3 étoiles (100%) → fond vert + coche ✓
+ * Ces 3 états sont mutuellement exclusifs et purement visuels — ils ne
+ * changent rien à la logique de progression déjà existante (isDone /
+ * getThemeStars), qui reste la seule source de vérité pour les étoiles.
+ *
  * @param {Object} t - Objet thème depuis ALL_THEMES
  * @returns {string} HTML de la carte
  */
@@ -2308,6 +2382,8 @@ function _buildThemeCard(t) {
     ? title.main.charAt(0).toUpperCase() + title.main.slice(1)
     : '';
 
+  const currentStars = getThemeStars(t.id);
+
   const resetBtn = isDone(t.id)
     ? '<button class="btn-reset-theme" '
       + 'onclick="event.stopPropagation();resetTheme(\'' + escJS(t.id) + '\')">'
@@ -2315,14 +2391,38 @@ function _buildThemeCard(t) {
       + '</button>'
     : '';
 
-  const currentStars = getThemeStars(t.id);
+  /* ── Étoiles : span dédié par étoile (remplie / vide) pour un contraste
+     visuel net en CSS, plutôt que de compter sur la seule police (voir §7
+     de style.css : .star-filled est coloré et net, .star-empty est estompé). */
   const starsStr = Array.from({ length: 3 }, (_, i) => {
-    return i < currentStars ? '⭐' : '☆';
+    return i < currentStars
+      ? '<span class="star-filled">⭐</span>'
+      : '<span class="star-empty">☆</span>';
   }).join('');
 
-  return '<div class="theme-card' + (isDone(t.id) ? ' done' : '') + '" '
-    + 'role="button" tabindex="0" aria-label="' + _escAttr(mainTitle) + '" '
+  /* ── État visuel (nouveau / en cours / terminé) ── */
+  let state;
+  if (currentStars === 3)        state = 'complete';
+  else if (isOpened(t.id))        state = 'progress';
+  else                             state = 'new';
+
+  const stateLabel = {
+    complete: L('Xumurame 100%',      'Terminé à 100%'),
+    progress: L('Jalqabame',          'En cours'),
+    new     : L('Haaraa — hin banamne', 'Nouveau — jamais ouvert')
+  }[state];
+
+  /* Badge "Nouveau" — uniquement sur les modules jamais ouverts, pour
+     orienter le choix du prochain module sans avoir à deviner. */
+  const newBadge = state === 'new'
+    ? '<span class="t-badge-new">' + L('🆕 Haaraa', '🆕 Nouveau') + '</span>'
+    : '';
+
+  return '<div class="theme-card state-' + state + '" '
+    + 'role="button" tabindex="0" '
+    + 'aria-label="' + _escAttr(mainTitle + ' — ' + stateLabel) + '" '
     + 'onclick="openTheme(\'' + escJS(t.id) + '\')">'
+    + newBadge
     + '<div class="t-emoji">'   + t.emoji    + '</div>'
     + '<div class="t-name">'    + mainTitle  + '</div>'
     + '<div class="t-sub">'     + title.sub  + '</div>'
@@ -2354,6 +2454,7 @@ function openTheme(id, dir) {
     return;
   }
   _stopCardAudio(); // annule un drill "répéter x fois" du thème précédent
+  markOpened(id); /* 🆕 ne réapparaît plus comme "Nouveau" dans la grille (§7) */
   CT = found;
   fcIdx = 0;
   dqStep = 0; dqScore = 0; dqAnswered = false;
@@ -4813,7 +4914,16 @@ function _exportGuide() {
   let sectionsHTML = '';
 
   if (bodyEl) {
-    const details = bodyEl.querySelectorAll('details.hg-section');
+    /* 🐞 CORRECTIF : #homeGuideBody contient TOUJOURS les deux blocs
+       bilingues (.home-lang-block[data-lang="or"] et [data-lang="fr"]),
+       un seul étant visible via la classe .home-lang-hidden (display:none
+       en CSS — voir _buildHomeGuide()). Mais querySelectorAll() ignore
+       le display:none et remontait donc les <details> DES DEUX langues,
+       d'où un PDF bilingue au lieu du guide dans la seule langue de
+       l'apprenant. On restreint maintenant la recherche au bloc
+       actuellement visible (celui sans .home-lang-hidden). */
+    const activeBlock = bodyEl.querySelector('.home-lang-block:not(.home-lang-hidden)');
+    const details = (activeBlock || bodyEl).querySelectorAll('details.hg-section');
     details.forEach((det) => {
       const summaryEl = det.querySelector('.hg-summary');
       const detailEl  = det.querySelector('.hg-detail');

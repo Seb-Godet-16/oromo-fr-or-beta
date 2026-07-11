@@ -229,6 +229,9 @@ body{
   --c-bg:#f0f4ff;
   --c-done:#4CAF50;
   --c-progress-bg:rgba(0,56,147,.2);
+  /* 🆕 Fonds teintés des cartes-module selon leur état (§7 / _buildThemeCard) */
+  --c-card-progress-bg:#fff8e1;   /* module ouvert, pas encore à 100% */
+  --c-card-complete-bg:#e8f6ea;   /* module maîtrisé à 100% (3 étoiles) */
   --c-footer-bg:#e8ecf8;
   --c-footer-border:#d0d8ee;
   --c-vocab-chip-bg:#eef0ff;
@@ -277,6 +280,8 @@ html:not([class*="theme-"]){
   --c-bg:#f0f4ff;
   --c-done:#4CAF50;
   --c-progress-bg:rgba(0,56,147,.2);
+  --c-card-progress-bg:#fff8e1;
+  --c-card-complete-bg:#e8f6ea;
   --c-footer-bg:#e8ecf8;
   --c-footer-border:#d0d8ee;
   --c-vocab-chip-bg:#eef0ff;
@@ -312,6 +317,8 @@ html.theme-oromo{
   --c-bg:#f4f9f4;
   --c-done:#009A44;
   --c-progress-bg:rgba(0,154,68,.2);
+  --c-card-progress-bg:#fff8e1;
+  --c-card-complete-bg:#e3f5ea;
   --c-footer-bg:#ebf3eb;
   --c-footer-border:#d0ebd8;
   --c-vocab-chip-bg:#f0f9f4;
@@ -664,8 +671,8 @@ html.theme-oromo body{background:#f4f9f4}
 /*
   Carte d'un thème :
   • border:3px solid transparent → espace réservé pour la bordure
-    verte .done (évite le saut de layout à la complétion)
-  • position:relative → pour le ::after "✓"
+    verte .state-complete (évite le saut de layout à la complétion)
+  • position:relative → pour le ::after "✓" et le badge "Nouveau"
 */
 .theme-card{
   background:#fff;
@@ -675,14 +682,31 @@ html.theme-oromo body{background:#f4f9f4}
   cursor:pointer;
   box-shadow:0 2px 8px #0001;
   border:3px solid transparent;
-  transition:transform .15s, border-color .2s;
+  transition:transform .15s, border-color .2s, background-color .2s;
   position:relative;
 }
 .theme-card:active{transform:scale(.96)}
 
-/* État "complété" : bordure verte + coche en haut à droite */
-.theme-card.done{border-color:var(--c-done)}
-.theme-card.done::after{
+/* ══════════════════════════════════════════════════════════════════
+   🆕 SYSTÈME À 3 ÉTATS — en plus des étoiles ⭐ (voir _buildThemeCard) :
+     • .state-new      : jamais ouvert           → badge "Nouveau"
+     • .state-progress : ouvert, pas encore 100% → fond ambre discret
+     • .state-complete : 3 étoiles (100%)        → fond vert + coche ✓
+   ══════════════════════════════════════════════════════════════════ */
+
+/* .state-new : aucun style de fond particulier — seul le badge le signale */
+
+/* État "en cours" : léger lavis ambré, ne rivalise pas avec le vert "terminé" */
+.theme-card.state-progress{
+  background:var(--c-card-progress-bg);
+}
+
+/* État "terminé à 100%" : bordure + fond vert + coche en haut à droite */
+.theme-card.state-complete{
+  border-color:var(--c-done);
+  background:var(--c-card-complete-bg);
+}
+.theme-card.state-complete::after{
   content:"✓";
   position:absolute;
   top:6px; right:8px;
@@ -691,11 +715,37 @@ html.theme-oromo body{background:#f4f9f4}
   font-size:.9rem;
 }
 
+/* Badge "🆕 Nouveau" — coin haut-gauche, pour guider vers les modules
+   jamais essayés sans être aussi appuyé qu'une coche de complétion. */
+.t-badge-new{
+  position:absolute;
+  top:6px; left:8px;
+  font-size:.62rem;
+  font-weight:800;
+  color:#fff;
+  background:var(--c-primary);
+  border-radius:20px;
+  padding:2px 7px;
+  letter-spacing:.02em;
+  white-space:nowrap;
+}
+
 /* Éléments internes de la carte-thème */
 .t-emoji{font-size:2.4rem;line-height:1.1}
 .t-name{font-size:.88rem;font-weight:700;color:#333;margin-top:6px;line-height:1.25}
 .t-sub{font-size:.72rem;color:#888;margin-top:3px;line-height:1.3}
 .t-stars{font-size:.82rem;margin-top:5px}
+/* 🆕 Étoile acquise : pleine couleur, légèrement agrandie pour ressortir.
+   Étoile non acquise : très estompée, pour un contraste net à distance
+   (le simple contour "☆" ne suffisait pas à bien distinguer les deux). */
+.star-filled{
+  color:var(--c-star);
+  filter:none;
+}
+.star-empty{
+  color:#ccc;
+  opacity:.55;
+}
 /* Bouton reset d'un thème (anciennement styles inline dans app.js) */
 .btn-reset-theme{
   display:inline-block;
@@ -3018,6 +3068,9 @@ footer a:hover{text-decoration:underline}
 /* Étoiles (récupérées depuis l'ancien Home) */
 .sections-stars{
   margin-top:2px;
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
 }
 .sections-stars-inner{
   font-size:.85rem;
@@ -3027,6 +3080,12 @@ footer a:hover{text-decoration:underline}
   border-radius:50px;
   padding:3px 10px;
   display:inline-block;
+}
+/* 🆕 Pill "✅ X / total terminés" — même gabarit que le pill étoiles,
+   fond légèrement teinté vert pour le distinguer au premier coup d'œil
+   (voir _fillHeader dans app.js, §7). */
+.sections-stars-inner.sections-complete-pill{
+  background:rgba(0,0,0,.12);
 }
 
 /* Drapeau en haut à droite */
@@ -3203,7 +3262,9 @@ footer a:hover{text-decoration:underline}
     border-color:#38383f;
     color:#e8e8e8;
   }
-  .theme-card.done{background:#1e2e22;border-color:#2d4a30;}
+  .theme-card.state-progress{background:#2e2a1c;border-color:#4a4327;}
+  .theme-card.state-complete{background:#1e2e22;border-color:#2d4a30;}
+  .star-empty{color:#666;}
   .t-name{color:#f0f0f0;}
   .t-sub{color:#aaa;}
 
