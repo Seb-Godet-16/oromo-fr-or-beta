@@ -71,6 +71,10 @@
          · Android (manuel) par Sébastien Godet (aidé par Gemini 3.5
            Flash Extended)
      - Correctifs par Sébastien Godet (aidé par Claude Sonnet 5)
+
+   Du 08/07/2026 au 12/07/2026 : Expériences utilisateurs (Christophe
+                                  Elin, Maman, Moi) et correctifs avec
+                                  Claude Sonnet 5.
    ============================================================ */
 
 
@@ -4591,8 +4595,51 @@ if ('serviceWorker' in navigator) {
     window.location.reload();
   });
 
+  /*
+   * 🆕 VÉRIFICATION PROACTIVE DES MISES À JOUR
+   * ---------------------------------------------------------------
+   * Sans ce bloc, le navigateur ne revérifie sw.js que selon son
+   * propre cycle interne (jusqu'à 24h de délai), ce qui est trop
+   * lent pour une app PWA rouverte plusieurs fois par jour depuis
+   * l'écran d'accueil (mode standalone, sans navigation classique
+   * qui déclencherait normalement une revérification).
+   *
+   * registration.update() force une revérification immédiate de
+   * sw.js. Si une nouvelle version est détectée (CACHE_NAME différent
+   * → nouveau build number injecté par GitHub Actions), le cycle
+   * install → skipWaiting → clients.claim → 'controllerchange'
+   * ci-dessus prend le relais et recharge automatiquement l'app.
+   *
+   * Deux déclencheurs :
+   *   1. Retour au premier plan (visibilitychange) — cas le plus
+   *      fréquent sur mobile : l'utilisateur rouvre l'app depuis
+   *      l'écran d'accueil ou revient d'une autre appli.
+   *   2. Toutes les 60 minutes — filet de sécurité pour un onglet
+   *      desktop laissé ouvert en continu, jamais mis en arrière-plan.
+   *
+   * Si l'utilisateur est hors-ligne au moment de l'appel, update()
+   * échoue simplement en silence (promesse rejetée, capturée par le
+   * .catch()) et sera retenté au prochain déclencheur — aucun risque
+   * de casser le mode hors-ligne.
+   */
+  function _checkForSwUpdate(registration) {
+    if (!registration) return;
+    registration.update().catch(() => {
+      /* Hors-ligne ou requête réseau échouée : retenté au prochain déclencheur */
+    });
+  }
+
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('./sw.js')
+      .then((registration) => {
+        document.addEventListener('visibilitychange', () => {
+          if (document.visibilityState === 'visible') {
+            _checkForSwUpdate(registration);
+          }
+        });
+
+        setInterval(() => _checkForSwUpdate(registration), 60 * 60 * 1000); // 60 min
+      })
       .catch((err) => {
         /* Échec silencieux : l'app fonctionne quand même en ligne */
         console.warn('[SW] Enregistrement échoué :', err);

@@ -41,7 +41,7 @@ Taphad'Meuh/
 │   └── style.css           ← All styles — dual theme system (theme-french / theme-oromo)
 │
 ├── js/
-│   ├── app.js              ← Full application engine (4 845 lines, 21 sections)
+│   ├── app.js              ← Full application engine (5 287 lines, 21 sections)
 │   ├── data-fr.js          ← Dataset — "Learn French" mode (48 themes, 1 427 lines)
 │   └── data-or.js          ← Dataset — "Learn Oromo" mode  (48 themes, 1 382 lines)
 │
@@ -224,7 +224,7 @@ Cache name is auto-versioned by GitHub Actions (`GITHUB_RUN_NUMBER`) on every de
 
 ### `app.js` — fichier unique volontairement monolithique
 
-Le moteur applicatif tient dans un seul fichier (5 119 lignes, 21 sections commentées).
+Le moteur applicatif tient dans un seul fichier (5 287 lignes, 21 sections commentées).
 Ce choix est délibéré : zéro étape de build, compatibilité maximale, hébergement statique sans bundler.
 
 Si le projet grossit significativement, une migration vers des modules ES (`import`/`export`) est envisageable. Elle nécessiterait :
@@ -269,6 +269,9 @@ Les autres thèmes de Niveau 1 génèrent leurs questions à la volée depuis `w
 | 08/07/2026 | Documentation (README + Bilan technique) resynchronisée avec le code réel (Sébastien + Claude Sonnet 5) |
 | 09-10/07/2026 | Bandeau hors-ligne persistant (§6.14) + section Guide "Quel navigateur choisir ?" — comparatif Android/iOS des 10 navigateurs les plus utilisés au monde, corrigé suite à un retour terrain (Sébastien + Claude Sonnet 5) |
 | 10/07/2026 | Resynchronisation complète des commentaires à numéros de ligne dans `index.html` et `style.css` (plan de fichier de ce dernier entièrement recalculé) + correction d'une taille obsolète de `app.js` dans ce README (Sébastien + Claude Sonnet 5) |
+| 11/07/2026 | Réorganisation des rubriques du Guide (Écran 1), ajout du paragraphe "Limites audio hors ligne" et du bloc "En bref" en tête du Guide *(entrée reconstituée le 12/07 à partir des en-têtes de fichiers — voir le trou de documentation signalé en fin de section 6 du Bilan technique)* |
+| 12/07/2026 | Correctif `_exportGuide()` (le PDF du Guide contenait les deux langues au lieu d'une seule) + système à 3 états visuels pour les cartes-module (nouveau / en cours / terminé à 100%, badge "Nouveau", compteur "✅ X/48 terminés") en complément des étoiles ⭐ — voir Bilan technique §6.18. Resynchronisation de ce README et du Bilan technique (`app.js` : 5 244 lignes, `style.css` : 4 467 lignes) (Sébastien + Claude Sonnet 5) |
+| 12/07/2026 | Vérification proactive des mises à jour de l'app installée : `registration.update()` déclenché au retour au premier plan et toutes les 60 min, en complément du mécanisme existant (`skipWaiting`/`clients.claim`/`controllerchange` → rechargement auto) — voir Bilan technique §6.19 (`app.js` : 5 287 lignes) (Sébastien + Claude Sonnet 5) |
 
 *Journal détaillé (dont le retour de recettage complet du 03/07) disponible en commentaire d'en-tête dans `app.js`.*
 
