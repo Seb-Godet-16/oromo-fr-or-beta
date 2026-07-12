@@ -52,20 +52,20 @@
      14.   Utilitaires & chaînes de résultats bilingues      ligne  4099
      17.   Guide utilisateur — Onboarding                    ligne  4186
       —    Écran Home — _buildHomeGuide()                    ligne  4242
-     18.   Crédits — showCredits()                           ligne  4358
-     15.   Initialisation du launcher                        ligne  4419
-     16.   Accessibilité clavier                             ligne  4452
-     19.   Spinner de chargement des données                 ligne  4464
-     19b.  Viewport height fix — Android Chrome / Brave      ligne  4507
-     20.   Enregistrement du Service Worker (PWA)            ligne  4569
+     18.   Crédits — showCredits()                           ligne  4361
+     15.   Initialisation du launcher                        ligne  4422
+     16.   Accessibilité clavier                             ligne  4455
+     19.   Spinner de chargement des données                 ligne  4467
+     19b.  Viewport height fix — Android Chrome / Brave      ligne  4510
+     20.   Enregistrement du Service Worker (PWA)            ligne  4572
            + 🆕 vérification proactive des mises à jour
            au premier plan et toutes les 60 min — voir §6.19
-     20b.  🆕 Installation PWA — bouton natif "Installer     ligne  4659
+     20b.  🆕 Installation PWA — bouton natif "Installer     ligne  4662
            l'app" (bouton natif Android/Chrome, rappel iOS)
-     21.   Exports PDF — window.print() + @media print       ligne  4760
-     21a.  Export Guide (écran Home)                         ligne  4957
-     21b.  Export Vocabulaire (leçon Niveau 1)               ligne  5072
-     21c.  Export Situation (leçon Niveau 2 — dialogue)      ligne  5168
+     21.   Exports PDF — window.print() + @media print       ligne  4763
+     21a.  Export Guide (écran Home)                         ligne  4960
+     21b.  Export Vocabulaire (leçon Niveau 1)               ligne  5075
+     21c.  Export Situation (leçon Niveau 2 — dialogue)      ligne  5171
    ============================================================
 
    HISTORIQUE DE L'APPLICATION

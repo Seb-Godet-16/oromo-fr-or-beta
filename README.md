@@ -41,9 +41,9 @@ Taphad'Meuh/
 │   └── style.css           ← All styles — dual theme system (theme-french / theme-oromo)
 │
 ├── js/
-│   ├── app.js              ← Full application engine (5 299 lines, 21 sections)
-│   ├── data-fr.js          ← Dataset — "Learn French" mode (48 themes, 1 427 lines)
-│   └── data-or.js          ← Dataset — "Learn Oromo" mode  (48 themes, 1 382 lines)
+│   ├── app.js              ← Full application engine (5 303 lines, 21 sections)
+│   ├── data-fr.js          ← Dataset — "Learn French" mode (48 themes, 1 428 lines)
+│   └── data-or.js          ← Dataset — "Learn Oromo" mode  (48 themes, 1 383 lines)
 │
 ├── sw.js                   ← Service Worker — Cache First / Network First + SVG fallbacks
 ├── manifest.json           ← PWA manifest — icons, theme colors, orientation
@@ -224,7 +224,7 @@ Cache name is auto-versioned by GitHub Actions (`GITHUB_RUN_NUMBER`) on every de
 
 ### `app.js` — fichier unique volontairement monolithique
 
-Le moteur applicatif tient dans un seul fichier (5 299 lignes, 21 sections commentées).
+Le moteur applicatif tient dans un seul fichier (5 303 lignes, 21 sections commentées).
 Ce choix est délibéré : zéro étape de build, compatibilité maximale, hébergement statique sans bundler.
 
 Si le projet grossit significativement, une migration vers des modules ES (`import`/`export`) est envisageable. Elle nécessiterait :
@@ -273,6 +273,7 @@ Les autres thèmes de Niveau 1 génèrent leurs questions à la volée depuis `w
 | 12/07/2026 | Correctif `_exportGuide()` (le PDF du Guide contenait les deux langues au lieu d'une seule) + système à 3 états visuels pour les cartes-module (nouveau / en cours / terminé à 100%, badge "Nouveau", compteur "✅ X/48 terminés") en complément des étoiles ⭐ — voir Bilan technique §6.18. Resynchronisation de ce README et du Bilan technique (`app.js` : 5 244 lignes, `style.css` : 4 467 lignes) (Sébastien + Claude Sonnet 5) |
 | 12/07/2026 | Vérification proactive des mises à jour de l'app installée : `registration.update()` déclenché au retour au premier plan et toutes les 60 min, en complément du mécanisme existant (`skipWaiting`/`clients.claim`/`controllerchange` → rechargement auto) — voir Bilan technique §6.19 (`app.js` : 5 287 lignes) (Sébastien + Claude Sonnet 5) |
 | 12/07/2026 | Ajout d'une période dans l'historique en en-tête de `app.js` (08/07 → 12/07/2026, expériences utilisateurs) + resynchronisation complète du plan interne `SECTIONS DE CE FICHIER` du même fichier — désynchronisé depuis l'ajout de §3e, il lui manquait aussi entièrement les sections §3e (Bandeau hors-ligne) et §20b (Installation PWA), désormais ajoutées — voir Bilan technique §6.20 (`app.js` : 5 299 lignes) (Sébastien + Claude Sonnet 5) |
+| 12/07/2026 | Relecture complète de l'application et resynchronisation des commentaires à numéros de ligne : recalcul intégral du plan interne de `style.css` (périmé depuis le 10/07/2026) et de `index.html`, correction d'un nouveau décalage de +3 lignes dans le plan de `app.js` apparu depuis l'entrée précédente — voir Bilan technique §6.21. Aucune ligne de code fonctionnel modifiée (`app.js` : 5 303 lignes, `style.css` : 4 467 lignes, `index.html` : 1 307 lignes) (Sébastien + Claude Sonnet 5) |
 
 *Journal détaillé (dont le retour de recettage complet du 03/07) disponible en commentaire d'en-tête dans `app.js`.*
 

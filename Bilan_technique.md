@@ -16,7 +16,7 @@
 | Thèmes par mode | 48 (32 Niveau 1 Vocabulaire + 16 Niveau 2 Dialogue) |
 | Mots/expressions par mode | ~387 entrées (Français) · ~396 entrées (Oromo) |
 | Fonctionnement hors-ligne | ✅ 100 % après première visite (Service Worker) |
-| Taille totale du code source | ~695 Ko (6 fichiers principaux, 14 497 lignes) |
+| Taille totale du code source | ~695 Ko (6 fichiers principaux, 14 513 lignes) |
 | Indicateur hors-ligne | ✅ Bandeau persistant, proactif (couvre 🎤 Répète ET 🔊 Écouter — voir §6.14) |
 | Guide navigateur | 🆕 Comparatif Android/iOS des 10 navigateurs les plus utilisés au monde (voir §6.15) |
 | Repérage visuel des modules | 🆕 Système à 3 états (nouveau / en cours / terminé à 100%) en plus des étoiles ⭐ (voir §6.18) |
@@ -30,12 +30,12 @@
 
 | Fichier | Taille | Lignes | Rôle |
 |---|---|---|---|
-| `js/app.js` | 222 Ko | 5 299 | Moteur applicatif complet (135 fonctions, dont le bandeau hors-ligne §3e, le suivi "modules déjà ouverts" §7 et la vérification proactive des mises à jour SW §20 — voir §6.19 ; plan interne `SECTIONS DE CE FICHIER` resynchronisé, y compris §3e et §20b qui en étaient absentes) |
-| `css/style.css` | 145 Ko | 4 467 | Styles + système de thèmes dual (dont §16b bandeau hors-ligne, §7 états visuels des cartes-module) |
-| `js/data-fr.js` | 106 Ko | 1 427 | Dataset mode "Apprendre le Français" |
-| `js/data-or.js` | 103 Ko | 1 382 | Dataset mode "Apprendre l'Oromo" |
-| `index.html` | 87 Ko | 1 298 | Structure HTML — 5 écrans + 2 modales + bandeau hors-ligne + guide "Quel navigateur choisir ?" |
-| `sw.js` | 33 Ko | 624 | Service Worker — Cache First / Network First |
+| `js/app.js` | 222 Ko | 5 303 | Moteur applicatif complet (135 fonctions, dont le bandeau hors-ligne §3e, le suivi "modules déjà ouverts" §7 et la vérification proactive des mises à jour SW §20 — voir §6.19 ; plan interne `SECTIONS DE CE FICHIER` resynchronisé le 12/07/2026, voir §6.21) |
+| `css/style.css` | 145 Ko | 4 467 | Styles + système de thèmes dual (dont §16b bandeau hors-ligne, §7 états visuels des cartes-module ; plan interne `PLAN DU FICHIER` intégralement recalculé le 12/07/2026, voir §6.21) |
+| `js/data-fr.js` | 106 Ko | 1 428 | Dataset mode "Apprendre le Français" |
+| `js/data-or.js` | 103 Ko | 1 383 | Dataset mode "Apprendre l'Oromo" |
+| `index.html` | 87 Ko | 1 307 | Structure HTML — 5 écrans + 2 modales + bandeau hors-ligne + guide "Quel navigateur choisir ?" ; plan interne `PLAN DU FICHIER` resynchronisé le 12/07/2026 (voir §6.21) |
+| `sw.js` | 33 Ko | 625 | Service Worker — Cache First / Network First |
 | `manifest.json` | — | — | PWA — icônes, orientation, screenshots |
 | `deploy.yml` | — | — | CI/CD GitHub Actions |
 
@@ -97,18 +97,18 @@ Depuis l'écran Sections, deux icônes remplacent l'ancien bouton retour unique 
 | 13b | Onglet Répète | `_matchRepeat()`, `renderRepeat()`, garde iOS standalone (ligne 3496), `repeatRecord()` | **3331 / 3460 / 3783** |
 | 13 | Quiz Dialogue | `renderDialogQuiz()`, `checkDQ()` | **3998 / 4066** |
 | 14 | Utilitaires | `_quizResultStrings()`, `esc()`, `escJS()` | **4108 / 4142 / 4162** |
-| 17 | Guide / Onboarding | `_buildHomeGuide()`, `_maybeShowOnboarding()` | **4242 / 4331** |
-| 18 | Crédits | `showCredits()`, `closeCreditsModal()` | **4361 / 4412** |
-| 15 | Launcher init | Initialisation au chargement | **≈4419** |
-| 16 | Accessibilité clavier | Navigation clavier globale | **4452** |
-| 19 | Spinner / Viewport | `_showLoadingSpinner()`, `setAppHeight()` (fix Android Chrome) | **4476 / 4534** |
-| 20 | Service Worker | Enregistrement PWA (`navigator.serviceWorker.register`) + 🆕 `_checkForSwUpdate()` (§6.19) | **appel : 4641 / `_checkForSwUpdate()` : 4633** |
-| 20b | 🆕 Installation PWA | Bouton natif "Installer l'app" (Android/Chrome) | **section 4659** |
-| 21 | Exports PDF | `_exportGuide()` 🆕 corrigé (§6.18), `_exportVocab()`, `_exportSituation()` | **4960 / 5075 / 5171** |
+| 17 | Guide / Onboarding | `_buildHomeGuide()`, `_maybeShowOnboarding()` | **4242 / 4334** |
+| 18 | Crédits | `showCredits()`, `closeCreditsModal()` | **4364 / 4415** |
+| 15 | Launcher init | Initialisation au chargement | **≈4422** |
+| 16 | Accessibilité clavier | Navigation clavier globale | **4455** |
+| 19 | Spinner / Viewport | `_showLoadingSpinner()`, `setAppHeight()` (fix Android Chrome) | **4479 / 4537** |
+| 20 | Service Worker | Enregistrement PWA (`navigator.serviceWorker.register`) + 🆕 `_checkForSwUpdate()` (§6.19) | **appel : 4644 / `_checkForSwUpdate()` : 4636** |
+| 20b | 🆕 Installation PWA | Bouton natif "Installer l'app" (Android/Chrome) | **section 4662** |
+| 21 | Exports PDF | `_exportGuide()` 🆕 corrigé (§6.18), `_exportVocab()`, `_exportSituation()` | **4963 / 5078 / 5174** |
 
-*Table entièrement revérifiée et resynchronisée le 12/07/2026 — toutes les lignes ci-dessus ont été reconfirmées par recherche directe dans `app.js` (**5 299 lignes** au total). Historique des ajouts de la journée : **§6.18** (correctif `_exportGuide()` + bloc §4a + refonte `_buildThemeCard()`/`_fillHeader()`, +110 lignes) ; **§6.19** (vérification proactive des mises à jour SW, +43 lignes) ; ajout d'une entrée dans le bloc `HISTORIQUE DE L'APPLICATION` en tête du fichier (période 08/07 → 12/07/2026, +4 lignes) ; puis **resynchronisation complète du plan interne** `SECTIONS DE CE FICHIER` (+8 lignes, dont l'ajout des deux sections qui en étaient absentes depuis leur création : **§3e** Bandeau hors-ligne et **§20b** Installation PWA). Ce plan interne, désynchronisé depuis l'ajout de §3e (signalé lors des resyncs précédentes), est maintenant à jour et fait à nouveau foi au même titre que cette table.*
+*Table entièrement revérifiée et resynchronisée le 12/07/2026 — toutes les lignes ci-dessus ont été reconfirmées par recherche directe dans `app.js` (**5 303 lignes** au total). Un nouveau décalage de **+3 lignes**, portant sur tout le contenu à partir de `_maybeShowOnboarding()` (§17) jusqu'à la fin du fichier, avait été introduit entre la précédente resynchronisation (§6.20) et la présente session, sans qu'aucune section entière ne soit cette fois manquante — voir **§6.21**.*
 
-*Repères utiles pour les prochaines évolutions (voir §6.11 à §6.15, §6.18, §6.19) : `_TOTAL_THEMES_PER_MODE` (ligne 131), `_setAttrBi()` (ligne 453), `_isIosPwaStandalone()` (ligne 198, réutilisé dans `renderRepeat()` ligne 3496, `repeatRecord()` ligne 3841 et `_openPrintWindow()` ligne 4794).*
+*Repères utiles pour les prochaines évolutions (voir §6.11 à §6.15, §6.18 à §6.21) : `_TOTAL_THEMES_PER_MODE` (ligne 131), `_setAttrBi()` (ligne 453), `_isIosPwaStandalone()` (ligne 198, réutilisé dans `renderRepeat()` ligne 3496, `repeatRecord()` ligne 3841 et `_openPrintWindow()` ligne 4797).*
 
 ---
 
@@ -154,7 +154,7 @@ Depuis l'écran Sections, deux icônes remplacent l'ancien bouton retour unique 
 | §SPEAKING | Feedback visuel bouton audio (TTS) | 4298 |
 | §29 | Correctifs accessibilité mode sombre (WCAG AA) | 4356 |
 
-*Table intégralement revérifiée et resynchronisée le 12/07/2026 (**4 467 lignes actuelles**) — chaque ligne ci-dessus a été reconfirmée par recherche directe dans `style.css`. **+61 lignes** proviennent des ajouts documentés en **§6.18** (variables `--c-card-*`, refonte de `.theme-card` en 3 états + `.t-badge-new` + `.star-filled`/`.star-empty`, pill `.sections-complete-pill`, variantes mode sombre). Le fichier comptait déjà **4 406 lignes** avant cette session (contre 4 373 dans la précédente table de ce document, soit **+33 lignes** déjà non reflétées ici avant même cette resynchronisation — même trou de documentation que pour `app.js`, voir note **§6.16/§6.17** en fin de section 6). **Le plan interne en en-tête du fichier (`PLAN DU FICHIER`) n'a en revanche PAS été retouché lors de cette session** (contrairement au 10/07/2026 où il avait été entièrement recalculé) : il liste toujours les anciens numéros de ligne d'avant le présent correctif et ne doit plus être considéré comme fiable tant qu'il n'aura pas été remis à jour. §PROGRESS reste la refonte du 06/07/2026 : l'ancien cercle SVG unique (`.home-progress-circle-wrap`) est remplacé par `.home-progress-wrap` + `.home-progress-card`, capable d'afficher 1 ou 2 cartes.*
+*Table revérifiée le 12/07/2026 (**4 467 lignes actuelles**, inchangé depuis la précédente session) — chaque ligne ci-dessus reste reconfirmée par recherche directe dans `style.css`. **Le plan interne en en-tête du fichier (`PLAN DU FICHIER`), resté périmé depuis le 10/07/2026 (signalé dans la session précédente sans être corrigé), a cette fois été intégralement recalculé** — voir **§6.21** : chacune de ses ~40 lignes a été revérifiée par recherche directe plutôt que par simple arithmétique, et fait à nouveau foi au même titre que cette table. §PROGRESS reste la refonte du 06/07/2026 : l'ancien cercle SVG unique (`.home-progress-circle-wrap`) est remplacé par `.home-progress-wrap` + `.home-progress-card`, capable d'afficher 1 ou 2 cartes.*
 
 ---
 
@@ -166,15 +166,15 @@ Depuis l'écran Sections, deux icônes remplacent l'ancien bouton retour unique 
 | Bandeau | 🆕 `#offline-banner` — Bandeau hors-ligne persistant (voir §6.14) | 132 |
 | Écran 0 | `#app-launcher` — Lanceur | 151 |
 | Écran 1 | `#home` — Guide / Onboarding (dont `#homeProgressWrap` 🆕) | 254 |
-| Écran 2a | `#sections-level1` — Grille Niveau 1 (dont icônes 🏠/❓ 🆕) | 1057 |
-| Écran 2b | `#sections-level2` — Grille Niveau 2 (dont icônes 🏠/❓ 🆕) | 1089 |
-| Écran 3 | `#lesson` — Leçon (5 onglets) | 1126 |
-| Modale 1 | `#credits-modal` — Remerciements | 1205 |
-| Modale 2 | `#custom-confirm-modal` — Confirmation suppression | 1238 |
-| Nav | `#bottom-nav` — Barre de navigation basse | 1254 |
-| Scripts | Chargement de `app.js` | 1296 |
+| Écran 2a | `#sections-level1` — Grille Niveau 1 (dont icônes 🏠/❓ 🆕) | 1065 |
+| Écran 2b | `#sections-level2` — Grille Niveau 2 (dont icônes 🏠/❓ 🆕) | 1097 |
+| Écran 3 | `#lesson` — Leçon (5 onglets) | 1134 |
+| Modale 1 | `#credits-modal` — Remerciements | 1213 |
+| Modale 2 | `#custom-confirm-modal` — Confirmation suppression | 1246 |
+| Nav | `#bottom-nav` — Barre de navigation basse | 1262 |
+| Scripts | Chargement de `app.js` | 1304 |
 
-*Table resynchronisée le 12/07/2026 (**1 298 lignes actuelles**, contre 1 246 dans la précédente table de ce document). `index.html` n'a **pas** été modifié pendant cette session (seuls `app.js` et `style.css` l'ont été, voir §6.18) : les **+52 lignes** d'écart proviennent entièrement d'un travail antérieur non documenté ici — le fichier lui-même porte un en-tête à jour daté du 11/07/2026 référençant "Bilan_technique.md §6.17" (réorganisation des rubriques du Guide, ajout du paragraphe "Limites audio hors ligne" et du bloc "En bref"), mais les entrées §6.16/§6.17 correspondantes n'existaient pas dans ce document avant la présente resynchronisation des tables. Voir la note à ce sujet en fin de section 6.*
+*Table resynchronisée le 12/07/2026 (**1 307 lignes actuelles**, contre 1 298 dans la précédente table de ce document). `index.html` n'a pas été modifié fonctionnellement pendant cette session — seul son plan interne en en-tête (`PLAN DU FICHIER`) a été recalculé (voir §6.21) : les **+9 lignes** d'écart avec la précédente table proviennent d'un travail antérieur (daté du 11/07/2026 dans l'en-tête du fichier) déjà partiellement documenté en §6.16/§6.17.*
 
 ---
 
@@ -361,11 +361,35 @@ Au total, la resynchronisation du plan (avec l'ajout de ces deux entrées et de 
 
 ---
 
+### 6.21 🆕 Relecture complète et resynchronisation des commentaires à numéros de ligne (12/07/2026)
+
+**Demande** : relire l'ensemble de l'application et mettre à jour les commentaires (et leurs numéros de ligne) ainsi que le README et ce Bilan technique si nécessaire.
+
+**Constat** : aucune ligne de code fonctionnel n'a été modifiée dans cette session — uniquement des commentaires. Trois plans internes se sont révélés périmés à des degrés divers :
+
+| Fichier | Plan interne | État avant cette session | Correctif |
+|---|---|---|---|
+| `app.js` | `SECTIONS DE CE FICHIER` | Décalage de **+3 lignes** sur tout le contenu situé après `_maybeShowOnboarding()` (§17), apparu depuis la resynchronisation du §6.20 sans qu'aucune section ne soit cette fois manquante | Chacune des ~13 lignes concernées revérifiée par recherche directe et corrigée |
+| `style.css` | `PLAN DU FICHIER` | Périmé depuis le 10/07/2026 (signalé à plusieurs reprises — §6.20 — sans jamais être corrigé) ; décalages allant de **+3 à +94 lignes** selon la section, cumulés sur plusieurs sessions (§6.15, §6.18) | Plan intégralement recalculé, section par section, par recherche directe (`§1` à `§29`, y compris les sous-repères internes comme les icônes de retour ou la liste "Quel navigateur choisir ?") |
+| `index.html` | `PLAN DU FICHIER` | Décalage de **+8 à +9 lignes** selon la section, dû au travail du 11/07/2026 déjà partiellement documenté (§6.16/§6.17) mais jamais répercuté dans ce plan | Numéros de ligne recalculés pour les 9 repères du plan |
+
+Aucune section entière n'était manquante cette fois-ci (contrairement à `app.js` en §6.20) : il s'agissait uniquement de numéros de ligne obsolètes.
+
+**Méthode** : chaque numéro de ligne annoncé dans les trois plans a été vérifié par recherche directe (`grep`) de l'élément réel correspondant (déclaration de fonction, sélecteur CSS, balise HTML `id="..."`) plutôt que par simple report arithmétique, pour éviter de propager une erreur préexistante. Chaque modification de commentaire a ensuite été revérifiée pour s'assurer qu'elle ne modifiait pas le nombre total de lignes du fichier — un ajout ou une suppression de ligne dans un en-tête aurait décalé tout le code qui suit et invalidé les numéros que l'on vient de corriger. `app.js`, `style.css` et `index.html` conservent donc chacun exactement le même nombre de lignes qu'avant cette session.
+
+**Documents mis à jour en conséquence** : les tables §2, §3, §4 et §5 de ce Bilan (numéros de ligne et compteurs de lignes actuels de tous les fichiers), ainsi que le README (architecture, note de maintenabilité, tableau historique).
+
+**Hors périmètre de cette session** : les nombreuses références ponctuelles à des numéros de ligne dans la prose des sections §6.1 à §6.19 de ce document (ex. §6.3, §6.9, §6.10, §6.11, §6.13) n'ont pas été systématiquement revérifiées une par une — certaines datent de sessions plus anciennes et pourraient elles aussi être décalées. Seules les tables de référence structurées (§2 à §5) et les trois plans internes des fichiers sources font foi de manière fiable à ce jour.
+
+**Fichiers modifiés** : `app.js`, `style.css`, `index.html` (commentaires uniquement, aucun changement de comportement, nombre de lignes inchangé pour chacun), `Bilan_technique.md` et `README.md` (mise à jour des tables et de l'historique).
+
+---
+
 ## 7. Points de vigilance / dettes techniques
 
 | Point | Niveau | Détail |
 |---|---|---|
-| `app.js` monolithique | ⚠️ Moyen | 5 299 lignes, 135 fonctions — maintenable grâce aux `§` mais migration ES modules complexe (handlers `onclick` inline). Plan interne en en-tête du fichier **resynchronisé le 12/07/2026** (voir §3), y compris les sections §3e et §20b qui en étaient absentes depuis leur création |
+| `app.js` monolithique | ⚠️ Moyen | 5 303 lignes, 135 fonctions — maintenable grâce aux `§` mais migration ES modules complexe (handlers `onclick` inline). Plan interne en en-tête du fichier **resynchronisé le 12/07/2026** (voir §6.21) |
 | 🆕 Mises à jour PWA (`registration.update()`) | ✅ OK | Vérification proactive sur retour au premier plan + toutes les 60 min, en plus du cycle natif du navigateur — voir §6.19. Échec silencieux et sans risque si hors-ligne |
 | `unsafe-inline` CSP | ⚠️ Moyen | Nécessaire pour les `onclick` générés dynamiquement par `innerHTML` et pour GitHub Pages (pas de headers HTTP customs) |
 | Voix Oromo TTS | ⚠️ Moyen, ✅ communiqué hors ligne | `om-ET` absente sur la plupart des appareils — l'utilisateur entend souvent du Somali ou de l'Amharique. Hors connexion, si aucune voix de la cascade n'est installée localement, la langue par défaut du système peut être utilisée à la place — désormais signalé par le bandeau hors-ligne (voir §6.14) |
@@ -417,5 +441,6 @@ Au total, la resynchronisation du plan (avec l'ajout de ces deux entrées et de 
 | 12/07/2026 | 🆕 Étape 6 : correctif `_exportGuide()` (le PDF du Guide contenait les deux langues au lieu de la seule langue de l'apprenant) + système à 3 états visuels pour les cartes-module de l'écran Sections (nouveau / en cours / terminé à 100%, badge "Nouveau", compteur "✅ X/48 terminés") en complément des étoiles ⭐ — voir §6.18. Resynchronisation complète des tables §2/§3/§4/§5 de ce Bilan (`app.js` : 5 244 lignes, `style.css` : 4 467 lignes) ; au passage, un trou de documentation préexistant a été identifié et signalé (§6.16/§6.17 référencés dans le code depuis le 11/07/2026 mais jamais rédigés dans ce fichier — non comblé faute de contexte, voir note en fin de section 6) — Sébastien Godet + Claude Sonnet 5 |
 | 12/07/2026 | 🆕 Étape 7 : vérification proactive des mises à jour PWA — `registration.update()` déclenché au retour au premier plan (`visibilitychange`) et toutes les 60 min (`setInterval`), en complément du cycle `skipWaiting`/`clients.claim`/`controllerchange` déjà en place — voir §6.19. Table §3 (lignes §20/§21) et compteur `app.js` (5 287 lignes) resynchronisés en conséquence — Sébastien Godet + Claude Sonnet 5 |
 | 12/07/2026 | 🆕 Étape 8 : ajout d'une période dans l'historique en en-tête de `app.js` (08/07 → 12/07/2026) + resynchronisation complète du plan interne `SECTIONS DE CE FICHIER`, désynchronisé depuis l'ajout de §3e — deux sections entières (§3e, §20b) en étaient absentes et ont été ajoutées — voir §6.20. Table §3 entièrement revérifiée par recherche directe et compteur `app.js` (5 299 lignes) à jour — Sébastien Godet + Claude Sonnet 5 |
+| 12/07/2026 | 🆕 Étape 9 : relecture complète de l'application et resynchronisation des commentaires à numéros de ligne — recalcul intégral du plan interne `PLAN DU FICHIER` de `style.css` (périmé depuis le 10/07/2026, décalages de +3 à +94 lignes) et de `index.html` (+8 à +9 lignes), correction d'un nouveau décalage de +3 lignes apparu dans le plan `SECTIONS DE CE FICHIER` de `app.js` depuis l'étape 8 — voir §6.21. Aucune ligne de code fonctionnel modifiée ; nombre de lignes inchangé pour les trois fichiers (`app.js` : 5 303 lignes, `style.css` : 4 467 lignes, `index.html` : 1 307 lignes) — Sébastien Godet + Claude Sonnet 5 |
 
 *Journal détaillé (dont la citation complète du retour de recettage du 03/07) : voir le bloc de commentaire `HISTORIQUE DE L'APPLICATION` en tête de `app.js`.*
