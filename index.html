@@ -295,6 +295,46 @@
            parcours (Français ET Oromo) ont de la progression. Rempli et
            peuplé dynamiquement par renderHome() dans app.js. -->
       <div class="home-progress-wrap" id="homeProgressWrap" style="display:none"></div>
+
+      <!--
+        🆕 Bloc "En bref" — repositionné ici (entre le bouton d'installation
+        et le bouton Commencer), pour reprendre la mise en page validée sur
+        l'app espagnole : badges → installation → l'essentiel → Commencer.
+        Auparavant en tête de #homeGuideBody, donc affiché APRÈS le bouton
+        Commencer au lieu d'avant.
+        Chaque variante linguistique reste déclarée comme un .home-lang-block
+        à part entière : la bascule de langue de _buildHomeGuide() repose sur
+        document.querySelectorAll('.home-lang-block') et s'applique donc
+        quel que soit l'endroit du DOM où se trouve l'élément — le déplacer
+        hors de #homeGuideBody ne casse rien. #homeGuideBody ne contenait de
+        toute façon jamais ce bloc dans les exports PDF (_exportGuide() ne
+        récupère que les <details class="hg-section">), donc ce déplacement
+        n'affecte pas non plus le PDF. Voir Bilan_technique.md §6.17.
+      -->
+      <div class="home-lang-block home-lang-hidden" data-lang="or">
+        <div class="hg-tldr">
+          <h3 class="hg-tldr-title">🚀 Daqiiqaa 30 keessatti waan beekuu qabdu</h3>
+          <ul class="hg-tldr-list">
+            <li>📚 Sadarkaa lama : Jechoota (mata duree 32) ergasii Dubbii (16) — Kaardota, Quiz, Irra deebʼi</li>
+            <li>🔊 Sagaleen ni jira ; Faransaayiif sagaleen bilbila hedduu irratti argama — rakkoo addaa hin qabu</li>
+            <li>📴 Buufamee interneetii malee ni hojjeta — 🎤 Irra deebʼi malee, kun yeroo hunda interneetii barbaada, erga buufamees</li>
+            <li>🌐 Browser — Android : Chrome, Samsung Internet, Edge, Opera fi Brave hundi ni ta'u ; Firefox 🎤 Irra deebʼiif gonkumaa hin hojjetu ; DuckDuckGo fi UC Browser hin mirkanaa'ini. iPhone/iPad : Safari fayyadami — 100% amansiisaa argachuuf</li>
+          </ul>
+          <p class="hg-tldr-footer">Ibsi guutuun armaan gaditti, yookiin booda caancala ❓ Gargaarsa irraa.</p>
+        </div>
+      </div>
+      <div class="home-lang-block home-lang-hidden" data-lang="fr">
+        <div class="hg-tldr">
+          <h3 class="hg-tldr-title">🚀 L'essentiel en 30 secondes</h3>
+          <ul class="hg-tldr-list">
+            <li>📚 2 niveaux : Vocabulaire (32 thèmes) puis Dialogues (16) — Cartes, Quiz, Répète</li>
+            <li>🔊 Audio inclus ; en Oromo, la voix « idéale » est parfois remplacée par une voix proche (Somali, Amharique…) — normal, pas un bug</li>
+            <li>📴 Installable et utilisable hors-ligne — sauf 🎤 Répète, qui a toujours besoin d'internet, même une fois installée</li>
+            <li>🌐 Navigateur — Android : Chrome, Samsung Internet, Edge, Opera et Brave conviennent tous ; Firefox ne permet jamais 🎤 Répète ; DuckDuckGo et UC Browser sont moins éprouvés. iPhone/iPad : utilisez Safari pour une expérience garantie à 100%</li>
+          </ul>
+          <p class="hg-tldr-footer">Détails complets ci-dessous, ou plus tard via le bouton ❓ Guide.</p>
+        </div>
+      </div>
     </div><!-- /.home-guide-header -->
 
     <!-- Bouton Commencer + bouton PDF Guide côte à côte dans la barre sticky -->
@@ -320,22 +360,6 @@
            Langue maternelle de l'apprenant = Oromo → guide en Oromo.
            ───────────────────────────────────────────────────────── -->
       <div class="home-lang-block home-lang-hidden" data-lang="or">
-
-        <!-- 🆕 Kutaa "Cuunfaa" — cuunfaa dafamee mul'atu, akkasumas hin
-             baname (accordion miti). Barataan haaraan hojii appichaa fi
-             addatti hafte (interneetii malee, browser) daqiiqaa muraasa
-             keessatti akka hubatu gargaara. Gargaarsi bal'aan armaan
-             gaditti ni argama. Ilaali Bilan_technique.md §6.17. -->
-        <div class="hg-tldr">
-          <h3 class="hg-tldr-title">🚀 Daqiiqaa 30 keessatti waan beekuu qabdu</h3>
-          <ul class="hg-tldr-list">
-            <li>📚 Sadarkaa lama : Jechoota (mata duree 32) ergasii Dubbii (16) — Kaardota, Quiz, Irra deebʼi</li>
-            <li>🔊 Sagaleen ni jira ; Faransaayiif sagaleen bilbila hedduu irratti argama — rakkoo addaa hin qabu</li>
-            <li>📴 Buufamee interneetii malee ni hojjeta — 🎤 Irra deebʼi malee, kun yeroo hunda interneetii barbaada, erga buufamees</li>
-            <li>🌐 Browser — Android : Chrome, Samsung Internet, Edge, Opera fi Brave hundi ni ta'u ; Firefox 🎤 Irra deebʼiif gonkumaa hin hojjetu ; DuckDuckGo fi UC Browser hin mirkanaa'ini. iPhone/iPad : Safari fayyadami — 100% amansiisaa argachuuf</li>
-          </ul>
-          <p class="hg-tldr-footer">Ibsi guutuun armaan gaditti, yookiin booda caancala ❓ Gargaarsa irraa.</p>
-        </div>
 
         <!-- 1. Comment ça marche -->
         <details class="hg-section">
@@ -661,22 +685,6 @@
            Langue maternelle de l'apprenant = Français → guide en Français.
            ───────────────────────────────────────────────────────── -->
       <div class="home-lang-block home-lang-hidden" data-lang="fr">
-
-        <!-- 🆕 Bloc "En bref" — résumé visible sans dépliage, ajouté pour
-             qu'un nouvel apprenant comprenne le fonctionnement ET les
-             spécificités (hors-ligne, navigateur) en un coup d'œil, sans
-             avoir à ouvrir un seul accordéon. Le guide détaillé reste
-             entièrement disponible juste en-dessous. Voir Bilan_technique.md §6.17. -->
-        <div class="hg-tldr">
-          <h3 class="hg-tldr-title">🚀 L'essentiel en 30 secondes</h3>
-          <ul class="hg-tldr-list">
-            <li>📚 2 niveaux : Vocabulaire (32 thèmes) puis Dialogues (16) — Cartes, Quiz, Répète</li>
-            <li>🔊 Audio inclus ; en Oromo, la voix « idéale » est parfois remplacée par une voix proche (Somali, Amharique…) — normal, pas un bug</li>
-            <li>📴 Installable et utilisable hors-ligne — sauf 🎤 Répète, qui a toujours besoin d'internet, même une fois installée</li>
-            <li>🌐 Navigateur — Android : Chrome, Samsung Internet, Edge, Opera et Brave conviennent tous ; Firefox ne permet jamais 🎤 Répète ; DuckDuckGo et UC Browser sont moins éprouvés. iPhone/iPad : utilisez Safari pour une expérience garantie à 100%</li>
-          </ul>
-          <p class="hg-tldr-footer">Détails complets ci-dessous, ou plus tard via le bouton ❓ Guide.</p>
-        </div>
 
         <!-- 1. Comment ça marche -->
         <details class="hg-section">

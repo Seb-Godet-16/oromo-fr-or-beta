@@ -12,52 +12,60 @@
      └─ app.js       → Ce fichier : logique applicative complète
 
    SECTIONS DE CE FICHIER (ordre d'apparition réel) :
-      1.   Variables d'état globales (let/const)             ligne    78
-      —    Utilitaire bilingue L() / langKeys()              ligne   133
-      2.   Point d'entrée — initApp(mode)                    ligne   222
-      3.   Synthèse vocale + prononciation Oromo             ligne   420
-      3a2. Surlignage mot par mot — pendant la lecture TTS   ligne   844
-      3a3. Vitesse de lecture — paliers (Cartes Flash,       ligne   979
+      1.   Variables d'état globales (let/const)             ligne    90
+      —    Utilitaire bilingue L() / langKeys()              ligne   149
+      2.   Point d'entrée — initApp(mode)                    ligne   263
+      3.   Synthèse vocale + prononciation Oromo             ligne   464
+     3a2.  Surlignage mot par mot — pendant la lecture TTS   ligne   888
+     3a3.  Vitesse de lecture — paliers (Cartes Flash,       ligne  1023
            Répète, Dialogue, Vocabulaire, Quiz Vocabulaire)
-      3b.  Retour haptique — _vibrateFeedback()              ligne  1082
-      3b2. Confetti — animation de félicitations (stars)     ligne  1104
-      3c.  Interruption audio — visibilitychange / focus     ligne  1185
-      3d.  KeepAlive watchdog — Chrome / Android             ligne  1226
-      4.   Persistance de la progression (étoiles)           ligne  1268
-      4c.  Réinitialisation — confirmResetProgress()         ligne  1343  (dans §4)
-      4b.  Restauration de session quiz (sessionStorage)     ligne  1509
-      5.   Navigation entre écrans                           ligne  1621
-      5b.  Navigation basse — helpers                        ligne  1736
-           dont goToAccueil() / goToGuide() — icônes 🏠 / ❓   ligne  1856
+     3b.   Retour haptique — _vibrateFeedback()              ligne  1126
+     3b2.  Confetti — animation de félicitations (stars)     ligne  1148
+     3c.   Interruption audio — visibilitychange / focus     ligne  1229
+     3d.   KeepAlive watchdog — Chrome / Android             ligne  1270
+     3e.   🆕 Bandeau hors-ligne — connectivité              ligne  1312
+           (navigator.onLine) — voir §6.14
+      4.   Persistance de la progression (étoiles)           ligne  1424
+     4a.   🆕 Suivi "modules déjà ouverts" (badge Nouveau)    ligne  1459
+           (dans §4, voir §6.18)
+     4c.   Réinitialisation — confirmResetProgress()         ligne  1541  (dans §4)
+     4b.   Restauration de session quiz (sessionStorage)     ligne  1712
+      5.   Navigation entre écrans                           ligne  1824
+     5b.   Navigation basse — helpers                        ligne  1939
+           dont goToAccueil() / goToGuide() — icônes 🏠 / ❓   ligne  2083
            du header Sections (choix Lanceur vs Écran Home)
-      6.   Écran Home — bouton Commencer + carte(s) de       ligne  1908
+      6.   Écran Home — bouton Commencer + carte(s) de       ligne  2135
            progression (1 par parcours ayant des modules
            réussis — _getOtherModeProgress(), voir plus bas)
-      7.   Écran Sections — grille des thèmes                ligne  2062
-      8.   Ouverture d'un thème (écran Lesson + onglets)     ligne  2175
-           switchTab() : onglets + repositionnement          ligne  2336
+      7.   Écran Sections — grille des thèmes                ligne  2294
+      8.   Ouverture d'un thème (écran Lesson + onglets)     ligne  2448
+           switchTab() : onglets + repositionnement          ligne  2610
            du bouton PDF en mode Cartes (fixed via JS)
-      9.   Cartes Flash — vocabulaire interactif             ligne  2368
-     10.   Quiz 10 questions — avec étoiles progressives     ligne  2543
+      9.   Cartes Flash — vocabulaire interactif             ligne  2642
+     10.   Quiz 10 questions — avec étoiles progressives     ligne  2817
            (dont Quiz Alphabet, sans barre de vitesse — voir §3a3)
-     11.   Dialogue — scènes de situation                    ligne  2862
-     12.   Vocabulaire — lexique visuel cliquable            ligne  2922
-     13b.  Onglet Répète — badges voix (🔊) + reconnaissance   ligne  2970
+     11.   Dialogue — scènes de situation                    ligne  3136
+     12.   Vocabulaire — lexique visuel cliquable            ligne  3196
+     13b.  Onglet Répète — badges voix (🔊) + reconnaissance  ligne  3244
            vocale (🎙️), vitesse dédiée — voir §3a3
-     13.   Quiz Dialogue — questions sur le dialogue         ligne  3715
-     14.   Utilitaires & chaînes de résultats bilingues      ligne  3825
-     17.   Guide utilisateur — Onboarding                    ligne  3912
-      —    Écran Home — _buildHomeGuide()                    ligne  3968
-     18.   Crédits — showCredits()                           ligne  4072
-     15.   Initialisation du launcher                        ligne  4133
-     16.   Accessibilité clavier                             ligne  4151
-     19.   Spinner de chargement des données                 ligne  4163
-     19b.  Viewport height fix — Android Chrome / Brave      ligne  4206
-     20.   Enregistrement du Service Worker (PWA)            ligne  4268
-     21.   Exports PDF — window.print() + @media print       ligne  4315
-     21a.  Export Guide (écran Home)                         ligne  4512
-     21b.  Export Vocabulaire (leçon Niveau 1)               ligne  4618
-     21c.  Export Situation (leçon Niveau 2 — dialogue)      ligne  4714
+     13.   Quiz Dialogue — questions sur le dialogue         ligne  3989
+     14.   Utilitaires & chaînes de résultats bilingues      ligne  4099
+     17.   Guide utilisateur — Onboarding                    ligne  4186
+      —    Écran Home — _buildHomeGuide()                    ligne  4242
+     18.   Crédits — showCredits()                           ligne  4358
+     15.   Initialisation du launcher                        ligne  4419
+     16.   Accessibilité clavier                             ligne  4452
+     19.   Spinner de chargement des données                 ligne  4464
+     19b.  Viewport height fix — Android Chrome / Brave      ligne  4507
+     20.   Enregistrement du Service Worker (PWA)            ligne  4569
+           + 🆕 vérification proactive des mises à jour
+           au premier plan et toutes les 60 min — voir §6.19
+     20b.  🆕 Installation PWA — bouton natif "Installer     ligne  4659
+           l'app" (bouton natif Android/Chrome, rappel iOS)
+     21.   Exports PDF — window.print() + @media print       ligne  4760
+     21a.  Export Guide (écran Home)                         ligne  4957
+     21b.  Export Vocabulaire (leçon Niveau 1)               ligne  5072
+     21c.  Export Situation (leçon Niveau 2 — dialogue)      ligne  5168
    ============================================================
 
    HISTORIQUE DE L'APPLICATION
@@ -4266,9 +4274,12 @@ function _buildHomeGuide() {
   /* ── 3. Badges de fonctionnalités ── */
   const badgesEl = document.getElementById('homeGuideBadges');
   if (badgesEl) {
+    /* 🆕 Badge "Hors-ligne" retiré : redondant depuis que le bouton
+       d'installation ci-dessous porte lui-même le libellé "Installer en
+       mode hors-ligne" (voir _updateInstallUI § 20b). */
     const badges = isFr
-      ? ['✅ Bilisaa', '🚧 Galmee malee', '📱 Bilbila & Kompiyuutara', '🔊 Sagalee', '🎤 Irra deebii\'i', '📲 Interneetii malee']
-      : ['✅ 100% Gratuit', '🚧 Sans inscription', '📱 Mobile & Bureau', '🔊 Audio inclus', '🎤 Répétition orale', '📲 Hors-ligne'];
+      ? ['✅ Bilisaa', '🚧 Galmee malee', '📱 Bilbila & Kompiyuutara', '🔊 Sagalee', '🎤 Irra deebii\'i']
+      : ['✅ 100% Gratuit', '🚧 Sans inscription', '📱 Mobile & Bureau', '🔊 Audio inclus', '🎤 Répétition orale'];
     badgesEl.innerHTML = badges.map((b) => '<span class="hg-badge">' + b + '</span>').join('');
   }
 
@@ -4705,7 +4716,7 @@ function _updateInstallUI() {
   if (btn) {
     btn.style.display = canPrompt ? '' : 'none';
     if (canPrompt) {
-      btn.textContent = L('📲 Fuula jalqabaarratti dabali', "📲 Installer l'app");
+      btn.textContent = L('📲 Interneetii malee dabali', '📲 Installer en mode hors-ligne');
     }
   }
 
