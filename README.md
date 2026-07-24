@@ -62,8 +62,11 @@ Taphad'Meuh/
 [Launcher]  →  choose language
      │
      ▼
- [Home / Guide]  →  onboarding (first visit per mode)
-     │
+   [Home]  →  dashboard (Start/Continue button + progress card(s))
+     │  ▲
+     │  │  🆕 first visit only (per mode) : auto-redirect right after Home
+     │  └──❓── [Guide]  →  bilingual explanatory guide (accordions)
+     │         🏠 back to [Home]
      ▼
  [Sections]  →  grid of 48 modules  (Niveau 1 ×32 + Niveau 2 ×16)
      │
@@ -76,13 +79,15 @@ Taphad'Meuh/
               └── 🎤 Répète         (Speech Recognition — mic required)
 ```
 
-**Back navigation (Sections screen)** — two dedicated icons instead of a single "← Back" button, so the learner can jump straight to either destination :
+**🆕 (24/07/2026)** `Home` and `Guide` used to be a single merged screen (`#home`), which made the ❓ icon reload the very screen it was already on. They are now two separate screens, each showing only the icon that leads to the *other* one. On a learner's very first visit for a given mode (Français or Oromo), the app shows `Home` then immediately slides into `Guide` — no tap needed. 🏠 from `Guide` returns to `Home`, where "Commencer" starts the modules (and marks that mode as onboarded, so this auto-redirect only happens once per mode).
+
+**Back navigation (Sections / Lesson screens)** — two dedicated icons instead of a single "← Back" button, so the learner can jump straight to either destination :
 
 ```
 [Sections]  ──🏠──▶  [Launcher]   (choose Français / Oromo again — same as the
                                    bottom-nav "Change language" button)
-            ──❓──▶  [Home]       (dashboard : Start/Continue button +
-                                   progress card(s) + explanatory guide below)
+            ──❓──▶  [Guide]      (bilingual explanatory guide — 🏠 from
+                                   there returns to [Home], not [Launcher])
 ```
 
 ---
@@ -275,6 +280,8 @@ Les autres thèmes de Niveau 1 génèrent leurs questions à la volée depuis `w
 | 12/07/2026 | Ajout d'une période dans l'historique en en-tête de `app.js` (08/07 → 12/07/2026, expériences utilisateurs) + resynchronisation complète du plan interne `SECTIONS DE CE FICHIER` du même fichier — désynchronisé depuis l'ajout de §3e, il lui manquait aussi entièrement les sections §3e (Bandeau hors-ligne) et §20b (Installation PWA), désormais ajoutées — voir Bilan technique §6.20 (`app.js` : 5 299 lignes) (Sébastien + Claude Sonnet 5) |
 | 12/07/2026 | Relecture complète de l'application et resynchronisation des commentaires à numéros de ligne : recalcul intégral du plan interne de `style.css` (périmé depuis le 10/07/2026) et de `index.html`, correction d'un nouveau décalage de +3 lignes dans le plan de `app.js` apparu depuis l'entrée précédente — voir Bilan technique §6.21. Aucune ligne de code fonctionnel modifiée (`app.js` : 5 303 lignes, `style.css` : 4 467 lignes, `index.html` : 1 307 lignes) (Sébastien + Claude Sonnet 5) |
 | 24/07/2026 | Identité de marque reprise du logo (`Logo-appli-or-fr.png`), en s'inspirant du projet frère VACHÉBO : tokens `--c-flag-red/black/cream` communs aux deux thèmes, footer du lanceur et carte "L'essentiel en 30 secondes" recolorés, logo complet ajouté aux headers de l'écran Modules, mélange d'éléments culturels (🗼🛖🌳🐓☕🥐) en footer + clin d'œil sur un quiz sans-faute, crème mixée dans le dégradé d'accueil. Correctif au passage d'un bug latent de z-index (`.modal` recouvert par `.app-toast`). Resynchronisation complète des 3 plans internes — voir Bilan technique §6.22 (`app.js` : 5 670 lignes, `style.css` : 4 999 lignes, `index.html` : 1 754 lignes) (Sébastien + Claude Sonnet 5) |
+| 24/07/2026 | 🐞 Correctif retour terrain : Home et Guide (`#home`) étaient fusionnés en un seul écran, rendant l'icône ❓ inopérante depuis Home (elle rechargeait le même écran). Séparés en deux écrans distincts `#home` (dashboard) et `#guide` (guide explicatif) ; chacun n'affiche plus que l'icône vers l'AUTRE écran (`#home` → ❓ seule, `#guide` → 🏠 seule). Nouvelle fonction `goToHome()`, `goToGuide()` recentrée sur `#guide`. Resynchronisation complète des 3 plans internes — voir Bilan technique §6.23 (`app.js` : 5 796 lignes, `style.css` : 5 082 lignes, `index.html` : 1 824 lignes) (Sébastien + Claude Sonnet 5) |
+| 24/07/2026 | Suite directe de l'étape précédente : à la toute première visite d'un mode (jamais onboardé), l'apprenant voit désormais automatiquement l'écran Guide juste après Home, sans avoir à taper ❓ lui-même (`_maybeShowOnboarding()` bascule sur `#guide` au lieu de laisser `#home` affiché sans action). Une fois "Commencer" cliqué depuis Home (flag onboarding posé), les lancements suivants sautent directement aux Modules, comme avant. Resynchronisation du plan interne de `app.js` — voir Bilan technique §6.23 (`app.js` : 5 790 lignes) (Sébastien + Claude Sonnet 5) |
 
 *Journal détaillé (dont le retour de recettage complet du 03/07) disponible en commentaire d'en-tête dans `app.js`.*
 

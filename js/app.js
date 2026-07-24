@@ -12,68 +12,71 @@
      └─ app.js       → Ce fichier : logique applicative complète
 
    SECTIONS DE CE FICHIER (ordre d'apparition réel) :
-      1.   Variables d'état globales (let/const)             ligne   110
-      —    Utilitaire bilingue L() / langKeys()              ligne   192
-      2.   Point d'entrée — initApp(mode)                    ligne   283
-      3.   Synthèse vocale + prononciation Oromo             ligne   484
-     3a2.  Surlignage mot par mot — pendant la lecture TTS   ligne   908
-     3a3.  Vitesse de lecture — paliers (Cartes Flash,       ligne  1043
+      1.   Variables d'état globales (let/const)             ligne   122
+      —    Utilitaire bilingue L() / langKeys()              ligne   195
+      2.   Point d'entrée — initApp(mode)                    ligne   295
+      3.   Synthèse vocale + prononciation Oromo             ligne   496
+     3a2.  Surlignage mot par mot — pendant la lecture TTS   ligne   920
+     3a3.  Vitesse de lecture — paliers (Cartes Flash,       ligne  1055
            Répète, Dialogue, Vocabulaire, Quiz Vocabulaire)
-     3b.   Retour haptique — _vibrateFeedback()              ligne  1146
-     3b2.  Confetti — animation de félicitations (stars)     ligne  1168
-     3c.   Interruption audio — visibilitychange / focus     ligne  1249
-     3d.   KeepAlive watchdog — Chrome / Android             ligne  1290
-     3e.   🆕 Bandeau hors-ligne — connectivité              ligne  1332
+     3b.   Retour haptique — _vibrateFeedback()              ligne  1158
+     3b2.  Confetti — animation de félicitations (stars)     ligne  1180
+     3c.   Interruption audio — visibilitychange / focus     ligne  1261
+     3d.   KeepAlive watchdog — Chrome / Android             ligne  1302
+     3e.   🆕 Bandeau hors-ligne — connectivité              ligne  1344
            (navigator.onLine) — voir §6.14
-      4.   Persistance de la progression (étoiles)           ligne  1444
-     4a.   🆕 Suivi "modules déjà ouverts" (badge Nouveau)    ligne  1475
+      4.   Persistance de la progression (étoiles)           ligne  1456
+     4a.   🆕 Suivi "modules déjà ouverts" (badge Nouveau)    ligne  1487
            (dans §4, voir §6.18)
-     4c.   Réinitialisation — confirmResetProgress()         ligne  1561  (dans §4)
-     4b.   Restauration de session quiz (sessionStorage)     ligne  1732
-      5.   Navigation entre écrans                           ligne  1844
-     5b.   Navigation basse — helpers                        ligne  1969
-           dont goToAccueil() / goToGuide() — icônes 🏠 / ❓   ligne  2202
-           du header Sections (choix Lanceur vs Écran Home)
-     5c.   🆕 Navigation rapide en haut — icônes 🏠❓📚🚪,     ligne  2082
-           étendue à TOUS les écrans (jusqu'ici Sections
-           uniquement) — voir _updateQuickNav() / _QUICK_NAV_MAP
-     5d.   🆕 Modale "Quitter l'application" (#quit-app-modal) ligne  2217
+     4c.   Réinitialisation — confirmResetProgress()         ligne  1573  (dans §4)
+     4b.   Restauration de session quiz (sessionStorage)     ligne  1744
+      5.   Navigation entre écrans                           ligne  1856
+     5b.   Navigation basse — helpers                        ligne  2012
+           dont goToAccueil()/goToHome()/goToGuide() — 🏠/❓  ligne  2271
+           (🆕 goToHome() : Guide → Home, sans changer de mode)
+     5c.   🆕 Navigation rapide en haut — icônes 🏠❓📚🚪,     ligne  2130
+           étendue à TOUS les écrans ; entrées 'home'/'guide'
+           distinctes depuis le 24/07/2026 (_QUICK_NAV_MAP)
+     5d.   🆕 Modale "Quitter l'application" (#quit-app-modal) ligne  2301
            — openQuitModal() / quitAppClose() / quitAppRestart()
-      6.   Écran Home — bouton Commencer + carte(s) de       ligne  2342
+      6.   Écran Home — bouton Commencer + carte(s) de       ligne  2426
            progression (1 par parcours ayant des modules
            réussis — _getOtherModeProgress(), voir plus bas)
-      7.   Écran Sections — grille des thèmes                ligne  2501
-      8.   Ouverture d'un thème (écran Lesson + onglets)     ligne  2655
-           switchTab() : onglets + repositionnement          ligne  2817
+      7.   Écran Sections — grille des thèmes                ligne  2585
+      8.   Ouverture d'un thème (écran Lesson + onglets)     ligne  2739
+           switchTab() : onglets + repositionnement          ligne  2901
            du bouton PDF en mode Cartes (fixed via JS)
-      9.   Cartes Flash — vocabulaire interactif             ligne  2849
-     10.   Quiz 10 questions — avec étoiles progressives     ligne  3024
+      9.   Cartes Flash — vocabulaire interactif             ligne  2933
+     10.   Quiz 10 questions — avec étoiles progressives     ligne  3108
            (dont Quiz Alphabet, sans barre de vitesse — voir §3a3)
-     11.   Dialogue — scènes de situation                    ligne  3344
-     12.   Vocabulaire — lexique visuel cliquable            ligne  3404
-     13b.  Onglet Répète — badges voix (🔊) + reconnaissance  ligne  3452
+     11.   Dialogue — scènes de situation                    ligne  3428
+     12.   Vocabulaire — lexique visuel cliquable            ligne  3488
+     13b.  Onglet Répète — badges voix (🔊) + reconnaissance  ligne  3536
            vocale (🎙️), vitesse dédiée — voir §3a3
-     13.   Quiz Dialogue — questions sur le dialogue         ligne  4197
-     14.   Utilitaires & chaînes de résultats bilingues      ligne  4308
-     17.   Guide utilisateur — Onboarding                    ligne  4404
-      —    Écran Home — _buildHomeGuide()                    ligne  4460
-     18.   Crédits — showCredits()                           ligne  4579
-     15.   Initialisation du launcher                        ligne  4709
-     15b.  🆕 Panneaux infos dépliables des cartes de langue  ligne  4742
+     13.   Quiz Dialogue — questions sur le dialogue         ligne  4281
+     14.   Utilitaires & chaînes de résultats bilingues      ligne  4392
+     17.   Guide utilisateur — Onboarding — 🆕 auto-affiché   ligne  4488
+           après Home à la 1ʳᵉ visite (_maybeShowOnboarding())
+      —    🆕 Écran Home (#home) + Guide (#guide) — deux      ligne  4513
+           écrans séparés depuis le 24/07/2026 (un seul avant,
+           voir index.html §6) — _buildHomeGuide()
+     18.   Crédits — showCredits()                           ligne  4692
+     15.   Initialisation du launcher                        ligne  4836
+     15b.  🆕 Panneaux infos dépliables des cartes de langue  ligne  4869
            (état par défaut + préférence manuelle — voir §7
            de la demande de refonte du Lanceur, 22/07/2026)
-     16.   Accessibilité clavier                             ligne  4814
-     19.   Spinner de chargement des données                 ligne  4826
-     19b.  Viewport height fix — Android Chrome / Brave      ligne  4869
-     20.   Enregistrement du Service Worker (PWA)            ligne  4931
+     16.   Accessibilité clavier                             ligne  4941
+     19.   Spinner de chargement des données                 ligne  4953
+     19b.  Viewport height fix — Android Chrome / Brave      ligne  4996
+     20.   Enregistrement du Service Worker (PWA)            ligne  5058
            + 🆕 vérification proactive des mises à jour
            au premier plan et toutes les 60 min — voir §6.19
-     20b.  🆕 Installation PWA — bouton natif "Installer     ligne  5021
+     20b.  🆕 Installation PWA — bouton natif "Installer     ligne  5148
            l'app" (bouton natif Android/Chrome, rappel iOS)
-     21.   Exports PDF — window.print() + @media print       ligne  5122
-     21a.  Export Guide (écran Home)                         ligne  5319
-     21b.  Export Vocabulaire (leçon Niveau 1)               ligne  5434
-     21c.  Export Situation (leçon Niveau 2 — dialogue)      ligne  5530
+     21.   Exports PDF — window.print() + @media print       ligne  5249
+     21a.  Export Guide (écran #guide)                       ligne  5446
+     21b.  Export Vocabulaire (leçon Niveau 1)               ligne  5563
+     21c.  Export Situation (leçon Niveau 2 — dialogue)      ligne  5659
    ============================================================
    🆕 Plan resynchronisé le 23/07/2026 : ajout des sections 5c
    (navigation rapide 🏠❓📚 étendue à tous les écrans, jusqu'ici
@@ -81,14 +84,14 @@
    app-modal, icône 🚪 présente désormais partout). Tout ce qui suit
    le §5b a décalé de +185 lignes environ.
    ============================================================
-   🆕 Resynchronisé le 24/07/2026 : trois ajouts liés à la marque
-   (tokens --c-flag-red/black/cream, logo étendu, clin d'œil
-   mascotte "mélange culturel" 🗼🛖🌳🐓☕🥐 sur un quiz sans-faute —
-   voir _quizResultStrings() §14) ont décalé de +11 lignes tout ce
-   qui suit le milieu du §14. §11 à §14 décalent de +1 à +2 lignes
-   (ajout de `+ r.cultural` aux deux écrans de résultat, §10 et
-   §13) ; §17 et au-delà décalent de +11 lignes (bloc `cultural`
-   ajouté dans _quizResultStrings, §14).
+   🆕 Resynchronisé le 24/07/2026 (marque + Home/Guide + auto-guide) :
+   trois sessions cumulées ce jour — (1) identité de marque du logo ;
+   (2) séparation de #home et #guide en deux écrans (bug ❓ inopérant,
+   voir index.html §6, Bilan_technique.md §6.23) ; (3) #17/_maybeShow-
+   Onboarding() enchaîne désormais sur #guide juste après #home à la
+   1ʳᵉ visite d'un mode, au lieu d'y rester sans action. Toutes les
+   ancres ci-dessus ont été revérifiées par recherche directe dans le
+   fichier final (recalcul intégral, pas par arithmétique de décalage).
    ============================================================
 
    HISTORIQUE DE L'APPLICATION
@@ -1862,18 +1865,48 @@ function _clearQuizSession() {
  * avec une animation de slide directionnelle.
  *
  * ORDRE DES ÉCRANS (profondeur de navigation) :
- *   0: app-launcher → 1: home → 2: sections → 3: lesson
+ *   0: app-launcher → 1: home → 1b: guide → 2: sections → 3: lesson
+ * 🆕 (24/07/2026) #guide est désormais un écran à part entière, séparé
+ * du dashboard #home (voir §6, _buildHomeGuide()) — corrige le bug où
+ * l'icône ❓ depuis #home rechargeait le même écran sur lui-même.
  * Aller vers un écran plus profond → slide de droite à gauche (forward)
  * Revenir vers un écran moins profond → slide de gauche à droite (back)
  *
- * @param {'home'|'sections'|'lesson'} id - ID de l'élément HTML de l'écran
+ * @param {'home'|'guide'|'sections'|'lesson'} id - ID de l'élément HTML de l'écran
  * @param {'forward'|'back'|'none'} [dir] - Direction forcée (optionnel)
  */
 
 /* Ordre des écrans pour déterminer la direction */
-const _SCREEN_ORDER = ['app-launcher', 'home', 'sections-level1', 'sections-level2', 'lesson'];
+const _SCREEN_ORDER = ['app-launcher', 'home', 'guide', 'sections-level1', 'sections-level2', 'lesson'];
+
+/* 🆕 CORRECTIF (24/07/2026, bug navigation basse) : identifiant du
+   setTimeout qui finalise la transition en cours (voir fin de
+   showScreen ci-dessous). Nécessaire pour l'annuler proprement si
+   une NOUVELLE navigation démarre avant que l'ancienne n'ait fini
+   d'animer — voir explication détaillée au point d'annulation. */
+let _screenTransitionTimer = null;
 
 function showScreen(id, dir) {
+  /* 🆕 CORRECTIF (24/07/2026, bug navigation basse) : annule toute
+     transition précédente encore "en vol".
+     BUG CORRIGÉ : showScreen() finalise chaque transition avec un
+     setTimeout (280ms plus tard) qui capture nextScreen par closure
+     et lui pose la classe "active". Si l'apprenant tapait un 2e
+     bouton de nav (Modules, Guide, Langue…) pendant l'animation du
+     1er écran, le 2e appel démarrait bien sa propre transition — mais
+     le setTimeout du 1er appel restait programmé. Quand il se
+     déclenchait ensuite, il retirait la classe "active" fraîchement
+     posée par la 2e transition (removeANIM_CLASSES tourne sur TOUS
+     les écrans) et rendait "active" l'écran de la 1ʳᵉ transition à
+     la place — l'apprenant se retrouvait donc sur le mauvais écran,
+     ou l'app semblait "sauter" toute seule juste après avoir tapé.
+     En annulant ici le timer précédent avant d'en programmer un
+     nouveau, seule la DERNIÈRE navigation en date peut finaliser. */
+  if (_screenTransitionTimer) {
+    clearTimeout(_screenTransitionTimer);
+    _screenTransitionTimer = null;
+  }
+
   /* BUG-FIX : fermer toute modale restée ouverte accidentellement
      (overlay invisible en z-index 10000 qui bloque tous les clics) */
   const confirmModal = document.getElementById('custom-confirm-modal');
@@ -1965,11 +1998,12 @@ function showScreen(id, dir) {
 
   /* ── Finaliser après la durée de l'animation (280ms) ── */
   const DURATION = 280;
-  setTimeout(() => {
+  _screenTransitionTimer = setTimeout(() => {
     document.querySelectorAll('.screen').forEach((s) => {
       s.classList.remove.apply(s.classList, ANIM_CLASSES);
     });
     nextScreen.classList.add('active');
+    _screenTransitionTimer = null;
   }, DURATION);
 }
 
@@ -2026,8 +2060,13 @@ function _updateBottomNav(screenId) {
      "Commencer" (_buildHomeGuide → homeStartBtn), qui pose le flag AVANT
      de naviguer vers l'écran Modules. Lors des visites suivantes de
      #home (bouton ❓ Guide, une fois le flag déjà posé), la nav reste
-     normalement visible — seul le tout premier passage est concerné. */
-  if (screenId === 'home') {
+     normalement visible — seul le tout premier passage est concerné.
+     🆕 (24/07/2026) Règle étendue à #guide : depuis la séparation de
+     #home et #guide en deux écrans distincts, le Guide est atteignable
+     dès la première visite (icône ❓ depuis #home) — la même protection
+     doit donc s'y appliquer pour éviter de court-circuiter l'onboarding
+     via la nav basse pendant qu'on le consulte. */
+  if (screenId === 'home' || screenId === 'guide') {
     const obKey = isFrench() ? 'tm_onboarded_fr' : 'tm_onboarded_or';
     const firstEverVisit = localStorage.getItem(obKey) !== 'true';
     if (firstEverVisit) {
@@ -2081,7 +2120,7 @@ function _updateBottomNav(screenId) {
     const mb = document.getElementById('navBtnModules');
     if (mb) mb.classList.add('active');
   }
-  if (screenId === 'home') {
+  if (screenId === 'home' || screenId === 'guide') {
     const gb = document.getElementById('navBtnGuide');
     if (gb) gb.classList.add('active');
   }
@@ -2109,19 +2148,30 @@ function _updateBottomNav(screenId) {
    AVANT la navigation, dès le clic sur "Commencer" — voir §17) : la
    restriction ne s'applique donc en pratique qu'à l'écran #home.
    🚪 Quitter est toujours visible, sur tous les écrans sans exception.
+
+   🆕 (24/07/2026) L'icône correspondant à l'écran déjà affiché (ex :
+   📚 sur Sections, 🏠 sur Home/Guide) est désormais masquée plutôt que
+   grisée — voir _updateQuickNav() plus bas, retour terrain Bug_4.
    ============================================================ */
 
 /**
  * Table de correspondance écran → ids des boutons de nav rapide.
  * `current` indique la clé (home|guide|modules) qui représente
- * l'écran affiché : ce bouton est désactivé (.disabled) mais reste
- * visible, pour ne pas faire "sauter" la mise en page d'un écran à
- * l'autre. Le Lanceur n'a pas d'entrée home/guide/modules : aucun
- * mode n'étant encore choisi, seul 🚪 Quitter y a un sens.
+ * l'écran affiché : ce bouton est entièrement masqué (display:none)
+ * — inutile de proposer un raccourci vers l'écran où l'on se trouve
+ * déjà (🆕 24/07/2026, retour terrain — voir Bug_4 : auparavant ce
+ * bouton restait visible mais grisé/désactivé). Le Lanceur n'a pas
+ * d'entrée home/guide/modules : aucun mode n'étant encore choisi,
+ * seul 🚪 Quitter y a un sens.
  */
 const _QUICK_NAV_MAP = {
   'app-launcher'    : { quit: 'launcherQuitBtn' },
-  'home'            : { home: 'homeQnHomeBtn',        guide: 'homeQnGuideBtn',        modules: 'homeQnModulesBtn',        quit: 'homeQuitBtn',        current: 'guide' },
+  /* 🆕 (24/07/2026) #home et #guide sont désormais deux écrans distincts
+     (voir §6, _buildHomeGuide()) : chacun n'affiche plus que l'icône qui
+     mène VERS l'autre — plus de bouton "home" ici (on y est déjà, et il
+     rechargeait auparavant le même écran, d'où le bug). */
+  'home'            : { guide: 'homeQnGuideBtn',       modules: 'homeQnModulesBtn',    quit: 'homeQuitBtn',        current: 'home' },
+  'guide'           : { home: 'guideQnHomeBtn',        modules: 'guideQnModulesBtn',   quit: 'guideQuitBtn',       current: 'guide' },
   'sections-level1' : { home: 'sectionsBackHomeBtn',  guide: 'sectionsBackGuideBtn',  modules: 'sectionsQnModulesBtn',    quit: 'sectionsQuitBtn',    current: 'modules' },
   'sections-level2' : { home: 'sectionsBackHomeBtn2', guide: 'sectionsBackGuideBtn2', modules: 'sectionsQnModulesBtn2',   quit: 'sectionsQuitBtn2',   current: 'modules' },
   'lesson'          : { home: 'lessonQnHomeBtn',       guide: 'lessonQnGuideBtn',      modules: 'lessonQnModulesBtn',     quit: 'lessonQuitBtn' },
@@ -2160,10 +2210,17 @@ function _updateQuickNav(screenId) {
     const el = document.getElementById(map[key]);
     if (!el) return;
     const isCurrent = (key === map.current);
-    /* 📚 Modules masqué UNIQUEMENT sur #home tant que le mode courant
-       n'a jamais été onboardé (voir commentaire de section ci-dessus) */
-    const hiddenByOnboarding = (screenId === 'home' && key === 'modules' && !_isQuickNavUnlocked());
-    el.style.display = hiddenByOnboarding ? 'none' : '';
+    /* 📚 Modules masqué UNIQUEMENT sur #home et #guide tant que le mode
+       courant n'a jamais été onboardé (voir commentaire de section
+       ci-dessus) — étendu à #guide le 24/07/2026 puisque cet écran est
+       désormais atteignable dès la première visite, avant "Commencer". */
+    const hiddenByOnboarding = ((screenId === 'home' || screenId === 'guide') && key === 'modules' && !_isQuickNavUnlocked());
+    /* 🆕 (24/07/2026) L'icône de l'écran déjà affiché est masquée
+       (display:none), pas seulement grisée — retour terrain, cf. Bug_4 :
+       inutile de proposer un raccourci vers l'écran où l'on se trouve
+       déjà. Les 3 autres icônes ne bougent pas de place (elles restent
+       dans le même ordre 🏠/❓/📚), seul le nombre visible change. */
+    el.style.display = (isCurrent || hiddenByOnboarding) ? 'none' : '';
     el.disabled = isCurrent;
   });
 
@@ -2204,22 +2261,40 @@ function lessonGoBack() {
 }
 
 /**
- * Icône "🏠" du header Sections → retour à l'écran de LANCEMENT
+ * Icône "🏠" du header Sections/Leçon → retour à l'écran de LANCEMENT
  * (#app-launcher, choix Français / Oromo). Même mécanisme que le
  * bouton "Changer de langue" de la nav basse (navBtnLang).
+ * ⚠️ Ne pas confondre avec goToHome() ci-dessous : ce bouton-ci quitte
+ * le mode courant, alors que goToHome() reste dans le mode et ramène
+ * seulement au dashboard #home.
  */
 function goToAccueil() {
   showScreen('app-launcher', 'back');
 }
 
 /**
- * Icône "❓" du header Sections → retour à l'écran Home (dashboard :
- * bouton Commencer/Continuer + carte(s) de progression + guide
- * explicatif juste en dessous). Identique à showOnboardingGuide()
- * (bouton "Guide" de la nav basse), avec l'animation "back".
+ * 🆕 (24/07/2026) Icône "🏠" du header Guide → retour à l'écran Home
+ * (#home, le dashboard : bouton Commencer/Continuer + carte(s) de
+ * progression), SANS changer de mode/langue — contrairement à
+ * goToAccueil() ci-dessus. N'existait pas avant la séparation de #home
+ * et #guide en deux écrans distincts (voir §6).
+ */
+function goToHome() {
+  showScreen('home', 'back');
+}
+
+/**
+ * Icône "❓" du header Sections/Leçon/Home → ouvre l'écran #guide
+ * (guide explicatif bilingue, accordéons). Identique à
+ * showOnboardingGuide() (bouton "Guide" de la nav basse), avec
+ * l'animation "back".
+ * 🆕 (24/07/2026) Cible désormais #guide (écran dédié) et non plus
+ * #home : avant la séparation des deux écrans, cette fonction rouvrait
+ * #home, ce qui n'avait aucun effet visible quand on l'appelait déjà
+ * depuis #home (bug rapporté en retour terrain).
  */
 function goToGuide() {
-  showScreen('home', 'back');
+  showScreen('guide', 'back');
 }
 
 /* ============================================================
@@ -4435,24 +4510,32 @@ const _OB_KEY_FR = 'tm_onboarded_fr';
 const _OB_KEY_OR = 'tm_onboarded_or';
 
 /* ============================================================
-   ÉCRAN 2 — GUIDE / HOME (remplace l'ancien écran Home)
+   ÉCRAN 2 — HOME (dashboard) + GUIDE (#guide) — deux écrans séparés
    ============================================================
-   _buildHomeGuide() : injecte dans #home le guide d'utilisation
-   bilingue avec badges, accordéons et checkbox "Ne plus afficher".
+   🆕 (24/07/2026) #home et #guide étaient auparavant un seul et même
+   écran (#home faisait double emploi : dashboard ET guide explicatif),
+   ce qui rendait l'icône ❓ de #home inopérante (elle rechargeait le
+   même écran sur lui-même — retour terrain). Ils sont désormais deux
+   <div class="screen"> distincts dans index.html, mais restent
+   construits par la MÊME fonction _buildHomeGuide() ci-dessous, qui :
+     • peuple le dashboard #home (titre, drapeaux, sous-titre, badges,
+       installation, bouton Commencer/Continuer, export PDF, topbar) ;
+     • ET bascule le bon bloc de langue à l'intérieur de #guide
+       (.home-lang-block, voir plus bas).
    Appelée une fois par initApp() après _setUI().
 
    Logique "Ne plus afficher" :
    • Si le flag localStorage est posé ET que ce n'est pas un
      appel depuis "Aide" → on saute directement à sections.
-   • La checkbox dans l'écran permet de poser/retirer le flag.
-   • showOnboardingGuide() : force l'affichage depuis le footer
-     (écran home) sans toucher au flag.
+   • Le bouton "Commencer" sur #home permet de poser le flag.
+   • showOnboardingGuide() : force l'affichage de #guide depuis la nav
+     basse ou les icônes ❓, sans toucher au flag.
    ============================================================ */
 
 /**
- * Active le bon bloc de langue dans l'écran #home et met à jour
- * les éléments dynamiques (drapeaux, titre, sous-titre, badges,
- * boutons).
+ * Met à jour les éléments dynamiques de #home ET #guide (drapeaux,
+ * titre, sous-titre, badges, boutons, topbars) et active le bon bloc
+ * de langue dans #guide.
  *
  * ARCHITECTURE (depuis Juin 2026) :
  * La structure HTML complète du guide (accordéons, audio, bio…)
@@ -4462,9 +4545,10 @@ const _OB_KEY_OR = 'tm_onboarded_or';
  *   • .home-lang-block[data-lang="fr"] → guide en Français
  *     (apprenant francophone qui apprend l'Oromo)
  * Cette fonction se limite à :
- *   1. Masquer les deux blocs, puis révéler le bon.
+ *   1. Masquer les deux blocs, puis révéler le bon (dans #guide).
  *   2. Renseigner les IDs de l'en-tête (drapeaux, titre, sous-titre,
- *      badges) et des boutons (Commencer, Export PDF, topbar).
+ *      badges) et des boutons (Commencer, Export PDF, topbars de
+ *      #home ET #guide).
  */
 function _buildHomeGuide() {
   const isFr = isFrench();
@@ -4510,9 +4594,19 @@ function _buildHomeGuide() {
     badgesEl.innerHTML = badges.map((b) => '<span class="hg-badge">' + b + '</span>').join('');
   }
 
-  /* ── 4. Topbar ── */
+  /* ── 4. Topbar ──
+     🆕 (24/07/2026) #home et #guide ayant désormais chacun leur propre
+     topbar, ce libellé ne peut plus servir aux deux à la fois : #home
+     affiche un titre de dashboard, #guide garde l'ancien libellé
+     "Guide explicatif" (voir plus bas, guideTopbarTitle/guideTitle). */
   const topbarTitle = document.getElementById('homeTopbarTitle');
-  if (topbarTitle) topbarTitle.textContent = L('Gargaarsa', 'Guide explicatif');
+  if (topbarTitle) topbarTitle.textContent = L('Fuula Jalqabaa', 'Accueil');
+
+  const guideTopbarTitle = document.getElementById('guideTopbarTitle');
+  if (guideTopbarTitle) guideTopbarTitle.textContent = L('Gargaarsa', 'Guide explicatif');
+
+  const guideTitleEl = document.getElementById('guideTitle');
+  if (guideTitleEl) guideTitleEl.textContent = L('📖 Gargaarsa', '📖 Guide explicatif');
 
   /* ── 5. Bouton Commencer ── */
   const btn = document.getElementById('homeStartBtn');
@@ -4553,15 +4647,24 @@ function _buildHomeGuide() {
  * Appelée par initApp() juste après showScreen('home').
  * Si le guide a déjà été vu pour le mode actif (flag localStorage posé
  * par le clic sur "Commencer"), on saute directement à l'écran des
- * modules — l'utilisateur ne revoit pas le guide à chaque lancement.
- * Sinon, on ne fait rien : l'écran #home (guide) déjà affiché reste visible.
- * N'affecte jamais showOnboardingGuide() (icône ❓ de la nav basse),
- * qui force toujours l'affichage du guide sans consulter ce flag.
+ * modules — l'utilisateur ne revoit pas le dashboard à chaque lancement.
+ * 🆕 (24/07/2026) Sinon (première visite jamais terminée pour ce mode),
+ * on enchaîne automatiquement sur l'écran #guide (guide explicatif) —
+ * juste après #home, comme demandé : l'apprenant voit d'abord le
+ * dashboard (showScreen('home') ci-dessus dans initApp), puis bascule
+ * aussitôt sur le Guide. Il revient ensuite à #home via l'icône 🏠 du
+ * Guide pour cliquer sur "Commencer" (ce qui pose le flag onboarding).
+ * N'affecte jamais showOnboardingGuide() (bouton "Guide" de la nav
+ * basse), qui force toujours l'affichage du guide sans consulter ce
+ * flag, ni goToGuide()/goToHome() (icônes ❓/🏠), utilisables librement
+ * une fois sur l'un des deux écrans.
  */
 function _maybeShowOnboarding() {
   const key = isFrench() ? _OB_KEY_FR : _OB_KEY_OR;
   if (localStorage.getItem(key) === 'true') {
     showScreen('sections-level1');
+  } else {
+    showScreen('guide');
   }
 }
 
@@ -4577,11 +4680,12 @@ function _closeOnboarding() {
 }
 
 /**
- * Ouvre le guide depuis le lien "Aide" dans les footers.
- * Affiche l'écran #home (guide) sans toucher au flag.
+ * Ouvre le guide depuis le bouton "Guide" de la nav basse.
+ * 🆕 (24/07/2026) Affiche désormais l'écran #guide dédié, séparé du
+ * dashboard #home — sans toucher au flag d'onboarding.
  */
 function showOnboardingGuide() {
-  showScreen('home');
+  showScreen('guide');
 }
 
 /* ============================================================
@@ -4619,7 +4723,7 @@ function showCredits() {
       ? '<p class="credits-copy">' + lblCopy + '</p>'
         + '<hr class="credits-sep">'
 
-        + '<details class="hg-section" open>'
+        + '<details class="hg-section">'
         +   '<summary class="hg-summary">'
         +     '<span class="hg-icon">🙋</span>'
         +     '<span class="hg-label">Eenyu ani?</span>'
@@ -4648,13 +4752,21 @@ function showCredits() {
         +     '<span class="hg-chevron">▼</span>'
         +   '</summary>'
         +   '<div class="hg-detail">'
-        +     '<p>👨\u200d💻 Galata guddaa <strong>Fédérico Calo</strong>'
-        +     ' (<a href="https://www.linkedin.com/in/federicocalo/" target="_blank" rel="noopener noreferrer">Architektii Guddisaa Web</a>)'
-        +     ' gargaarsa teknikaaf.</p>'
-        +     '<p>🌍 Galata baay\'een <strong>Mussa Sembro</strong>'
-        +     ' (<a href="https://www.linkedin.com/in/mussa-sembro-137472174/" target="_blank" rel="noopener noreferrer">Hiikkaa-Ibsituu Afaan Oromoo</a>)'
-        +     ' — hiikaa, sirreessaa fi gorsa afaanii.</p>'
-        +     '<p>👪 Galata guddaa <strong>maatii kootiif</strong> — irra deebi\'ee dubbisuu fi gorsaaf.</p>'
+        +     '<div class="hg-essential">'
+        +       '<ul class="hg-essential-list">'
+        /* 🆕 (24/07/2026) Rubrique synthétisée — reprise et condensée depuis
+           le Guide explicatif (§8), icônes différenciées par contributeur. */
+        +         '<li>🛠️ <strong>Fédérico Calo</strong> — '
+        +           '<a href="https://www.linkedin.com/in/federicocalo/" target="_blank" rel="noopener noreferrer">gargaarsa teeknikaa</a></li>'
+        +         '<li>🌍 <strong>Mussa Sembro</strong> — '
+        +           '<a href="https://www.linkedin.com/in/mussa-sembro-137472174/" target="_blank" rel="noopener noreferrer">hiikkaa fi gorsa afaanii</a></li>'
+        +         '<li>👪 <strong>Maatii koo</strong> — deebi\'anii dubbisuu fi gorsa</li>'
+        /* 🆕 BROUILLON Oromo — traduction à FAIRE VALIDER PAR MUSSA SEMBRO
+           avant publication (même règle que pour le récit personnel Oromo
+           quelques lignes plus haut dans cette même fonction). */
+        +         '<li>🔀 <strong>Christophe Elin fi Sandrine Le Goff</strong> — yaada walbira qabuu Ispaanish/Faransaayii (VACHÉBO), kanas fooyyessuuf gargaare (dogoggora, filannoo dhuunfaa, deemsa)</li>'
+        +       '</ul>'
+        +     '</div>'
         +   '</div>'
         + '</details>'
 
@@ -4662,7 +4774,7 @@ function showCredits() {
       : '<p class="credits-copy">' + lblCopy + '</p>'
         + '<hr class="credits-sep">'
 
-        + '<details class="hg-section" open>'
+        + '<details class="hg-section">'
         +   '<summary class="hg-summary">'
         +     '<span class="hg-icon">🙋</span>'
         +     '<span class="hg-label">Qui je suis</span>'
@@ -4688,13 +4800,19 @@ function showCredits() {
         +     '<span class="hg-chevron">▼</span>'
         +   '</summary>'
         +   '<div class="hg-detail">'
-        +     '<p>👨\u200d💻 Un grand merci à <strong>Fédérico Calo</strong>'
-        +     ' (<a href="https://www.linkedin.com/in/federicocalo/" target="_blank" rel="noopener noreferrer">Architecte Développeur Web</a>)'
-        +     ' pour son aide technique.</p>'
-        +     '<p>🌍 Merci beaucoup à <strong>Mussa Sembro</strong>'
-        +     ' (<a href="https://www.linkedin.com/in/mussa-sembro-137472174/" target="_blank" rel="noopener noreferrer">Traducteur-Interprète en Oromo</a>)'
-        +     ' pour son travail de traduction, ses corrections et ses précieux conseils linguistiques.</p>'
-        +     '<p>👪 Merci à mes <strong>parents</strong> pour leur relecture attentive et leurs conseils.</p>'
+        +     '<div class="hg-essential">'
+        +       '<ul class="hg-essential-list">'
+        /* 🆕 (24/07/2026) Rubrique synthétisée — reprise et condensée depuis
+           le Guide explicatif (§8), icônes différenciées par contributeur,
+           cf. Bug_2 (capture de l'appli sœur). */
+        +         '<li>🛠️ <strong>Fédérico Calo</strong> — '
+        +           '<a href="https://www.linkedin.com/in/federicocalo/" target="_blank" rel="noopener noreferrer">aide technique</a></li>'
+        +         '<li>🌍 <strong>Mussa Sembro</strong> — '
+        +           '<a href="https://www.linkedin.com/in/mussa-sembro-137472174/" target="_blank" rel="noopener noreferrer">traduction &amp; conseils linguistiques</a></li>'
+        +         '<li>👪 <strong>Mes parents</strong> — relecture &amp; conseils</li>'
+        +         '<li>🔀 <strong>Christophe Elin &amp; Sandrine Le Goff</strong> — retours croisés Espagnol ↔ Français (VACHÉBO), profitant aussi à cette appli (bugs, personnalisation, navigation)</li>'
+        +       '</ul>'
+        +     '</div>'
         +   '</div>'
         + '</details>';
   }
@@ -5325,7 +5443,7 @@ function _printDocFooter() {
 
 
 /* ============================================================
-   21a. EXPORT GUIDE (Écran Home)
+   21a. EXPORT GUIDE (Écran #guide)
    ============================================================ */
 
 function _exportGuide() {
@@ -5336,18 +5454,20 @@ function _exportGuide() {
   const langPair = isFr ? 'Fran\u00e7ais \u2194 Afaan Oromoo' : 'Afaan Oromoo \u2194 Fran\u00e7ais';
   const modeLabel = isFr ? 'Mode : Apprendre le Fran\u00e7ais' : 'Mode : Afaan Oromoo Barachuu';
 
-  const bodyEl = document.getElementById('homeGuideBody');
+  const bodyEl = document.getElementById('guideBody');
   let sectionsHTML = '';
 
   if (bodyEl) {
-    /* 🐞 CORRECTIF : #homeGuideBody contient TOUJOURS les deux blocs
-       bilingues (.home-lang-block[data-lang="or"] et [data-lang="fr"]),
-       un seul étant visible via la classe .home-lang-hidden (display:none
-       en CSS — voir _buildHomeGuide()). Mais querySelectorAll() ignore
-       le display:none et remontait donc les <details> DES DEUX langues,
-       d'où un PDF bilingue au lieu du guide dans la seule langue de
-       l'apprenant. On restreint maintenant la recherche au bloc
-       actuellement visible (celui sans .home-lang-hidden). */
+    /* 🐞 CORRECTIF : #guideBody (ex-#homeGuideBody, renommé le 24/07/2026
+       lors de la séparation de #home et #guide en deux écrans) contient
+       TOUJOURS les deux blocs bilingues (.home-lang-block[data-lang="or"]
+       et [data-lang="fr"]), un seul étant visible via la classe
+       .home-lang-hidden (display:none en CSS — voir _buildHomeGuide()).
+       Mais querySelectorAll() ignore le display:none et remontait donc
+       les <details> DES DEUX langues, d'où un PDF bilingue au lieu du
+       guide dans la seule langue de l'apprenant. On restreint maintenant
+       la recherche au bloc actuellement visible (celui sans
+       .home-lang-hidden). */
     const activeBlock = bodyEl.querySelector('.home-lang-block:not(.home-lang-hidden)');
     const details = (activeBlock || bodyEl).querySelectorAll('details.hg-section');
     details.forEach((det) => {

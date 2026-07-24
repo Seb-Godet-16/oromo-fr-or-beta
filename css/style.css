@@ -22,53 +22,55 @@
  * ║  rendu visuel.                                                  ║
  * ╠══════════════════════════════════════════════════════════════════╣
  * ║  PLAN DU FICHIER                                                ║
- * ║   §1        Reset & base                          ligne    83  ║
- * ║   §2        Variables de thème (:root / fallback) ligne   207  ║
- * ║   §3        Thème Français (html.theme-french)    ligne   286  ║
- * ║   §4        Thème Oromo (html.theme-oromo)        ligne   328  ║
- * ║   §5        Écran 0 — Lanceur (dont 🆕            ligne   365  ║
- * ║             .launcher-quit-btn, voir ligne 434)                ║
- * ║   §6        Écran 1 — Accueil #home (dont 🆕      ligne   809  ║
- * ║             .home-topbar 3 zones, voir ligne 853)               ║
- * ║   §7        Écran 2 — Sections                    ligne   887  ║
- * ║   §8        Écran 3 — Leçon (dont .back-btn-icon  ligne  1055  ║
- * ║             icônes 🏠/❓, voir ligne 1284; 🆕 .lesson-quick-nav  ║
- * ║             ligne 1077)                                         ║
- * ║   §9        Composants : Flashcards               ligne  1367  ║
- * ║   §10       Composants : Alphabet                 ligne  1569  ║
- * ║   §11       Composants : Quiz                     ligne  1669  ║
- * ║   §12       Composants : Dialogues / Situations   ligne  1783  ║
- * ║   §13       Composants : Vocabulaire              ligne  1888  ║
- * ║   §14       Modale Remerciements                  ligne  1956  ║
- * ║   §15       Footer commun                         ligne  2048  ║
- * ║   §16       Toast notification                    ligne  2068  ║
- * ║   §16b   🆕 Bandeau hors-ligne persistant          ligne  2104  ║
- * ║   §17       Onglet Répète (dont 🆕 .repeat-        ligne  2168  ║
+ * ║   §1        Reset & base                          ligne    90  ║
+ * ║   §2        Variables de thème (:root / fallback) ligne   214  ║
+ * ║   §3        Thème Français (html.theme-french)    ligne   293  ║
+ * ║   §4        Thème Oromo (html.theme-oromo)        ligne   335  ║
+ * ║   §5        Écran 0 — Lanceur (dont 🆕            ligne   372  ║
+ * ║             .launcher-quit-btn, voir ligne 452)                ║
+ * ║   §6        Écran 1 — Home #home + 🆕 Écran 1b    ligne   856  ║
+ * ║             Guide #guide (24/07/2026, séparés — voir            ║
+ * ║             .home-topbar 2 zones/écran, ligne 900)              ║
+ * ║   §7        Écran 2 — Sections                    ligne   943  ║
+ * ║   §8        Écran 3 — Leçon (dont .back-btn-icon  ligne  1111  ║
+ * ║             icônes 🏠/❓, voir ligne 1340; 🆕 .lesson-quick-nav  ║
+ * ║             ligne 1133)                                         ║
+ * ║   §9        Composants : Flashcards               ligne  1423  ║
+ * ║   §10       Composants : Alphabet                 ligne  1625  ║
+ * ║   §11       Composants : Quiz                     ligne  1725  ║
+ * ║   §12       Composants : Dialogues / Situations   ligne  1839  ║
+ * ║   §13       Composants : Vocabulaire              ligne  1944  ║
+ * ║   §14       Modale Remerciements                  ligne  2012  ║
+ * ║   §15       Footer commun                         ligne  2104  ║
+ * ║   §16       Toast notification                    ligne  2124  ║
+ * ║   §16b   🆕 Bandeau hors-ligne persistant          ligne  2160  ║
+ * ║   §17       Onglet Répète (dont 🆕 .repeat-        ligne  2224  ║
  * ║             badges-intro, phrase d'intro 2 badges)              ║
- * ║   §18       Focus clavier                         ligne  2466  ║
- * ║   §19       Guide utilisateur (.ob-*, dont 🆕      ligne  2484  ║
+ * ║   §18       Focus clavier                         ligne  2522  ║
+ * ║   §19       Guide utilisateur (.ob-*, dont 🆕      ligne  2540  ║
  * ║             "Quel navigateur choisir ?")                        ║
- * ║   §20       Spinner de chargement                 ligne  2952  ║
- * ║   §22       Écran Home redesigné                  ligne  2989  ║
- * ║   §23       Écran Sections redesigné (dont        ligne  3402  ║
- * ║             .back-btn-group, voir ligne 3427)                  ║
- * ║   §24       Responsive : tablette & desktop       ligne  3555  ║
- * ║   §24b      Mode sombre                           ligne  3645  ║
- * ║   §24c      Responsive : mode paysage mobile      ligne  3765  ║
- * ║   §25       Boutons d'export PDF                  ligne  3837  ║
- * ║   §26       Barre de navigation basse             ligne  3937  ║
- * ║   §27       Onglets niveau 1 / 2                  ligne  4064  ║
- * ║   §28       Écrans sections level (no-scroll)     ligne  4159  ║
- * ║   §20e      Grille thèmes écrans level            ligne  4357  ║
- * ║   §CONFETTI Animation de félicitations ⭐⭐⭐      ligne  4378  ║
- * ║   §PROGRESS Carte(s) de progression (Home,        ligne  4449  ║
+ * ║   §20       Spinner de chargement                 ligne  3008  ║
+ * ║   §22       Écrans Home (dashboard) + 🆕 Guide    ligne  3045  ║
+ * ║             (séparé le 24/07/2026, voir §6)                     ║
+ * ║   §23       Écran Sections redesigné (dont        ligne  3463  ║
+ * ║             .back-btn-group, voir ligne 3488)                  ║
+ * ║   §24       Responsive : tablette & desktop       ligne  3635  ║
+ * ║   §24b      Mode sombre                           ligne  3725  ║
+ * ║   §24c      Responsive : mode paysage mobile      ligne  3845  ║
+ * ║   §25       Boutons d'export PDF                  ligne  3918  ║
+ * ║   §26       Barre de navigation basse             ligne  4018  ║
+ * ║   §27       Onglets niveau 1 / 2                  ligne  4145  ║
+ * ║   §28       Écrans sections level (no-scroll)     ligne  4240  ║
+ * ║   §20e      Grille thèmes écrans level            ligne  4438  ║
+ * ║   §CONFETTI Animation de félicitations ⭐⭐⭐      ligne  4459  ║
+ * ║   §PROGRESS Carte(s) de progression (Home,        ligne  4530  ║
  * ║             1 ou 2 selon les parcours commencés)                ║
- * ║   §CONFIRM  Modale confirmation suppression       ligne  4572  ║
- * ║   §QUITMODAL 🆕 Modale "Quitter l'application"     ligne  4691  ║
+ * ║   §CONFIRM  Modale confirmation suppression       ligne  4653  ║
+ * ║   §QUITMODAL 🆕 Modale "Quitter l'application"     ligne  4772  ║
  * ║             (#quit-app-modal, icône 🚪 nav rapide)              ║
- * ║   §ANTISPAM E-mail affiché à l'envers (CSS RTL)  ligne  4794  ║
- * ║   §SPEAKING Feedback visuel bouton audio (TTS)    ligne  4821  ║
- * ║   §29       Correctifs accessibilité mode sombre  ligne  4879  ║
+ * ║   §ANTISPAM E-mail affiché à l'envers (CSS RTL)  ligne  4875  ║
+ * ║   §SPEAKING Feedback visuel bouton audio (TTS)    ligne  4902  ║
+ * ║   §29       Correctifs accessibilité mode sombre  ligne  4960  ║
  * ║  ── Plan resynchronisé le 23/07/2026 : ajout d'une navigation    ║
  * ║  rapide (🏠❓📚) en haut de CHAQUE écran (jusqu'ici réservée à    ║
  * ║  Sections) + bouton 🚪 Quitter partout et sa modale dédiée       ║
@@ -82,6 +84,13 @@
  * ║  clin d'œil mascotte sur quiz sans-faute (§CONFIRM, .result-box), ║
  * ║  z-index de .modal relevé à 10001 (§14, au-dessus du toast).     ║
  * ║  Le fichier a gagné ~+69 lignes.                                 ║
+ * ║  ── Resynchronisé le 24/07/2026 (2e session — bug Home/Guide) :  ║
+ * ║  #home (§6/§22) et #guide sont désormais deux écrans séparés,    ║
+ * ║  partageant les mêmes classes .home-guide-* et le même fond      ║
+ * ║  dégradé (#home, #guide{...}). Chaque topbar n'a plus que 2      ║
+ * ║  icônes (au lieu de 3) : #home → ❓+📚, #guide → 🏠+📚. Voir      ║
+ * ║  index.html et app.js (§5c, _QUICK_NAV_MAP). Toutes les ancres   ║
+ * ║  ci-dessus ont été recalculées ; le fichier a gagné ~+14 lignes. ║
  * ╚══════════════════════════════════════════════════════════════════╝
  */
 
@@ -377,10 +386,21 @@ html.theme-oromo body{background:#f4f9f4}
 #app-launcher{
   background: #BFA98A; /* Café au lait plus soutenu / plus foncé */
   align-items: center;
-  justify-content: center;
-  padding: 24px 20px calc(var(--bottom-nav-h, 56px) + 60px); /* espace pour la nav + footer */
+  /* justify-content:flex-start (et non plus "center") : .launcher-footer
+     porte désormais margin-top:auto (voir plus bas), qui absorbe lui-même
+     tout l'espace libre pour se plaquer en bas — "center" n'aurait ici
+     plus aucun effet visible tant que cette marge auto existe. */
+  justify-content: flex-start;
+  /* 🩹 CORRECTIF (24/07/2026, retour terrain) : ce padding-bottom
+     réservait de la place pour l'ancien .launcher-footer en
+     position:absolute (voir plus bas). Le footer est désormais en
+     flux normal (il pousse le contenu au lieu de flotter par-dessus),
+     un padding standard suffit donc — la bottom-nav étant de toute
+     façon masquée sur cet écran (voir index.html, commentaire de
+     #bottom-nav : "Cachée sur l'écran lanceur"). */
+  padding: 24px 20px 32px;
   position: relative;
-  overflow: hidden;
+  overflow-x: hidden; /* clippe uniquement le dégradé décoratif .launcher-bg à l'horizontale */
   min-height: 100vh;
 }
 
@@ -764,6 +784,21 @@ html.theme-oromo body{background:#f4f9f4}
 }
 .lang-card-info[open] .lang-card-info-chevron{ transform: rotate(180deg) }
 
+/* 🆕 (24/07/2026) Phrase d'accroche au-dessus des puces — inspirée de
+   la version Espagnol (VACHÉBO), voir commentaire index.html.
+   Style volontairement proche de .lang-card-info-list (même famille
+   visuelle) mais en italique et légèrement plus marqué, pour bien la
+   distinguer des puces factuelles qui suivent. */
+.lang-card-info-intro{
+  margin: 0;
+  padding: 0 12px 8px;
+  font-size: .66rem;
+  line-height: 1.4;
+  font-style: italic;
+  font-weight: 600;
+  opacity: .9;
+}
+
 /* Liste à puces — contenu masqué automatiquement par [open] du <details> natif */
 .lang-card-info-list{
   list-style: none;
@@ -778,20 +813,34 @@ html.theme-oromo body{background:#f4f9f4}
 
 /* ── Footer du lanceur ───────────────────────────────────────────── */
 /*
-   Position:absolute + bottom = hauteur nav → colle juste au-dessus
-   de la bottom-nav visible sur cet écran.
+   🩹 CORRECTIF (24/07/2026, Bug_1.jpeg) : ce footer était en
+   position:absolute + bottom:var(--bottom-nav-h) — donc plaqué à une
+   distance FIXE du bas de l'écran, sans lien avec la hauteur réelle
+   du contenu au-dessus (les éléments en position:absolute ne comptent
+   pas dans la hauteur du parent). Dès que les panneaux infos dépliés
+   des cartes de langue devenaient un peu hauts (texte plus long,
+   écran étroit…), le footer chevauchait et cachait leur dernière
+   puce au lieu de s'afficher après.
+   Le footer est maintenant un simple bloc en flux normal, à la suite
+   de .launcher-inner dans le DOM (voir index.html) : il pousse
+   toujours vers le bas, ne recouvre plus jamais rien, et la page
+   défile naturellement si le contenu dépasse la hauteur de l'écran.
+   margin-top:auto (le parent est un flex column, voir .screen) :
+   quand le contenu est court, le footer reste collé en bas de la
+   zone visible ; quand il est long, il suit simplement après.
 */
 .launcher-footer{
-  position: absolute;
-  bottom: var(--bottom-nav-h, 56px); left: 0; right: 0;
+  width: 100%;
+  max-width: 420px; /* aligné avec .launcher-inner, juste au-dessus */
+  margin-top: auto;
   text-align: center;
   padding: 10px 12px;
   font-size: .68rem;
   color: var(--c-flag-black);
   background: var(--c-flag-cream);
   border-top: 1px solid rgba(200,16,46,.35);
+  border-radius: 12px;
   line-height: 1.7;
-  z-index: 1;
 }
 .launcher-footer a{ color: var(--c-flag-red); text-decoration: none; font-weight: 700 }
 .launcher-footer a:hover{ text-decoration: underline; color: var(--c-flag-black) }
@@ -813,8 +862,13 @@ html.theme-oromo body{background:#f4f9f4}
 }
 
 /* ══════════════════════════════════════════════════════════════════
-   §6 — ÉCRAN 1 : HOME / GUIDE  (#home)
+   §6 — ÉCRAN 1 : HOME (#home) + ÉCRAN 1b : GUIDE (#guide)
    ══════════════════════════════════════════════════════════════════
+   🆕 (24/07/2026) #home (dashboard) et #guide (guide explicatif) sont
+   désormais deux <div class="screen"> séparés dans index.html — ils
+   étaient auparavant fusionnés dans un seul #home. Les classes de ce
+   bloc (.home-topbar, .home-guide-header, .home-guide-body…) sont
+   partagées par les deux écrans, d'où le nom conservé ("home-guide-*").
    Le fond et le layout principal sont définis dans §22.
    Ce bloc contient les éléments communs réutilisés.
    ══════════════════════════════════════════════════════════════════ */
@@ -852,11 +906,15 @@ html.theme-oromo body{background:#f4f9f4}
 #home footer a{color:#00000088;font-weight:600}
 #home footer a:hover{text-decoration:underline}
 
-/* ── Barre fixe en haut du guide (#home) ──
-   🆕 Restructurée en 3 zones (gauche = nav rapide 🏠❓📚, centre =
-   titre, droite = 🚪 Quitter) au lieu d'un simple titre centré, pour
-   étendre à cet écran la navigation rapide déjà présente sur Sections
-   (voir _updateQuickNav() dans app.js, §5b). */
+/* ── Barre fixe en haut de #home ET #guide ──
+   Restructurée en 3 zones (gauche = nav rapide, centre = titre,
+   droite = 🚪 Quitter) au lieu d'un simple titre centré, pour étendre
+   la navigation rapide déjà présente sur Sections (voir
+   _updateQuickNav() dans app.js, §5b).
+   🆕 (24/07/2026) Depuis la séparation de #home et #guide en deux
+   écrans, chacun n'affiche plus que 2 icônes à gauche (au lieu de 3) :
+   #home → ❓ + 📚 (🏠 supprimé, redondant) ; #guide → 🏠 + 📚
+   (❓ supprimé, redondant) — voir _QUICK_NAV_MAP dans app.js. */
 .home-topbar{
   position:sticky;
   top:0;
@@ -2993,14 +3051,19 @@ footer a:hover{text-decoration:underline}
 }
 
 /* ════════════════════════════════════════════════════════════════
-   §22 — ÉCRAN HOME REDESIGNÉ : GUIDE / ONBOARDING
+   §22 — ÉCRANS HOME (dashboard) + GUIDE (onboarding, #guide)
    ════════════════════════════════════════════════════════════════
    Remplace l'ancien écran Home (barre de progression + étoiles).
-   Structure : en-tête coloré → corps accordéons → checkbox → CTA.
+   Structure #home  : en-tête coloré → CTA Commencer/PDF.
+   Structure #guide : petit en-tête → corps accordéons.
+   🆕 (24/07/2026) Les deux vivaient dans un seul #home ; désormais
+   deux écrans séparés partageant les mêmes classes (voir §6).
    ════════════════════════════════════════════════════════════════ */
 
-/* L'écran #home garde son fond en dégradé tricolore */
-#home{
+/* L'écran #home garde son fond en dégradé tricolore —
+   🆕 (24/07/2026) partagé avec #guide, désormais un écran séparé qui
+   réutilise les mêmes classes .home-guide-* (voir Bilan_technique.md). */
+#home, #guide{
   background:
     var(--c-grad-home),
     radial-gradient(circle at 20% 20%, rgba(255,255,255,0.35) 0%, transparent 40%),
@@ -3435,9 +3498,24 @@ footer a:hover{text-decoration:underline}
   align-self:flex-start;
   margin-bottom:4px;
 }
+/* 🆕 (24/07/2026) Icônes de nav rapide agrandies + recolorées par
+   fonction, en s'inspirant de l'appli sœur VACHÉBO (Bug_3) : plus
+   simples à repérer d'un coup d'œil qu'un même bouton translucide
+   répété 4 fois. Uniquement sur cet écran (Modules) — cf. capture
+   d'écran de la demande ; Accueil et Leçon gardent le gabarit compact
+   existant (.back-btn-icon de base, ligne ~1331). L'icône désactivée
+   (écran courant) reste grisée via .back-btn-icon:disabled (inchangé). */
 .sections-header-left .back-btn-icon{
-  font-size:.85rem !important;
+  font-size:1.3rem !important;
+  padding:8px 11px;
+  border-radius:12px;
+  min-width:40px;
+  text-align:center;
 }
+.sections-header-left .back-btn-group .back-btn-icon:nth-child(1){background:rgba(255,255,255,.85)}   /* 🏠 Accueil */
+.sections-header-left .back-btn-group .back-btn-icon:nth-child(2){background:rgba(241,196,15,.85)}    /* ❓ Guide   */
+.sections-header-left .back-btn-group .back-btn-icon:nth-child(3){background:rgba(76,175,80,.85)}     /* 📚 Modules */
+/* 🚪 Quitter (4e icône) : couleur déjà gérée par .quit-icon-btn (rouge) — non modifiée ici. */
 
 .sections-header-left h2{
   font-size:.95rem !important;
@@ -3448,15 +3526,19 @@ footer a:hover{text-decoration:underline}
 
 /* 🆕 Logo (image complète) affiché sur l'écran Modules, même logique
    visuelle que .home-guide-logo (écran Guide) : petite vignette avec
-   ombre portée pour se détacher du dégradé coloré du header. */
+   ombre portée pour se détacher du dégradé coloré du header.
+   🆕 (24/07/2026, Bug_3) Agrandi significativement — l'appli sœur
+   VACHÉBO affiche son logo en grand bandeau, bien plus repérable
+   qu'une simple vignette de 56px. */
 .sections-header-logo-wrap{
-  margin:2px 0 4px;
+  margin:6px 0 8px;
 }
 .sections-header-logo{
-  width:56px;
+  width:100%;
+  max-width:220px;
   height:auto;
-  border-radius:8px;
-  box-shadow:0 2px 8px rgba(0,0,0,.25);
+  border-radius:10px;
+  box-shadow:0 3px 10px rgba(0,0,0,.28);
   display:block;
 }
 
@@ -3623,8 +3705,8 @@ footer a:hover{text-decoration:underline}
     min-height:0;
   }
 
-  /* Guide home */
-  #home{
+  /* Guide home — 🆕 (24/07/2026) #guide inclus, écran désormais séparé */
+  #home, #guide{
     border-radius:32px;
     min-height:600px;
   }
@@ -3789,7 +3871,7 @@ footer a:hover{text-decoration:underline}
 
   /* ── Défilement fluide, contenu jamais masqué ── */
   .screen{min-height:100%}
-  #home, #sections-level1, #sections-level2, #lesson{
+  #home, #guide, #sections-level1, #sections-level2, #lesson{
     -webkit-overflow-scrolling:touch;
     padding-bottom:64px; /* espace de sécurité au-dessus de la nav basse compressée */
   }
@@ -3805,6 +3887,7 @@ footer a:hover{text-decoration:underline}
   .lang-card-tap-hint{top:6px;right:6px;padding:2px 6px 2px 7px;font-size:.54rem}
   .lang-card-info-summary{padding:6px 10px}
   .lang-card-info-label{font-size:.6rem}
+  .lang-card-info-intro{padding:0 10px 6px;font-size:.6rem}
   .lang-card-info-list{padding:0 10px 10px;font-size:.6rem;gap:3px}
 
   /* ── Guide/Home : en-tête très compressé, logo masqué ── */

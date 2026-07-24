@@ -8,7 +8,7 @@
   ╠══════════════════════════════════════════════════════════════════╣
   ║  RÔLE DE CE FICHIER                                             ║
   ║  Ce fichier est le point d'entrée unique de l'application.      ║
-  ║  Il déclare la structure HTML des 4 "écrans" (screens) et de   ║
+  ║  Il déclare la structure HTML des 5 "écrans" (screens) et de   ║
   ║  la modale. Aucune logique métier n'y est présente : tout le   ║
   ║  comportement est délégué à js/app.js et js/data-fr/or.js.     ║
   ╠══════════════════════════════════════════════════════════════════╣
@@ -25,38 +25,44 @@
   ║  La visibilité des écrans est contrôlée par la classe CSS       ║
   ║  "active" (gérée dans app.js via showScreen()).                 ║
   ║  Ordre du parcours utilisateur :                                ║
-  ║    [0] app-launcher → [1] home → [2] sections → [3] lesson     ║
+  ║   [0] app-launcher → [1] home → [1b] guide → [2] sections →    ║
+  ║   [3] lesson                                                    ║
+  ║  🆕 24/07/2026 : [1b] guide est un nouvel écran, séparé de      ║
+  ║  [1] home (voir plan ci-dessous et Bilan_technique.md).          ║
   ╠══════════════════════════════════════════════════════════════════╣
   ║  PLAN DU FICHIER                                                ║
   ║   <head>    Métadonnées, PWA, Open Graph, feuille de styles     ║
   ║   Écran 0   Lanceur (#app-launcher, dont 🆕 bouton              ║
-  ║             Quitter)                          ligne    157      ║
-  ║   Écran 1   Guide / Onboarding (#home, dont 🆕                  ║
-  ║             nav rapide + Quitter)              ligne    358      ║
-  ║   Écran 2a  Niveau 1 Modules (#sections-level1) ligne  1443      ║
-  ║   Écran 2b  Niveau 2 Modules (#sections-level2) ligne  1483      ║
+  ║             Quitter)                          ligne    166      ║
+  ║   Écran 1   Home / Dashboard (#home, dont 🆕                    ║
+  ║             nav rapide + Quitter)              ligne    379      ║
+  ║   Écran 1b  🆕 Guide explicatif (#guide) — SÉPARÉ               ║
+  ║             de #home le 24/07/2026 (bug ❓ inopérant)  ligne    501      ║
+  ║   Écran 2a  Niveau 1 Modules (#sections-level1) ligne  1516      ║
+  ║   Écran 2b  Niveau 2 Modules (#sections-level2) ligne  1556      ║
   ║   Écran 3   Leçon (#lesson, dont 🆕 rangée                       ║
-  ║             .lesson-quick-nav)                ligne   1528      ║
-  ║   Modale    Remerciements (#credits-modal)    ligne   1624      ║
-  ║   Modale    Confirmation suppression          ligne   1657      ║
-  ║   Modale 🆕 Quitter l'application              ligne   1684      ║
+  ║             .lesson-quick-nav)                ligne   1601      ║
+  ║   Modale    Remerciements (#credits-modal)    ligne   1697      ║
+  ║   Modale    Confirmation suppression          ligne   1730      ║
+  ║   Modale 🆕 Quitter l'application              ligne   1757      ║
   ║             (#quit-app-modal)                                   ║
-  ║   Nav       Barre de navigation basse         ligne   1701      ║
-  ║   Scripts   Chargement de app.js              ligne   1743      ║
-  ║  🆕 23/07/2026 : plan resynchronisé — ajout d'un bouton Quitter  ║
-  ║  sur chaque écran (+ sa modale dédiée) et d'une nav rapide       ║
-  ║  🏠❓📚 étendue à Home/Sections/Leçon (jusqu'ici limitée à       ║
-  ║  Sections). Voir _updateQuickNav()/openQuitModal() dans app.js.  ║
-  ║  Tout le fichier a décalé de ~+79 lignes. Voir Bilan_technique.md.║
+  ║   Nav       Barre de navigation basse         ligne   1774      ║
+  ║   Scripts   Chargement de app.js              ligne   1816      ║
+  ║  🆕 24/07/2026 : Home et Guide séparés en deux écrans           ║
+  ║  distincts (#home / #guide) — l'icône ❓ depuis #home            ║
+  ║  rechargeait auparavant le même écran sur lui-même (retour       ║
+  ║  terrain). #home ne garde que ❓+📚 (🏠 supprimé, redondant),    ║
+  ║  #guide n'a que 🏠+📚 (❓ supprimé, redondant). Voir              ║
+  ║  _QUICK_NAV_MAP / goToHome() / goToGuide() dans app.js (§5c)     ║
+  ║  et Bilan_technique.md. Tout le fichier après l'ancien #home a   ║
+  ║  décalé de ~+40 lignes (nouvel écran + commentaires).            ║
   ║                                                                  ║
-  ║  🆕 24/07/2026 : resynchronisation. Deux origines à l'écart      ║
-  ║  constaté : (1) les ajouts de cette session — logo étendu aux    ║
-  ║  écrans Sections, mélange culturel (§Footer, §hg-tldr) — soit    ║
-  ║  ~+16 lignes ; (2) un écart PRÉEXISTANT, non lié à ces ajouts,   ║
-  ║  déjà présent dans le fichier reçu en début de session (Écran 2a ║
-  ║  déjà à la ligne 1437 réelle contre 1205 indiqué au plan) —      ║
-  ║  signalé rétroactivement, non investigué plus avant. Toutes les  ║
-  ║  ancres ci-dessus reflètent la position réelle actuelle.         ║
+  ║  ⚠️ Au passage, les repères Remerciements/Confirmation ci-       ║
+  ║  dessus (déjà obsolètes AVANT ce correctif — écart préexistant,  ║
+  ║  non lié à la séparation Home/Guide) ont été corrigés par        ║
+  ║  recherche directe. Le reste du plan hérité des sessions         ║
+  ║  précédentes (23-24/07/2026) n'a pas fait l'objet d'une          ║
+  ║  resynchronisation complète — voir Bilan_technique.md.           ║
   ║                                                                  ║
   ╚══════════════════════════════════════════════════════════════════╝
 -->
@@ -295,11 +301,22 @@
               <span class="lang-card-info-chevron">▾</span>
             </span>
           </summary>
+          <!--
+            🆕 (24/07/2026) Contenu enrichi — modèle repris de l'appli
+            sœur VACHÉBO (Espagnol), voir Bug_1_-_exemple_correctif_appli_espagnol.jpeg :
+            une phrase d'accroche + puces plus détaillées (situations
+            concrètes, export PDF, précision sur la limite hors-ligne
+            de l'onglet Répète). Traduction oromo à faire valider par
+            Mussa Sembro (relecteur linguistique du projet, voir
+            README) avant mise en ligne.
+          -->
+          <p class="lang-card-info-intro">Taphad'Meuh jechoota barbaachisaa fi itti fayyadama isaanii si barsiisa.</p>
           <ul class="lang-card-info-list">
-            <li>📚 Mata duree 48 — jechoota 32 fi dubbii 16</li>
+            <li>📚 Mata duree 48 — jechoota 32 fi haasawa jireenya guyyaa guyyaa (gabaa, fayyaa, geejjiba…)</li>
             <li>🔊 Kaardota + sagalee jecha hundaaf</li>
-            <li>🎯 Quiz ittiin of madaaltu</li>
-            <li>📴 Bilisaa, galmee malee, interneetii malee illee ni hojjeta</li>
+            <li>🎯 Quiz ittiin of madaaltu — ⭐ kan gadi hin bu'ine</li>
+            <li>📥 Waraqaalee PDF, iskiriinii malee deebi'anii qo'achuuf</li>
+            <li>📴 Bilisaa, galmee malee, erga fe'amee booda interneetii malee illee ni hojjeta (kutaa 🎤 "Irra Deebi'i" malee, kan yeroo hunda interneetii barbaadu)</li>
           </ul>
         </details>
 
@@ -312,11 +329,14 @@
               <span class="lang-card-info-chevron">▾</span>
             </span>
           </summary>
+          <!-- 🆕 (24/07/2026) Contenu enrichi — voir commentaire de la carte Français ci-dessus. -->
+          <p class="lang-card-info-intro">Taphad'Meuh t'apprend les mots qui comptent, pour les utiliser dans de vraies situations.</p>
           <ul class="lang-card-info-list">
-            <li>📚 48 thèmes — 32 de vocabulaire, 16 de dialogues</li>
+            <li>📚 48 thèmes — 32 de vocabulaire, 16 de dialogues de la vie réelle (marché, santé, transport…)</li>
             <li>🔊 Cartes flash + audio pour chaque mot</li>
-            <li>🎯 Quiz pour vérifier vos progrès</li>
-            <li>📴 Gratuit, sans inscription, utilisable hors-ligne</li>
+            <li>🎯 Quiz pour vérifier tes progrès — ⭐ qui ne redescendent jamais</li>
+            <li>📥 Fiches téléchargeables en PDF, pour réviser sans écran</li>
+            <li>📴 Gratuit, sans inscription, utilisable hors-ligne une fois installée (sauf l'onglet 🎤 Répète, qui a toujours besoin d'internet)</li>
           </ul>
         </details>
 
@@ -328,14 +348,12 @@
       © Juin 2026 – Développé par Sébastien Godet<br>
       Assisté par IA · Claude Sonnet 4.6 &amp; Gemini 3.5 Flash<br>
       <button id="btn-copy-email" class="antispam-btn" onclick="openAndCopyEmail()"><span class="antispam-email">moc.liamg@61tedog.neitsabes</span></button> ·
-      <a href="https://www.linkedin.com/in/s%C3%A9bastien-godet-142ba6145" target="_blank" rel="noopener noreferrer">LinkedIn</a> ·
-      <!--
-        showCredits() est défini dans app.js ; il affiche la modale
-        #credits-modal en changeant son display de "none" à "flex".
-        OPTIMISATION : onclick inline conservé ici car c'est un simple
-        déclencheur de modale sans logique propre à la vue.
-      -->
-      <a href="#" onclick="showCredits()">Remerciements</a>
+      <a href="https://www.linkedin.com/in/s%C3%A9bastien-godet-142ba6145" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+      <!-- 🆕 (24/07/2026) Lien "Remerciements" retiré de ce pied de page à la
+           demande du porteur du projet. Le contenu (remerciements à Fédérico
+           Calo et Mussa Sembro) reste consultable via la modale #credits-modal
+           (bouton "💌 Infos" de la nav basse et section 8 du Guide) — seul le
+           raccourci depuis CE footer disparaît. -->
       <!-- 🆕 Mélange des éléments culturels illustrés sur le drapeau du logo
            (tour Eiffel, case traditionnelle, baobab, coq, café, croissant) —
            simple clin d'œil décoratif, aria-hidden car purement visuel. -->
@@ -381,7 +399,6 @@
     -->
     <div class="home-topbar">
       <div class="back-btn-group" id="homeQnGroup">
-        <button class="back-btn-icon" id="homeQnHomeBtn" onclick="goToAccueil()" aria-label="Accueil">🏠</button>
         <button class="back-btn-icon" id="homeQnGuideBtn" onclick="goToGuide()" aria-label="Guide">❓</button>
         <button class="back-btn-icon" id="homeQnModulesBtn" onclick="navGoModules()" aria-label="Modules">📚</button>
       </div>
@@ -429,14 +446,14 @@
 
       <!--
         🆕 (23/07/2026) Bloc "En bref" déplacé — repositionné à nouveau,
-        cette fois EN TÊTE de #homeGuideBody (voir plus bas), donc APRÈS
+        cette fois EN TÊTE de #guideBody (voir plus bas), donc APRÈS
         la barre sticky Commencer + PDF au lieu d'avant.
         Raison : remonter la ligne "Commencer"/PDF au-dessus de ce bloc,
         pour que l'apprenant n'ait pas à faire défiler tout le résumé
         "L'essentiel en 30 secondes" avant d'apercevoir le bouton qui
         le fait réellement avancer. Nouvel ordre visuel de l'en-tête :
         badges → installation → (progression) → Commencer/PDF → l'essentiel.
-        Historique : ce bloc était déjà en tête de #homeGuideBody à
+        Historique : ce bloc était déjà en tête de #guideBody à
         l'origine, puis avait été remonté ICI (dans le header, avant
         Commencer) pour reprendre la mise en page de l'app espagnole
         (badges → installation → l'essentiel → Commencer) — voir
@@ -456,7 +473,7 @@
     <!-- Bouton Commencer + bouton PDF Guide côte à côte dans la barre sticky —
          🆕 (23/07/2026) remonté juste après l'en-tête (badges/installation/
          progression), donc AVANT le bloc "L'essentiel en 30 secondes"
-         (déplacé plus bas, en tête de #homeGuideBody) : l'apprenant voit
+         (déplacé plus bas, en tête de #guideBody) : l'apprenant voit
          désormais le bouton qui fait avancer sans avoir à défiler le
          résumé au préalable. Voir commentaire ci-dessus. -->
     <div class="home-start-sticky">
@@ -466,6 +483,47 @@
       </div>
     </div>
 
+  </div><!-- /#home (dashboard uniquement — le guide vit désormais dans #guide, voir juste en dessous) -->
+
+
+  <!-- ════════════════════════════════════════════════════════════════
+       ÉCRAN 1b — GUIDE EXPLICATIF  (#guide)
+       ────────────────────────────────────────────────────────────────
+       🆕 (24/07/2026) Écran désormais SÉPARÉ de #home (dashboard).
+       Auparavant les deux vivaient dans le même <div id="home">, ce qui
+       rendait l'icône ❓ inopérante depuis #home (elle rechargeait le
+       même écran). Séparation demandée suite à un retour terrain :
+         • #home  → ❓ visible (mène ici), 🏠 supprimé (redondant : on y
+           est déjà, et "Changer de langue" fait déjà ce travail plus bas
+           dans la nav basse)
+         • #guide → 🏠 visible (ramène à #home), ❓ supprimé (on y est déjà)
+       Les deux icônes ne pointent donc plus jamais vers l'écran sur
+       lequel on se trouve déjà — voir _QUICK_NAV_MAP dans app.js (§5c).
+
+       CONTENU : reprend tel quel l'ancien corps du guide (deux blocs
+       statiques bilingues, un par langue cible — .home-lang-block —
+       dont un seul est visible via _buildHomeGuide(), inchangée).
+       ════════════════════════════════════════════════════════════════ -->
+  <div id="guide" class="screen">
+
+    <!-- Barre fixe en haut — 🏠 Accueil (retour au dashboard #home) et
+         📚 Modules (mêmes règles de masquage que sur #home — voir
+         _updateQuickNav() dans app.js, §5c) + 🚪 Quitter. -->
+    <div class="home-topbar">
+      <div class="back-btn-group" id="guideQnGroup">
+        <button class="back-btn-icon" id="guideQnHomeBtn" onclick="goToHome()" aria-label="Accueil">🏠</button>
+        <button class="back-btn-icon" id="guideQnModulesBtn" onclick="navGoModules()" aria-label="Modules">📚</button>
+      </div>
+      <span class="home-topbar-title" id="guideTopbarTitle"></span>
+      <button class="back-btn-icon quit-icon-btn" id="guideQuitBtn" onclick="openQuitModal()" aria-label="Quitter">🚪</button>
+    </div>
+
+    <!-- Petit en-tête (titre uniquement — logo/drapeaux/badges/installation
+         restent sur #home, ils n'ont pas leur place sur un écran d'aide) -->
+    <div class="home-guide-header" id="guideHeader">
+      <h1 class="home-guide-title" id="guideTitle"></h1>
+    </div>
+
     <!--
       ══════════════════════════════════════════════════════════════
       CORPS DU GUIDE — deux blocs statiques (un par langue)
@@ -473,7 +531,7 @@
       Géré par _buildHomeGuide() via la classe .home-lang-hidden.
       ══════════════════════════════════════════════════════════════
     -->
-    <div class="home-guide-body" id="homeGuideBody">
+    <div class="home-guide-body" id="guideBody">
 
       <!-- ─────────────────────────────────────────────────────────
            BLOC OROMO — guide en Afaan Oromoo
@@ -484,7 +542,7 @@
 
         <!--
           🆕 (23/07/2026) "L'essentiel en 30 secondes" — de retour en tête
-          de #homeGuideBody (voir commentaire détaillé dans .home-guide-header
+          de #guideBody (voir commentaire détaillé dans .home-guide-header
           ci-dessus), donc juste APRÈS la barre sticky Commencer + PDF.
         -->
         <div class="hg-tldr">
@@ -871,8 +929,12 @@
             <div class="hg-essential">
               <p class="hg-essential-title">🔑 Waan Beekuu Qabdan</p>
               <ul class="hg-essential-list">
-                <li>🙏 Fédérico Calo — gargaarsa teknikaaf</li>
-                <li>🙏 Mussa Sembro fi maatii koo — hiikkaa fi gorsa ergonomii</li>
+                <li>🛠️ Fédérico Calo — gargaarsa teeknikaa</li>
+                <li>🌍 Mussa Sembro — hiikkaa fi gorsa afaanii</li>
+                <li>👪 Maatii koo — deebi'anii dubbisuu fi gorsa</li>
+                <!-- 🆕 (24/07/2026) BROUILLON — traduction à FAIRE VALIDER PAR MUSSA SEMBRO
+                     avant publication (même règle que pour le récit personnel Oromo, voir app.js §18). -->
+                <li>🔀 Christophe Elin fi Sandrine Le Goff — yaada walbira qabuu Ispaanish/Faransaayii (VACHÉBO), kanas fooyyessuuf gargaare</li>
               </ul>
             </div>
             <details class="hg-subdetail">
@@ -883,7 +945,10 @@
               gargaarsa teknikaaf.</p>
             <p>Galata baay'een <strong>Mussa Sembro</strong>
               (<a href="https://www.linkedin.com/in/mussa-sembro-137472174/" target="_blank" rel="noopener noreferrer">Hiikkaa-Ibsituu Afaan Oromoo</a>)
-              fi maatii kootiif — irra deebi'ee dubbisuu, hiika sirreessuu, fi gorsa ergonomii appii kennuuf.</p>
+              hiikkaa, sirreessaa fi gorsa afaaniif — akkasumas <strong>maatii kootiif</strong> irra deebi'anii dubbisuu fi gorsaaf.</p>
+            <p>Galata guddaa <strong>Christophe Elin</strong> fi <strong>Sandrine Le Goff</strong>tiif
+              — yaada walbira qabuu appii obboleessaa VACHÉBO (Ispaanish-Faransaayii) fi kan kanaa gidduutti kennaniif,
+              kanaanis appiin kun illee fooyya'e (dogoggora sirreessuu, filannoo dhuunfaa, deemsa keessa).</p>
               </div>
             </details>
           </div>
@@ -942,7 +1007,7 @@
 
         <!--
           🆕 (23/07/2026) "L'essentiel en 30 secondes" — de retour en tête
-          de #homeGuideBody (voir commentaire détaillé dans .home-guide-header
+          de #guideBody (voir commentaire détaillé dans .home-guide-header
           plus haut), donc juste APRÈS la barre sticky Commencer + PDF.
         -->
         <div class="hg-tldr">
@@ -1378,8 +1443,10 @@
             <div class="hg-essential">
               <p class="hg-essential-title">🔑 L'essentiel</p>
               <ul class="hg-essential-list">
-                <li>🙏 Fédérico Calo — aide technique</li>
-                <li>🙏 Mussa Sembro et mes parents — traductions et ergonomie</li>
+                <li>🛠️ Fédérico Calo — aide technique</li>
+                <li>🌍 Mussa Sembro — traductions et conseils linguistiques</li>
+                <li>👪 Mes parents — relecture et conseils</li>
+                <li>🔀 Christophe Elin &amp; Sandrine Le Goff — retours croisés Espagnol ↔ Français (VACHÉBO), qui ont aussi profité à cette appli</li>
               </ul>
             </div>
             <details class="hg-subdetail">
@@ -1392,6 +1459,9 @@
               (<a href="https://www.linkedin.com/in/mussa-sembro-137472174/" target="_blank" rel="noopener noreferrer">Traducteur-Interprète en Oromo</a>)
               et à mes parents pour leur travail de relecture, leurs corrections sur les traductions
               et leurs conseils sur l'ergonomie de l'application.</p>
+            <p>Merci enfin à <strong>Christophe Elin</strong> et <strong>Sandrine Le Goff</strong> pour leurs retours
+              d'expérience croisés entre l'application sœur VACHÉBO (Espagnol-Français) et Taphad'Meuh — leurs remarques
+              ont permis d'améliorer aussi cette application (correctifs de bugs, personnalisation, navigation...).</p>
               </div>
             </details>
           </div>
@@ -1441,9 +1511,9 @@
 
       </div><!-- /.home-lang-block[data-lang="fr"] -->
 
-    </div><!-- /#homeGuideBody -->
+    </div><!-- /#guideBody -->
 
-  </div><!-- /#home -->
+  </div><!-- /#guide -->
 
 
   <!-- ════════════════════════════════════════════════════════════════
