@@ -22,49 +22,66 @@
  * ║  rendu visuel.                                                  ║
  * ╠══════════════════════════════════════════════════════════════════╣
  * ║  PLAN DU FICHIER                                                ║
- * ║   §1        Reset & base                          ligne    73  ║
- * ║   §2        Variables de thème (:root / fallback) ligne   197  ║
- * ║   §3        Thème Français (html.theme-french)    ligne   263  ║
- * ║   §4        Thème Oromo (html.theme-oromo)        ligne   305  ║
- * ║   §5        Écran 0 — Lanceur                     ligne   342  ║
- * ║   §6        Écran 1 — Accueil #home               ligne   548  ║
- * ║   §7        Écran 2 — Sections                    ligne   614  ║
- * ║   §8        Écran 3 — Leçon (dont .back-btn-icon  ligne   782  ║
- * ║             icônes 🏠/❓, voir ligne 1000)                      ║
- * ║   §9        Composants : Flashcards               ligne  1061  ║
- * ║   §10       Composants : Alphabet                 ligne  1263  ║
- * ║   §11       Composants : Quiz                     ligne  1363  ║
- * ║   §12       Composants : Dialogues / Situations   ligne  1468  ║
- * ║   §13       Composants : Vocabulaire              ligne  1573  ║
- * ║   §14       Modale Remerciements                  ligne  1641  ║
- * ║   §15       Footer commun                         ligne  1728  ║
- * ║   §16       Toast notification                    ligne  1748  ║
- * ║   §16b   🆕 Bandeau hors-ligne persistant          ligne  1784  ║
- * ║   §17       Onglet Répète (dont 🆕 .repeat-        ligne  1848  ║
+ * ║   §1        Reset & base                          ligne    83  ║
+ * ║   §2        Variables de thème (:root / fallback) ligne   207  ║
+ * ║   §3        Thème Français (html.theme-french)    ligne   286  ║
+ * ║   §4        Thème Oromo (html.theme-oromo)        ligne   328  ║
+ * ║   §5        Écran 0 — Lanceur (dont 🆕            ligne   365  ║
+ * ║             .launcher-quit-btn, voir ligne 434)                ║
+ * ║   §6        Écran 1 — Accueil #home (dont 🆕      ligne   809  ║
+ * ║             .home-topbar 3 zones, voir ligne 853)               ║
+ * ║   §7        Écran 2 — Sections                    ligne   887  ║
+ * ║   §8        Écran 3 — Leçon (dont .back-btn-icon  ligne  1055  ║
+ * ║             icônes 🏠/❓, voir ligne 1284; 🆕 .lesson-quick-nav  ║
+ * ║             ligne 1077)                                         ║
+ * ║   §9        Composants : Flashcards               ligne  1367  ║
+ * ║   §10       Composants : Alphabet                 ligne  1569  ║
+ * ║   §11       Composants : Quiz                     ligne  1669  ║
+ * ║   §12       Composants : Dialogues / Situations   ligne  1783  ║
+ * ║   §13       Composants : Vocabulaire              ligne  1888  ║
+ * ║   §14       Modale Remerciements                  ligne  1956  ║
+ * ║   §15       Footer commun                         ligne  2048  ║
+ * ║   §16       Toast notification                    ligne  2068  ║
+ * ║   §16b   🆕 Bandeau hors-ligne persistant          ligne  2104  ║
+ * ║   §17       Onglet Répète (dont 🆕 .repeat-        ligne  2168  ║
  * ║             badges-intro, phrase d'intro 2 badges)              ║
- * ║   §18       Focus clavier                         ligne  2146  ║
- * ║   §19       Guide utilisateur (.ob-*, dont 🆕      ligne  2164  ║
- * ║             "Quel navigateur choisir ?", voir ligne 2406)      ║
- * ║   §20       Spinner de chargement                 ligne  2632  ║
- * ║   §22       Écran Home redesigné                  ligne  2669  ║
- * ║   §23       Écran Sections redesigné (dont        ligne  3011  ║
- * ║             .back-btn-group, voir ligne 3036)                  ║
- * ║   §24       Responsive : tablette & desktop       ligne  3150  ║
- * ║   §24b      Mode sombre                           ligne  3240  ║
- * ║   §24c      Responsive : mode paysage mobile      ligne  3355  ║
- * ║   §25       Boutons d'export PDF                  ligne  3417  ║
- * ║   §26       Barre de navigation basse             ligne  3517  ║
- * ║   §27       Onglets niveau 1 / 2                  ligne  3644  ║
- * ║   §28       Écrans sections level (no-scroll)     ligne  3739  ║
- * ║   §20e      Grille thèmes écrans level            ligne  3937  ║
- * ║   §CONFETTI Animation de félicitations ⭐⭐⭐      ligne  3958  ║
- * ║   §PROGRESS Carte(s) de progression (Home,        ligne  4029  ║
+ * ║   §18       Focus clavier                         ligne  2466  ║
+ * ║   §19       Guide utilisateur (.ob-*, dont 🆕      ligne  2484  ║
+ * ║             "Quel navigateur choisir ?")                        ║
+ * ║   §20       Spinner de chargement                 ligne  2952  ║
+ * ║   §22       Écran Home redesigné                  ligne  2989  ║
+ * ║   §23       Écran Sections redesigné (dont        ligne  3402  ║
+ * ║             .back-btn-group, voir ligne 3427)                  ║
+ * ║   §24       Responsive : tablette & desktop       ligne  3555  ║
+ * ║   §24b      Mode sombre                           ligne  3645  ║
+ * ║   §24c      Responsive : mode paysage mobile      ligne  3765  ║
+ * ║   §25       Boutons d'export PDF                  ligne  3837  ║
+ * ║   §26       Barre de navigation basse             ligne  3937  ║
+ * ║   §27       Onglets niveau 1 / 2                  ligne  4064  ║
+ * ║   §28       Écrans sections level (no-scroll)     ligne  4159  ║
+ * ║   §20e      Grille thèmes écrans level            ligne  4357  ║
+ * ║   §CONFETTI Animation de félicitations ⭐⭐⭐      ligne  4378  ║
+ * ║   §PROGRESS Carte(s) de progression (Home,        ligne  4449  ║
  * ║             1 ou 2 selon les parcours commencés)                ║
- * ║   §CONFIRM  Modale confirmation suppression       ligne  4152  ║
- * ║   §ANTISPAM E-mail affiché à l'envers (CSS RTL)  ligne  4271  ║
- * ║   §SPEAKING Feedback visuel bouton audio (TTS)    ligne  4298  ║
- * ║   §29       Correctifs accessibilité mode sombre  ligne  4356  ║
- * ║  ── Plan resynchronisé le 12/07/2026 (voir Bilan technique §6.21) ║
+ * ║   §CONFIRM  Modale confirmation suppression       ligne  4572  ║
+ * ║   §QUITMODAL 🆕 Modale "Quitter l'application"     ligne  4691  ║
+ * ║             (#quit-app-modal, icône 🚪 nav rapide)              ║
+ * ║   §ANTISPAM E-mail affiché à l'envers (CSS RTL)  ligne  4794  ║
+ * ║   §SPEAKING Feedback visuel bouton audio (TTS)    ligne  4821  ║
+ * ║   §29       Correctifs accessibilité mode sombre  ligne  4879  ║
+ * ║  ── Plan resynchronisé le 23/07/2026 : ajout d'une navigation    ║
+ * ║  rapide (🏠❓📚) en haut de CHAQUE écran (jusqu'ici réservée à    ║
+ * ║  Sections) + bouton 🚪 Quitter partout et sa modale dédiée       ║
+ * ║  (§QUITMODAL). Voir _updateQuickNav()/openQuitModal() dans       ║
+ * ║  app.js §5c/§5d. Le fichier a gagné ~+178 lignes. Bilan_technique.md
+ * ║  à mettre à jour en conséquence.                                 ║
+ * ║  ── Resynchronisé le 24/07/2026 : tokens de marque               ║
+ * ║  --c-flag-red/black/cream (§2), footer + carte "L'essentiel      ║
+ * ║  en 30 secondes" recolorés (§5/§19), logo étendu à l'écran       ║
+ * ║  Sections (§23), crème mixée dans --c-grad-home (§2/§3/§4),      ║
+ * ║  clin d'œil mascotte sur quiz sans-faute (§CONFIRM, .result-box), ║
+ * ║  z-index de .modal relevé à 10001 (§14, au-dessus du toast).     ║
+ * ║  Le fichier a gagné ~+69 lignes.                                 ║
  * ╚══════════════════════════════════════════════════════════════════╝
  */
 
@@ -237,7 +254,7 @@ body{
   --c-vocab-chip-bg:#eef0ff;
   --c-vocab-chip-border:#8090c0;
   --c-fc-nav-hover:#e8eeff;
-  --c-grad-home:linear-gradient(135deg,#002395 0%,#ffffff 50%,#ED2939 100%);
+  --c-grad-home:linear-gradient(135deg,#002395 0%,var(--c-flag-cream) 50%,#ED2939 100%); /* 🆕 crème du drapeau du logo */
   --c-grad-sections:linear-gradient(135deg,#002395,#ED2939);
   --c-grad-lesson:linear-gradient(135deg,#002395,#ED2939);
   --c-grad-fc-back:linear-gradient(135deg,#002395,#ED2939);
@@ -256,6 +273,19 @@ body{
 
   /* ── Police principale — utilisée par la modale de confirmation ── */
   --font-main:'Segoe UI', system-ui, sans-serif;
+
+  /* ── 🆕 Couleurs du drapeau du logo Taphad'Meuh (rouge/blanc/noir) ──
+     Non redéfinies par html.theme-french ni html.theme-oromo : cette
+     palette est une signature de MARQUE (celle du drapeau illustré
+     dans Logo-appli-or-fr.png), pas une couleur de mode d'apprentissage.
+     Utilisée sur des éléments transversaux aux deux thèmes : le footer
+     du lanceur et la carte "L'essentiel en 30 secondes" du Guide —
+     voir §5 et §12b. Inspiré de --c-vache-cream/--c-vache-brown dans
+     le projet frère VACHÉBO (même logique : un accent de marque qui
+     ne bascule jamais avec le thème actif). */
+  --c-flag-red:#C8102E;
+  --c-flag-black:#1A1A1A;
+  --c-flag-cream:#F7F2E7;
 }
 
 
@@ -287,7 +317,7 @@ html:not([class*="theme-"]){
   --c-vocab-chip-bg:#eef0ff;
   --c-vocab-chip-border:#8090c0;
   --c-fc-nav-hover:#e8eeff;
-  --c-grad-home:linear-gradient(135deg,#002395 0%,#ffffff 50%,#ED2939 100%);
+  --c-grad-home:linear-gradient(135deg,#002395 0%,var(--c-flag-cream) 50%,#ED2939 100%); /* 🆕 crème du drapeau du logo */
   --c-grad-sections:linear-gradient(135deg,#002395,#ED2939);
   --c-grad-lesson:linear-gradient(135deg,#002395,#ED2939);
   --c-grad-fc-back:linear-gradient(135deg,#002395,#ED2939);
@@ -324,7 +354,7 @@ html.theme-oromo{
   --c-vocab-chip-bg:#f0f9f4;
   --c-vocab-chip-border:#a0d8b4;
   --c-fc-nav-hover:#e8f5e9;
-  --c-grad-home:linear-gradient(135deg,#009A44 0%,#ffffff 50%,#EF2B2D 100%);
+  --c-grad-home:linear-gradient(135deg,#009A44 0%,var(--c-flag-cream) 50%,#EF2B2D 100%); /* 🆕 crème du drapeau du logo */
   --c-grad-sections:linear-gradient(135deg,#009A44,#FED141,#EF2B2D);
   --c-grad-lesson:linear-gradient(135deg,#009A44,#FED141);
   --c-grad-fc-back:linear-gradient(135deg,#009A44,#FED141);
@@ -403,6 +433,35 @@ html.theme-oromo body{background:#f4f9f4}
   user-select: none;
 }
 
+/* 🆕 Bouton "Quitter" (🚪) du lanceur — coin haut-droit, toujours
+   accessible, avant même le choix de langue. Aucun mode n'étant
+   encore choisi à cet écran, son aria-label/title reste bilingue
+   (voir _updateQuickNav() dans app.js, cas 'app-launcher'), contrairement
+   aux autres écrans où le libellé suit L() dans la langue de l'apprenant. */
+.launcher-quit-btn{
+  position:absolute;
+  top:14px;
+  right:14px;
+  z-index:2;
+  background:rgba(0,0,0,.08);
+  border:none;
+  color:#4A3E3D;
+  font-size:1.15rem;
+  width:38px;
+  height:38px;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  line-height:1;
+  transition:background .15s, transform .1s;
+}
+.launcher-quit-btn:active{
+  background:rgba(0,0,0,.16);
+  transform:scale(.92);
+}
+
 /* Titre bilingue principal sur la même ligne (Style Espagne) */
 .launcher-title{
   font-size: 1rem; /* Taille épurée identique à la version Espagne */
@@ -422,11 +481,29 @@ html.theme-oromo body{background:#f4f9f4}
 
 /* ── Cartes de sélection de langue ──────────────────────────────── */
 
-/* Colonne de cartes */
+/*
+   🆕 (22/07/2026) REFONTE — grille 2 colonnes au lieu d'un empilement.
+   .launcher-cards reçoit 4 enfants DIRECTS dans l'ordre du DOM :
+   [bouton fr, bouton or, panneau-infos fr, panneau-infos or] — SANS
+   <div> wrapper par langue. Avec grid-auto-flow:row (par défaut) et
+   2 colonnes, cet ordre place automatiquement :
+     • rangée 1 = les 2 boutons .lang-card
+     • rangée 2 = les 2 panneaux .lang-card-info
+   Une grille CSS étire par défaut (align-items:stretch, valeur
+   implicite) tous les items d'une même rangée à la hauteur du plus
+   grand → les 2 CARTES ont donc TOUJOURS la même taille, quelle que
+   soit la différence de longueur entre le texte fr et le texte or
+   (point 6 de la demande), sans JS ni hauteur fixée en dur.
+   row-gap:0 + border-radius complémentaires (carte = coins bas
+   carrés, panneau infos = coins bas arrondis) → carte + panneau se
+   touchent et se lisent comme UN SEUL bloc visuel par langue
+   (point 1), tout en restant 2 éléments DOM distincts et accessibles.
+*/
 .launcher-cards{
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 12px;
+  row-gap: 0;
   width: 100%;
 }
 
@@ -434,18 +511,29 @@ html.theme-oromo body{background:#f4f9f4}
    Carte de base :
    • overflow:hidden + border-radius → le dégradé ne déborde pas
    • position:relative → pour le ::before (effet lumineux au tap)
+     ET pour le positionnement absolu de la pastille "à toucher"
    • transition sur transform + box-shadow → feedback visuel fluide
+   • flex-direction:column + justify/align:center → disposition
+     verticale centrée drapeau → nom → sous-titre (point 2)
+   • border-radius bas carrés : se raccorde au panneau infos juste
+     en dessous (voir .lang-card-info), qui referme la forme arrondie
+   • min-height : filet de sécurité en plus de l'étirement de grille
+     (voir commentaire .launcher-cards) pour un rendu correct même
+     si CSS Grid n'est pas supporté (dégradation gracieuse)
 */
 .lang-card{
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 16px;
+  justify-content: center;
+  text-align: center;
+  gap: 6px;
   width: 100%;
-  padding: 20px 22px;
+  min-height: 182px;
+  padding: 34px 12px 18px;
   border: none;
-  border-radius: 20px;
+  border-radius: 20px 20px 0 0;
   cursor: pointer;
-  text-align: left;
   box-shadow: 0 6px 24px rgba(0,0,0,.1);
   transition: transform .15s ease, box-shadow .15s ease;
   position: relative;
@@ -470,59 +558,222 @@ html.theme-oromo body{background:#f4f9f4}
 }
 .lang-card:active::before{ opacity: 1 }
 
-/* Variante Français — dégradé bleu-blanc-rouge */
+/* Focus clavier — outline clair pour rester visible sur les dégradés
+   colorés (contrairement au cas §18, ceci est un <button> natif,
+   mais l'outline navigateur par défaut manque de contraste ici). */
+.lang-card:focus-visible{
+  outline: 3px solid #fff;
+  outline-offset: -5px;
+}
+
+/*
+   🆕 (22/07/2026) CORRECTIF ACCESSIBILITÉ — contraste texte/fond.
+   Les dégradés d'origine (bleu→rouge vif, vert→or vif) tombaient à
+   ~2,2:1 pour du texte blanc sur la zone rouge/or la plus claire —
+   bien en dessous du minimum WCAG 2.1 AA (4,5:1 texte normal,
+   3:1 texte large ≥ 14px gras). Les teintes ci-dessous sont
+   volontairement plus soutenues (mais restent reconnaissables comme
+   bleu/rouge français et vert/or oromo) : elles ont été choisies et
+   vérifiées par calcul (luminance relative WCAG) pour garantir
+   ≥ 4,5:1 avec du texte blanc PARTOUT sur le dégradé, pas seulement
+   à ses extrémités :
+     • Français : pire cas ≈ 8,1:1 (au lieu de 4,35:1 côté rouge)
+     • Oromo     : pire cas ≈ 7,6:1 (au lieu de 2,24:1 côté or)
+   Variante Français — dégradé bleu-blanc-rouge (assombri)
+*/
 .lang-card--fr{
-  background: linear-gradient(135deg,#002395 0%,#1a3a9f 50%,#c0192b 100%);
+  background: linear-gradient(135deg,#001f7a 0%,#152f80 50%,#9e1523 100%);
   color: #fff;
 }
 
-/* Variante Oromo — dégradé vert-or */
+/* Variante Oromo — dégradé vert-or (assombri, cf. commentaire ci-dessus) */
 .lang-card--or{
-  background: linear-gradient(135deg,#007a35 0%,#009A44 45%,#c8960a 100%);
+  background: linear-gradient(135deg,#00542c 0%,#0d5c30 45%,#6b4f07 100%);
   color: #fff;
 }
 
 /* Drapeau emoji, non rétréci si l'espace manque */
 .lang-card-flag{
-  font-size: 2.8rem;
+  font-size: 2.5rem;
   flex-shrink: 0;
   filter: drop-shadow(0 2px 6px rgba(0,0,0,.25));
   line-height: 1;
 }
 
-/* Zone texte (s'étire pour prendre tout l'espace disponible) */
-.lang-card-body{
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-/* Libellé principal de la carte */
+/*
+   Libellé principal de la carte (langue CIBLE apprise).
+   🆕 (22/07/2026) text-shadow ajouté (lisibilité en plein soleil) —
+   ne remplace PAS la vérification de contraste ci-dessus, qui reste
+   valable même sans l'ombre (ceinture ET bretelles).
+*/
 .lang-card-name{
-  font-size: 1.05rem;
+  font-size: .95rem;
   font-weight: 800;
   line-height: 1.2;
   color: #fff;
+  text-shadow: 0 1px 3px rgba(0,0,0,.35);
 }
 
-/* Traduction en italique sous le libellé */
+/*
+   Traduction sous le libellé (langue de l'AUDIENCE — voir index.html).
+   🆕 (22/07/2026) CORRECTIF ACCESSIBILITÉ : couleur passée de
+   rgba(255,255,255,.8) à un blanc opaque. La transparence faisait
+   se mélanger le texte AU fond dégradé (donc perdre du contraste en
+   même temps que celui-ci baissait) — un texte à 80% d'opacité sur
+   un fond déjà limite ne peut pas tenir 4,5:1. La hiérarchie visuelle
+   avec .lang-card-name est maintenant assurée par la taille/graisse/
+   italique uniquement, plus fiable qu'une transparence pour l'accessibilité.
+*/
 .lang-card-sub{
-  font-size: .72rem;
-  color: rgba(255,255,255,.75);
-  font-weight: 500;
+  font-size: .68rem;
+  color: #fff;
+  font-weight: 600;
   font-style: italic;
   line-height: 1.3;
+  text-shadow: 0 1px 2px rgba(0,0,0,.3);
 }
 
-/* Chevron décoratif à droite */
-.lang-card-arrow{
-  font-size: 2rem;
-  font-weight: 300;
-  color: rgba(255,255,255,.6);
-  flex-shrink: 0;
+/*
+   🆕 (22/07/2026) Pastille "à toucher" (point 3) — texte court +
+   flèche animée, positionnée en évidence en haut de carte.
+   pointer-events:none : ne capte jamais le tap (c'est toute la
+   carte/bouton qui reste la cible tactile, comme avant).
+   CORRECTIF ACCESSIBILITÉ : fond passé d'un voile blanc translucide
+   (rgba(255,255,255,.22), qui ÉCLAIRCIT le dégradé sous un texte
+   blanc — donc réduit le contraste) à une pastille sombre
+   (rgba(0,0,0,.4)). Un fond sombre sous texte blanc reste ≥ 12:1
+   quel que soit l'endroit du dégradé où la pastille se trouve —
+   fiable même si la carte est retouchée plus tard.
+*/
+.lang-card-tap-hint{
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  background: rgba(0,0,0,.4);
+  border: 1px solid rgba(255,255,255,.5);
+  border-radius: 999px;
+  padding: 3px 8px 3px 9px;
+  font-size: .6rem;
+  font-weight: 700;
+  letter-spacing: .02em;
+  color: #fff;
   line-height: 1;
-  margin-left: 4px;
+  pointer-events: none;
+}
+.lang-card-tap-arrow{
+  display: inline-block;
+  animation: langCardTapBounce 1.1s ease-in-out infinite;
+}
+@keyframes langCardTapBounce{
+  0%, 100%{ transform: translateX(0) }
+  50%     { transform: translateX(3px) }
+}
+/* Respect de prefers-reduced-motion (convention déjà en place — voir
+   §1, §17, §19…) : flèche statique, pastille et texte restent visibles. */
+@media (prefers-reduced-motion: reduce){
+  .lang-card-tap-arrow{ animation: none }
+}
+
+/*
+   🆕 (22/07/2026) Panneau infos dépliable (points 4, 5, 7, 8).
+   <details>/<summary> natif — cohérent avec les autres accordéons de
+   l'app (.hg-section, .level-details) : clavier et sémantique gérés
+   nativement par le navigateur, aucun rôle ARIA custom nécessaire.
+   align-self:start (au lieu du stretch implicite de la grille) :
+   évite que le panneau REPLIÉ ne s'étire inutilement jusqu'à la
+   hauteur du panneau DÉPLIÉ voisin (les 2 panneaux peuvent avoir un
+   état différent — seules les CARTES, rangée 1, doivent être égales).
+   border-radius bas arrondis + coins hauts carrés : se raccorde
+   pile sous .lang-card (coins bas carrés) pour former un seul bloc.
+*/
+.lang-card-info{
+  align-self: start;
+  background: rgba(255,255,255,.95);
+  color: #4A3E3D;
+  border-radius: 0 0 18px 18px;
+  overflow: hidden;
+  box-shadow: 0 4px 14px rgba(0,0,0,.08);
+}
+.lang-card-info--fr{ border: 2px solid rgba(0,35,149,.35); border-top: none }
+.lang-card-info--or{ border: 2px solid rgba(0,122,53,.35); border-top: none }
+
+/* Ligne cliquable : libellé (langue de l'audience) + bouton "i" (point 5) */
+.lang-card-info-summary{
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  list-style: none;
+  cursor: pointer;
+  padding: 10px 12px;
+  user-select: none;
+}
+.lang-card-info-summary::-webkit-details-marker{ display: none } /* Chrome/Safari : cache le triangle natif */
+.lang-card-info-summary::marker{ content: "" }                   /* Firefox : idem */
+.lang-card-info--fr .lang-card-info-summary:hover{ background: rgba(0,35,149,.06) }
+.lang-card-info--or .lang-card-info-summary:hover{ background: rgba(0,122,53,.06) }
+.lang-card-info-summary:focus-visible{
+  outline: 3px solid currentColor;
+  outline-offset: -3px;
+}
+
+/* Libellé à gauche du bouton "i" — ex. "Infos sur [nom de l'appli]" */
+.lang-card-info-label{
+  flex: 1;
+  text-align: left;
+  font-size: .68rem;
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+/* Groupe des 2 icônes à droite : bouton "i" + chevron d'état */
+.lang-card-info-icons{
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  flex-shrink: 0;
+}
+
+/* Bouton "i" — cercle avec la lettre i, couleur reprise du dégradé de la carte */
+.lang-card-info-i{
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 19px;
+  height: 19px;
+  border-radius: 50%;
+  border: 1.5px solid currentColor;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-style: italic;
+  font-weight: 700;
+  font-size: .7rem;
+  line-height: 1;
+  flex-shrink: 0;
+}
+.lang-card-info--fr .lang-card-info-i{ color: #002395 }
+.lang-card-info--or .lang-card-info-i{ color: #007a35 }
+
+/* Chevron — même convention de rotation à l'ouverture que .hg-chevron / .level-chevron */
+.lang-card-info-chevron{
+  font-size: .68rem;
+  color: #7D6B69;
+  transition: transform .2s ease;
+  flex-shrink: 0;
+}
+.lang-card-info[open] .lang-card-info-chevron{ transform: rotate(180deg) }
+
+/* Liste à puces — contenu masqué automatiquement par [open] du <details> natif */
+.lang-card-info-list{
+  list-style: none;
+  margin: 0;
+  padding: 0 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: .66rem;
+  line-height: 1.4;
 }
 
 /* ── Footer du lanceur ───────────────────────────────────────────── */
@@ -536,13 +787,30 @@ html.theme-oromo body{background:#f4f9f4}
   text-align: center;
   padding: 10px 12px;
   font-size: .68rem;
-  color: #7D6B69;
-  background: transparent;
+  color: var(--c-flag-black);
+  background: var(--c-flag-cream);
+  border-top: 1px solid rgba(200,16,46,.35);
   line-height: 1.7;
   z-index: 1;
 }
-.launcher-footer a{ color: #7D6B69; text-decoration: none; font-weight: 600 }
-.launcher-footer a:hover{ text-decoration: underline; color: #4A3E3D }
+.launcher-footer a{ color: var(--c-flag-red); text-decoration: none; font-weight: 700 }
+.launcher-footer a:hover{ text-decoration: underline; color: var(--c-flag-black) }
+
+/* 🆕 Mélange d'éléments culturels du logo (tour Eiffel, case, baobab,
+   coq, café, croissant…) — signature de marque affichée sous le texte
+   du footer du lanceur. Voir _culturalMixLine() dans app.js (§15c). */
+.launcher-footer-cultural{
+  display:block;
+  margin-top:2px;
+  font-size:.9rem;
+  letter-spacing:.15em;
+  opacity:.85;
+}
+@media(prefers-color-scheme:dark){
+  .launcher-footer{background:#241a12;border-top-color:rgba(232,83,94,.35);color:#ECE6DA;}
+  .launcher-footer a{color:#E8536A;}
+  .launcher-footer a:hover{color:#ECE6DA;}
+}
 
 /* ══════════════════════════════════════════════════════════════════
    §6 — ÉCRAN 1 : HOME / GUIDE  (#home)
@@ -584,15 +852,20 @@ html.theme-oromo body{background:#f4f9f4}
 #home footer a{color:#00000088;font-weight:600}
 #home footer a:hover{text-decoration:underline}
 
-/* ── Barre fixe en haut du guide (#home) ── */
+/* ── Barre fixe en haut du guide (#home) ──
+   🆕 Restructurée en 3 zones (gauche = nav rapide 🏠❓📚, centre =
+   titre, droite = 🚪 Quitter) au lieu d'un simple titre centré, pour
+   étendre à cet écran la navigation rapide déjà présente sur Sections
+   (voir _updateQuickNav() dans app.js, §5b). */
 .home-topbar{
   position:sticky;
   top:0;
   z-index:20;
   display:flex;
   align-items:center;
-  justify-content:center;
-  padding:0 14px;
+  justify-content:space-between;
+  gap:6px;
+  padding:0 10px;
   background:rgba(20,20,32,.88);
   backdrop-filter:blur(8px);
   border-bottom:1px solid rgba(255,255,255,.12);
@@ -600,13 +873,20 @@ html.theme-oromo body{background:#f4f9f4}
   flex-shrink:0;
 }
 
-/* Titre "Guide explicatif" / "Gargaarsa" — centré */
+/* Titre "Guide explicatif" / "Gargaarsa" — centré entre les 2 groupes
+   d'icônes ; flex:1 + ellipsis pour ne jamais pousser les boutons
+   hors écran si le libellé bilingue est un peu long. */
 .home-topbar-title{
+  flex:1;
+  min-width:0;
   font-size:1.1rem;
   font-weight:700;
   color:rgba(255,255,255,.95);
   letter-spacing:.01em;
   text-align:center;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
 }
 
 
@@ -795,6 +1075,17 @@ html.theme-french .btn-reset-theme:hover{
   display:flex;
   flex-direction:column;
   gap:8px;
+}
+
+/* 🆕 Rangée de navigation rapide (🏠❓📚🚪) — ajoutée AU-DESSUS de
+   .lesson-header-top (voir _updateQuickNav() dans app.js, §5b).
+   Le groupe .back-btn-group (🏠❓📚) reste à gauche, 🚪 Quitter isolé
+   à droite pour rester visuellement distinct (comme sur #home). */
+.lesson-quick-nav{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:6px;
 }
 
 /* Ligne 1 : retour + badge + emoji + titre */
@@ -1010,6 +1301,28 @@ html.theme-french .btn-reset-theme:hover{
 .back-btn-icon:active{
   background:rgba(255,255,255,.32);
   transform:scale(.94);
+}
+
+/* 🆕 NAVIGATION RAPIDE (§5b app.js) — icône "Quitter" 🚪
+   Même gabarit que .back-btn-icon (elle appartient au même groupe
+   .back-btn-group sur tous les écrans), teinte rougeâtre pour se
+   distinguer visuellement des icônes de navigation Accueil/Guide/
+   Modules. Présente sur CHAQUE écran de l'application. */
+.quit-icon-btn{
+  background:rgba(255,90,90,.28) !important;
+}
+.quit-icon-btn:active{
+  background:rgba(255,90,90,.46) !important;
+}
+
+/* 🆕 État "écran actuel" d'une icône de nav rapide (ex. 📚 quand on
+   est déjà sur Sections) — posé/retiré dynamiquement par
+   _updateQuickNav() via la propriété native .disabled. Grisée et non
+   cliquable, mais reste visible : la mise en page ne bouge pas d'un
+   écran à l'autre. */
+.back-btn-icon:disabled{
+  opacity:.35;
+  cursor:default;
 }
 
 /* ── Onglets ─────────────────────────────────────────────────────── */
@@ -1438,6 +1751,15 @@ html.theme-french .btn-reset-theme:hover{
 }
 .result-box h3{color:var(--c-primary);font-size:1.2rem;margin-bottom:8px}
 
+/* 🆕 Clin d'œil mascotte (mélange d'éléments culturels du logo) affiché
+   uniquement sur un sans-faute (3⭐) — voir _quizResultStrings() §14. */
+.quiz-cultural-wink{
+  font-size:1rem;
+  letter-spacing:.15em;
+  margin-bottom:6px;
+  opacity:.85;
+}
+
 /* Score affiché en grand (ex. "8 / 10") */
 .score-num{font-size:2.8rem;font-weight:900;color:var(--c-primary)}
 
@@ -1653,7 +1975,12 @@ html.theme-french .btn-reset-theme:hover{
   position:fixed;
   inset:0;                /* équivaut à top/right/bottom/left:0 */
   background:rgba(0,0,0,0.6);
-  z-index:9999;
+  /* 🆕 10001 plutôt que 9999 : sans ça, .app-toast (10000, voir §16)
+     peut recouvrir visuellement cette modale (#credits-modal / Infos)
+     si un toast se déclenche pendant qu'elle est ouverte — même bug
+     que celui corrigé le 22/07/2026 côté VACHÉBO sur ses 3 modales de
+     confirmation, ici transposé à la seule modale de ce fichier. */
+  z-index:10001;
   align-items:center;
   justify-content:center; /* centrage vertical + horizontal */
 }
@@ -1735,12 +2062,12 @@ footer{
   text-align:center;
   padding:16px 12px 20px;
   font-size:.72rem;
-  color:#888;
-  background:var(--c-footer-bg);
-  border-top:1px solid var(--c-footer-border);
+  color:var(--c-flag-black);
+  background:var(--c-flag-cream);
+  border-top:1px solid rgba(200,16,46,.35);
   line-height:1.7;
 }
-footer a{color:var(--c-primary);text-decoration:none;font-weight:600}
+footer a{color:var(--c-flag-red);text-decoration:none;font-weight:700}
 footer a:hover{text-decoration:underline}
 
 
@@ -2883,29 +3210,100 @@ footer a:hover{text-decoration:underline}
 .hg-tldr{
   margin:14px 14px 6px;
   padding:14px 16px;
-  background:var(--c-vocab-chip-bg);
-  border:1.5px solid var(--c-primary);
+  background:var(--c-flag-cream);
+  border:1.5px solid var(--c-flag-red);
   border-radius:14px;
 }
 .hg-tldr-title{
   margin:0 0 .55em;
   font-size:1rem;
-  color:var(--c-primary);
+  color:var(--c-flag-red);
 }
 .hg-tldr-list{
   margin:0 0 .6em;
   padding-left:1.15em;
   font-size:.83rem;
   line-height:1.55;
-  color:#444;
+  color:var(--c-flag-black);
 }
 .hg-tldr-list li{margin-bottom:.4em}
 .hg-tldr-list li:last-child{margin-bottom:0}
 .hg-tldr-footer{
-  margin:0;
+  margin:0 0 .5em;
   font-size:.76rem;
+  color:var(--c-flag-red);
+  opacity:.85;
+}
+/* 🆕 Mélange d'éléments culturels du logo, même principe que le footer
+   du lanceur (.launcher-footer-cultural) — voir §5. */
+.hg-tldr-cultural{
+  display:block;
+  font-size:.95rem;
+  letter-spacing:.15em;
+  opacity:.85;
+}
+
+/* ── 🆕 (23/07/2026) Niveau intermédiaire par rubrique — "L'essentiel" ──
+   Chaque rubrique du Guide (.hg-section) a 3 profondeurs de lecture :
+     1. .hg-summary        → titre de la rubrique (toujours visible)
+     2. .hg-essential       → l'essentiel en 2-4 puces, affiché DÈS
+                              l'ouverture de la rubrique, sans clic
+                              supplémentaire (comprend l'apprenant pressé)
+     3. .hg-subdetail        → accordéon imbriqué "Voir le détail complet",
+                               replié par défaut, contient l'intégralité du
+                               texte pédagogique déjà rédigé (inchangé)
+   Voir Bilan_technique.md §6.22 pour le détail de cette évolution UX. */
+.hg-essential{
+  margin:0 0 10px;
+  padding:9px 12px;
+  background:var(--c-vocab-chip-bg);
+  border-left:3px solid var(--c-primary);
+  border-radius:0 8px 8px 0;
+}
+.hg-essential-title{
+  margin:0 0 .4em;
+  font-size:.78rem;
+  font-weight:700;
   color:var(--c-primary);
-  opacity:.8;
+}
+.hg-essential-list{
+  margin:0;
+  padding-left:1.1em;
+  font-size:.8rem;
+  line-height:1.5;
+  color:#444;
+}
+.hg-essential-list li{margin-bottom:.3em}
+.hg-essential-list li:last-child{margin-bottom:0}
+
+/* Sous-accordéon "Voir le détail complet" — même convention de rotation
+   de chevron que .hg-chevron / .level-chevron (voir commentaire ligne 738) */
+.hg-subdetail{
+  margin-top:2px;
+  border-top:1px dashed rgba(0,0,0,.12);
+}
+.hg-subsummary{
+  display:flex;
+  align-items:center;
+  gap:6px;
+  padding:9px 0 5px;
+  cursor:pointer;
+  list-style:none;
+  font-size:.78rem;
+  font-weight:600;
+  color:var(--c-primary);
+  user-select:none;
+}
+.hg-subsummary::-webkit-details-marker{display:none}
+.hg-subsummary:hover{opacity:.8}
+.hg-subchevron{
+  font-size:.6rem;
+  transition:transform .2s;
+  flex-shrink:0;
+}
+.hg-subdetail[open] .hg-subchevron{transform:rotate(180deg)}
+.hg-subdetail-content{
+  padding-top:4px;
 }
 
 /* ── Schéma de parcours utilisateur ── */
@@ -3046,6 +3444,20 @@ footer a:hover{text-decoration:underline}
   font-weight:800;
   margin:0 0 4px;
   line-height:1.2;
+}
+
+/* 🆕 Logo (image complète) affiché sur l'écran Modules, même logique
+   visuelle que .home-guide-logo (écran Guide) : petite vignette avec
+   ombre portée pour se détacher du dégradé coloré du header. */
+.sections-header-logo-wrap{
+  margin:2px 0 4px;
+}
+.sections-header-logo{
+  width:56px;
+  height:auto;
+  border-radius:8px;
+  box-shadow:0 2px 8px rgba(0,0,0,.25);
+  display:block;
 }
 
 /* Traduction du titre "Modules / Moojuulota" dans le header coloré */
@@ -3335,8 +3747,13 @@ footer a:hover{text-decoration:underline}
   .hg-summary:hover{background:#2e2e3a;}
   .hg-detail{background:#1f1f28;color:#ccc;}
   .hg-section{border-bottom-color:rgba(255,255,255,.08);}
-  .hg-tldr{background:#26262e;border-color:var(--c-primary);}
-  .hg-tldr-list{color:#ccc;}
+  .hg-tldr{background:#26262e;border-color:#E8536A;}
+  .hg-tldr-title{color:#E8536A;}
+  .hg-tldr-list{color:#ECE6DA;}
+  .hg-tldr-footer{color:#E8536A;}
+  .hg-essential{background:#26262e;}
+  .hg-essential-list{color:#ccc;}
+  .hg-subdetail{border-top-color:rgba(255,255,255,.12);}
   .noshow-label{background:rgba(30,30,38,.8);color:#e0e0e0;border-color:rgba(255,255,255,.2);}
   #home footer{color:rgba(255,255,255,.4);}
   #home footer a{color:rgba(255,255,255,.55);}
@@ -3379,7 +3796,16 @@ footer a:hover{text-decoration:underline}
 
   /* ── Lanceur : titre et cartes de langue resserrés ── */
   .launcher-title{font-size:1.15rem;margin-bottom:10px}
-  .lang-card{padding:10px 14px}
+  /* 🆕 (22/07/2026) Cartes 2 colonnes : hauteur/pastille/panneau infos
+     compressés pour tenir dans une hauteur d'écran réduite. La pastille
+     "à toucher" reste visible (juste plus petite) — l'info qu'elle
+     porte est encore plus utile quand l'espace est contraint. */
+  .lang-card{min-height:0;padding:26px 10px 12px;gap:3px}
+  .lang-card-flag{font-size:1.8rem}
+  .lang-card-tap-hint{top:6px;right:6px;padding:2px 6px 2px 7px;font-size:.54rem}
+  .lang-card-info-summary{padding:6px 10px}
+  .lang-card-info-label{font-size:.6rem}
+  .lang-card-info-list{padding:0 10px 10px;font-size:.6rem;gap:3px}
 
   /* ── Guide/Home : en-tête très compressé, logo masqué ── */
   .home-guide-header{padding:14px 20px 8px}
@@ -3396,6 +3822,7 @@ footer a:hover{text-decoration:underline}
 
   /* ── Sections / modules : header et cartes compressés ── */
   .sections-header{padding:8px 14px 10px}
+  .sections-header-logo-wrap{display:none} /* bannière décorative — non essentielle en paysage */
   .sections-header-left h2{font-size:.82rem}
   .level-tab{padding:5px 8px;font-size:.7rem}
   .theme-card{padding:8px 6px 7px}
@@ -4267,6 +4694,109 @@ footer a:hover{text-decoration:underline}
   }
 }
 
+/* ════════════════════════════════════════════════════════════════
+   §QUITMODAL — MODALE "QUITTER L'APPLICATION"  (#quit-app-modal)
+   ════════════════════════════════════════════════════════════════
+   Ouverte depuis l'icône 🚪 présente sur CHAQUE écran (voir
+   openQuitModal() dans app.js). Structure/overlay identiques à
+   #custom-confirm-modal (fixed + backdrop blur), mais AUCUNE
+   règle de fond/texte n'est redéclarée en ID sur .modal-content :
+   contrairement à #custom-confirm-modal (qui force un fond blanc
+   via var(--bg-card,#fff) même en mode sombre), cette modale hérite
+   volontairement du fond generique .modal-content — déjà repeint en
+   sombre par le bloc @media(prefers-color-scheme:dark) plus haut
+   (ligne ~3508) — pour un contraste correct dans les deux modes.
+   3 actions empilées (au lieu des 2 boutons génériques de
+   #custom-confirm-modal) : Fermer l'appli / Revenir au départ /
+   Annuler — voir maquette fournie par l'utilisateur (app "Vachébo").
+   ════════════════════════════════════════════════════════════════ */
+#quit-app-modal{
+  position:fixed;
+  top:0; left:0;
+  width:100%; height:100%;
+  background-color:rgba(0,0,0,.45);
+  backdrop-filter:blur(5px);
+  -webkit-backdrop-filter:blur(5px);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:10000;
+  padding:16px;
+  box-sizing:border-box;
+}
+#quit-app-modal .modal-content{
+  max-width:340px;
+  animation:modalScaleIn .25s cubic-bezier(.34,1.56,.64,1);
+}
+
+/* Titre — emoji + texte, un peu plus compact que le h3 générique */
+.modal-content h3.quit-modal-title{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
+  margin-bottom:4px;
+  font-size:1.15em;
+}
+/* Sous-titre ("Choisis une option") — plus petit/discret que le <p>
+   générique, sans toucher à sa couleur (héritée + patchée en mode
+   sombre par la règle .modal-content p existante). */
+.modal-content p.quit-modal-sub{
+  font-size:.82em;
+  margin-bottom:20px;
+  opacity:.75;
+}
+
+/* Zone des 3 actions — empilées verticalement (pleine largeur),
+   contrairement à .modal-actions (2 boutons côte à côte). */
+.quit-modal-actions{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+.quit-modal-actions button{
+  width:100%;
+  padding:13px;
+  border-radius:12px;
+  font-weight:700;
+  font-size:.95em;
+  cursor:pointer;
+  transition:transform .1s ease, filter .1s ease, background .15s ease;
+}
+.quit-modal-actions button:active{
+  transform:scale(.97);
+}
+
+/* "Fermer l'appli" — action principale, rouge plein (best-effort :
+   voir quitAppClose() dans app.js pour les limites de window.close()) */
+.btn-quit-close{
+  background:#D64545;
+  color:#fff;
+  border:none;
+}
+.btn-quit-close:hover{filter:brightness(.94)}
+
+/* "Revenir au départ" — secondaire, contour bleu (reprend goToAccueil()) */
+.btn-quit-restart{
+  background:#fff;
+  color:#2563EB;
+  border:2px solid #2563EB;
+}
+.btn-quit-restart:hover{background:rgba(37,99,235,.06)}
+
+/* "Annuler" — tertiaire, simple lien texte centré */
+.btn-quit-cancel{
+  background:none;
+  border:none;
+  color:#888;
+  font-weight:600;
+  padding:6px;
+}
+.btn-quit-cancel:hover{text-decoration:underline}
+@media(prefers-color-scheme:dark){
+  .btn-quit-cancel{color:#aaa}
+}
+
 /* ══════════════════════════════════════════════════════════════════
    ANTISPAM — Adresse e-mail affichée à l'envers dans le HTML,
    remise visuellement à l'endroit par CSS (direction RTL).
@@ -4423,6 +4953,8 @@ footer a:hover{text-decoration:underline}
   .ob-reread-hint a,
   .ob-flow-arrow,
   .modal-content a,
+  .hg-essential-title,
+  .hg-subsummary,
   .nav-btn.active{
     color:var(--c-accent-dark);
   }

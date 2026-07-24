@@ -30,11 +30,11 @@
 
 | Fichier | Taille | Lignes | Rôle |
 |---|---|---|---|
-| `js/app.js` | 222 Ko | 5 303 | Moteur applicatif complet (135 fonctions, dont le bandeau hors-ligne §3e, le suivi "modules déjà ouverts" §7 et la vérification proactive des mises à jour SW §20 — voir §6.19 ; plan interne `SECTIONS DE CE FICHIER` resynchronisé le 12/07/2026, voir §6.21) |
-| `css/style.css` | 145 Ko | 4 467 | Styles + système de thèmes dual (dont §16b bandeau hors-ligne, §7 états visuels des cartes-module ; plan interne `PLAN DU FICHIER` intégralement recalculé le 12/07/2026, voir §6.21) |
+| `js/app.js` | 242 Ko | 5 670 | Moteur applicatif complet (157 fonctions nommées, dont le bandeau hors-ligne §3e, le suivi "modules déjà ouverts" §7, la vérification proactive des mises à jour SW §20 — voir §6.19 — et 🆕 le clin d'œil mascotte sur quiz sans-faute §14 — voir §6.22 ; plan interne `SECTIONS DE CE FICHIER` resynchronisé le 24/07/2026, voir §6.22) |
+| `css/style.css` | 166 Ko | 4 999 | Styles + système de thèmes dual (dont §16b bandeau hors-ligne, §7 états visuels des cartes-module, et 🆕 §2 tokens de marque `--c-flag-red/black/cream` — voir §6.22 ; plan interne `PLAN DU FICHIER` intégralement recalculé le 24/07/2026, voir §6.22) |
 | `js/data-fr.js` | 106 Ko | 1 428 | Dataset mode "Apprendre le Français" |
 | `js/data-or.js` | 103 Ko | 1 383 | Dataset mode "Apprendre l'Oromo" |
-| `index.html` | 87 Ko | 1 307 | Structure HTML — 5 écrans + 2 modales + bandeau hors-ligne + guide "Quel navigateur choisir ?" ; plan interne `PLAN DU FICHIER` resynchronisé le 12/07/2026 (voir §6.21) |
+| `index.html` | 114 Ko | 1 754 | Structure HTML — 5 écrans + 2 modales + bandeau hors-ligne + guide "Quel navigateur choisir ?" + 🆕 logo étendu aux écrans Sections (§6.22) ; plan interne `PLAN DU FICHIER` resynchronisé le 24/07/2026 (voir §6.22) |
 | `sw.js` | 33 Ko | 625 | Service Worker — Cache First / Network First |
 | `manifest.json` | — | — | PWA — icônes, orientation, screenshots |
 | `deploy.yml` | — | — | CI/CD GitHub Actions |
@@ -385,11 +385,34 @@ Aucune section entière n'était manquante cette fois-ci (contrairement à `app.
 
 ---
 
+### §6.22 — 🆕 Identité de marque du logo + resynchronisation complète (24/07/2026)
+
+**Contexte** : demande utilisateur, en s'inspirant d'une capture d'écran du projet frère VACHÉBO (Français/Espagnol, même auteur) — reprendre pour cette application trois de ses partis-pris : logo affiché sur tous les écrans praticables, éléments de marque indépendants du thème actif, clin d'œil culturel décoratif.
+
+**Ajouts fonctionnels** :
+1. **Tokens de marque** `--c-flag-red` (#C8102E), `--c-flag-black` (#1A1A1A), `--c-flag-cream` (#F7F2E7) — déclarés dans `:root` (§2 de `style.css`), **non redéfinis** par `html.theme-french` ni `html.theme-oromo` (contrairement à `--c-primary`/`--c-accent`) : ce sont les couleurs du drapeau illustré dans `Logo-appli-or-fr.png`, une identité de marque transversale aux deux thèmes — même logique que `--c-vache-cream`/`--c-vache-brown` chez VACHÉBO.
+2. **Footer du lanceur** (`.launcher-footer`, §15) et carte **"L'essentiel en 30 secondes"** (`.hg-tldr`, §19, versions FR et OR) recolorés avec ces tokens, variantes mode sombre incluses (rouge éclairci `#E8536A` pour rester lisible sur fond sombre).
+3. **Logo complet** ajouté aux deux headers de l'écran Modules (`#sections-level1`/`#sections-level2`, §23) — vignette 56px avec ombre portée, masquée en paysage compressé comme celle du Guide. L'écran Leçon (`#lesson`) a été délibérément laissé de côté : son header est déjà très compact ("footer supprimé pour maximiser l'espace disponible sur mobile", commentaire préexistant du fichier).
+4. **Mélange d'éléments culturels du logo** (🗼 tour Eiffel, 🛖 case traditionnelle, 🌳 baobab, 🐓 coq, ☕ café, 🥐 croissant) — ligne décorative `aria-hidden`, sans nouveau texte à traduire, affichée sous le footer du lanceur, sous chaque carte `.hg-tldr`, et 🆕 sur un clin d'œil mascotte affiché uniquement sur un quiz **sans-faute (3⭐)**, aux deux écrans de résultat (`_quizResultStrings()`, §14 → nouveau champ `cultural`).
+5. **Crème du logo mixée dans `--c-grad-home`** — la teinte médiane du dégradé d'accueil, jusqu'ici un blanc pur (`#ffffff`), utilise désormais `var(--c-flag-cream)` dans les 3 déclarations (`:root`, `theme-french`, `theme-oromo`).
+
+**Correctif de bug latent (indépendant de la demande initiale)** : `.modal` (la modale Infos/Remerciements, `#credits-modal`) était en z-index **9999**, sous `.app-toast` (**10000**) — un toast pouvait donc recouvrir visuellement cette modale si elle était ouverte au moment où un toast se déclenchait. Exactement le même bug déjà identifié et corrigé chez VACHÉBO le 22/07/2026 sur ses 3 modales de confirmation. `.modal` relevé à **10001**.
+
+**Resynchronisation des trois plans internes** (`SECTIONS DE CE FICHIER` dans `app.js`, `PLAN DU FICHIER` dans `style.css` et `index.html`) : chaque ancre revérifiée par recherche directe, comme en §6.21. Deux origines distinctes à l'écart constaté :
+- Les ajouts de cette session (ci-dessus), qui décalent `app.js` de +1/+2 lignes à partir de §11 (les deux `+ r.cultural` insérés aux écrans de résultat) puis +11 lignes à partir de §17 (bloc `cultural` dans `_quizResultStrings`, §14) ;
+- Un **écart préexistant, sans rapport avec cette session**, découvert en cours de resynchronisation : `index.html` (`#sections-level1`) était déjà à la ligne réelle 1437 dans le fichier reçu en tout début de session, contre 1205 indiqué au plan — soit environ +230 lignes d'écart non lié aux étapes 22/07 ou 23/07 documentées dans le README. Un écart de nature similaire existait dans `style.css` autour de l'Écran 3 (Leçon). **Non investigué plus avant** faute de contexte sur son origine exacte ; corrigé au passage comme les autres ancres.
+
+**Hors périmètre de cette session** — ⚠️ **à signaler explicitement** : les tables détaillées §3 (`app.js`), §4 (`style.css`) et §5 (`index.html`) de ce Bilan, ainsi que les tailles de fichiers citées en §7 et dans le README, n'ont **pas** été resynchronisées avant ce soir — elles datent toutes de l'Étape 9 (§6.21, 12/07/2026) et affichaient encore `app.js` : 5 303 lignes / `style.css` : 4 467 lignes / `index.html` : 1 307 lignes, alors que le fichier reçu ce soir (avant toute modification) en comptait déjà 5 650 / 4 923 / 1 729. **Cet écart de fond (12 jours, plusieurs sessions du 18 au 23/07 non répercutées ici) dépasse largement les quelques dizaines de lignes ajoutées ce soir** et n'a pas été comblé : seuls les compteurs globaux (§2 ci-dessus, §7, README) ont été mis à jour avec les valeurs réelles actuelles ; les ~80 repères ligne-par-fonction des tables §3/§4/§5 nécessiteraient une session dédiée, sur le même principe que l'Étape 9, pour être revérifiés un par un plutôt que par arithmétique.
+
+**Fichiers modifiés** : `app.js`, `style.css`, `index.html` (ajouts fonctionnels + resynchronisation des plans internes), `Bilan_technique.md` et `README.md` (§2, §7, historique).
+
+---
+
 ## 7. Points de vigilance / dettes techniques
 
 | Point | Niveau | Détail |
 |---|---|---|
-| `app.js` monolithique | ⚠️ Moyen | 5 303 lignes, 135 fonctions — maintenable grâce aux `§` mais migration ES modules complexe (handlers `onclick` inline). Plan interne en en-tête du fichier **resynchronisé le 12/07/2026** (voir §6.21) |
+| `app.js` monolithique | ⚠️ Moyen | 5 670 lignes, 157 fonctions — maintenable grâce aux `§` mais migration ES modules complexe (handlers `onclick` inline). Plan interne en en-tête du fichier **resynchronisé le 24/07/2026** (voir §6.22) |
 | 🆕 Mises à jour PWA (`registration.update()`) | ✅ OK | Vérification proactive sur retour au premier plan + toutes les 60 min, en plus du cycle natif du navigateur — voir §6.19. Échec silencieux et sans risque si hors-ligne |
 | `unsafe-inline` CSP | ⚠️ Moyen | Nécessaire pour les `onclick` générés dynamiquement par `innerHTML` et pour GitHub Pages (pas de headers HTTP customs) |
 | Voix Oromo TTS | ⚠️ Moyen, ✅ communiqué hors ligne | `om-ET` absente sur la plupart des appareils — l'utilisateur entend souvent du Somali ou de l'Amharique. Hors connexion, si aucune voix de la cascade n'est installée localement, la langue par défaut du système peut être utilisée à la place — désormais signalé par le bandeau hors-ligne (voir §6.14) |
@@ -442,5 +465,6 @@ Aucune section entière n'était manquante cette fois-ci (contrairement à `app.
 | 12/07/2026 | 🆕 Étape 7 : vérification proactive des mises à jour PWA — `registration.update()` déclenché au retour au premier plan (`visibilitychange`) et toutes les 60 min (`setInterval`), en complément du cycle `skipWaiting`/`clients.claim`/`controllerchange` déjà en place — voir §6.19. Table §3 (lignes §20/§21) et compteur `app.js` (5 287 lignes) resynchronisés en conséquence — Sébastien Godet + Claude Sonnet 5 |
 | 12/07/2026 | 🆕 Étape 8 : ajout d'une période dans l'historique en en-tête de `app.js` (08/07 → 12/07/2026) + resynchronisation complète du plan interne `SECTIONS DE CE FICHIER`, désynchronisé depuis l'ajout de §3e — deux sections entières (§3e, §20b) en étaient absentes et ont été ajoutées — voir §6.20. Table §3 entièrement revérifiée par recherche directe et compteur `app.js` (5 299 lignes) à jour — Sébastien Godet + Claude Sonnet 5 |
 | 12/07/2026 | 🆕 Étape 9 : relecture complète de l'application et resynchronisation des commentaires à numéros de ligne — recalcul intégral du plan interne `PLAN DU FICHIER` de `style.css` (périmé depuis le 10/07/2026, décalages de +3 à +94 lignes) et de `index.html` (+8 à +9 lignes), correction d'un nouveau décalage de +3 lignes apparu dans le plan `SECTIONS DE CE FICHIER` de `app.js` depuis l'étape 8 — voir §6.21. Aucune ligne de code fonctionnel modifiée ; nombre de lignes inchangé pour les trois fichiers (`app.js` : 5 303 lignes, `style.css` : 4 467 lignes, `index.html` : 1 307 lignes) — Sébastien Godet + Claude Sonnet 5 |
+| 24/07/2026 | 🆕 Étape 10 : identité de marque reprise du logo (`Logo-appli-or-fr.png`), en s'inspirant du projet frère VACHÉBO — tokens `--c-flag-red/black/cream` transversaux aux deux thèmes, footer du lanceur et carte "L'essentiel en 30 secondes" recolorés, logo complet ajouté aux headers de l'écran Modules, mélange d'éléments culturels (🗼🛖🌳🐓☕🥐) en footer + clin d'œil sur quiz sans-faute, crème mixée dans `--c-grad-home` — voir §6.22. Correctif au passage d'un bug latent de z-index (`.modal` sous `.app-toast`, même bug déjà corrigé chez VACHÉBO le 22/07). Resynchronisation complète des 3 plans internes ; découverte au passage d'un écart de fond préexistant entre ce Bilan (dernières valeurs : 12/07/2026) et le code reçu ce soir, non comblé (hors périmètre, voir §6.22) — Sébastien Godet + Claude Sonnet 5 |
 
 *Journal détaillé (dont la citation complète du retour de recettage du 03/07) : voir le bloc de commentaire `HISTORIQUE DE L'APPLICATION` en tête de `app.js`.*

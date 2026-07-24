@@ -12,60 +12,83 @@
      └─ app.js       → Ce fichier : logique applicative complète
 
    SECTIONS DE CE FICHIER (ordre d'apparition réel) :
-      1.   Variables d'état globales (let/const)             ligne    90
-      —    Utilitaire bilingue L() / langKeys()              ligne   149
-      2.   Point d'entrée — initApp(mode)                    ligne   263
-      3.   Synthèse vocale + prononciation Oromo             ligne   464
-     3a2.  Surlignage mot par mot — pendant la lecture TTS   ligne   888
-     3a3.  Vitesse de lecture — paliers (Cartes Flash,       ligne  1023
+      1.   Variables d'état globales (let/const)             ligne   110
+      —    Utilitaire bilingue L() / langKeys()              ligne   192
+      2.   Point d'entrée — initApp(mode)                    ligne   283
+      3.   Synthèse vocale + prononciation Oromo             ligne   484
+     3a2.  Surlignage mot par mot — pendant la lecture TTS   ligne   908
+     3a3.  Vitesse de lecture — paliers (Cartes Flash,       ligne  1043
            Répète, Dialogue, Vocabulaire, Quiz Vocabulaire)
-     3b.   Retour haptique — _vibrateFeedback()              ligne  1126
-     3b2.  Confetti — animation de félicitations (stars)     ligne  1148
-     3c.   Interruption audio — visibilitychange / focus     ligne  1229
-     3d.   KeepAlive watchdog — Chrome / Android             ligne  1270
-     3e.   🆕 Bandeau hors-ligne — connectivité              ligne  1312
+     3b.   Retour haptique — _vibrateFeedback()              ligne  1146
+     3b2.  Confetti — animation de félicitations (stars)     ligne  1168
+     3c.   Interruption audio — visibilitychange / focus     ligne  1249
+     3d.   KeepAlive watchdog — Chrome / Android             ligne  1290
+     3e.   🆕 Bandeau hors-ligne — connectivité              ligne  1332
            (navigator.onLine) — voir §6.14
-      4.   Persistance de la progression (étoiles)           ligne  1424
-     4a.   🆕 Suivi "modules déjà ouverts" (badge Nouveau)    ligne  1459
+      4.   Persistance de la progression (étoiles)           ligne  1444
+     4a.   🆕 Suivi "modules déjà ouverts" (badge Nouveau)    ligne  1475
            (dans §4, voir §6.18)
-     4c.   Réinitialisation — confirmResetProgress()         ligne  1541  (dans §4)
-     4b.   Restauration de session quiz (sessionStorage)     ligne  1712
-      5.   Navigation entre écrans                           ligne  1824
-     5b.   Navigation basse — helpers                        ligne  1939
-           dont goToAccueil() / goToGuide() — icônes 🏠 / ❓   ligne  2083
+     4c.   Réinitialisation — confirmResetProgress()         ligne  1561  (dans §4)
+     4b.   Restauration de session quiz (sessionStorage)     ligne  1732
+      5.   Navigation entre écrans                           ligne  1844
+     5b.   Navigation basse — helpers                        ligne  1969
+           dont goToAccueil() / goToGuide() — icônes 🏠 / ❓   ligne  2202
            du header Sections (choix Lanceur vs Écran Home)
-      6.   Écran Home — bouton Commencer + carte(s) de       ligne  2135
+     5c.   🆕 Navigation rapide en haut — icônes 🏠❓📚🚪,     ligne  2082
+           étendue à TOUS les écrans (jusqu'ici Sections
+           uniquement) — voir _updateQuickNav() / _QUICK_NAV_MAP
+     5d.   🆕 Modale "Quitter l'application" (#quit-app-modal) ligne  2217
+           — openQuitModal() / quitAppClose() / quitAppRestart()
+      6.   Écran Home — bouton Commencer + carte(s) de       ligne  2342
            progression (1 par parcours ayant des modules
            réussis — _getOtherModeProgress(), voir plus bas)
-      7.   Écran Sections — grille des thèmes                ligne  2294
-      8.   Ouverture d'un thème (écran Lesson + onglets)     ligne  2448
-           switchTab() : onglets + repositionnement          ligne  2610
+      7.   Écran Sections — grille des thèmes                ligne  2501
+      8.   Ouverture d'un thème (écran Lesson + onglets)     ligne  2655
+           switchTab() : onglets + repositionnement          ligne  2817
            du bouton PDF en mode Cartes (fixed via JS)
-      9.   Cartes Flash — vocabulaire interactif             ligne  2642
-     10.   Quiz 10 questions — avec étoiles progressives     ligne  2817
+      9.   Cartes Flash — vocabulaire interactif             ligne  2849
+     10.   Quiz 10 questions — avec étoiles progressives     ligne  3024
            (dont Quiz Alphabet, sans barre de vitesse — voir §3a3)
-     11.   Dialogue — scènes de situation                    ligne  3136
-     12.   Vocabulaire — lexique visuel cliquable            ligne  3196
-     13b.  Onglet Répète — badges voix (🔊) + reconnaissance  ligne  3244
+     11.   Dialogue — scènes de situation                    ligne  3344
+     12.   Vocabulaire — lexique visuel cliquable            ligne  3404
+     13b.  Onglet Répète — badges voix (🔊) + reconnaissance  ligne  3452
            vocale (🎙️), vitesse dédiée — voir §3a3
-     13.   Quiz Dialogue — questions sur le dialogue         ligne  3989
-     14.   Utilitaires & chaînes de résultats bilingues      ligne  4099
-     17.   Guide utilisateur — Onboarding                    ligne  4186
-      —    Écran Home — _buildHomeGuide()                    ligne  4242
-     18.   Crédits — showCredits()                           ligne  4361
-     15.   Initialisation du launcher                        ligne  4422
-     16.   Accessibilité clavier                             ligne  4455
-     19.   Spinner de chargement des données                 ligne  4467
-     19b.  Viewport height fix — Android Chrome / Brave      ligne  4510
-     20.   Enregistrement du Service Worker (PWA)            ligne  4572
+     13.   Quiz Dialogue — questions sur le dialogue         ligne  4197
+     14.   Utilitaires & chaînes de résultats bilingues      ligne  4308
+     17.   Guide utilisateur — Onboarding                    ligne  4404
+      —    Écran Home — _buildHomeGuide()                    ligne  4460
+     18.   Crédits — showCredits()                           ligne  4579
+     15.   Initialisation du launcher                        ligne  4709
+     15b.  🆕 Panneaux infos dépliables des cartes de langue  ligne  4742
+           (état par défaut + préférence manuelle — voir §7
+           de la demande de refonte du Lanceur, 22/07/2026)
+     16.   Accessibilité clavier                             ligne  4814
+     19.   Spinner de chargement des données                 ligne  4826
+     19b.  Viewport height fix — Android Chrome / Brave      ligne  4869
+     20.   Enregistrement du Service Worker (PWA)            ligne  4931
            + 🆕 vérification proactive des mises à jour
            au premier plan et toutes les 60 min — voir §6.19
-     20b.  🆕 Installation PWA — bouton natif "Installer     ligne  4662
+     20b.  🆕 Installation PWA — bouton natif "Installer     ligne  5021
            l'app" (bouton natif Android/Chrome, rappel iOS)
-     21.   Exports PDF — window.print() + @media print       ligne  4763
-     21a.  Export Guide (écran Home)                         ligne  4960
-     21b.  Export Vocabulaire (leçon Niveau 1)               ligne  5075
-     21c.  Export Situation (leçon Niveau 2 — dialogue)      ligne  5171
+     21.   Exports PDF — window.print() + @media print       ligne  5122
+     21a.  Export Guide (écran Home)                         ligne  5319
+     21b.  Export Vocabulaire (leçon Niveau 1)               ligne  5434
+     21c.  Export Situation (leçon Niveau 2 — dialogue)      ligne  5530
+   ============================================================
+   🆕 Plan resynchronisé le 23/07/2026 : ajout des sections 5c
+   (navigation rapide 🏠❓📚 étendue à tous les écrans, jusqu'ici
+   limitée à Sections) et 5d (modale "Quitter l'application", #quit-
+   app-modal, icône 🚪 présente désormais partout). Tout ce qui suit
+   le §5b a décalé de +185 lignes environ.
+   ============================================================
+   🆕 Resynchronisé le 24/07/2026 : trois ajouts liés à la marque
+   (tokens --c-flag-red/black/cream, logo étendu, clin d'œil
+   mascotte "mélange culturel" 🗼🛖🌳🐓☕🥐 sur un quiz sans-faute —
+   voir _quizResultStrings() §14) ont décalé de +11 lignes tout ce
+   qui suit le milieu du §14. §11 à §14 décalent de +1 à +2 lignes
+   (ajout de `+ r.cultural` aux deux écrans de résultat, §10 et
+   §13) ; §17 et au-delà décalent de +11 lignes (bloc `cultural`
+   ajouté dans _quizResultStrings, §14).
    ============================================================
 
    HISTORIQUE DE L'APPLICATION
@@ -83,6 +106,12 @@
    Du 08/07/2026 au 12/07/2026 : Expériences utilisateurs (Christophe
                                   Elin, Maman, Moi) et correctifs avec
                                   Claude Sonnet 5.
+
+   22/07/2026 : Refonte des cartes de langue du Lanceur (écran 0) —
+                grille 2 colonnes avec panneaux infos dépliables par
+                parcours + correctif d'accessibilité (contraste texte/
+                fond WCAG 2.1 AA sur les dégradés bleu/rouge et
+                vert/or des cartes). Avec Claude Sonnet 5.
    ============================================================ */
 
 
@@ -1852,6 +1881,13 @@ function showScreen(id, dir) {
     confirmModal.classList.add('modal-hidden');
     confirmModal.style.pointerEvents = 'none';
   }
+  /* 🆕 Même filet de sécurité pour la modale Quitter (ex. navigation
+     déclenchée pendant qu'elle est ouverte, bouton "retour" du tel.) */
+  const quitModalSafety = document.getElementById('quit-app-modal');
+  if (quitModalSafety && !quitModalSafety.classList.contains('modal-hidden')) {
+    quitModalSafety.classList.add('modal-hidden');
+    quitModalSafety.style.pointerEvents = 'none';
+  }
 
   /* Trouver l'écran actuellement actif */
   let currentScreen = null;
@@ -1879,6 +1915,9 @@ function showScreen(id, dir) {
 
   /* ── Mettre à jour la nav bar ── */
   _updateBottomNav(id);
+
+  /* ── 🆕 Mettre à jour la nav rapide en haut (🏠❓📚🚪) ── */
+  _updateQuickNav(id);
 
   /* ── Pas d'animation si même écran ou pas d'écran source ── */
   if (!currentScreen || currentScreen === nextScreen) {
@@ -2048,6 +2087,95 @@ function _updateBottomNav(screenId) {
   }
 }
 
+/* ============================================================
+   5c. 🆕 NAVIGATION RAPIDE EN HAUT — icônes 🏠 ❓ 📚 🚪
+   ============================================================
+   Réplique tout en haut de CHAQUE écran (Lanceur, Home/Guide,
+   Sections niveau 1/2, Leçon) le principe déjà présent dans le
+   header Sections (icônes 🏠/❓), en l'étendant à 📚 Modules et à
+   un nouveau bouton 🚪 Quitter (→ voir §5d, modale #quit-app-modal).
+
+   RÈGLE DE DÉBLOCAGE ("voir tous les écrans la première fois") :
+   🏠 et ❓ ramènent toujours vers un écran déjà vu (le Lanceur ou le
+   Guide) — ils ne permettent de sauter AUCUN contenu, donc restent
+   toujours visibles, y compris lors de la toute première visite.
+   📚 en revanche permettrait de sauter directement dans les modules
+   SANS avoir lu le guide d'onboarding sur #home : il reste donc
+   masqué sur cet écran précis tant que le flag 'tm_onboarded_fr/or'
+   n'a pas été posé pour le mode courant (même flag que celui déjà
+   utilisé par _updateBottomNav() ci-dessus pour masquer la nav
+   basse). Sur tous les autres écrans (Sections/Leçon), ce flag est
+   de toute façon déjà posé dès qu'on peut les atteindre (il est posé
+   AVANT la navigation, dès le clic sur "Commencer" — voir §17) : la
+   restriction ne s'applique donc en pratique qu'à l'écran #home.
+   🚪 Quitter est toujours visible, sur tous les écrans sans exception.
+   ============================================================ */
+
+/**
+ * Table de correspondance écran → ids des boutons de nav rapide.
+ * `current` indique la clé (home|guide|modules) qui représente
+ * l'écran affiché : ce bouton est désactivé (.disabled) mais reste
+ * visible, pour ne pas faire "sauter" la mise en page d'un écran à
+ * l'autre. Le Lanceur n'a pas d'entrée home/guide/modules : aucun
+ * mode n'étant encore choisi, seul 🚪 Quitter y a un sens.
+ */
+const _QUICK_NAV_MAP = {
+  'app-launcher'    : { quit: 'launcherQuitBtn' },
+  'home'            : { home: 'homeQnHomeBtn',        guide: 'homeQnGuideBtn',        modules: 'homeQnModulesBtn',        quit: 'homeQuitBtn',        current: 'guide' },
+  'sections-level1' : { home: 'sectionsBackHomeBtn',  guide: 'sectionsBackGuideBtn',  modules: 'sectionsQnModulesBtn',    quit: 'sectionsQuitBtn',    current: 'modules' },
+  'sections-level2' : { home: 'sectionsBackHomeBtn2', guide: 'sectionsBackGuideBtn2', modules: 'sectionsQnModulesBtn2',   quit: 'sectionsQuitBtn2',   current: 'modules' },
+  'lesson'          : { home: 'lessonQnHomeBtn',       guide: 'lessonQnGuideBtn',      modules: 'lessonQnModulesBtn',     quit: 'lessonQuitBtn' },
+};
+
+/**
+ * Le guide d'onboarding du mode courant a-t-il déjà été validé au
+ * moins une fois (bouton "Commencer" déjà cliqué) ? Réutilise le
+ * même flag localStorage que _updateBottomNav() / §17.
+ * @returns {boolean}
+ */
+function _isQuickNavUnlocked() {
+  if (!currentMode) return false;
+  const obKey = isFrench() ? 'tm_onboarded_fr' : 'tm_onboarded_or';
+  return localStorage.getItem(obKey) === 'true';
+}
+
+/**
+ * Met à jour visibilité, état actif/désactivé et libellés (langue de
+ * l'apprenant) de la nav rapide, pour l'écran actuellement affiché.
+ * Appelée depuis showScreen() juste après _updateBottomNav().
+ * @param {string} screenId
+ */
+function _updateQuickNav(screenId) {
+  const map = _QUICK_NAV_MAP[screenId];
+  if (!map) return;
+
+  /* Lanceur : aucun mode choisi → libellé bilingue en dur, pas de
+     jeu d'icônes 🏠/❓/📚 (rien vers quoi "sauter" à cet écran). */
+  if (screenId === 'app-launcher') {
+    _setAttrBi(map.quit, 'Quitter · Bahuu');
+    return;
+  }
+
+  ['home', 'guide', 'modules'].forEach((key) => {
+    const el = document.getElementById(map[key]);
+    if (!el) return;
+    const isCurrent = (key === map.current);
+    /* 📚 Modules masqué UNIQUEMENT sur #home tant que le mode courant
+       n'a jamais été onboardé (voir commentaire de section ci-dessus) */
+    const hiddenByOnboarding = (screenId === 'home' && key === 'modules' && !_isQuickNavUnlocked());
+    el.style.display = hiddenByOnboarding ? 'none' : '';
+    el.disabled = isCurrent;
+  });
+
+  /* Libellés bilingues (aria-label + title — boutons icône seule,
+     sans texte visible, donc rien à traduire visuellement ici) */
+  _setAttrBi(map.home,    L('Fuula Jalqabaa', 'Accueil'));
+  _setAttrBi(map.guide,   L('Gargaarsa',      'Guide'));
+  _setAttrBi(map.modules, L('Kutaalee',       'Modules'));
+  _setAttrBi(map.quit,    L('Bahuu',          'Quitter'));
+}
+
+
 /**
  * Bouton Modules dans la nav bar :
  * va sur l'écran du niveau mémorisé (ou niveau 1 par défaut).
@@ -2092,6 +2220,94 @@ function goToAccueil() {
  */
 function goToGuide() {
   showScreen('home', 'back');
+}
+
+/* ============================================================
+   5d. 🆕 MODALE "QUITTER L'APPLICATION"  (#quit-app-modal)
+   ============================================================
+   Ouverte depuis l'icône 🚪 de la nav rapide (§5c), présente sur
+   chaque écran. Reprend le visuel montré par l'utilisateur (app
+   "Vachébo" espagnol-français) : 3 choix empilés — Fermer l'appli /
+   Revenir au départ / Annuler. Tout le texte visible passe par L(),
+   sauf sur le lanceur où aucun mode n'est encore choisi (bilingue).
+   ============================================================ */
+
+/**
+ * Ouvre la modale de confirmation "Quitter l'application ?" et
+ * localise tout son contenu texte dans la langue de l'apprenant.
+ */
+function openQuitModal() {
+  /* Comme _openConfirmModal() : si la modale Infos/Crédits est
+     ouverte en dessous, on la referme pour éviter un empilement. */
+  const creditsModal = document.getElementById('credits-modal');
+  if (creditsModal) creditsModal.style.display = 'none';
+
+  const onLauncher = !currentMode;
+
+  _setText('quitModalTitle', onLauncher
+    ? "🚪 Quitter l'application ? · Bahuu barbaaddaa?"
+    : L('🚪 Appii keessaa bahuu?', "🚪 Quitter l'application ?"));
+
+  _setText('quitModalSub', onLauncher
+    ? 'Choisis une option · Filannoo filadhu'
+    : L('Filannoo tokko filadhu', 'Choisis une option'));
+
+  _setText('quitModalCloseBtn', onLauncher
+    ? "🚪 Fermer l'appli"
+    : L('🚪 Appii cufi', "🚪 Fermer l'appli"));
+
+  /* "Revenir au départ" n'a pas de sens si on est DÉJÀ sur le
+     lanceur — masqué dans ce cas plutôt que traduit inutilement. */
+  const restartBtn = document.getElementById('quitModalRestartBtn');
+  if (restartBtn) {
+    restartBtn.style.display = onLauncher ? 'none' : '';
+    restartBtn.textContent = L("🏠 Gara jalqabaatti deebi'i", '🏠 Revenir au départ');
+  }
+
+  _setText('quitModalCancelBtn', onLauncher ? 'Annuler · Dhiisi' : L('Dhiisi', 'Annuler'));
+
+  const modal = document.getElementById('quit-app-modal');
+  if (!modal) return;
+  modal.classList.remove('modal-hidden');
+  modal.style.pointerEvents = '';
+}
+
+/** Referme la modale Quitter sans action (bouton "Annuler" ou tap hors-carte). */
+function closeQuitModal() {
+  const modal = document.getElementById('quit-app-modal');
+  if (!modal) return;
+  modal.classList.add('modal-hidden');
+  modal.style.pointerEvents = 'none';
+}
+
+/** "Revenir au départ" → referme la modale puis retour au Lanceur. */
+function quitAppRestart() {
+  closeQuitModal();
+  goToAccueil();
+}
+
+/**
+ * "Fermer l'appli" — best-effort seulement : par sécurité, la plupart
+ * des navigateurs interdisent à une page web de fermer un onglet
+ * qu'elle n'a pas elle-même ouvert via script (window.open()). Ça
+ * fonctionne surtout en PWA installée (mode standalone), pas de
+ * garantie en onglet de navigateur classique. On tente quand même
+ * window.close(), puis on affiche un message de repli (_showToast,
+ * déjà utilisé ailleurs dans l'app) si la fenêtre est toujours là
+ * après un court délai — dans la langue de l'apprenant.
+ */
+function quitAppClose() {
+  closeQuitModal();
+  _stopCardAudio(); // coupe une éventuelle lecture TTS/audio en cours
+
+  try { window.close(); } catch (e) { /* ignoré : voir commentaire ci-dessus */ }
+
+  setTimeout(() => {
+    _showToast(L(
+      "Foddaa kana ofumaan cufuu hin dandeenye. Baala/tab kana harkaan cufuu dandeessa yeroo barbaadde.",
+      "Ton navigateur ne permet pas de fermer cet onglet automatiquement. Tu peux le fermer toi-même quand tu veux."
+    ));
+  }, 350);
 }
 
 /**
@@ -3012,6 +3228,7 @@ function renderQuiz10() {
     document.getElementById('tabContent').innerHTML = '<div class="result-box">'
       + '<div style="font-size:2rem; margin-bottom:5px;">' + (earnedStars === 3 ? '🌟🌟🌟' : endStars) + '</div>'
       + '<h3>' + r.title + '</h3>'
+      + r.cultural
       + '<div class="score-num">' + q10Score + '/' + total + '</div>'
       + '<div style="font-size:1rem;margin:6px 0;color:' + (isSuccess ? 'var(--c-success)' : 'var(--c-error)') + '">' + r.sub + '</div>'
       + '<div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:14px">'
@@ -4031,6 +4248,7 @@ function renderDialogQuiz() {
     document.getElementById('tabContent').innerHTML = '<div class="result-box">'
       + '<div style="font-size:2rem; margin-bottom:5px;">' + (earnedStars === 3 ? '🎉🎉🎉' : endStars) + '</div>'
       + '<h3>' + r.title + '</h3>'
+      + r.cultural
       + '<div class="score-num">' + dqScore + '/' + total + '</div>'
       + '<div style="font-size:.9rem;margin-top:6px;color:' + (isSuccess ? 'var(--c-success)' : 'var(--c-error)') + '">' + r.sub + '</div>'
       + '<div style="display:flex;gap:8px;justify-content:center;margin-top:14px;flex-wrap:wrap">'
@@ -4114,8 +4332,17 @@ function _quizResultStrings(pct, type) {
   else if (stars === 2) title = L('Gaarii dha! ⭐⭐',              'Très bien ! ⭐⭐');
   else if (stars === 1) title = L('Ni danda\'ama! ⭐',             'Bien ! ⭐');
 
+  /* 🆕 Clin d'œil mascotte sur un sans-faute (3⭐) : mélange des éléments
+     culturels du logo, décoratif uniquement (aria-hidden), donc pas de
+     nouveau texte à traduire. Même principe que .launcher-footer-cultural
+     et .hg-tldr-cultural (§5 / §12b). */
+  const cultural = (stars === 3)
+    ? '<div class="quiz-cultural-wink" aria-hidden="true">🗼 🛖 🌳 🐓 ☕ 🥐</div>'
+    : '';
+
   return {
     title : title,
+    cultural: cultural,
     sub   : isSuccess
       ? L('Kutaan kun milkiin darbeera! Tarreeffama haaraa argatteetta.',
           'Module validé ! Vous pouvez passer au suivant ou réessayer pour plus d\'étoiles.')
@@ -4375,32 +4602,101 @@ function showCredits() {
     '© Juin 2026 – Développé par Sébastien Godet · Assisté par IA Claude Sonnet 4.6 et Gemini 3.5 Flash'
   );
 
+  /* Ligne d'e-mail / LinkedIn — factorisée ici, réutilisée dans les 2 langues
+     à l'intérieur de la carte contact de la rubrique "Qui je suis". */
+  const contactLinks =
+      '<div class="ob-bio-links">'
+    + '<button class="ob-bio-btn antispam-btn" onclick="openAndCopyEmail()">✉️ <span class="antispam-email">moc.liamg@61tedog.neitsabes</span></button>'
+    + '<a class="ob-bio-btn" href="https://www.linkedin.com/in/s%C3%A9bastien-godet-142ba6145" target="_blank" rel="noopener noreferrer">💼 LinkedIn</a>'
+    + '</div>';
+
   if (bodyEl) {
     bodyEl.innerHTML = isFrench()
-      /* ── Texte Oromo (interface pour l'apprenant de français) ── */
+      /* ── Texte Oromo (interface pour l'apprenant de français) ──
+         2 rubriques repliables <details>/<summary> — même convention
+         que les accordéons du Guide (.hg-section), pour cohérence
+         visuelle et navigation clavier native (I7 / W1). */
       ? '<p class="credits-copy">' + lblCopy + '</p>'
-        + '<p><button class="antispam-btn credits-email" onclick="openAndCopyEmail()"><span class="antispam-email">moc.liamg@61tedog.neitsabes</span></button>'
-        + ' · <a href="https://www.linkedin.com/in/s%C3%A9bastien-godet-142ba6145" target="_blank" rel="noopener noreferrer">LinkedIn</a></p>'
         + '<hr class="credits-sep">'
-        + '<p>Galata guddaa <strong>Fédérico Calo</strong>'
-        + ' (<a href="https://www.linkedin.com/in/federicocalo/" target="_blank" rel="noopener noreferrer">Architektii Guddisaa Web</a>)'
-        + ' gargaarsa teknikaaf.</p>'
-        + '<p>Galata baay\'een <strong>Mussa Sembro</strong>'
-        + ' (<a href="https://www.linkedin.com/in/mussa-sembro-137472174/" target="_blank" rel="noopener noreferrer">Hiikkaa-Ibsituu Afaan Oromoo</a>)'
-        + ' — hiikaa, sirreessaa fi gorsa afaanii.</p>'
-        + '<p><strong>Maatii koo</strong> — irra deebi\'ee dubbisuu fi gorsaaf.</p>'
+
+        + '<details class="hg-section" open>'
+        +   '<summary class="hg-summary">'
+        +     '<span class="hg-icon">🙋</span>'
+        +     '<span class="hg-label">Eenyu ani?</span>'
+        +     '<span class="hg-chevron">▼</span>'
+        +   '</summary>'
+        +   '<div class="hg-detail">'
+        /* 🆕 Récit personnel — brouillon traduit, à FAIRE VALIDER PAR
+           MUSSA SEMBRO avant publication (contrairement au reste du
+           contenu Oromo de l'appli, déjà relu par lui). */
+        +     '<p>🏃 <strong>Sébastien Godet</strong>, waggaa 38. Maqaa kana duuba, ogeessa Jiyoograafii, leenjisaa atileetiksii, akkasumas nama michoomsuu jaalatu tokkotu jira. Kilabii atileetiksii Paris keessatti, Fulbaana 2016, <strong>Mussa Sembro</strong> wajjin walbarre — walitti dhufeenyi guddaa ta\'e.</p>'
+        +     '<p>✈️ Aadaa isaa fi naannoo isaa, Oromiyaa, ofuma kootiin ilaaluufan fedhii qabaadhe : Muddee 2024 keessa, ji\'a tokkoof gara isaa, Itoophiyaa dhaqe.</p>'
+        +     '<p>💡 Turtiin kun simannaa fi walitti dhufeenya addaa ture — afaan fi aadaa ani hin beekne baay\'ee baradhe. Mussa Faransaayiffaa bilchinaan dubbata, garuu dafee hubadhe : walitti dhufeenyi dhugaan ijaaramuu qabu, maatii isaatii fi michoota isaa achi jiraatan wajjin ture. Erga deebi\'ee booda, afaan isaaniitiin isaan wajjin dubbachuuf fedhiin natti hin dhumne. Waxabajjii 2026, Claude Artifacts argachuun, kaka\'umsi dhugaan achitti argame : carraan dandeettii koo developpimantii weebii IA gargaaramee guddisuu, pirojektii koo hojiirra oolchuuf furtuu naaf ta\'e.</p>'
+        +     '<p>🐄 Akkasitti <strong>Taphad\'Meuh</strong> dhalate. Pirojektiin kun tokkicha ta\'ee waan lama fide : barnoota teeknikaa koo mirkaneessuu fi meeshaa hir\'ate uumuu — appii bilisaa Faransaayotaa fi Oromoota walitti fiduuf, gorsa afaanii Mussa mataa isaatii fayyadamee.</p>'
+        +     '<div class="ob-bio-contact">'
+        +       '<div class="ob-bio-contact-title">💬 Yaada yookiin gorsa qabdaa?</div>'
+        +       '<p>Deebiin kee hundi baay\'ee barbaachisaa dha !</p>'
+        +       contactLinks
+        +     '</div>'
+        +   '</div>'
+        + '</details>'
+
+        + '<details class="hg-section">'
+        +   '<summary class="hg-summary">'
+        +     '<span class="hg-icon">🙏</span>'
+        +     '<span class="hg-label">Galateeffannaa</span>'
+        +     '<span class="hg-chevron">▼</span>'
+        +   '</summary>'
+        +   '<div class="hg-detail">'
+        +     '<p>👨\u200d💻 Galata guddaa <strong>Fédérico Calo</strong>'
+        +     ' (<a href="https://www.linkedin.com/in/federicocalo/" target="_blank" rel="noopener noreferrer">Architektii Guddisaa Web</a>)'
+        +     ' gargaarsa teknikaaf.</p>'
+        +     '<p>🌍 Galata baay\'een <strong>Mussa Sembro</strong>'
+        +     ' (<a href="https://www.linkedin.com/in/mussa-sembro-137472174/" target="_blank" rel="noopener noreferrer">Hiikkaa-Ibsituu Afaan Oromoo</a>)'
+        +     ' — hiikaa, sirreessaa fi gorsa afaanii.</p>'
+        +     '<p>👪 Galata guddaa <strong>maatii kootiif</strong> — irra deebi\'ee dubbisuu fi gorsaaf.</p>'
+        +   '</div>'
+        + '</details>'
+
       /* ── Texte français (interface pour l'apprenant d'Oromo) ── */
       : '<p class="credits-copy">' + lblCopy + '</p>'
-        + '<p><button class="antispam-btn credits-email" onclick="openAndCopyEmail()"><span class="antispam-email">moc.liamg@61tedog.neitsabes</span></button>'
-        + ' · <a href="https://www.linkedin.com/in/s%C3%A9bastien-godet-142ba6145" target="_blank" rel="noopener noreferrer">LinkedIn</a></p>'
         + '<hr class="credits-sep">'
-        + '<p>Un grand merci à <strong>Fédérico Calo</strong>'
-        + ' (<a href="https://www.linkedin.com/in/federicocalo/" target="_blank" rel="noopener noreferrer">Architecte Développeur Web</a>)'
-        + ' pour son aide technique.</p>'
-        + '<p>Merci beaucoup à <strong>Mussa Sembro</strong>'
-        + ' (<a href="https://www.linkedin.com/in/mussa-sembro-137472174/" target="_blank" rel="noopener noreferrer">Traducteur-Interprète en Oromo</a>)'
-        + ' pour son travail de traduction, ses corrections et ses précieux conseils linguistiques.</p>'
-        + '<p>Merci à mes <strong>parents</strong> pour leur relecture attentive et leurs conseils.</p>';
+
+        + '<details class="hg-section" open>'
+        +   '<summary class="hg-summary">'
+        +     '<span class="hg-icon">🙋</span>'
+        +     '<span class="hg-label">Qui je suis</span>'
+        +     '<span class="hg-chevron">▼</span>'
+        +   '</summary>'
+        +   '<div class="hg-detail">'
+        +     '<p>🏃 <strong>Sébastien Godet</strong>, 38 ans. Derrière ce nom, il y a un géographe de formation, un entraîneur d\'athlétisme et surtout un passionné par l\'art de tisser des liens. C\'est dans mon club d\'athlétisme parisien qu\'à l\'automne 2016, j\'ai rencontré <strong>Mussa Sembro</strong> — une rencontre qui allait beaucoup compter.</p>'
+        +     '<p>✈️ Sa culture et sa région d\'origine, l\'Oromia, m\'ont donné envie d\'aller voir par moi-même : en décembre 2024, je suis parti un mois chez lui, en Éthiopie.</p>'
+        +     '<p>💡 Ce séjour a été une immersion rare — accueil, échanges, une langue et une culture que je découvrais presque tout. Mussa parle un français parfait, mais j\'ai vite compris que le vrai lien à construire, c\'était avec sa famille et ses amis restés sur place. De retour, l\'envie de pouvoir échanger avec eux, dans leur langue, ne m\'a plus quitté. C\'est en juin 2026, avec la découverte de Claude Artifacts, que le déclic a eu lieu : cette opportunité de développer mes compétences en développement web grâce à l\'IA m\'a donné les clés pour donner vie au projet.</p>'
+        +     '<p>🐄 C\'est ainsi qu\'est né <strong>Taphad\'Meuh</strong>. Ce projet fait coup double : il concrétise mon apprentissage technique tout en créant l\'outil qui manquait — une appli gratuite pour tisser des ponts entre francophones et oromophones, avec les précieux conseils linguistiques de Mussa lui-même.</p>'
+        +     '<div class="ob-bio-contact">'
+        +       '<div class="ob-bio-contact-title">💬 Une remarque, une idée ?</div>'
+        +       '<p>Chaque retour compte vraiment !</p>'
+        +       contactLinks
+        +     '</div>'
+        +   '</div>'
+        + '</details>'
+
+        + '<details class="hg-section">'
+        +   '<summary class="hg-summary">'
+        +     '<span class="hg-icon">🙏</span>'
+        +     '<span class="hg-label">Remerciements</span>'
+        +     '<span class="hg-chevron">▼</span>'
+        +   '</summary>'
+        +   '<div class="hg-detail">'
+        +     '<p>👨\u200d💻 Un grand merci à <strong>Fédérico Calo</strong>'
+        +     ' (<a href="https://www.linkedin.com/in/federicocalo/" target="_blank" rel="noopener noreferrer">Architecte Développeur Web</a>)'
+        +     ' pour son aide technique.</p>'
+        +     '<p>🌍 Merci beaucoup à <strong>Mussa Sembro</strong>'
+        +     ' (<a href="https://www.linkedin.com/in/mussa-sembro-137472174/" target="_blank" rel="noopener noreferrer">Traducteur-Interprète en Oromo</a>)'
+        +     ' pour son travail de traduction, ses corrections et ses précieux conseils linguistiques.</p>'
+        +     '<p>👪 Merci à mes <strong>parents</strong> pour leur relecture attentive et leurs conseils.</p>'
+        +   '</div>'
+        + '</details>';
   }
 
   const modal = document.getElementById('credits-modal');
@@ -4447,6 +4743,78 @@ function closeCreditsModal() {
 document.querySelectorAll('.lang-card[data-lang]').forEach((card) => {
   card.addEventListener('click', () => {
     initApp(card.getAttribute('data-lang'));
+  });
+});
+
+
+/* ============================================================
+   15b. 🆕 (22/07/2026) LANCEUR — PANNEAUX INFOS DÉPLIABLES
+   ============================================================
+   Chaque carte de langue (#app-launcher) porte désormais un bloc
+   <details class="lang-card-info"> listant ce que propose ce
+   parcours (voir index.html pour la convention de langue des
+   puces — inverse du nom de la carte).
+
+   RÈGLE D'ÉTAT PAR DÉFAUT (point 7 de la demande) :
+     • Tout premier lancement de l'app (le parcours correspondant
+       n'a JAMAIS atteint l'écran des modules — flag localStorage
+       'tm_onboarded_fr'/'tm_onboarded_or', §17, absent) → déplié.
+     • Dès que CE parcours a atteint l'écran des modules au moins
+       une fois (flag posé, voir _buildHomeGuide → bouton "Commencer"),
+       son panneau se replie par défaut au prochain retour ici.
+     • Un choix manuel de l'apprenant (a rouvert ou refermé un
+       panneau à la main) prime TOUJOURS sur cette valeur par
+       défaut — mémorisé séparément par parcours ci-dessous.
+   CHOIX DE CONCEPTION : cette règle est appliquée par CARTE (clé
+   'tm_onboarded_fr' pour la carte fr, '..._or' pour la carte or)
+   plutôt que globalement aux 2 panneaux à la fois. Un apprenant qui
+   a déjà exploré le parcours français n'a plus besoin qu'on le lui
+   rappelle, mais le parcours oromo jamais commencé reste ouvert
+   tant qu'il n'a pas, lui, été visité — cohérent avec le fait que
+   ces 2 flags de progression sont déjà indépendants dans toute
+   l'app (voir §17, STORAGE_KEY, OPENED_KEY plus haut).
+
+   <details>/<summary> natif : l'ouverture/fermeture au clic est
+   déjà gérée par le navigateur (comme .hg-section, .level-details) ;
+   ce script se contente de poser l'état initial et d'écouter
+   l'évènement 'toggle' pour mémoriser une préférence manuelle.
+   ============================================================ */
+const _LAUNCHER_INFO_PREF_FR = 'pe_launcher_info_fr_v1'; // 'open' | 'closed' — absent = aucune préférence manuelle
+const _LAUNCHER_INFO_PREF_OR = 'pe_launcher_info_or_v1';
+
+/**
+ * Détermine si un panneau infos du launcher doit être déplié au rendu.
+ * Priorité : préférence manuelle explicite > règle par défaut (point 7).
+ * @param {string} prefKey - clé localStorage de préférence manuelle du panneau
+ * @param {string} obKey   - clé localStorage 'tm_onboarded_*' du parcours associé
+ * @returns {boolean}
+ */
+function _shouldLauncherInfoBeOpen(prefKey, obKey) {
+  const manual = localStorage.getItem(prefKey);
+  if (manual === 'open')   return true;
+  if (manual === 'closed') return false;
+  /* Aucune préférence manuelle : ouvert tant que ce parcours n'a
+     jamais atteint l'écran des modules. */
+  return localStorage.getItem(obKey) !== 'true';
+}
+
+document.querySelectorAll('.lang-card-info[data-lang]').forEach((panel) => {
+  const isFrPanel = panel.getAttribute('data-lang') === 'learn_french';
+  const prefKey = isFrPanel ? _LAUNCHER_INFO_PREF_FR : _LAUNCHER_INFO_PREF_OR;
+  const obKey   = isFrPanel ? _OB_KEY_FR : _OB_KEY_OR;
+
+  /* État initial (déplié/replié) — écrase l'attribut "open" HTML
+     statique posé en secours pour les navigateurs sans JS. */
+  panel.open = _shouldLauncherInfoBeOpen(prefKey, obKey);
+
+  /* Toute interaction manuelle (clic sur le résumé, ou clavier —
+     Entrée/Espace sur un <summary> focus, géré nativement) devient
+     la préférence de l'apprenant : elle prime désormais sur la
+     règle par défaut, qu'elle rouvre un panneau que le défaut
+     aurait replié ou referme un panneau que le défaut aurait gardé
+     ouvert (point 7, dernier tiret). */
+  panel.addEventListener('toggle', () => {
+    localStorage.setItem(prefKey, panel.open ? 'open' : 'closed');
   });
 });
 

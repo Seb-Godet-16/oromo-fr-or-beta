@@ -29,19 +29,34 @@
   ╠══════════════════════════════════════════════════════════════════╣
   ║  PLAN DU FICHIER                                                ║
   ║   <head>    Métadonnées, PWA, Open Graph, feuille de styles     ║
-  ║   Écran 0   Lanceur (#app-launcher)           ligne    151      ║
-  ║   Écran 1   Guide / Onboarding (#home)        ligne    254      ║
-  ║   Écran 2a  Niveau 1 Modules (#sections-l1)   ligne   1065      ║
-  ║   Écran 2b  Niveau 2 Modules (#sections-l2)   ligne   1097      ║
-  ║   Écran 3   Leçon (#lesson)                   ligne   1134      ║
-  ║   Modale    Remerciements (#credits-modal)    ligne   1213      ║
-  ║   Modale    Confirmation suppression          ligne   1246      ║
-  ║   Nav       Barre de navigation basse         ligne   1262      ║
-  ║   Scripts   Chargement de app.js              ligne   1304      ║
-  ║  🆕 12/07/2026 : plan resynchronisé — numéros de ligne à        ║
-  ║  nouveau décalés depuis le 11/07/2026 suite à des évolutions    ║
-  ║  du Guide et des grilles de modules non répercutées ici        ║
-  ║  entre-temps — voir Bilan_technique.md §6.21.                   ║
+  ║   Écran 0   Lanceur (#app-launcher, dont 🆕 bouton              ║
+  ║             Quitter)                          ligne    157      ║
+  ║   Écran 1   Guide / Onboarding (#home, dont 🆕                  ║
+  ║             nav rapide + Quitter)              ligne    358      ║
+  ║   Écran 2a  Niveau 1 Modules (#sections-level1) ligne  1443      ║
+  ║   Écran 2b  Niveau 2 Modules (#sections-level2) ligne  1483      ║
+  ║   Écran 3   Leçon (#lesson, dont 🆕 rangée                       ║
+  ║             .lesson-quick-nav)                ligne   1528      ║
+  ║   Modale    Remerciements (#credits-modal)    ligne   1624      ║
+  ║   Modale    Confirmation suppression          ligne   1657      ║
+  ║   Modale 🆕 Quitter l'application              ligne   1684      ║
+  ║             (#quit-app-modal)                                   ║
+  ║   Nav       Barre de navigation basse         ligne   1701      ║
+  ║   Scripts   Chargement de app.js              ligne   1743      ║
+  ║  🆕 23/07/2026 : plan resynchronisé — ajout d'un bouton Quitter  ║
+  ║  sur chaque écran (+ sa modale dédiée) et d'une nav rapide       ║
+  ║  🏠❓📚 étendue à Home/Sections/Leçon (jusqu'ici limitée à       ║
+  ║  Sections). Voir _updateQuickNav()/openQuitModal() dans app.js.  ║
+  ║  Tout le fichier a décalé de ~+79 lignes. Voir Bilan_technique.md.║
+  ║                                                                  ║
+  ║  🆕 24/07/2026 : resynchronisation. Deux origines à l'écart      ║
+  ║  constaté : (1) les ajouts de cette session — logo étendu aux    ║
+  ║  écrans Sections, mélange culturel (§Footer, §hg-tldr) — soit    ║
+  ║  ~+16 lignes ; (2) un écart PRÉEXISTANT, non lié à ces ajouts,   ║
+  ║  déjà présent dans le fichier reçu en début de session (Écran 2a ║
+  ║  déjà à la ligne 1437 réelle contre 1205 indiqué au plan) —      ║
+  ║  signalé rétroactivement, non investigué plus avant. Toutes les  ║
+  ║  ancres ci-dessus reflètent la position réelle actuelle.         ║
   ║                                                                  ║
   ╚══════════════════════════════════════════════════════════════════╝
 -->
@@ -153,6 +168,15 @@
     <!-- Couche d'arrière-plan décorative (gérée par style.css) -->
     <div class="launcher-bg"></div>
 
+    <!--
+      🆕 Bouton "Quitter" (🚪) — accessible dès le tout premier écran,
+      avant même le choix de langue. Ouvre la modale #quit-app-modal
+      (voir openQuitModal() dans app.js). Bilingue en dur (aucun mode
+      choisi à ce stade → L() ne serait pas encore pertinent).
+    -->
+    <button type="button" class="launcher-quit-btn" id="launcherQuitBtn"
+            onclick="openQuitModal()" aria-label="Quitter · Bahuu" title="Quitter · Bahuu">🚪</button>
+
     <!-- Contenu centré du lanceur -->
     <div class="launcher-inner">
       <!--
@@ -177,39 +201,124 @@
         Choisis ta langue <span class="launcher-title-translation">· Afaan kee filadhu</span>
       </div>
 
-      <!-- Cartes de sélection de langue -->
+      <!--
+        ══════════════════════════════════════════════════════════════
+        🆕 (22/07/2026) Cartes de sélection de langue — REFONTE
+        ────────────────────────────────────────────────────────────
+        Chaque langue = UN SEUL bloc (bouton-carte + panneau infos
+        dépliable), désormais côte à côte plutôt qu'empilés.
+
+        Structure (4 enfants DIRECTS de .launcher-cards, SANS wrapper) :
+          1. .lang-card      (bouton fr)   3. .lang-card-info (fr)
+          2. .lang-card      (bouton or)   4. .lang-card-info (or)
+        Ce choix (pas de <div> englobant par langue) est volontaire :
+        .launcher-cards est une grille CSS 2 colonnes, et l'ordre du
+        DOM place naturellement les 2 boutons sur la RANGÉE 1 et les
+        2 panneaux infos sur la RANGÉE 2 (voir style.css §5). Une
+        grille CSS étire par défaut tous les éléments d'une même
+        rangée à la même hauteur → les 2 CARTES (rangée 1) ont donc
+        TOUJOURS la même taille, quelle que soit la longueur du texte
+        fr/or (point 6 de la demande), sans JS ni hauteur fixée en dur.
+
+        CONVENTION DE LANGUE DES PUCES (point 4) :
+        Le nom de la carte est dans la langue CIBLE apprise (ex :
+        "Apprendre le Français" = branding en français, cette carte
+        enseigne le français). Le sous-titre est déjà la traduction
+        dans la langue de l'AUDIENCE (apprenant). Les puces du
+        panneau infos suivent donc la langue du SOUS-TITRE (= inverse
+        du nom) pour rester compréhensibles par l'audience visée :
+          • carte "Apprendre le Français" → apprenant OROMOPHONE
+            → puces en OROMO (voir initApp() dans app.js : mode
+            learn_french ⇒ apprenant natif oromophone).
+          • carte "Afaan Oromoo Barachuu" (= "Apprendre l'Oromo")
+            → apprenant FRANCOPHONE → puces en FRANÇAIS.
+        Le libellé à gauche du bouton "i", la pastille "à toucher"
+        et le texte des puces suivent tous cette même langue audience.
+
+        État déplié/replié par défaut + mémorisation d'une éventuelle
+        préférence manuelle : géré par app.js §15b (élément <details>
+        natif, pas de logique de visibilité custom nécessaire).
+        ══════════════════════════════════════════════════════════════
+      -->
       <div class="launcher-cards">
 
         <!--
-          Carte Français
+          Carte Français (enseigne le français → audience oromophone)
           • lang-card--fr : variante colorée (voir style.css)
-          • data-lang non utilisé ici ; le clic est géré par l'écouteur
-            d'événements ajouté dans app.js (voir OPTIMISATION ci-dessous)
-          OPTIMISATION : l'attribut onclick inline a été remplacé par un
-          écouteur addEventListener dans app.js afin de séparer
-          strictement le HTML (structure) du JS (comportement).
+          • data-lang non utilisé pour le style ; le clic est géré par
+            l'écouteur addEventListener ajouté dans app.js (§15), afin
+            de séparer strictement le HTML (structure) du JS (comportement).
         -->
-        <button class="lang-card lang-card--fr" data-lang="learn_french">
-          <div class="lang-card-flag">🇫🇷</div>
-          <div class="lang-card-body">
-            <span class="lang-card-name">Apprendre le Français</span>
-            <span class="lang-card-sub">Afaan Faransaayii Barachuu</span>
-          </div>
-          <div class="lang-card-arrow">›</div>
+        <button class="lang-card lang-card--fr" type="button" data-lang="learn_french">
+          <!-- Pastille "à toucher" — texte + flèche animée (point 3).
+               aria-hidden : purement visuelle, redondante pour les
+               lecteurs d'écran (un <button> est déjà annoncé comme
+               activable). Langue = celle de l'audience (oromophone). -->
+          <span class="lang-card-tap-hint" aria-hidden="true">
+            <span class="lang-card-tap-text">Tuqi</span>
+            <span class="lang-card-tap-arrow">➜</span>
+          </span>
+          <span class="lang-card-flag">🇫🇷</span>
+          <span class="lang-card-name">Apprendre le Français</span>
+          <span class="lang-card-sub">Afaan Faransaayii Barachuu</span>
         </button>
 
         <!--
-          Carte Oromo
+          Carte Oromo (enseigne l'oromo → audience francophone)
           • lang-card--or : variante colorée (voir style.css)
         -->
-        <button class="lang-card lang-card--or" data-lang="learn_oromo">
-          <div class="lang-card-flag">🇪🇹</div>
-          <div class="lang-card-body">
-            <span class="lang-card-name">Afaan Oromoo Barachuu</span>
-            <span class="lang-card-sub">Apprendre l'Oromo</span>
-          </div>
-          <div class="lang-card-arrow">›</div>
+        <button class="lang-card lang-card--or" type="button" data-lang="learn_oromo">
+          <span class="lang-card-tap-hint" aria-hidden="true">
+            <span class="lang-card-tap-text">Touchez</span>
+            <span class="lang-card-tap-arrow">➜</span>
+          </span>
+          <span class="lang-card-flag">🇪🇹</span>
+          <span class="lang-card-name">Afaan Oromoo Barachuu</span>
+          <span class="lang-card-sub">Apprendre l'Oromo</span>
         </button>
+
+        <!--
+          Panneau infos — carte Français — puces en OROMO (audience).
+          <details>/<summary> natif : gère nativement le clavier et
+          l'état ouvert/fermé, cohérent avec les autres accordéons de
+          l'app (.hg-section, .level-details — voir style.css).
+          L'attribut "open" ci-dessous n'est qu'une valeur de secours
+          pour navigateurs sans JS ; app.js §15b l'écrase
+          systématiquement au chargement selon la règle définie au
+          point 7 de la demande (voir commentaire détaillé là-bas).
+        -->
+        <details class="lang-card-info lang-card-info--fr" data-lang="learn_french" id="langCardInfoFr" open>
+          <summary class="lang-card-info-summary">
+            <span class="lang-card-info-label">Odeeffannoo waa'ee "Afaan Faransaayii Barachuu"</span>
+            <span class="lang-card-info-icons" aria-hidden="true">
+              <span class="lang-card-info-i">i</span>
+              <span class="lang-card-info-chevron">▾</span>
+            </span>
+          </summary>
+          <ul class="lang-card-info-list">
+            <li>📚 Mata duree 48 — jechoota 32 fi dubbii 16</li>
+            <li>🔊 Kaardota + sagalee jecha hundaaf</li>
+            <li>🎯 Quiz ittiin of madaaltu</li>
+            <li>📴 Bilisaa, galmee malee, interneetii malee illee ni hojjeta</li>
+          </ul>
+        </details>
+
+        <!-- Panneau infos — carte Oromo — puces en FRANÇAIS (audience). -->
+        <details class="lang-card-info lang-card-info--or" data-lang="learn_oromo" id="langCardInfoOr" open>
+          <summary class="lang-card-info-summary">
+            <span class="lang-card-info-label">Infos sur « Apprendre l'Oromo »</span>
+            <span class="lang-card-info-icons" aria-hidden="true">
+              <span class="lang-card-info-i">i</span>
+              <span class="lang-card-info-chevron">▾</span>
+            </span>
+          </summary>
+          <ul class="lang-card-info-list">
+            <li>📚 48 thèmes — 32 de vocabulaire, 16 de dialogues</li>
+            <li>🔊 Cartes flash + audio pour chaque mot</li>
+            <li>🎯 Quiz pour vérifier vos progrès</li>
+            <li>📴 Gratuit, sans inscription, utilisable hors-ligne</li>
+          </ul>
+        </details>
 
       </div><!-- /.launcher-cards -->
     </div><!-- /.launcher-inner -->
@@ -227,6 +336,10 @@
         déclencheur de modale sans logique propre à la vue.
       -->
       <a href="#" onclick="showCredits()">Remerciements</a>
+      <!-- 🆕 Mélange des éléments culturels illustrés sur le drapeau du logo
+           (tour Eiffel, case traditionnelle, baobab, coq, café, croissant) —
+           simple clin d'œil décoratif, aria-hidden car purement visuel. -->
+      <span class="launcher-footer-cultural" aria-hidden="true" title="Tour Eiffel · Case traditionnelle · Baobab · Coq · Café · Croissant">🗼 🛖 🌳 🐓 ☕ 🥐</span>
     </footer>
 
   </div><!-- /#app-launcher -->
@@ -253,9 +366,27 @@
        ════════════════════════════════════════════════════════════════ -->
   <div id="home" class="screen">
 
-    <!-- Titre fixe en haut — mis à jour par _buildHomeGuide() -->
+    <!--
+      Titre fixe en haut — mis à jour par _buildHomeGuide().
+      🆕 Étendu à 3 zones (voir _updateQuickNav() dans app.js, §5b) :
+        • gauche  : nav rapide 🏠 Accueil / ❓ Guide (écran courant,
+                    désactivé) / 📚 Modules — 📚 reste MASQUÉ tant que
+                    le guide n'a jamais été validé pour ce mode (bouton
+                    "Commencer" jamais cliqué), pour que l'apprenant
+                    voie bien tout le guide à la toute première visite.
+                    🏠/❓ restent toujours visibles : ils ramènent vers
+                    un écran déjà vu, ils ne font sauter aucun contenu.
+        • centre  : titre (inchangé)
+        • droite  : 🚪 Quitter — toujours visible, y compris ici.
+    -->
     <div class="home-topbar">
+      <div class="back-btn-group" id="homeQnGroup">
+        <button class="back-btn-icon" id="homeQnHomeBtn" onclick="goToAccueil()" aria-label="Accueil">🏠</button>
+        <button class="back-btn-icon" id="homeQnGuideBtn" onclick="goToGuide()" aria-label="Guide">❓</button>
+        <button class="back-btn-icon" id="homeQnModulesBtn" onclick="navGoModules()" aria-label="Modules">📚</button>
+      </div>
       <span class="home-topbar-title" id="homeTopbarTitle"></span>
+      <button class="back-btn-icon quit-icon-btn" id="homeQuitBtn" onclick="openQuitModal()" aria-label="Quitter">🚪</button>
     </div>
 
     <!-- En-tête coloré — IDs mis à jour par _buildHomeGuide() -->
@@ -297,47 +428,37 @@
       <div class="home-progress-wrap" id="homeProgressWrap" style="display:none"></div>
 
       <!--
-        🆕 Bloc "En bref" — repositionné ici (entre le bouton d'installation
-        et le bouton Commencer), pour reprendre la mise en page validée sur
-        l'app espagnole : badges → installation → l'essentiel → Commencer.
-        Auparavant en tête de #homeGuideBody, donc affiché APRÈS le bouton
-        Commencer au lieu d'avant.
-        Chaque variante linguistique reste déclarée comme un .home-lang-block
-        à part entière : la bascule de langue de _buildHomeGuide() repose sur
-        document.querySelectorAll('.home-lang-block') et s'applique donc
-        quel que soit l'endroit du DOM où se trouve l'élément — le déplacer
-        hors de #homeGuideBody ne casse rien. #homeGuideBody ne contenait de
-        toute façon jamais ce bloc dans les exports PDF (_exportGuide() ne
-        récupère que les <details class="hg-section">), donc ce déplacement
-        n'affecte pas non plus le PDF. Voir Bilan_technique.md §6.17.
+        🆕 (23/07/2026) Bloc "En bref" déplacé — repositionné à nouveau,
+        cette fois EN TÊTE de #homeGuideBody (voir plus bas), donc APRÈS
+        la barre sticky Commencer + PDF au lieu d'avant.
+        Raison : remonter la ligne "Commencer"/PDF au-dessus de ce bloc,
+        pour que l'apprenant n'ait pas à faire défiler tout le résumé
+        "L'essentiel en 30 secondes" avant d'apercevoir le bouton qui
+        le fait réellement avancer. Nouvel ordre visuel de l'en-tête :
+        badges → installation → (progression) → Commencer/PDF → l'essentiel.
+        Historique : ce bloc était déjà en tête de #homeGuideBody à
+        l'origine, puis avait été remonté ICI (dans le header, avant
+        Commencer) pour reprendre la mise en page de l'app espagnole
+        (badges → installation → l'essentiel → Commencer) — voir
+        Bilan_technique.md §6.17. Le retour arrière ci-dessous n'annule
+        pas cette mise en page espagnole sur le FOND (l'essentiel reste
+        juste après l'en-tête, bien visible), seulement sur l'ORDRE
+        relatif au bouton Commencer, jugé prioritaire par les retours
+        apprenants (trop de défilement pour l'atteindre).
+        Comme précédemment, cela ne casse rien : la bascule de langue
+        de _buildHomeGuide() repose sur querySelectorAll('.home-lang-block')
+        et s'applique quel que soit l'endroit du DOM ; _exportGuide() ne
+        récupère que les <details class="hg-section"> (jamais ce bloc),
+        donc ce déplacement n'affecte pas non plus le PDF.
       -->
-      <div class="home-lang-block home-lang-hidden" data-lang="or">
-        <div class="hg-tldr">
-          <h3 class="hg-tldr-title">🚀 Daqiiqaa 30 keessatti waan beekuu qabdu</h3>
-          <ul class="hg-tldr-list">
-            <li>📚 Sadarkaa lama : Jechoota (mata duree 32) ergasii Dubbii (16) — Kaardota, Quiz, Irra deebʼi</li>
-            <li>🔊 Sagaleen ni jira ; Faransaayiif sagaleen bilbila hedduu irratti argama — rakkoo addaa hin qabu</li>
-            <li>📴 Buufamee interneetii malee ni hojjeta — 🎤 Irra deebʼi malee, kun yeroo hunda interneetii barbaada, erga buufamees</li>
-            <li>🌐 Browser — Android : Chrome, Samsung Internet, Edge, Opera fi Brave hundi ni ta'u ; Firefox 🎤 Irra deebʼiif gonkumaa hin hojjetu ; DuckDuckGo fi UC Browser hin mirkanaa'ini. iPhone/iPad : Safari fayyadami — 100% amansiisaa argachuuf</li>
-          </ul>
-          <p class="hg-tldr-footer">Ibsi guutuun armaan gaditti, yookiin booda caancala ❓ Gargaarsa irraa.</p>
-        </div>
-      </div>
-      <div class="home-lang-block home-lang-hidden" data-lang="fr">
-        <div class="hg-tldr">
-          <h3 class="hg-tldr-title">🚀 L'essentiel en 30 secondes</h3>
-          <ul class="hg-tldr-list">
-            <li>📚 2 niveaux : Vocabulaire (32 thèmes) puis Dialogues (16) — Cartes, Quiz, Répète</li>
-            <li>🔊 Audio inclus ; en Oromo, la voix « idéale » est parfois remplacée par une voix proche (Somali, Amharique…) — normal, pas un bug</li>
-            <li>📴 Installable et utilisable hors-ligne — sauf 🎤 Répète, qui a toujours besoin d'internet, même une fois installée</li>
-            <li>🌐 Navigateur — Android : Chrome, Samsung Internet, Edge, Opera et Brave conviennent tous ; Firefox ne permet jamais 🎤 Répète ; DuckDuckGo et UC Browser sont moins éprouvés. iPhone/iPad : utilisez Safari pour une expérience garantie à 100%</li>
-          </ul>
-          <p class="hg-tldr-footer">Détails complets ci-dessous, ou plus tard via le bouton ❓ Guide.</p>
-        </div>
-      </div>
     </div><!-- /.home-guide-header -->
 
-    <!-- Bouton Commencer + bouton PDF Guide côte à côte dans la barre sticky -->
+    <!-- Bouton Commencer + bouton PDF Guide côte à côte dans la barre sticky —
+         🆕 (23/07/2026) remonté juste après l'en-tête (badges/installation/
+         progression), donc AVANT le bloc "L'essentiel en 30 secondes"
+         (déplacé plus bas, en tête de #homeGuideBody) : l'apprenant voit
+         désormais le bouton qui fait avancer sans avoir à défiler le
+         résumé au préalable. Voir commentaire ci-dessus. -->
     <div class="home-start-sticky">
       <div class="home-start-row">
         <button class="btn-start-main" id="homeStartBtn" onclick="showScreen('sections-level1')"></button>
@@ -361,6 +482,23 @@
            ───────────────────────────────────────────────────────── -->
       <div class="home-lang-block home-lang-hidden" data-lang="or">
 
+        <!--
+          🆕 (23/07/2026) "L'essentiel en 30 secondes" — de retour en tête
+          de #homeGuideBody (voir commentaire détaillé dans .home-guide-header
+          ci-dessus), donc juste APRÈS la barre sticky Commencer + PDF.
+        -->
+        <div class="hg-tldr">
+          <h3 class="hg-tldr-title">🚀 Daqiiqaa 30 keessatti waan beekuu qabdu</h3>
+          <ul class="hg-tldr-list">
+            <li>📚 Sadarkaa lama : Jechoota (mata duree 32) ergasii Dubbii (16) — Kaardota, Quiz, Irra deebʼi</li>
+            <li>🔊 Sagaleen ni jira ; Faransaayiif sagaleen bilbila hedduu irratti argama — rakkoo addaa hin qabu</li>
+            <li>📴 Buufamee interneetii malee ni hojjeta — 🎤 Irra deebʼi malee, kun yeroo hunda interneetii barbaada, erga buufamees</li>
+            <li>🌐 Browser — Android : Chrome, Samsung Internet, Edge, Opera fi Brave hundi ni ta'u ; Firefox 🎤 Irra deebʼiif gonkumaa hin hojjetu ; DuckDuckGo fi UC Browser hin mirkanaa'ini. iPhone/iPad : Safari fayyadami — 100% amansiisaa argachuuf</li>
+          </ul>
+          <p class="hg-tldr-footer">Ibsi guutuun armaan gaditti, yookiin booda caancala ❓ Gargaarsa irraa.</p>
+          <span class="hg-tldr-cultural" aria-hidden="true" title="Gamtoomina aadaa — Faransaayi fi Oromiyaa">🗼 🛖 🌳 🐓 ☕ 🥐</span>
+        </div>
+
         <!-- 1. Comment ça marche -->
         <details class="hg-section">
           <summary class="hg-summary">
@@ -369,6 +507,17 @@
             <span class="hg-chevron">▼</span>
           </summary>
           <div class="hg-detail">
+            <div class="hg-essential">
+              <p class="hg-essential-title">🔑 Waan Beekuu Qabdan</p>
+              <ul class="hg-essential-list">
+                <li>📚 <strong>Sadarkaa 2</strong> : Jechoota (mata duree 32) ergasii Dubbii (16)</li>
+                <li>⭐ Quiz booda : ≥ 50% = ⭐ · ≥ 75% = ⭐⭐ · 100% = ⭐⭐⭐ (gonkumaa hin hir'atu)</li>
+                <li>💡 Sadarkaa 1 irraa jalqabi — Sadarkaa 2 booda salphaa taʼa</li>
+              </ul>
+            </div>
+            <details class="hg-subdetail">
+              <summary class="hg-subsummary"><span class="hg-subchevron">▼</span> Ibsa guutuu ilaali</summary>
+              <div class="hg-subdetail-content">
             <p>Appiin kun <strong>tartiiba keessan</strong> tarkaanfii tarkaanfiitti, yeroo keessanitti, galmee fi kafaltii malee isin qajeelcha.</p>
             <p>Appiin kun <strong>sadarkaa lama</strong> qaba :</p>
             <ul>
@@ -393,6 +542,8 @@
             </ul>
             <p>Fuula <strong>Gargaarsa</strong> kun yeroo hunda caancala ❓ gara jalaa cuqaasuun ni mulʼata.</p>
             <div class="ob-tip">💡 Sadarkaa 1 irraa jalqabi — booda sadarkaa 2 salphaa taʼa !</div>
+              </div>
+            </details>
           </div>
         </details>
 
@@ -404,6 +555,17 @@
             <span class="hg-chevron">▼</span>
           </summary>
           <div class="hg-detail">
+            <div class="hg-essential">
+              <p class="hg-essential-title">🔑 Waan Beekuu Qabdan</p>
+              <ul class="hg-essential-list">
+                <li>💸 Bilisaa guutuu, galmee malee, beeksisa malee</li>
+                <li>🔊🎤📴 Sagalee, dubbii shaakaluu fi interneetii malee hojjechuu ni dandeessa</li>
+                <li>⭐ Tartiibni urjii ni eegama — gonkumaa hin hir'atu</li>
+              </ul>
+            </div>
+            <details class="hg-subdetail">
+              <summary class="hg-subsummary"><span class="hg-subchevron">▼</span> Ibsa guutuu ilaali</summary>
+              <div class="hg-subdetail-content">
             <ul>
               <li>💸 <strong>Bilisaa guutuu</strong> — gatii hin kaffaltu, beeksisni hin jiru</li>
               <li>🚫 <strong>Galmee malee</strong> — app bani, hojjechuuf jalqabi</li>
@@ -414,6 +576,8 @@
               <li>⭐ <strong>Tartiiba urjii</strong> — madaala keessan kan darbee ni eegama ; caalmaan argatte ol ni ba'a, gad bu'u hin beeku</li>
             </ul>
             <div class="ob-tip">💡 Appiin kun meeshaa tokkicha hin taʼu — Duolingo fi barsiisaa waliin itti fayyadami !</div>
+              </div>
+            </details>
           </div>
         </details>
 
@@ -425,6 +589,17 @@
             <span class="hg-chevron">▼</span>
           </summary>
           <div class="hg-detail">
+            <div class="hg-essential">
+              <p class="hg-essential-title">🔑 Waan Beekuu Qabdan</p>
+              <ul class="hg-essential-list">
+                <li>🧩 Meeshaan tokko qofti gahaa miti — walitti makuutu gaarii dha</li>
+                <li>📱 App tana : jechoota sirna qabsiifte + sagalee + interneetii malee</li>
+                <li>🦉🏫🗣️ Duolingo/mana barumsaa caasluga qofaaf, hiriyoota uumamaa dubbii dhugaaf</li>
+              </ul>
+            </div>
+            <details class="hg-subdetail">
+              <summary class="hg-subsummary"><span class="hg-subchevron">▼</span> Ibsa guutuu ilaali</summary>
+              <div class="hg-subdetail-content">
             <p>Meeshaa tokko qofti gahaa miti — walitti makuun saffisaan barata !</p>
             <div class="ob-compare">
               <div class="ob-compare-col">
@@ -445,6 +620,8 @@
               </div>
             </div>
             <div class="ob-tip">💡 Gorsa keenya : app kana jechota irratti hojjechuuf fayyadami — booda Duolingo yookiin barsiisaa caaslugaaf fayyadami, fi hiriyoota uumamaa waliin dubbii dhugaa shaakali. Meeshaaleen hunduu wal-cimsu !</div>
+              </div>
+            </details>
           </div>
         </details>
 
@@ -465,6 +642,17 @@
             <span class="hg-chevron">▼</span>
           </summary>
           <div class="hg-detail">
+            <div class="hg-essential">
+              <p class="hg-essential-title">🔑 Waan Beekuu Qabdan</p>
+              <ul class="hg-essential-list">
+                <li>🤖 Android : Chrome, Samsung Internet, Edge, Opera, Brave, Vivaldi hundi ni ta'u</li>
+                <li>❌ Firefox : 🎤 Irra deebʼi gonkumaa hin hojjetu</li>
+                <li>🍎 iPhone/iPad : <strong>Safari</strong> fayyadami — 100% amansiisaa argachuuf</li>
+              </ul>
+            </div>
+            <details class="hg-subdetail">
+              <summary class="hg-subsummary"><span class="hg-subchevron">▼</span> Ibsa guutuu ilaali</summary>
+              <div class="hg-subdetail-content">
             <p>Hojiiwwan appii kanaa sadii — 🔊 <strong>Dhaggeeffachuu</strong>, 🎤 <strong>Irra deebʼi</strong> fi 📲 <strong>interneetii malee buusuu</strong> — browser fayyadamtu irratti hirkatu. Kunoo browser addunyaa irratti baay'ee fayyadamaman, akkaataa amansiisummaa isaaniitiin walbira qabame.</p>
 
             <div class="ob-audio-block">
@@ -498,6 +686,8 @@
             </div>
 
             <div class="ob-tip">💡 Cuunfaa : Android irratti, browser Chromium baay'een (Chrome, Samsung Internet, Edge, Opera, Brave, Vivaldi) ni ta'u — Firefox qofa 🎤 Irra deebʼiif rakkoo qaba. iPhone/iPad irratti, <strong>Safari</strong> fayyadami — 100% amansiisaa argachuuf.</div>
+              </div>
+            </details>
           </div>
         </details>
 
@@ -509,6 +699,17 @@
             <span class="hg-chevron">▼</span>
           </summary>
           <div class="hg-detail">
+            <div class="hg-essential">
+              <p class="hg-essential-title">🔑 Waan Beekuu Qabdan</p>
+              <ul class="hg-essential-list">
+                <li>⚙️ Qindaa'ina bilbila keetii keessatti sagalee filadhu (Android : Gargaarsa → Sagalee uumamaa ; iOS : Gargaarsa → Dubbii → Sagalee)</li>
+                <li>🎧 Sagaleen dhugaa yoo hin jiraanne, sagaleen dhihoo (Somali, Amharic…) ofumaan bakka bu'a</li>
+                <li>🎤 Cimdiin Irra deebʼi hayyama maaykiroofoonii barbaada</li>
+              </ul>
+            </div>
+            <details class="hg-subdetail">
+              <summary class="hg-subsummary"><span class="hg-subchevron">▼</span> Ibsa guutuu ilaali</summary>
+              <div class="hg-subdetail-content">
             <h4 style="margin:0 0 .4em;font-size:.95em">🔊 Sagalee qindeessuu</h4>
             <p>Sagalee sirriitti dhageeffachuun barachuu keessatti barbaachisaa dha. Appiin kun <strong>sagalee browser yookiin bilbila kee</strong> (Web Speech API) fayyadama. Sagaleen Faransaayii meeshaalee hedduu irratti argama — yoo hin jiraanne, gara gadii hordofi.</p>
 
@@ -564,6 +765,8 @@
               <li><strong>🎤 Dubbadhu</strong> — jecha dubbadhuu.</li>
             </ul>
             <div class="ob-tip">💡 Hayyama maaykiroofoonii barbaachisa — browser mara irratti hin hojjetu.</div>
+              </div>
+            </details>
           </div>
         </details>
 
@@ -575,6 +778,17 @@
             <span class="hg-chevron">▼</span>
           </summary>
           <div class="hg-detail">
+            <div class="hg-essential">
+              <p class="hg-essential-title">🔑 Waan Beekuu Qabdan</p>
+              <ul class="hg-essential-list">
+                <li>📲 App buusi (Android ⋮ yookiin iOS 🔗 → « Fuula jalqabarratti »)</li>
+                <li>⚠️ Interneetii malee : 🎤 Irra deebʼi gonkumaa hin danda'amu ; 🔊 Dhaggeeffachuun sagaleen durumaan jiraate qofa hojjeta</li>
+                <li>📄 PDF sadii buufamuu danda'u : gargaarsa guutuu, moojuula, haala dubbii</li>
+              </ul>
+            </div>
+            <details class="hg-subdetail">
+              <summary class="hg-subsummary"><span class="hg-subchevron">▼</span> Ibsa guutuu ilaali</summary>
+              <div class="hg-subdetail-content">
             <h4 style="margin:0 0 .4em;font-size:.95em">📲 App gara meeshaa irratti buusi</h4>
             <ul>
               <li><strong>Android / Chrome</strong> : ⋮ cuqaasi → <em>"Fuula jalqabarratti ida'i"</em></li>
@@ -611,6 +825,8 @@
               <li><strong>📚 Moojuula tokko</strong> — caancala <em>📄 Moojuula kana buusi</em> fuula moojuula sanaa irraa.</li>
               <li><strong>💬 Haala tokko</strong> — caancala <em>📄 Haala kana buusi</em> fuula dubbii irraa.</li>
             </ul>
+              </div>
+            </details>
           </div>
         </details>
 
@@ -622,12 +838,25 @@
             <span class="hg-chevron">▼</span>
           </summary>
           <div class="hg-detail">
+            <div class="hg-essential">
+              <p class="hg-essential-title">🔑 Waan Beekuu Qabdan</p>
+              <ul class="hg-essential-list">
+                <li>🔄 Kaardii moojuula xumurame irratti caancala « Irra deebi'i » cuqaasi</li>
+                <li>⚠️ Mirkaneeffannaa ni gaafatama — urjiileen ni haqamu</li>
+                <li>🎯 Quiz irra deebi'iitii urjii haaraa argadhu</li>
+              </ul>
+            </div>
+            <details class="hg-subdetail">
+              <summary class="hg-subsummary"><span class="hg-subchevron">▼</span> Ibsa guutuu ilaali</summary>
+              <div class="hg-subdetail-content">
             <p>Moojuula tokko irra deebi'uu barbaaddaa? Urjiilee haquun <strong>jalqaba irraa jalqabuu</strong> ni dandaa'ama.</p>
             <ul>
               <li>Fuula <strong>Moojuulota</strong> irratti moojuula xumurame barbaacha baha — kaardii isaa irratti caancalli <strong>🔄 Irra deebi'i</strong> mul'ata.</li>
               <li>Caancala sana cuqaasi — mirkaneeffannaa ni gaafata.</li>
               <li>Urjiilee ni dhaban — garuu Quiz irra deebi'uun urjii haaraa argachuu ni dandaa'ama.</li>
             </ul>
+              </div>
+            </details>
           </div>
         </details>
 
@@ -639,12 +868,24 @@
             <span class="hg-chevron">▼</span>
           </summary>
           <div class="hg-detail">
+            <div class="hg-essential">
+              <p class="hg-essential-title">🔑 Waan Beekuu Qabdan</p>
+              <ul class="hg-essential-list">
+                <li>🙏 Fédérico Calo — gargaarsa teknikaaf</li>
+                <li>🙏 Mussa Sembro fi maatii koo — hiikkaa fi gorsa ergonomii</li>
+              </ul>
+            </div>
+            <details class="hg-subdetail">
+              <summary class="hg-subsummary"><span class="hg-subchevron">▼</span> Ibsa guutuu ilaali</summary>
+              <div class="hg-subdetail-content">
             <p>Galata guddaa <strong>Fédérico Calo</strong>
               (<a href="https://www.linkedin.com/in/federicocalo/" target="_blank" rel="noopener noreferrer">Architektii Guddisaa Web</a>)
               gargaarsa teknikaaf.</p>
             <p>Galata baay'een <strong>Mussa Sembro</strong>
               (<a href="https://www.linkedin.com/in/mussa-sembro-137472174/" target="_blank" rel="noopener noreferrer">Hiikkaa-Ibsituu Afaan Oromoo</a>)
               fi maatii kootiif — irra deebi'ee dubbisuu, hiika sirreessuu, fi gorsa ergonomii appii kennuuf.</p>
+              </div>
+            </details>
           </div>
         </details>
 
@@ -656,6 +897,17 @@
             <span class="hg-chevron">▼</span>
           </summary>
           <div class="hg-detail">
+            <div class="hg-essential">
+              <p class="hg-essential-title">🔑 Waan Beekuu Qabdan</p>
+              <ul class="hg-essential-list">
+                <li>🙋 Sébastien Godet — uumaa appii, gestionna pirojektiitti jijjiiramaa jira</li>
+                <li>💡 Hawwii irraa dhalate : meeshaa bilisaa Oromoota fi Faransaawiota walitti fiduuf</li>
+                <li>💬 Yaada keessaniif imeelii yookiin LinkedIn irratti quunnamaa</li>
+              </ul>
+            </div>
+            <details class="hg-subdetail">
+              <summary class="hg-subsummary"><span class="hg-subchevron">▼</span> Ibsa guutuu ilaali</summary>
+              <div class="hg-subdetail-content">
             <div class="ob-bio-card">
               <div class="ob-bio-avatar">🙋</div>
               <div class="ob-bio-info">
@@ -674,6 +926,8 @@
                 <a class="ob-bio-btn" href="https://www.linkedin.com/in/s%C3%A9bastien-godet-142ba6145" target="_blank" rel="noopener noreferrer">💼 Message LinkedIn</a>
               </div>
             </div>
+              </div>
+            </details>
           </div>
         </details>
       </div><!-- /.home-lang-block[data-lang="or"] -->
@@ -686,6 +940,23 @@
            ───────────────────────────────────────────────────────── -->
       <div class="home-lang-block home-lang-hidden" data-lang="fr">
 
+        <!--
+          🆕 (23/07/2026) "L'essentiel en 30 secondes" — de retour en tête
+          de #homeGuideBody (voir commentaire détaillé dans .home-guide-header
+          plus haut), donc juste APRÈS la barre sticky Commencer + PDF.
+        -->
+        <div class="hg-tldr">
+          <h3 class="hg-tldr-title">🚀 L'essentiel en 30 secondes</h3>
+          <ul class="hg-tldr-list">
+            <li>📚 2 niveaux : Vocabulaire (32 thèmes) puis Dialogues (16) — Cartes, Quiz, Répète</li>
+            <li>🔊 Audio inclus ; en Oromo, la voix « idéale » est parfois remplacée par une voix proche (Somali, Amharique…) — normal, pas un bug</li>
+            <li>📴 Installable et utilisable hors-ligne — sauf 🎤 Répète, qui a toujours besoin d'internet, même une fois installée</li>
+            <li>🌐 Navigateur — Android : Chrome, Samsung Internet, Edge, Opera et Brave conviennent tous ; Firefox ne permet jamais 🎤 Répète ; DuckDuckGo et UC Browser sont moins éprouvés. iPhone/iPad : utilisez Safari pour une expérience garantie à 100%</li>
+          </ul>
+          <p class="hg-tldr-footer">Détails complets ci-dessous, ou plus tard via le bouton ❓ Guide.</p>
+          <span class="hg-tldr-cultural" aria-hidden="true" title="Mélange culturel — France & Oromia">🗼 🛖 🌳 🐓 ☕ 🥐</span>
+        </div>
+
         <!-- 1. Comment ça marche -->
         <details class="hg-section">
           <summary class="hg-summary">
@@ -694,6 +965,17 @@
             <span class="hg-chevron">▼</span>
           </summary>
           <div class="hg-detail">
+            <div class="hg-essential">
+              <p class="hg-essential-title">🔑 L'essentiel</p>
+              <ul class="hg-essential-list">
+                <li>📚 <strong>2 niveaux</strong> : Vocabulaire (32 thèmes) puis Dialogues (16)</li>
+                <li>⭐ Quiz après chaque module : ≥ 50% = ⭐ · ≥ 75% = ⭐⭐ · 100% = ⭐⭐⭐ (jamais dégressif)</li>
+                <li>💡 Commencez par le Niveau 1 — le Niveau 2 sera plus facile ensuite</li>
+              </ul>
+            </div>
+            <details class="hg-subdetail">
+              <summary class="hg-subsummary"><span class="hg-subchevron">▼</span> Voir le détail complet</summary>
+              <div class="hg-subdetail-content">
             <p>Cette appli vous guide pas à pas pour apprendre l'Oromo, à votre rythme, sans inscription ni abonnement.</p>
             <p>Elle est organisée en <strong>deux niveaux</strong> :</p>
             <ul>
@@ -718,6 +1000,8 @@
             </ul>
             <p>Ce <strong>Guide</strong> est accessible à tout moment via le bouton ❓ dans la barre de navigation en bas.</p>
             <div class="ob-tip">💡 Commencez par le Niveau 1 — les dialogues du Niveau 2 seront plus faciles ensuite !</div>
+              </div>
+            </details>
           </div>
         </details>
 
@@ -729,6 +1013,17 @@
             <span class="hg-chevron">▼</span>
           </summary>
           <div class="hg-detail">
+            <div class="hg-essential">
+              <p class="hg-essential-title">🔑 L'essentiel</p>
+              <ul class="hg-essential-list">
+                <li>💸 100% gratuit, sans inscription, sans publicité</li>
+                <li>🔊🎤📴 Audio, répétition orale et mode hors-ligne inclus</li>
+                <li>⭐ Progression sauvegardée — vos étoiles ne diminuent jamais</li>
+              </ul>
+            </div>
+            <details class="hg-subdetail">
+              <summary class="hg-subsummary"><span class="hg-subchevron">▼</span> Voir le détail complet</summary>
+              <div class="hg-subdetail-content">
             <ul>
               <li>💸 <strong>100% gratuit</strong> — aucun abonnement, aucune publicité</li>
               <li>🚫 <strong>Sans inscription</strong> — ouvrez l'app et commencez immédiatement</li>
@@ -739,6 +1034,8 @@
               <li>⭐ <strong>Progression sauvegardée</strong> — vos étoiles ne diminuent jamais, votre meilleur score est conservé</li>
             </ul>
             <div class="ob-tip">💡 Cette appli n'est pas un outil unique — combinez-la avec Duolingo, un cours ou des amis natifs pour progresser plus vite !</div>
+              </div>
+            </details>
           </div>
         </details>
 
@@ -750,6 +1047,17 @@
             <span class="hg-chevron">▼</span>
           </summary>
           <div class="hg-detail">
+            <div class="hg-essential">
+              <p class="hg-essential-title">🔑 L'essentiel</p>
+              <ul class="hg-essential-list">
+                <li>🧩 Aucune méthode n'est parfaite seule — l'idéal est de les combiner</li>
+                <li>📱 Cette appli : vocabulaire structuré + audio + hors-ligne</li>
+                <li>🦉🏫🗣️ Duolingo/école pour la grammaire, amis natifs pour la fluidité</li>
+              </ul>
+            </div>
+            <details class="hg-subdetail">
+              <summary class="hg-subsummary"><span class="hg-subchevron">▼</span> Voir le détail complet</summary>
+              <div class="hg-subdetail-content">
             <p>Pas de meilleure méthode unique — chacune a ses forces. <strong>L'idéal, c'est de les combiner !</strong></p>
             <div class="ob-compare">
               <div class="ob-compare-col">
@@ -770,6 +1078,8 @@
               </div>
             </div>
             <div class="ob-tip">💡 Notre conseil : utilise cette appli pour construire ta base de vocabulaire dès le premier jour — puis appuie-toi sur Duolingo ou une école pour la grammaire, et pratique avec des natifs pour la fluidité. Chaque outil renforce les autres !</div>
+              </div>
+            </details>
           </div>
         </details>
 
@@ -792,6 +1102,17 @@
             <span class="hg-chevron">▼</span>
           </summary>
           <div class="hg-detail">
+            <div class="hg-essential">
+              <p class="hg-essential-title">🔑 L'essentiel</p>
+              <ul class="hg-essential-list">
+                <li>🤖 Android : Chrome, Samsung Internet, Edge, Opera, Brave, Vivaldi conviennent tous</li>
+                <li>❌ Firefox : 🎤 Répète ne fonctionnera jamais</li>
+                <li>🍎 iPhone/iPad : utilisez <strong>Safari</strong> pour une expérience garantie à 100%</li>
+              </ul>
+            </div>
+            <details class="hg-subdetail">
+              <summary class="hg-subsummary"><span class="hg-subchevron">▼</span> Voir le détail complet</summary>
+              <div class="hg-subdetail-content">
             <p>Trois fonctionnalités de l'appli dépendent directement du navigateur utilisé : 🔊 <strong>Écouter</strong>, 🎤 <strong>Répète</strong> et 📲 <strong>l'installation hors-ligne</strong>. Voici un comparatif des navigateurs les plus utilisés dans le monde, classés par fiabilité.</p>
 
             <div class="ob-audio-block">
@@ -825,6 +1146,8 @@
             </div>
 
             <div class="ob-tip">💡 En résumé : sur Android, la plupart des navigateurs Chromium (Chrome, Samsung Internet, Edge, Opera, Brave, Vivaldi) conviennent — seul Firefox pose problème pour 🎤 Répète. Sur iPhone/iPad, utilisez <strong>Safari</strong> pour une expérience garantie à 100%.</div>
+              </div>
+            </details>
           </div>
         </details>
 
@@ -836,6 +1159,17 @@
             <span class="hg-chevron">▼</span>
           </summary>
           <div class="hg-detail">
+            <div class="hg-essential">
+              <p class="hg-essential-title">🔑 L'essentiel</p>
+              <ul class="hg-essential-list">
+                <li>⚙️ Réglez la voix dans les paramètres de votre téléphone (Android : Accessibilité → Synthèse vocale ; iOS : Accessibilité → Contenu énoncé → Voix)</li>
+                <li>🎧 En Oromo, si la voix native manque, une voix proche (Somali, Amharique…) prend le relais automatiquement</li>
+                <li>🎤 L'onglet Répète nécessite l'autorisation microphone</li>
+              </ul>
+            </div>
+            <details class="hg-subdetail">
+              <summary class="hg-subsummary"><span class="hg-subchevron">▼</span> Voir le détail complet</summary>
+              <div class="hg-subdetail-content">
             <h4 style="margin:0 0 .4em;font-size:.95em">🔊 Configurer son audio</h4>
             <p>Bien entendre les mots, c'est essentiel ! L'appli utilise la <strong>synthèse vocale intégrée</strong> à votre téléphone ou navigateur (Web Speech API). Si le son est absent, robotique ou dans la mauvaise langue, suivez le guide ci-dessous.</p>
 
@@ -938,6 +1272,8 @@
               <li><strong>🎤 Parler</strong> — prononsez-le à votre tour.</li>
             </ul>
             <div class="ob-tip">💡 Nécessite l'autorisation microphone — peut ne pas fonctionner sur tous les navigateurs.</div>
+              </div>
+            </details>
           </div>
         </details>
 
@@ -949,6 +1285,17 @@
             <span class="hg-chevron">▼</span>
           </summary>
           <div class="hg-detail">
+            <div class="hg-essential">
+              <p class="hg-essential-title">🔑 L'essentiel</p>
+              <ul class="hg-essential-list">
+                <li>📲 Installez l'app (menu ⋮ Android ou partage 🔗 iOS → « Ajouter à l'écran d'accueil »)</li>
+                <li>⚠️ Hors-ligne : 🎤 Répète ne fonctionne jamais ; 🔊 Écouter fonctionne seulement si la voix est déjà installée</li>
+                <li>📄 3 PDF téléchargeables : guide complet, module, situation de dialogue</li>
+              </ul>
+            </div>
+            <details class="hg-subdetail">
+              <summary class="hg-subsummary"><span class="hg-subchevron">▼</span> Voir le détail complet</summary>
+              <div class="hg-subdetail-content">
             <h4 style="margin:0 0 .4em;font-size:.95em">📲 Installer l'app en hors ligne</h4>
             <ul>
               <li><strong>Android / Chrome</strong> : menu ⋮ → <em>"Ajouter à l'écran d'accueil"</em></li>
@@ -985,6 +1332,8 @@
               <li><strong>📚 Un module thématique</strong> — bouton <em>📄 Télécharger ce module</em> depuis la page du module.</li>
               <li><strong>💬 Une situation de dialogue</strong> — bouton <em>📄 Télécharger cette situation</em> depuis la page du dialogue.</li>
             </ul>
+              </div>
+            </details>
           </div>
         </details>
 
@@ -996,12 +1345,25 @@
             <span class="hg-chevron">▼</span>
           </summary>
           <div class="hg-detail">
+            <div class="hg-essential">
+              <p class="hg-essential-title">🔑 L'essentiel</p>
+              <ul class="hg-essential-list">
+                <li>🔄 Sur la carte du module terminé : bouton « Recommencer »</li>
+                <li>⚠️ Une confirmation est demandée — les étoiles sont supprimées</li>
+                <li>🎯 Rejouez le Quiz pour en regagner</li>
+              </ul>
+            </div>
+            <details class="hg-subdetail">
+              <summary class="hg-subsummary"><span class="hg-subchevron">▼</span> Voir le détail complet</summary>
+              <div class="hg-subdetail-content">
             <p>Envie de recommencer un module à zéro ? Vous pouvez <strong>effacer vos étoiles</strong> et repartir de la base.</p>
             <ul>
               <li>Depuis l'écran <strong>Modules</strong>, repérez le thème déjà complété — le bouton <strong>🔄 Recommencer</strong> apparaît directement sur sa carte.</li>
               <li>Appuyez sur ce bouton — une confirmation vous sera demandée.</li>
               <li>Vos étoiles sont supprimées — rejouez le Quiz pour en regagner.</li>
             </ul>
+              </div>
+            </details>
           </div>
         </details>
 
@@ -1013,6 +1375,16 @@
             <span class="hg-chevron">▼</span>
           </summary>
           <div class="hg-detail">
+            <div class="hg-essential">
+              <p class="hg-essential-title">🔑 L'essentiel</p>
+              <ul class="hg-essential-list">
+                <li>🙏 Fédérico Calo — aide technique</li>
+                <li>🙏 Mussa Sembro et mes parents — traductions et ergonomie</li>
+              </ul>
+            </div>
+            <details class="hg-subdetail">
+              <summary class="hg-subsummary"><span class="hg-subchevron">▼</span> Voir le détail complet</summary>
+              <div class="hg-subdetail-content">
             <p>Un grand merci à <strong>Fédérico Calo</strong>
               (<a href="https://www.linkedin.com/in/federicocalo/" target="_blank" rel="noopener noreferrer">Architecte Développeur Web</a>)
               pour son aide technique.</p>
@@ -1020,6 +1392,8 @@
               (<a href="https://www.linkedin.com/in/mussa-sembro-137472174/" target="_blank" rel="noopener noreferrer">Traducteur-Interprète en Oromo</a>)
               et à mes parents pour leur travail de relecture, leurs corrections sur les traductions
               et leurs conseils sur l'ergonomie de l'application.</p>
+              </div>
+            </details>
           </div>
         </details>
 
@@ -1031,6 +1405,17 @@
             <span class="hg-chevron">▼</span>
           </summary>
           <div class="hg-detail">
+            <div class="hg-essential">
+              <p class="hg-essential-title">🔑 L'essentiel</p>
+              <ul class="hg-essential-list">
+                <li>🙋 Sébastien Godet — créateur de l'application, en reconversion vers la gestion de projets</li>
+                <li>💡 Née d'une envie : un outil gratuit pour relier francophones et oromophones</li>
+                <li>💬 Contact par e-mail ou LinkedIn pour toute suggestion</li>
+              </ul>
+            </div>
+            <details class="hg-subdetail">
+              <summary class="hg-subsummary"><span class="hg-subchevron">▼</span> Voir le détail complet</summary>
+              <div class="hg-subdetail-content">
             <div class="ob-bio-card">
               <div class="ob-bio-avatar">🙋</div>
               <div class="ob-bio-info">
@@ -1049,6 +1434,8 @@
                 <a class="ob-bio-btn" href="https://www.linkedin.com/in/s%C3%A9bastien-godet-142ba6145" target="_blank" rel="noopener noreferrer">💼 Message LinkedIn</a>
               </div>
             </div>
+              </div>
+            </details>
           </div>
         </details>
 
@@ -1068,6 +1455,14 @@
         <div class="back-btn-group">
           <button class="back-btn-icon" id="sectionsBackHomeBtn" onclick="goToAccueil()" aria-label="Accueil">🏠</button>
           <button class="back-btn-icon" id="sectionsBackGuideBtn" onclick="goToGuide()" aria-label="Guide">❓</button>
+          <!-- 🆕 📚 Modules (écran courant → désactivé par _updateQuickNav) + 🚪 Quitter -->
+          <button class="back-btn-icon" id="sectionsQnModulesBtn" onclick="navGoModules()" aria-label="Modules">📚</button>
+          <button class="back-btn-icon quit-icon-btn" id="sectionsQuitBtn" onclick="openQuitModal()" aria-label="Quitter">🚪</button>
+        </div>
+        <!-- 🆕 Logo complet, même image que le Lanceur et le Guide -->
+        <div class="sections-header-logo-wrap">
+          <img class="sections-header-logo" src="img/Logo-appli-or-fr.png" alt="Taphad'Meuh"
+               width="1408" height="768" loading="lazy" decoding="async">
         </div>
         <h2 id="sectionsTitle"></h2>
         <div class="progress-bar-wrap">
@@ -1100,6 +1495,14 @@
         <div class="back-btn-group">
           <button class="back-btn-icon" id="sectionsBackHomeBtn2" onclick="goToAccueil()" aria-label="Accueil">🏠</button>
           <button class="back-btn-icon" id="sectionsBackGuideBtn2" onclick="goToGuide()" aria-label="Guide">❓</button>
+          <!-- 🆕 📚 Modules (écran courant → désactivé par _updateQuickNav) + 🚪 Quitter -->
+          <button class="back-btn-icon" id="sectionsQnModulesBtn2" onclick="navGoModules()" aria-label="Modules">📚</button>
+          <button class="back-btn-icon quit-icon-btn" id="sectionsQuitBtn2" onclick="openQuitModal()" aria-label="Quitter">🚪</button>
+        </div>
+        <!-- 🆕 Logo complet, même image que le Lanceur et le Guide -->
+        <div class="sections-header-logo-wrap">
+          <img class="sections-header-logo" src="img/Logo-appli-or-fr.png" alt="Taphad'Meuh"
+               width="1408" height="768" loading="lazy" decoding="async">
         </div>
         <h2 id="sectionsTitle2"></h2>
         <div class="progress-bar-wrap">
@@ -1134,6 +1537,23 @@
   <div id="lesson" class="screen">
 
     <div class="lesson-header">
+
+      <!--
+        🆕 Rangée de navigation rapide (voir _updateQuickNav() dans
+        app.js, §5b) : 🏠 Accueil / ❓ Guide / 📚 Modules à gauche,
+        🚪 Quitter isolé à droite. Le bouton "←" existant (ligne 1
+        ci-dessous) reste la navigation principale retour-liste ;
+        cette rangée ajoute la possibilité de sauter directement vers
+        n'importe quel autre écran.
+      -->
+      <div class="lesson-quick-nav">
+        <div class="back-btn-group">
+          <button class="back-btn-icon" id="lessonQnHomeBtn" onclick="goToAccueil()" aria-label="Accueil">🏠</button>
+          <button class="back-btn-icon" id="lessonQnGuideBtn" onclick="goToGuide()" aria-label="Guide">❓</button>
+          <button class="back-btn-icon" id="lessonQnModulesBtn" onclick="navGoModules()" aria-label="Modules">📚</button>
+        </div>
+        <button class="back-btn-icon quit-icon-btn" id="lessonQuitBtn" onclick="openQuitModal()" aria-label="Quitter">🚪</button>
+      </div>
 
       <!-- ── Ligne 1 : retour + badge niveau + emoji + titre ── -->
       <div class="lesson-header-top">
@@ -1250,6 +1670,34 @@
       <div class="modal-actions">
         <button id="modal-confirm-cancel"   onclick="closeConfirmModal()"></button>
         <button id="modal-confirm-validate"                              ></button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ════════════════════════════════════════════════════════════════
+       🆕 MODALE — QUITTER L'APPLICATION  (#quit-app-modal)
+       ────────────────────────────────────────────────────────────────
+       Ouverte depuis l'icône 🚪 présente sur CHAQUE écran (nav rapide,
+       voir openQuitModal() dans app.js, §5c). Propose 3 choix :
+         • Fermer l'appli      → quitAppClose()   (best-effort, voir
+                                  commentaire de la fonction pour les
+                                  limites de window.close())
+         • Revenir au départ   → quitAppRestart() (= goToAccueil())
+                                  masqué si on est déjà sur le lanceur
+         • Annuler              → closeQuitModal()
+       Contenu texte 100% dans la langue de l'apprenant (L()), sauf
+       sur le lanceur lui-même où aucun mode n'est encore choisi
+       (texte bilingue, comme le reste de cet écran).
+       ════════════════════════════════════════════════════════════════ -->
+  <div id="quit-app-modal" class="modal-hidden" style="pointer-events:none">
+    <div class="modal-content">
+      <h3 class="quit-modal-title" id="quitModalTitle"></h3>
+      <p  class="quit-modal-sub"   id="quitModalSub"></p>
+      <div class="quit-modal-actions">
+        <button id="quitModalCloseBtn"   class="btn-quit-close"   onclick="quitAppClose()"></button>
+        <button id="quitModalRestartBtn" class="btn-quit-restart" onclick="quitAppRestart()"></button>
+        <button id="quitModalCancelBtn"  class="btn-quit-cancel"  onclick="closeQuitModal()"></button>
       </div>
     </div>
   </div>
