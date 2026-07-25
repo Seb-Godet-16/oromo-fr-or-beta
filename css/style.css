@@ -22,75 +22,78 @@
  * ║  rendu visuel.                                                  ║
  * ╠══════════════════════════════════════════════════════════════════╣
  * ║  PLAN DU FICHIER                                                ║
- * ║   §1        Reset & base                          ligne    90  ║
- * ║   §2        Variables de thème (:root / fallback) ligne   214  ║
- * ║   §3        Thème Français (html.theme-french)    ligne   293  ║
- * ║   §4        Thème Oromo (html.theme-oromo)        ligne   335  ║
- * ║   §5        Écran 0 — Lanceur (dont 🆕            ligne   372  ║
- * ║             .launcher-quit-btn, voir ligne 452)                ║
- * ║   §6        Écran 1 — Home #home + 🆕 Écran 1b    ligne   856  ║
- * ║             Guide #guide (24/07/2026, séparés — voir            ║
- * ║             .home-topbar 2 zones/écran, ligne 900)              ║
- * ║   §7        Écran 2 — Sections                    ligne   943  ║
- * ║   §8        Écran 3 — Leçon (dont .back-btn-icon  ligne  1111  ║
- * ║             icônes 🏠/❓, voir ligne 1340; 🆕 .lesson-quick-nav  ║
- * ║             ligne 1133)                                         ║
- * ║   §9        Composants : Flashcards               ligne  1423  ║
- * ║   §10       Composants : Alphabet                 ligne  1625  ║
- * ║   §11       Composants : Quiz                     ligne  1725  ║
- * ║   §12       Composants : Dialogues / Situations   ligne  1839  ║
- * ║   §13       Composants : Vocabulaire              ligne  1944  ║
- * ║   §14       Modale Remerciements                  ligne  2012  ║
- * ║   §15       Footer commun                         ligne  2104  ║
- * ║   §16       Toast notification                    ligne  2124  ║
- * ║   §16b   🆕 Bandeau hors-ligne persistant          ligne  2160  ║
- * ║   §17       Onglet Répète (dont 🆕 .repeat-        ligne  2224  ║
+ * ║   §1        Reset & base                          ligne    99  ║
+ * ║   §2        Variables de thème (:root / fallback) ligne   223  ║
+ * ║   §3        Thème Français (html.theme-french)    ligne   302  ║
+ * ║   §4        Thème Oromo (html.theme-oromo)        ligne   344  ║
+ * ║   §5        Écran 0 — Lanceur (dont 🆕            ligne   381  ║
+ * ║             .launcher-quit-btn)                                ║
+ * ║   §6        🆕 Écran 1 — Home + Guide fusionnés   ligne   888  ║
+ * ║             (#home, agencement VACHÉBO, 24/07/2026,             ║
+ * ║             2e correctif — voir Bilan_technique.md §6.24)       ║
+ * ║   §7        Écran 2 — Sections                    ligne   979  ║
+ * ║   §8        Écran 3 — Leçon (dont .back-btn-icon  ligne  1147  ║
+ * ║             icônes 🏠/❓; 🆕 .lesson-quick-nav)                  ║
+ * ║   §9        Composants : Flashcards               ligne  1459  ║
+ * ║   §10       Composants : Alphabet                 ligne  1661  ║
+ * ║   §11       Composants : Quiz                     ligne  1761  ║
+ * ║   §12       Composants : Dialogues / Situations   ligne  1875  ║
+ * ║   §13       Composants : Vocabulaire              ligne  1980  ║
+ * ║   §14       Modale Remerciements                  ligne  2048  ║
+ * ║   §15       Footer commun                         ligne  2139  ║
+ * ║   §16       Toast notification                    ligne  2159  ║
+ * ║   §16b   🆕 Bandeau hors-ligne persistant          ligne  2195  ║
+ * ║   §17       Onglet Répète (dont 🆕 .repeat-        ligne  2259  ║
  * ║             badges-intro, phrase d'intro 2 badges)              ║
- * ║   §18       Focus clavier                         ligne  2522  ║
- * ║   §19       Guide utilisateur (.ob-*, dont 🆕      ligne  2540  ║
+ * ║   §18       Focus clavier                         ligne  2557  ║
+ * ║   §19       Guide utilisateur (.ob-*, dont 🆕      ligne  2575  ║
  * ║             "Quel navigateur choisir ?")                        ║
- * ║   §20       Spinner de chargement                 ligne  3008  ║
- * ║   §22       Écrans Home (dashboard) + 🆕 Guide    ligne  3045  ║
- * ║             (séparé le 24/07/2026, voir §6)                     ║
- * ║   §23       Écran Sections redesigné (dont        ligne  3463  ║
- * ║             .back-btn-group, voir ligne 3488)                  ║
- * ║   §24       Responsive : tablette & desktop       ligne  3635  ║
- * ║   §24b      Mode sombre                           ligne  3725  ║
- * ║   §24c      Responsive : mode paysage mobile      ligne  3845  ║
- * ║   §25       Boutons d'export PDF                  ligne  3918  ║
- * ║   §26       Barre de navigation basse             ligne  4018  ║
- * ║   §27       Onglets niveau 1 / 2                  ligne  4145  ║
- * ║   §28       Écrans sections level (no-scroll)     ligne  4240  ║
- * ║   §20e      Grille thèmes écrans level            ligne  4438  ║
- * ║   §CONFETTI Animation de félicitations ⭐⭐⭐      ligne  4459  ║
- * ║   §PROGRESS Carte(s) de progression (Home,        ligne  4530  ║
+ * ║   §20       Spinner de chargement                 ligne  3043  ║
+ * ║   §22       🆕 Écran Home + Guide fusionnés       ligne  3080  ║
+ * ║             (#home — fond dégradé, layout, voir §6)             ║
+ * ║   §23       Écran Sections redesigné (dont        ligne  3498  ║
+ * ║             .back-btn-group)                                   ║
+ * ║   §24       Responsive : tablette & desktop       ligne  3688  ║
+ * ║   §24b      Mode sombre                           ligne  3778  ║
+ * ║   §24c      Responsive : mode paysage mobile      ligne  3898  ║
+ * ║   §25       Boutons d'export PDF                  ligne  3971  ║
+ * ║   §26       Barre de navigation basse             ligne  4071  ║
+ * ║   §27       Onglets niveau 1 / 2                  ligne  4198  ║
+ * ║   §28       Écrans sections level (no-scroll)     ligne  4293  ║
+ * ║   §20e      Grille thèmes écrans level            ligne  4491  ║
+ * ║   §CONFETTI Animation de félicitations ⭐⭐⭐      ligne  4512  ║
+ * ║   §PROGRESS Carte(s) de progression (Home,        ligne  4583  ║
  * ║             1 ou 2 selon les parcours commencés)                ║
- * ║   §CONFIRM  Modale confirmation suppression       ligne  4653  ║
- * ║   §QUITMODAL 🆕 Modale "Quitter l'application"     ligne  4772  ║
+ * ║   §CONFIRM  Modale confirmation suppression       ligne  4706  ║
+ * ║   §QUITMODAL 🆕 Modale "Quitter l'application"     ligne  4825  ║
  * ║             (#quit-app-modal, icône 🚪 nav rapide)              ║
  * ║   §ANTISPAM E-mail affiché à l'envers (CSS RTL)  ligne  4875  ║
- * ║   §SPEAKING Feedback visuel bouton audio (TTS)    ligne  4902  ║
- * ║   §29       Correctifs accessibilité mode sombre  ligne  4960  ║
+ * ║   §SPEAKING Feedback visuel bouton audio (TTS)    ligne  4955  ║
+ * ║   §29       Correctifs accessibilité mode sombre  ligne  5013  ║
  * ║  ── Plan resynchronisé le 23/07/2026 : ajout d'une navigation    ║
  * ║  rapide (🏠❓📚) en haut de CHAQUE écran (jusqu'ici réservée à    ║
  * ║  Sections) + bouton 🚪 Quitter partout et sa modale dédiée       ║
  * ║  (§QUITMODAL). Voir _updateQuickNav()/openQuitModal() dans       ║
- * ║  app.js §5c/§5d. Le fichier a gagné ~+178 lignes. Bilan_technique.md
- * ║  à mettre à jour en conséquence.                                 ║
+ * ║  app.js §5c/§5d.                                                 ║
  * ║  ── Resynchronisé le 24/07/2026 : tokens de marque               ║
  * ║  --c-flag-red/black/cream (§2), footer + carte "L'essentiel      ║
  * ║  en 30 secondes" recolorés (§5/§19), logo étendu à l'écran       ║
  * ║  Sections (§23), crème mixée dans --c-grad-home (§2/§3/§4),      ║
  * ║  clin d'œil mascotte sur quiz sans-faute (§CONFIRM, .result-box), ║
  * ║  z-index de .modal relevé à 10001 (§14, au-dessus du toast).     ║
- * ║  Le fichier a gagné ~+69 lignes.                                 ║
- * ║  ── Resynchronisé le 24/07/2026 (2e session — bug Home/Guide) :  ║
- * ║  #home (§6/§22) et #guide sont désormais deux écrans séparés,    ║
- * ║  partageant les mêmes classes .home-guide-* et le même fond      ║
- * ║  dégradé (#home, #guide{...}). Chaque topbar n'a plus que 2      ║
- * ║  icônes (au lieu de 3) : #home → ❓+📚, #guide → 🏠+📚. Voir      ║
- * ║  index.html et app.js (§5c, _QUICK_NAV_MAP). Toutes les ancres   ║
- * ║  ci-dessus ont été recalculées ; le fichier a gagné ~+14 lignes. ║
+ * ║  ── Resynchronisé le 24/07/2026 (2e session, matin — bug         ║
+ * ║  Home/Guide) : #home et #guide brièvement séparés en deux        ║
+ * ║  écrans, chacun avec sa propre topbar 2 icônes.                  ║
+ * ║  ── Resynchronisé le 24/07/2026 (3e session, soir — fusion       ║
+ * ║  Home/Guide, agencement VACHÉBO) : #home et #guide, séparés      ║
+ * ║  quelques heures plus tôt le même jour, sont réunis à nouveau    ║
+ * ║  en un seul écran #home (§6/§22) — pas un simple retour          ║
+ * ║  arrière, un agencement recalé sur l'appli sœur VACHÉBO (logo →  ║
+ * ║  drapeaux → titre → sous-titre → badges → CTA → accordéons).     ║
+ * ║  Sa topbar ne garde que 📚+🚪 (🏠/❓ retirés, redondants sur un   ║
+ * ║  écran unique). Voir index.html, app.js (§5c, _QUICK_NAV_MAP) et ║
+ * ║  Bilan_technique.md §6.24. Toutes les ancres ci-dessus ont été   ║
+ * ║  recalculées par recherche directe dans le fichier final.        ║
  * ╚══════════════════════════════════════════════════════════════════╝
  */
 
@@ -550,7 +553,11 @@ html.theme-oromo body{background:#f4f9f4}
   gap: 6px;
   width: 100%;
   min-height: 182px;
-  padding: 34px 12px 18px;
+  /* 🆕 (24/07/2026) Padding haut réduit : n'a plus besoin de réserver de
+     place pour la pastille "à toucher", désormais en flux sous le texte
+     (voir .lang-card-tap-hint plus bas) au lieu d'être positionnée en
+     absolu en haut de carte. */
+  padding: 22px 14px 18px;
   border: none;
   border-radius: 20px 20px 0 0;
   cursor: pointer;
@@ -655,7 +662,7 @@ html.theme-oromo body{background:#f4f9f4}
 
 /*
    🆕 (22/07/2026) Pastille "à toucher" (point 3) — texte court +
-   flèche animée, positionnée en évidence en haut de carte.
+   flèche animée.
    pointer-events:none : ne capte jamais le tap (c'est toute la
    carte/bouton qui reste la cible tactile, comme avant).
    CORRECTIF ACCESSIBILITÉ : fond passé d'un voile blanc translucide
@@ -664,19 +671,25 @@ html.theme-oromo body{background:#f4f9f4}
    (rgba(0,0,0,.4)). Un fond sombre sous texte blanc reste ≥ 12:1
    quel que soit l'endroit du dégradé où la pastille se trouve —
    fiable même si la carte est retouchée plus tard.
+   🆕 (24/07/2026) Repositionnée en flux sous le titre/sous-titre
+   (au lieu d'un positionnement absolu en haut à droite de la carte),
+   pour s'aligner sur le CTA "Toca para empezar" de l'appli sœur
+   VACHÉBO (.lang-card-cta), qui est lui aussi un bloc sous le nom
+   plutôt qu'une pastille en coin. margin-top ajouté pour se détacher
+   légèrement du sous-titre au-dessus (le gap:6px de .lang-card
+   s'applique déjà entre tous les enfants directs).
 */
 .lang-card-tap-hint{
-  position: absolute;
-  top: 10px;
-  right: 10px;
   display: flex;
   align-items: center;
-  gap: 3px;
+  justify-content: center;
+  gap: 4px;
+  margin-top: 4px;
   background: rgba(0,0,0,.4);
   border: 1px solid rgba(255,255,255,.5);
   border-radius: 999px;
-  padding: 3px 8px 3px 9px;
-  font-size: .6rem;
+  padding: 5px 14px;
+  font-size: .68rem;
   font-weight: 700;
   letter-spacing: .02em;
   color: #fff;
@@ -720,7 +733,12 @@ html.theme-oromo body{background:#f4f9f4}
 .lang-card-info--fr{ border: 2px solid rgba(0,35,149,.35); border-top: none }
 .lang-card-info--or{ border: 2px solid rgba(0,122,53,.35); border-top: none }
 
-/* Ligne cliquable : libellé (langue de l'audience) + bouton "i" (point 5) */
+/* Ligne cliquable : libellé (langue de l'audience) + bouton "i" (point 5).
+   🆕 (24/07/2026) Bordure haute + léger fond ajoutés : le <summary> est
+   désormais placé en fin de <details> (voir index.html), ce qui en fait
+   une "barre de bascule" en bas de carte plutôt qu'un résumé en haut —
+   ce traitement visuel la sépare clairement du contenu au-dessus, à la
+   manière de .lang-card-toggle-bar dans l'appli sœur VACHÉBO. */
 .lang-card-info-summary{
   display: flex;
   align-items: center;
@@ -729,6 +747,8 @@ html.theme-oromo body{background:#f4f9f4}
   cursor: pointer;
   padding: 10px 12px;
   user-select: none;
+  border-top: 1px solid rgba(0,0,0,.08);
+  background: rgba(0,0,0,.03);
 }
 .lang-card-info-summary::-webkit-details-marker{ display: none } /* Chrome/Safari : cache le triangle natif */
 .lang-card-info-summary::marker{ content: "" }                   /* Firefox : idem */
@@ -791,7 +811,10 @@ html.theme-oromo body{background:#f4f9f4}
    distinguer des puces factuelles qui suivent. */
 .lang-card-info-intro{
   margin: 0;
-  padding: 0 12px 8px;
+  /* 🆕 (24/07/2026) Padding haut ajouté : ce paragraphe est désormais le
+     premier élément visible du panneau (le <summary> est passé en bas),
+     il a donc besoin de son propre espacement avec le bord haut arrondi. */
+  padding: 12px 12px 8px;
   font-size: .66rem;
   line-height: 1.4;
   font-style: italic;
@@ -803,7 +826,10 @@ html.theme-oromo body{background:#f4f9f4}
 .lang-card-info-list{
   list-style: none;
   margin: 0;
-  padding: 0 12px 14px;
+  /* 🆕 (24/07/2026) Padding bas réduit : la barre de bascule (déplacée en
+     bas, avec son propre padding vertical) suit désormais directement
+     cette liste — plus besoin d'un grand espace tampon ici. */
+  padding: 0 12px 4px;
   display: flex;
   flex-direction: column;
   gap: 6px;
@@ -862,15 +888,18 @@ html.theme-oromo body{background:#f4f9f4}
 }
 
 /* ══════════════════════════════════════════════════════════════════
-   §6 — ÉCRAN 1 : HOME (#home) + ÉCRAN 1b : GUIDE (#guide)
+   §6 — ÉCRAN 1 : HOME + GUIDE FUSIONNÉS (#home)
    ══════════════════════════════════════════════════════════════════
-   🆕 (24/07/2026) #home (dashboard) et #guide (guide explicatif) sont
-   désormais deux <div class="screen"> séparés dans index.html — ils
-   étaient auparavant fusionnés dans un seul #home. Les classes de ce
-   bloc (.home-topbar, .home-guide-header, .home-guide-body…) sont
-   partagées par les deux écrans, d'où le nom conservé ("home-guide-*").
-   Le fond et le layout principal sont définis dans §22.
-   Ce bloc contient les éléments communs réutilisés.
+   🆕 (24/07/2026, 2e correctif du jour) #home (dashboard) et #guide
+   (guide explicatif), brièvement séparés en deux <div class="screen">
+   distincts plus tôt le même jour, sont réunis en un seul écran #home
+   — pas un simple retour à l'ancien agencement Taphad'Meuh, mais une
+   réorganisation sur le modèle de l'appli sœur VACHÉBO (voir
+   Bilan_technique.md §6.24). Les classes de ce bloc (.home-topbar,
+   .home-guide-header, .home-guide-body…) gardent leur nom
+   ("home-guide-*") pour raison historique. Le fond et le layout
+   principal sont définis dans §22. Ce bloc contient les éléments
+   communs réutilisés.
    ══════════════════════════════════════════════════════════════════ */
 
 /* Bouton principal "Commencer" / "Continuer" */
@@ -906,15 +935,16 @@ html.theme-oromo body{background:#f4f9f4}
 #home footer a{color:#00000088;font-weight:600}
 #home footer a:hover{text-decoration:underline}
 
-/* ── Barre fixe en haut de #home ET #guide ──
+/* ── Barre fixe en haut de #home (dashboard + guide fusionnés) ──
    Restructurée en 3 zones (gauche = nav rapide, centre = titre,
    droite = 🚪 Quitter) au lieu d'un simple titre centré, pour étendre
    la navigation rapide déjà présente sur Sections (voir
    _updateQuickNav() dans app.js, §5b).
-   🆕 (24/07/2026) Depuis la séparation de #home et #guide en deux
-   écrans, chacun n'affiche plus que 2 icônes à gauche (au lieu de 3) :
-   #home → ❓ + 📚 (🏠 supprimé, redondant) ; #guide → 🏠 + 📚
-   (❓ supprimé, redondant) — voir _QUICK_NAV_MAP dans app.js. */
+   🆕 (24/07/2026, 2e correctif du jour) #home et #guide étant
+   réunis en un seul écran, les icônes 🏠 et ❓ n'ont plus de sens ici
+   (les deux menaient précisément vers cet écran) : seule reste 📚
+   Modules à gauche, en plus de 🚪 Quitter à droite — voir
+   _QUICK_NAV_MAP dans app.js. */
 .home-topbar{
   position:sticky;
   top:0;
@@ -2086,26 +2116,25 @@ html.theme-french .btn-reset-theme:hover{
   font-weight:bold;
   cursor:pointer;
 }
-/* Séparateur dans la modale Infos */
-.credits-sep{
-  border:none;
-  border-top:1px solid rgba(0,0,0,.1);
-  margin:12px 0;
-}
-/* Ligne copyright dans la modale Infos */
-.credits-copy{
-  font-size:.75rem;
-  color:#888;
-  line-height:1.5;
-}
 /* Email dans la modale Infos */
 .credits-email{
   font-size:.82rem;
 }
-/* Mode sombre */
-@media(prefers-color-scheme:dark){
-  .credits-sep{border-top-color:rgba(255,255,255,.12);}
-  .credits-copy{color:#aaa;}
+
+/* 🆕 (24/07/2026) CORRECTIF BUG — les rubriques dépliables "Qui suis-je ?"
+   et "Remerciements" héritaient de text-align:center depuis
+   .modal-content (ligne 2075) : chaque ligne des paragraphes
+   biographiques se retrouvait donc centrée, au lieu d'un texte en
+   flux normal aligné à gauche — difficile à lire pour un texte de
+   plusieurs phrases. L'appli sœur VACHÉBO évite ce piège via un style
+   inline text-align:left posé sur chaque <details> ; ici la même
+   correction est centralisée dans cette seule règle CSS (cohérent avec
+   la convention du fichier — voir commentaire "OPTIMISATION" en tête
+   de la §14). Le titre ("Infos") et le bouton "Fermer" restent hors de
+   #credits-modal-body : ils gardent le centrage d'origine, volontaire
+   pour ces éléments courts. */
+#credits-modal-body .hg-section{
+  text-align: left;
 }
 
 
@@ -3051,19 +3080,19 @@ footer a:hover{text-decoration:underline}
 }
 
 /* ════════════════════════════════════════════════════════════════
-   §22 — ÉCRANS HOME (dashboard) + GUIDE (onboarding, #guide)
+   §22 — ÉCRAN HOME + GUIDE FUSIONNÉS (#home)
    ════════════════════════════════════════════════════════════════
    Remplace l'ancien écran Home (barre de progression + étoiles).
-   Structure #home  : en-tête coloré → CTA Commencer/PDF.
-   Structure #guide : petit en-tête → corps accordéons.
-   🆕 (24/07/2026) Les deux vivaient dans un seul #home ; désormais
-   deux écrans séparés partageant les mêmes classes (voir §6).
+   Structure : en-tête coloré (logo, drapeaux, titre, sous-titre,
+   badges) → CTA Commencer/PDF → corps accordéons du guide.
+   🆕 (24/07/2026, 2e correctif du jour) #home et #guide, brièvement
+   séparés en deux écrans plus tôt dans la journée, sont réunis à
+   nouveau ici en un seul écran #home — agencement recalé sur
+   l'appli sœur VACHÉBO (voir §6, Bilan_technique.md §6.24).
    ════════════════════════════════════════════════════════════════ */
 
-/* L'écran #home garde son fond en dégradé tricolore —
-   🆕 (24/07/2026) partagé avec #guide, désormais un écran séparé qui
-   réutilise les mêmes classes .home-guide-* (voir Bilan_technique.md). */
-#home, #guide{
+/* L'écran #home garde son fond en dégradé tricolore. */
+#home{
   background:
     var(--c-grad-home),
     radial-gradient(circle at 20% 20%, rgba(255,255,255,0.35) 0%, transparent 40%),
@@ -3471,71 +3500,89 @@ footer a:hover{text-decoration:underline}
 /* ════════════════════════════════════════════════════════════════
    §23 — ÉCRAN SECTIONS REDESIGNÉ
    ════════════════════════════════════════════════════════════════
-   Header : flex row (gauche = infos, droite = drapeau).
+   Header : empilement vertical de 4 rangées pleine largeur (titre+
+   drapeau, icônes+logo, barre de progression, étoiles) — réagencé le
+   24/07/2026 sur le modèle de l'appli sœur VACHÉBO (Bug_5).
    Niveaux : <details> déroulants avec chevron animé.
    ════════════════════════════════════════════════════════════════ */
 
-/* Header redesigné : flex row */
+/* Header redesigné : empilement vertical de rangées pleine largeur */
 .sections-header{
   background:var(--c-grad-sections);
   padding:12px 14px 16px;
   color:#fff;
   display:flex;
-  align-items:flex-start;
+  flex-direction:column;
+}
+
+/* Rangée du haut : titre à gauche, drapeau à droite */
+.sections-top-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
   gap:10px;
+  margin-bottom:4px;
 }
 
 .sections-header-left{
   flex:1;
   min-width:0;
-  display:flex;
-  flex-direction:column;
-  gap:3px;
 }
-
-/* Retour + titre sur la même ligne */
-.sections-header-left .back-btn-group{
-  align-self:flex-start;
-  margin-bottom:4px;
-}
-/* 🆕 (24/07/2026) Icônes de nav rapide agrandies + recolorées par
-   fonction, en s'inspirant de l'appli sœur VACHÉBO (Bug_3) : plus
-   simples à repérer d'un coup d'œil qu'un même bouton translucide
-   répété 4 fois. Uniquement sur cet écran (Modules) — cf. capture
-   d'écran de la demande ; Accueil et Leçon gardent le gabarit compact
-   existant (.back-btn-icon de base, ligne ~1331). L'icône désactivée
-   (écran courant) reste grisée via .back-btn-icon:disabled (inchangé). */
-.sections-header-left .back-btn-icon{
-  font-size:1.3rem !important;
-  padding:8px 11px;
-  border-radius:12px;
-  min-width:40px;
-  text-align:center;
-}
-.sections-header-left .back-btn-group .back-btn-icon:nth-child(1){background:rgba(255,255,255,.85)}   /* 🏠 Accueil */
-.sections-header-left .back-btn-group .back-btn-icon:nth-child(2){background:rgba(241,196,15,.85)}    /* ❓ Guide   */
-.sections-header-left .back-btn-group .back-btn-icon:nth-child(3){background:rgba(76,175,80,.85)}     /* 📚 Modules */
-/* 🚪 Quitter (4e icône) : couleur déjà gérée par .quit-icon-btn (rouge) — non modifiée ici. */
 
 .sections-header-left h2{
   font-size:.95rem !important;
   font-weight:800;
-  margin:0 0 4px;
+  margin:0;
   line-height:1.2;
 }
+
+/* Rangée fusionnée icônes + logo, juste sous la rangée titre/drapeau —
+   logo centré au milieu (.sections-header-logo-wrap en flex:1), groupes
+   de 2 icônes de part et d'autre (flex-shrink:0, ne rétrécissent jamais).
+   Même principe que .sections-top-icons-row chez VACHÉBO. */
+.sections-top-icons-row{
+  display:flex;
+  align-items:center;
+  margin-bottom:6px;
+}
+.sections-top-icons-row .back-btn-group{
+  flex-shrink:0;
+}
+/* Icônes légèrement réduites SEULEMENT dans cette rangée fusionnée
+   icônes+logo (comme .sections-top-icons-row .back-icon-btn chez
+   VACHÉBO) : libère de la place pour le logo, sans toucher au gabarit
+   de .back-btn-icon utilisé ailleurs (Accueil, Guide, Leçon). */
+.sections-top-icons-row .back-btn-icon{
+  font-size:.85rem;
+  padding:5px 8px;
+}
+/* Icônes recolorées par fonction (ajouté le 24/07/2026, Bug_3) — ciblage
+   par ID plutôt que nth-child : robuste au fait que 🏠/❓ et 📚/🚪 sont
+   désormais dans 2 groupes .back-btn-group distincts de part et d'autre
+   du logo, au lieu d'un seul groupe de 4. Le sélecteur [id^=…] couvre à
+   la fois les IDs de #sections-level1 et leur variante suffixée "2" de
+   #sections-level2. */
+.sections-top-icons-row [id^="sectionsBackHomeBtn"]  { background:rgba(255,255,255,.85); } /* 🏠 Accueil */
+.sections-top-icons-row [id^="sectionsBackGuideBtn"] { background:rgba(241,196,15,.85);  } /* ❓ Guide   */
+.sections-top-icons-row [id^="sectionsQnModulesBtn"] { background:rgba(76,175,80,.85);   } /* 📚 Modules */
+/* 🚪 Quitter : couleur déjà gérée par .quit-icon-btn (rouge) — non modifiée ici. */
 
 /* 🆕 Logo (image complète) affiché sur l'écran Modules, même logique
    visuelle que .home-guide-logo (écran Guide) : petite vignette avec
    ombre portée pour se détacher du dégradé coloré du header.
-   🆕 (24/07/2026, Bug_3) Agrandi significativement — l'appli sœur
-   VACHÉBO affiche son logo en grand bandeau, bien plus repérable
-   qu'une simple vignette de 56px. */
+   🆕 (24/07/2026, Bug_5) Repositionné dans .sections-top-icons-row,
+   centré entre les 2 groupes d'icônes (comme chez VACHÉBO) au lieu
+   d'occuper toute la largeur en rangée séparée — donc rétréci en
+   conséquence pour cohabiter avec les icônes sur la même ligne. */
 .sections-header-logo-wrap{
-  margin:6px 0 8px;
+  flex:1 1 auto;
+  display:flex;
+  justify-content:center;
+  margin:0 6px;
 }
 .sections-header-logo{
-  width:100%;
-  max-width:220px;
+  width:85%;
+  max-width:190px;
   height:auto;
   border-radius:10px;
   box-shadow:0 3px 10px rgba(0,0,0,.28);
@@ -3705,8 +3752,8 @@ footer a:hover{text-decoration:underline}
     min-height:0;
   }
 
-  /* Guide home — 🆕 (24/07/2026) #guide inclus, écran désormais séparé */
-  #home, #guide{
+  /* Guide home — fusionné dans #home (voir §6/§22) */
+  #home{
     border-radius:32px;
     min-height:600px;
   }
@@ -3871,7 +3918,7 @@ footer a:hover{text-decoration:underline}
 
   /* ── Défilement fluide, contenu jamais masqué ── */
   .screen{min-height:100%}
-  #home, #guide, #sections-level1, #sections-level2, #lesson{
+  #home, #sections-level1, #sections-level2, #lesson{
     -webkit-overflow-scrolling:touch;
     padding-bottom:64px; /* espace de sécurité au-dessus de la nav basse compressée */
   }

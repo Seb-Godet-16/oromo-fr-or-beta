@@ -32,11 +32,13 @@
      4b.   Restauration de session quiz (sessionStorage)     ligne  1744
       5.   Navigation entre écrans                           ligne  1856
      5b.   Navigation basse — helpers                        ligne  2012
-           dont goToAccueil()/goToHome()/goToGuide() — 🏠/❓  ligne  2271
-           (🆕 goToHome() : Guide → Home, sans changer de mode)
-     5c.   🆕 Navigation rapide en haut — icônes 🏠❓📚🚪,     ligne  2130
-           étendue à TOUS les écrans ; entrées 'home'/'guide'
-           distinctes depuis le 24/07/2026 (_QUICK_NAV_MAP)
+           dont goToAccueil()/goToGuide() — icônes 🏠/❓       ligne  2271
+           (🆕 24/07/2026, 2e correctif : goToHome() supprimée,
+           #home et #guide réunis en un seul écran — voir §6.24
+           du Bilan technique)
+     5c.   🆕 Navigation rapide en haut — icônes 📚🚪 sur       ligne  2130
+           #home (🏠/❓ retirés, redondants sur l'écran fusionné),
+           🏠❓📚🚪 sur Sections/Leçon (_QUICK_NAV_MAP)
      5d.   🆕 Modale "Quitter l'application" (#quit-app-modal) ligne  2301
            — openQuitModal() / quitAppClose() / quitAppRestart()
       6.   Écran Home — bouton Commencer + carte(s) de       ligne  2426
@@ -56,11 +58,11 @@
      13.   Quiz Dialogue — questions sur le dialogue         ligne  4281
      14.   Utilitaires & chaînes de résultats bilingues      ligne  4392
      17.   Guide utilisateur — Onboarding — 🆕 auto-affiché   ligne  4488
-           après Home à la 1ʳᵉ visite (_maybeShowOnboarding())
-      —    🆕 Écran Home (#home) + Guide (#guide) — deux      ligne  4513
-           écrans séparés depuis le 24/07/2026 (un seul avant,
-           voir index.html §6) — _buildHomeGuide()
-     18.   Crédits — showCredits()                           ligne  4692
+           à la 1ʳᵉ visite d'un mode (_maybeShowOnboarding())
+      —    Écran Home + Guide — 🆕 (24/07/2026, 2e correctif  ligne  4584
+           du jour) écran UNIQUE #home à nouveau (agencement
+           VACHÉBO, pas l'ancien) — _buildHomeGuide()
+     18.   Crédits — showCredits()                           ligne  4722
      15.   Initialisation du launcher                        ligne  4836
      15b.  🆕 Panneaux infos dépliables des cartes de langue  ligne  4869
            (état par défaut + préférence manuelle — voir §7
@@ -74,7 +76,7 @@
      20b.  🆕 Installation PWA — bouton natif "Installer     ligne  5148
            l'app" (bouton natif Android/Chrome, rappel iOS)
      21.   Exports PDF — window.print() + @media print       ligne  5249
-     21a.  Export Guide (écran #guide)                       ligne  5446
+     21a.  Export Guide (accordéons de l'écran #home)         ligne  5462
      21b.  Export Vocabulaire (leçon Niveau 1)               ligne  5563
      21c.  Export Situation (leçon Niveau 2 — dialogue)      ligne  5659
    ============================================================
@@ -92,6 +94,16 @@
    1ʳᵉ visite d'un mode, au lieu d'y rester sans action. Toutes les
    ancres ci-dessus ont été revérifiées par recherche directe dans le
    fichier final (recalcul intégral, pas par arithmétique de décalage).
+   ============================================================
+   🆕 (24/07/2026, 2e correctif du jour, Bilan_technique.md §6.24) :
+   #home et #guide sont réunis en un seul écran #home (agencement
+   VACHÉBO), goToHome() est supprimée, goToGuide()/_maybeShowOnboarding()/
+   showOnboardingGuide() ciblent #home. Seules les ancres directement
+   concernées par ce correctif (§5b, §5c, §17, la section "Écran Home +
+   Guide" et §21a ci-dessus) ont été recalculées avec précision ; le
+   reste du plan hérité des passes précédentes n'a pas fait l'objet
+   d'une resynchronisation intégrale ligne par ligne — à prévoir dans
+   une prochaine passe dédiée, comme pour les précédentes.
    ============================================================
 
    HISTORIQUE DE L'APPLICATION
@@ -433,13 +445,16 @@ function initApp(mode) {
     loadDone();
     loadOpened(); /* 🆕 modules déjà ouverts — badge "Nouveau" (§7) */
 
-    /* Masquer le spinner de chargement avant d'afficher l'écran home */
+    /* Masquer le spinner de chargement avant d'afficher le premier écran */
     _hideLoadingSpinner();
 
-    /* Afficher l'écran d'accueil */
-    showScreen('home');
-
-    /* Afficher le guide utilisateur à la première visite (une fois par mode) */
+    /* 🆕 (24/07/2026, 2e correctif du jour) Plus d'appel showScreen('home')
+       préalable ici : #home et #guide, fusionnés en un seul écran (voir
+       Bilan_technique.md §6.24), ne nécessitent plus deux affichages
+       successifs (home PUIS bascule vers guide/sections). C'est
+       désormais _maybeShowOnboarding() qui choisit directement le bon
+       écran de destination — même principe que l'appli sœur VACHÉBO
+       (_maybeAutoShowGuide(), appelée seule en fin d'initApp()). */
     _maybeShowOnboarding();
   });
 }
@@ -1865,19 +1880,24 @@ function _clearQuizSession() {
  * avec une animation de slide directionnelle.
  *
  * ORDRE DES ÉCRANS (profondeur de navigation) :
- *   0: app-launcher → 1: home → 1b: guide → 2: sections → 3: lesson
- * 🆕 (24/07/2026) #guide est désormais un écran à part entière, séparé
- * du dashboard #home (voir §6, _buildHomeGuide()) — corrige le bug où
- * l'icône ❓ depuis #home rechargeait le même écran sur lui-même.
+ *   0: app-launcher → 1: home → 2: sections → 3: lesson
+ * 🆕 (24/07/2026, 2e correctif du jour) #home réunit à nouveau le
+ * dashboard ET le guide explicatif en un seul écran (voir §6,
+ * _buildHomeGuide(), Bilan_technique.md §6.24) — plus de sous-niveau
+ * "1b: guide" séparé.
  * Aller vers un écran plus profond → slide de droite à gauche (forward)
  * Revenir vers un écran moins profond → slide de gauche à droite (back)
  *
- * @param {'home'|'guide'|'sections'|'lesson'} id - ID de l'élément HTML de l'écran
+ * @param {'app-launcher'|'home'|'sections-level1'|'sections-level2'|'lesson'} id - ID de l'élément HTML de l'écran
  * @param {'forward'|'back'|'none'} [dir] - Direction forcée (optionnel)
  */
 
 /* Ordre des écrans pour déterminer la direction */
-const _SCREEN_ORDER = ['app-launcher', 'home', 'guide', 'sections-level1', 'sections-level2', 'lesson'];
+/* 🆕 (24/07/2026, 2e correctif du jour) 'guide' retiré : #home et #guide
+   sont réunis en un seul écran #home (fusion Home+Guide, voir
+   Bilan_technique.md §6.24) — plus aucune transition #home ↔ #guide à
+   ordonner ici. */
+const _SCREEN_ORDER = ['app-launcher', 'home', 'sections-level1', 'sections-level2', 'lesson'];
 
 /* 🆕 CORRECTIF (24/07/2026, bug navigation basse) : identifiant du
    setTimeout qui finalise la transition en cours (voir fin de
@@ -1934,6 +1954,22 @@ function showScreen(id, dir) {
 
   const nextScreen = document.getElementById(id);
   if (!nextScreen) return;
+
+  /* 🆕 (24/07/2026, 2e correctif — fusion Home+Guide, voir
+     Bilan_technique.md §6.24) Quitter #home (dashboard + guide fusionnés)
+     pour un autre écran = onboarding "vu" pour CE mode : il ne se
+     relance plus tout seul au prochain lancement dans ce mode (voir
+     _maybeShowOnboarding()). Couvre "▶ Commencer" comme n'importe quelle
+     autre sortie de l'écran (icône 📚 de la nav rapide, nav basse…) —
+     même principe que l'appli sœur VACHÉBO, qui pose son flag équivalent
+     au même endroit dans son propre showScreen(). Remplace l'ancien
+     localStorage.setItem() qui ne vivait QUE dans le onclick de
+     homeStartBtn (voir _buildHomeGuide()) : centralisé ici, il couvre
+     désormais toutes les sorties de #home, pas seulement "Commencer". */
+  if (currentScreen && currentScreen.id === 'home' && id !== 'home') {
+    const obKey = isFrench() ? _OB_KEY_FR : _OB_KEY_OR;
+    try { localStorage.setItem(obKey, 'true'); } catch (e) { /* stockage indisponible — dégradé silencieusement */ }
+  }
 
   /* Remonter en haut dès maintenant */
   window.scrollTo(0, 0);
@@ -2059,14 +2095,15 @@ function _updateBottomNav(screenId) {
      reste masquée. Elle réapparaît dès que l'apprenant clique sur
      "Commencer" (_buildHomeGuide → homeStartBtn), qui pose le flag AVANT
      de naviguer vers l'écran Modules. Lors des visites suivantes de
-     #home (bouton ❓ Guide, une fois le flag déjà posé), la nav reste
-     normalement visible — seul le tout premier passage est concerné.
-     🆕 (24/07/2026) Règle étendue à #guide : depuis la séparation de
-     #home et #guide en deux écrans distincts, le Guide est atteignable
-     dès la première visite (icône ❓ depuis #home) — la même protection
-     doit donc s'y appliquer pour éviter de court-circuiter l'onboarding
-     via la nav basse pendant qu'on le consulte. */
-  if (screenId === 'home' || screenId === 'guide') {
+     #home (bouton Guide de la nav basse, une fois le flag déjà posé),
+     la nav reste normalement visible — seul le tout premier passage
+     est concerné.
+     🆕 (24/07/2026, 2e correctif du jour) #home et #guide, brièvement
+     séparés en deux écrans distincts plus tôt dans la journée, sont
+     réunis en un seul écran #home (fusion Home+Guide, voir
+     Bilan_technique.md §6.24) : plus besoin de dupliquer la condition
+     sur un 2e id d'écran. */
+  if (screenId === 'home') {
     const obKey = isFrench() ? 'tm_onboarded_fr' : 'tm_onboarded_or';
     const firstEverVisit = localStorage.getItem(obKey) !== 'true';
     if (firstEverVisit) {
@@ -2120,7 +2157,7 @@ function _updateBottomNav(screenId) {
     const mb = document.getElementById('navBtnModules');
     if (mb) mb.classList.add('active');
   }
-  if (screenId === 'home' || screenId === 'guide') {
+  if (screenId === 'home') {
     const gb = document.getElementById('navBtnGuide');
     if (gb) gb.classList.add('active');
   }
@@ -2166,12 +2203,15 @@ function _updateBottomNav(screenId) {
  */
 const _QUICK_NAV_MAP = {
   'app-launcher'    : { quit: 'launcherQuitBtn' },
-  /* 🆕 (24/07/2026) #home et #guide sont désormais deux écrans distincts
-     (voir §6, _buildHomeGuide()) : chacun n'affiche plus que l'icône qui
-     mène VERS l'autre — plus de bouton "home" ici (on y est déjà, et il
-     rechargeait auparavant le même écran, d'où le bug). */
-  'home'            : { guide: 'homeQnGuideBtn',       modules: 'homeQnModulesBtn',    quit: 'homeQuitBtn',        current: 'home' },
-  'guide'           : { home: 'guideQnHomeBtn',        modules: 'guideQnModulesBtn',   quit: 'guideQuitBtn',       current: 'guide' },
+  /* 🆕 (24/07/2026, 2e correctif du jour) #home et #guide, brièvement
+     séparés en deux écrans distincts plus tôt dans la journée (chacun
+     n'affichant alors que l'icône menant VERS l'autre), sont réunis en
+     un seul écran #home (fusion Home+Guide, style VACHÉBO — voir
+     Bilan_technique.md §6.24). Ni 🏠 ni ❓ n'ont plus leur place ici :
+     les deux menaient précisément vers cet écran. Ne reste que 📚
+     Modules (raccourci pour sauter directement aux modules) + 🚪
+     Quitter, toujours disponible. */
+  'home'            : { modules: 'homeQnModulesBtn',    quit: 'homeQuitBtn',        current: 'home' },
   'sections-level1' : { home: 'sectionsBackHomeBtn',  guide: 'sectionsBackGuideBtn',  modules: 'sectionsQnModulesBtn',    quit: 'sectionsQuitBtn',    current: 'modules' },
   'sections-level2' : { home: 'sectionsBackHomeBtn2', guide: 'sectionsBackGuideBtn2', modules: 'sectionsQnModulesBtn2',   quit: 'sectionsQuitBtn2',   current: 'modules' },
   'lesson'          : { home: 'lessonQnHomeBtn',       guide: 'lessonQnGuideBtn',      modules: 'lessonQnModulesBtn',     quit: 'lessonQuitBtn' },
@@ -2210,16 +2250,16 @@ function _updateQuickNav(screenId) {
     const el = document.getElementById(map[key]);
     if (!el) return;
     const isCurrent = (key === map.current);
-    /* 📚 Modules masqué UNIQUEMENT sur #home et #guide tant que le mode
-       courant n'a jamais été onboardé (voir commentaire de section
-       ci-dessus) — étendu à #guide le 24/07/2026 puisque cet écran est
-       désormais atteignable dès la première visite, avant "Commencer". */
-    const hiddenByOnboarding = ((screenId === 'home' || screenId === 'guide') && key === 'modules' && !_isQuickNavUnlocked());
+    /* 📚 Modules masqué UNIQUEMENT sur #home tant que le mode courant n'a
+       jamais été onboardé (voir commentaire de section ci-dessus), pour
+       que l'apprenant lise bien tout le guide avant de pouvoir sauter
+       directement aux modules. */
+    const hiddenByOnboarding = (screenId === 'home' && key === 'modules' && !_isQuickNavUnlocked());
     /* 🆕 (24/07/2026) L'icône de l'écran déjà affiché est masquée
        (display:none), pas seulement grisée — retour terrain, cf. Bug_4 :
        inutile de proposer un raccourci vers l'écran où l'on se trouve
-       déjà. Les 3 autres icônes ne bougent pas de place (elles restent
-       dans le même ordre 🏠/❓/📚), seul le nombre visible change. */
+       déjà. Les autres icônes ne bougent pas de place, seul le nombre
+       visible change. */
     el.style.display = (isCurrent || hiddenByOnboarding) ? 'none' : '';
     el.disabled = isCurrent;
   });
@@ -2264,37 +2304,32 @@ function lessonGoBack() {
  * Icône "🏠" du header Sections/Leçon → retour à l'écran de LANCEMENT
  * (#app-launcher, choix Français / Oromo). Même mécanisme que le
  * bouton "Changer de langue" de la nav basse (navBtnLang).
- * ⚠️ Ne pas confondre avec goToHome() ci-dessous : ce bouton-ci quitte
- * le mode courant, alors que goToHome() reste dans le mode et ramène
- * seulement au dashboard #home.
  */
 function goToAccueil() {
   showScreen('app-launcher', 'back');
 }
 
-/**
- * 🆕 (24/07/2026) Icône "🏠" du header Guide → retour à l'écran Home
- * (#home, le dashboard : bouton Commencer/Continuer + carte(s) de
- * progression), SANS changer de mode/langue — contrairement à
- * goToAccueil() ci-dessus. N'existait pas avant la séparation de #home
- * et #guide en deux écrans distincts (voir §6).
- */
-function goToHome() {
-  showScreen('home', 'back');
-}
+/* 🆕 (24/07/2026, 2e correctif du jour) goToHome() SUPPRIMÉE : elle
+   n'existait que pour l'icône "🏠" de l'ex-écran #guide, séparé de
+   #home plus tôt dans la journée pour corriger un bug d'icône ❓
+   inopérante. #home et #guide sont désormais réunis en un seul écran
+   #home (fusion Home+Guide, style VACHÉBO — voir Bilan_technique.md
+   §6.24) : ce bouton n'a plus lieu d'être, il ramenait vers un écran
+   sur lequel on se trouvait déjà. */
 
 /**
- * Icône "❓" du header Sections/Leçon/Home → ouvre l'écran #guide
- * (guide explicatif bilingue, accordéons). Identique à
- * showOnboardingGuide() (bouton "Guide" de la nav basse), avec
- * l'animation "back".
- * 🆕 (24/07/2026) Cible désormais #guide (écran dédié) et non plus
- * #home : avant la séparation des deux écrans, cette fonction rouvrait
- * #home, ce qui n'avait aucun effet visible quand on l'appelait déjà
- * depuis #home (bug rapporté en retour terrain).
+ * Icône "❓" du header Sections/Leçon → affiche l'écran #home (qui
+ * contient désormais À LA FOIS le dashboard et le guide explicatif
+ * bilingue, accordéons compris). Identique à showOnboardingGuide()
+ * (bouton "Guide" de la nav basse), avec l'animation "back".
+ * 🆕 (24/07/2026, 2e correctif du jour) Cible à nouveau #home (et non
+ * plus #guide, qui n'existe plus) — fusion Home+Guide, voir
+ * Bilan_technique.md §6.24. Le nom de la fonction est conservé tel
+ * quel pour ne pas toucher tous les onclick="goToGuide()" du HTML
+ * (icônes ❓ de #sections-level1/2 et #lesson).
  */
 function goToGuide() {
-  showScreen('guide', 'back');
+  showScreen('home', 'back');
 }
 
 /* ============================================================
@@ -4510,34 +4545,42 @@ const _OB_KEY_FR = 'tm_onboarded_fr';
 const _OB_KEY_OR = 'tm_onboarded_or';
 
 /* ============================================================
-   ÉCRAN 2 — HOME (dashboard) + GUIDE (#guide) — deux écrans séparés
+   ÉCRAN 2 — HOME (dashboard) + GUIDE — ÉCRAN UNIQUE (#home)
    ============================================================
-   🆕 (24/07/2026) #home et #guide étaient auparavant un seul et même
-   écran (#home faisait double emploi : dashboard ET guide explicatif),
-   ce qui rendait l'icône ❓ de #home inopérante (elle rechargeait le
-   même écran sur lui-même — retour terrain). Ils sont désormais deux
-   <div class="screen"> distincts dans index.html, mais restent
-   construits par la MÊME fonction _buildHomeGuide() ci-dessous, qui :
-     • peuple le dashboard #home (titre, drapeaux, sous-titre, badges,
-       installation, bouton Commencer/Continuer, export PDF, topbar) ;
-     • ET bascule le bon bloc de langue à l'intérieur de #guide
-       (.home-lang-block, voir plus bas).
+   🆕 (24/07/2026, 2e correctif du jour) #home et #guide avaient été
+   séparés en deux <div class="screen"> distincts PLUS TÔT le même
+   jour, pour corriger l'icône ❓ de l'ancien #home unique qui
+   rechargeait le même écran sur lui-même (retour terrain). Cette
+   séparation créait cependant une navigation à deux temps peu
+   naturelle (home PUIS bascule automatique vers guide). Les deux
+   écrans sont donc réunis à nouveau ici en UN SEUL écran #home — pas
+   un simple retour arrière : l'agencement reprend cette fois celui de
+   l'appli sœur VACHÉBO (logo → drapeaux → titre → sous-titre → badges
+   → installation → Commencer/PDF → accordéons), voir
+   Bilan_technique.md §6.24. _buildHomeGuide() reste la fonction
+   unique qui peuple tout cet écran :
+     • le dashboard (titre, drapeaux, sous-titre, badges, installation,
+       bouton Commencer/Continuer, export PDF, topbar) ;
+     • ET le bon bloc de langue du corps du guide (.home-lang-block,
+       voir plus bas).
    Appelée une fois par initApp() après _setUI().
 
-   Logique "Ne plus afficher" :
-   • Si le flag localStorage est posé ET que ce n'est pas un
-     appel depuis "Aide" → on saute directement à sections.
-   • Le bouton "Commencer" sur #home permet de poser le flag.
-   • showOnboardingGuide() : force l'affichage de #guide depuis la nav
-     basse ou les icônes ❓, sans toucher au flag.
+   Logique "Ne plus afficher (l'écran complet)" :
+   • Si le flag localStorage est posé (posé par showScreen() dès qu'on
+     QUITTE #home, quelle que soit la sortie) → on saute directement
+     à #sections-level1 dès le lancement, sans repasser par #home.
+   • showOnboardingGuide() : force l'affichage de #home depuis le
+     bouton "Guide" de la nav basse, sans toucher au flag — permet d'y
+     revenir volontairement à tout moment, même une fois onboardé.
    ============================================================ */
 
 /**
- * Met à jour les éléments dynamiques de #home ET #guide (drapeaux,
- * titre, sous-titre, badges, boutons, topbars) et active le bon bloc
- * de langue dans #guide.
+ * Met à jour les éléments dynamiques de l'écran #home fusionné
+ * (drapeaux, titre, sous-titre, badges, boutons, topbar) et active le
+ * bon bloc de langue dans le corps du guide.
  *
- * ARCHITECTURE (depuis Juin 2026) :
+ * ARCHITECTURE (depuis Juin 2026, corps du guide inchangé par la
+ * fusion du 24/07/2026) :
  * La structure HTML complète du guide (accordéons, audio, bio…)
  * est déclarée statiquement dans index.html, dans deux blocs :
  *   • .home-lang-block[data-lang="or"] → guide en Oromo
@@ -4545,10 +4588,9 @@ const _OB_KEY_OR = 'tm_onboarded_or';
  *   • .home-lang-block[data-lang="fr"] → guide en Français
  *     (apprenant francophone qui apprend l'Oromo)
  * Cette fonction se limite à :
- *   1. Masquer les deux blocs, puis révéler le bon (dans #guide).
+ *   1. Masquer les deux blocs, puis révéler le bon.
  *   2. Renseigner les IDs de l'en-tête (drapeaux, titre, sous-titre,
- *      badges) et des boutons (Commencer, Export PDF, topbars de
- *      #home ET #guide).
+ *      badges) et des boutons (Commencer, Export PDF, topbar).
  */
 function _buildHomeGuide() {
   const isFr = isFrench();
@@ -4595,29 +4637,23 @@ function _buildHomeGuide() {
   }
 
   /* ── 4. Topbar ──
-     🆕 (24/07/2026) #home et #guide ayant désormais chacun leur propre
-     topbar, ce libellé ne peut plus servir aux deux à la fois : #home
-     affiche un titre de dashboard, #guide garde l'ancien libellé
-     "Guide explicatif" (voir plus bas, guideTopbarTitle/guideTitle). */
+     🆕 (24/07/2026, 2e correctif du jour) Un seul écran #home, une
+     seule topbar : plus besoin de dupliquer ce libellé pour un 2e
+     écran #guide (supprimé, voir Bilan_technique.md §6.24). */
   const topbarTitle = document.getElementById('homeTopbarTitle');
   if (topbarTitle) topbarTitle.textContent = L('Fuula Jalqabaa', 'Accueil');
-
-  const guideTopbarTitle = document.getElementById('guideTopbarTitle');
-  if (guideTopbarTitle) guideTopbarTitle.textContent = L('Gargaarsa', 'Guide explicatif');
-
-  const guideTitleEl = document.getElementById('guideTitle');
-  if (guideTitleEl) guideTitleEl.textContent = L('📖 Gargaarsa', '📖 Guide explicatif');
 
   /* ── 5. Bouton Commencer ── */
   const btn = document.getElementById('homeStartBtn');
   if (btn) {
     btn.textContent = L('▶ Jalqabi', '▶ Commencer');
+    /* 🆕 (24/07/2026, 2e correctif du jour) Plus de localStorage.setItem()
+       manuel ici : showScreen() marque désormais lui-même le guide comme
+       "déjà vu" pour CE mode dès qu'on quitte #home, quelle que soit la
+       sortie (voir showScreen(), et le bouton "Guide" de la nav basse
+       reste accessible ensuite via showOnboardingGuide(), qui ne
+       consulte jamais ce flag). */
     btn.onclick = () => {
-      /* Marque le guide comme "déjà vu" pour CE mode → ne sera plus
-         affiché automatiquement au prochain lancement (voir _maybeShowOnboarding).
-         Reste accessible en un clic via l'icône ❓ de la barre de navigation
-         (showOnboardingGuide() ne consulte jamais ce flag). */
-      localStorage.setItem(isFrench() ? _OB_KEY_FR : _OB_KEY_OR, 'true');
       showScreen('sections-level1');
     };
   }
@@ -4644,27 +4680,28 @@ function _buildHomeGuide() {
 
 
 /**
- * Appelée par initApp() juste après showScreen('home').
+ * Appelée par initApp() en toute fin de chargement, à la place de
+ * l'ancien showScreen('home') direct.
  * Si le guide a déjà été vu pour le mode actif (flag localStorage posé
- * par le clic sur "Commencer"), on saute directement à l'écran des
- * modules — l'utilisateur ne revoit pas le dashboard à chaque lancement.
- * 🆕 (24/07/2026) Sinon (première visite jamais terminée pour ce mode),
- * on enchaîne automatiquement sur l'écran #guide (guide explicatif) —
- * juste après #home, comme demandé : l'apprenant voit d'abord le
- * dashboard (showScreen('home') ci-dessus dans initApp), puis bascule
- * aussitôt sur le Guide. Il revient ensuite à #home via l'icône 🏠 du
- * Guide pour cliquer sur "Commencer" (ce qui pose le flag onboarding).
+ * par showScreen() dès qu'on a quitté #home une première fois), on
+ * saute directement à l'écran des modules — l'utilisateur ne revoit
+ * pas l'écran fusionné dashboard+guide à chaque lancement.
+ * 🆕 (24/07/2026, 2e correctif du jour) Sinon (première visite jamais
+ * terminée pour ce mode), on affiche #home — qui contient désormais À
+ * LA FOIS le dashboard ET le guide explicatif complet (fusion
+ * Home+Guide, voir Bilan_technique.md §6.24) : plus de bascule
+ * automatique entre deux écrans séparés, un seul affichage suffit.
  * N'affecte jamais showOnboardingGuide() (bouton "Guide" de la nav
- * basse), qui force toujours l'affichage du guide sans consulter ce
- * flag, ni goToGuide()/goToHome() (icônes ❓/🏠), utilisables librement
- * une fois sur l'un des deux écrans.
+ * basse), qui force toujours l'affichage de #home sans consulter ce
+ * flag, ni goToGuide() (icônes ❓ de Sections/Leçon), utilisable
+ * librement à tout moment.
  */
 function _maybeShowOnboarding() {
   const key = isFrench() ? _OB_KEY_FR : _OB_KEY_OR;
   if (localStorage.getItem(key) === 'true') {
     showScreen('sections-level1');
   } else {
-    showScreen('guide');
+    showScreen('home');
   }
 }
 
@@ -4681,11 +4718,12 @@ function _closeOnboarding() {
 
 /**
  * Ouvre le guide depuis le bouton "Guide" de la nav basse.
- * 🆕 (24/07/2026) Affiche désormais l'écran #guide dédié, séparé du
- * dashboard #home — sans toucher au flag d'onboarding.
+ * 🆕 (24/07/2026, 2e correctif du jour) Affiche à nouveau #home —
+ * fusion Home+Guide, voir Bilan_technique.md §6.24 — sans toucher au
+ * flag d'onboarding (accessible à tout moment, même une fois onboardé).
  */
 function showOnboardingGuide() {
-  showScreen('guide');
+  showScreen('home');
 }
 
 /* ============================================================
@@ -4698,16 +4736,11 @@ function showCredits() {
   const bodyEl  = document.getElementById('credits-modal-body');
   const closeEl = document.getElementById('credits-modal-close');
 
-  if (titleEl) titleEl.textContent = L('Odeeffannoo', 'Infos');
+  if (titleEl) titleEl.textContent = L('ℹ️ Odeeffannoo', 'ℹ️ Infos');
   if (closeEl) closeEl.textContent = L('Cufuu', 'Fermer');
 
-  const lblCopy = L(
-    '© Waxabajjii 2026 – Kan Sébastien Godet tolche · AI Claude Sonnet 4.6 fi Gemini 3.5 Flash gargaaramee',
-    '© Juin 2026 – Développé par Sébastien Godet · Assisté par IA Claude Sonnet 4.6 et Gemini 3.5 Flash'
-  );
-
   /* Ligne d'e-mail / LinkedIn — factorisée ici, réutilisée dans les 2 langues
-     à l'intérieur de la carte contact de la rubrique "Qui je suis". */
+     à l'intérieur de la carte contact de la rubrique "Qui suis-je ?". */
   const contactLinks =
       '<div class="ob-bio-links">'
     + '<button class="ob-bio-btn antispam-btn" onclick="openAndCopyEmail()">✉️ <span class="antispam-email">moc.liamg@61tedog.neitsabes</span></button>'
@@ -4720,10 +4753,7 @@ function showCredits() {
          2 rubriques repliables <details>/<summary> — même convention
          que les accordéons du Guide (.hg-section), pour cohérence
          visuelle et navigation clavier native (I7 / W1). */
-      ? '<p class="credits-copy">' + lblCopy + '</p>'
-        + '<hr class="credits-sep">'
-
-        + '<details class="hg-section">'
+      ? '<details class="hg-section">'
         +   '<summary class="hg-summary">'
         +     '<span class="hg-icon">🙋</span>'
         +     '<span class="hg-label">Eenyu ani?</span>'
@@ -4771,13 +4801,10 @@ function showCredits() {
         + '</details>'
 
       /* ── Texte français (interface pour l'apprenant d'Oromo) ── */
-      : '<p class="credits-copy">' + lblCopy + '</p>'
-        + '<hr class="credits-sep">'
-
-        + '<details class="hg-section">'
+      : '<details class="hg-section">'
         +   '<summary class="hg-summary">'
         +     '<span class="hg-icon">🙋</span>'
-        +     '<span class="hg-label">Qui je suis</span>'
+        +     '<span class="hg-label">Qui suis-je ?</span>'
         +     '<span class="hg-chevron">▼</span>'
         +   '</summary>'
         +   '<div class="hg-detail">'
@@ -5443,7 +5470,7 @@ function _printDocFooter() {
 
 
 /* ============================================================
-   21a. EXPORT GUIDE (Écran #guide)
+   21a. EXPORT GUIDE (#guideBody, imbriqué dans l'écran #home)
    ============================================================ */
 
 function _exportGuide() {
@@ -5458,9 +5485,10 @@ function _exportGuide() {
   let sectionsHTML = '';
 
   if (bodyEl) {
-    /* 🐞 CORRECTIF : #guideBody (ex-#homeGuideBody, renommé le 24/07/2026
-       lors de la séparation de #home et #guide en deux écrans) contient
-       TOUJOURS les deux blocs bilingues (.home-lang-block[data-lang="or"]
+    /* 🐞 CORRECTIF : #guideBody (ex-#homeGuideBody ; imbriqué depuis le
+       24/07/2026 (2e correctif du jour) dans l'écran fusionné #home,
+       voir Bilan_technique.md §6.24) contient TOUJOURS les deux blocs
+       bilingues (.home-lang-block[data-lang="or"]
        et [data-lang="fr"]), un seul étant visible via la classe
        .home-lang-hidden (display:none en CSS — voir _buildHomeGuide()).
        Mais querySelectorAll() ignore le display:none et remontait donc

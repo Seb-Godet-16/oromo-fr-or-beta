@@ -25,44 +25,39 @@
   ║  La visibilité des écrans est contrôlée par la classe CSS       ║
   ║  "active" (gérée dans app.js via showScreen()).                 ║
   ║  Ordre du parcours utilisateur :                                ║
-  ║   [0] app-launcher → [1] home → [1b] guide → [2] sections →    ║
-  ║   [3] lesson                                                    ║
-  ║  🆕 24/07/2026 : [1b] guide est un nouvel écran, séparé de      ║
-  ║  [1] home (voir plan ci-dessous et Bilan_technique.md).          ║
+  ║   [0] app-launcher → [1] home → [2] sections → [3] lesson      ║
+  ║  🆕 24/07/2026 (2e correctif du jour) : [1] home redevient un   ║
+  ║  écran UNIQUE (dashboard + guide fusionnés), sur le modèle de   ║
+  ║  l'appli sœur VACHÉBO — pas un simple retour à l'ancien         ║
+  ║  agencement Taphad'Meuh (voir Bilan_technique.md §6.24).         ║
   ╠══════════════════════════════════════════════════════════════════╣
   ║  PLAN DU FICHIER                                                ║
   ║   <head>    Métadonnées, PWA, Open Graph, feuille de styles     ║
   ║   Écran 0   Lanceur (#app-launcher, dont 🆕 bouton              ║
-  ║             Quitter)                          ligne    166      ║
-  ║   Écran 1   Home / Dashboard (#home, dont 🆕                    ║
-  ║             nav rapide + Quitter)              ligne    379      ║
-  ║   Écran 1b  🆕 Guide explicatif (#guide) — SÉPARÉ               ║
-  ║             de #home le 24/07/2026 (bug ❓ inopérant)  ligne    501      ║
-  ║   Écran 2a  Niveau 1 Modules (#sections-level1) ligne  1516      ║
-  ║   Écran 2b  Niveau 2 Modules (#sections-level2) ligne  1556      ║
+  ║             Quitter)                          ligne    172      ║
+  ║   Écran 1   🆕 Home + Guide fusionnés (#home, dont              ║
+  ║             nav rapide 📚+🚪 et corps d'accordéons)   ligne    396      ║
+  ║   Écran 2a  Niveau 1 Modules (#sections-level1) ligne  1494      ║
+  ║   Écran 2b  Niveau 2 Modules (#sections-level2) ligne  1551      ║
   ║   Écran 3   Leçon (#lesson, dont 🆕 rangée                       ║
-  ║             .lesson-quick-nav)                ligne   1601      ║
-  ║   Modale    Remerciements (#credits-modal)    ligne   1697      ║
-  ║   Modale    Confirmation suppression          ligne   1730      ║
-  ║   Modale 🆕 Quitter l'application              ligne   1757      ║
+  ║             .lesson-quick-nav)                ligne   1604      ║
+  ║   Modale    Remerciements (#credits-modal)    ligne   1700      ║
+  ║   Modale    Confirmation suppression          ligne   1733      ║
+  ║   Modale 🆕 Quitter l'application              ligne   1760      ║
   ║             (#quit-app-modal)                                   ║
-  ║   Nav       Barre de navigation basse         ligne   1774      ║
-  ║   Scripts   Chargement de app.js              ligne   1816      ║
-  ║  🆕 24/07/2026 : Home et Guide séparés en deux écrans           ║
-  ║  distincts (#home / #guide) — l'icône ❓ depuis #home            ║
-  ║  rechargeait auparavant le même écran sur lui-même (retour       ║
-  ║  terrain). #home ne garde que ❓+📚 (🏠 supprimé, redondant),    ║
-  ║  #guide n'a que 🏠+📚 (❓ supprimé, redondant). Voir              ║
-  ║  _QUICK_NAV_MAP / goToHome() / goToGuide() dans app.js (§5c)     ║
-  ║  et Bilan_technique.md. Tout le fichier après l'ancien #home a   ║
-  ║  décalé de ~+40 lignes (nouvel écran + commentaires).            ║
-  ║                                                                  ║
-  ║  ⚠️ Au passage, les repères Remerciements/Confirmation ci-       ║
-  ║  dessus (déjà obsolètes AVANT ce correctif — écart préexistant,  ║
-  ║  non lié à la séparation Home/Guide) ont été corrigés par        ║
-  ║  recherche directe. Le reste du plan hérité des sessions         ║
-  ║  précédentes (23-24/07/2026) n'a pas fait l'objet d'une          ║
-  ║  resynchronisation complète — voir Bilan_technique.md.           ║
+  ║   Nav       Barre de navigation basse         ligne   1777      ║
+  ║   Scripts   Chargement de app.js              ligne   1819      ║
+  ║  🆕 24/07/2026 (2e correctif du jour) : #home et #guide,        ║
+  ║  séparés plus tôt dans la journée pour corriger l'icône ❓       ║
+  ║  inopérante, sont réunis à nouveau — mais réagencés sur le      ║
+  ║  modèle VACHÉBO (logo → drapeaux → titre → sous-titre →         ║
+  ║  badges → installation → Commencer/PDF → accordéons), pas       ║
+  ║  remis dans leur ancien ordre Taphad'Meuh. La topbar de #home   ║
+  ║  ne garde que 📚 Modules + 🚪 Quitter (🏠/❓ supprimés : les      ║
+  ║  deux menaient vers cet écran lui-même). Voir _QUICK_NAV_MAP    ║
+  ║  dans app.js (§5c) et Bilan_technique.md §6.24. Le fichier a    ║
+  ║  raccourci d'environ 40 lignes par rapport à la version à deux  ║
+  ║  écrans séparés (topbar + petit en-tête dupliqués supprimés).   ║
   ║                                                                  ║
   ╚══════════════════════════════════════════════════════════════════╝
 -->
@@ -256,17 +251,20 @@
             de séparer strictement le HTML (structure) du JS (comportement).
         -->
         <button class="lang-card lang-card--fr" type="button" data-lang="learn_french">
-          <!-- Pastille "à toucher" — texte + flèche animée (point 3).
-               aria-hidden : purement visuelle, redondante pour les
-               lecteurs d'écran (un <button> est déjà annoncé comme
+          <span class="lang-card-flag">🇫🇷</span>
+          <span class="lang-card-name">Apprendre le Français</span>
+          <span class="lang-card-sub">Afaan Faransaayii Barachuu</span>
+          <!-- 🆕 (24/07/2026) Pastille "à toucher" — repositionnée sous le
+               titre/sous-titre (alignement avec l'appli sœur VACHÉBO, dont
+               le CTA "Toca para empezar" est un bloc en flux sous le nom,
+               et non une pastille absolue en coin — voir .lang-card-tap-hint
+               dans style.css). aria-hidden : purement visuelle, redondante
+               pour les lecteurs d'écran (un <button> est déjà annoncé comme
                activable). Langue = celle de l'audience (oromophone). -->
           <span class="lang-card-tap-hint" aria-hidden="true">
             <span class="lang-card-tap-text">Tuqi</span>
             <span class="lang-card-tap-arrow">➜</span>
           </span>
-          <span class="lang-card-flag">🇫🇷</span>
-          <span class="lang-card-name">Apprendre le Français</span>
-          <span class="lang-card-sub">Afaan Faransaayii Barachuu</span>
         </button>
 
         <!--
@@ -274,13 +272,14 @@
           • lang-card--or : variante colorée (voir style.css)
         -->
         <button class="lang-card lang-card--or" type="button" data-lang="learn_oromo">
+          <span class="lang-card-flag">🇪🇹</span>
+          <span class="lang-card-name">Afaan Oromoo Barachuu</span>
+          <span class="lang-card-sub">Apprendre l'Oromo</span>
+          <!-- 🆕 (24/07/2026) Voir commentaire de la carte Français ci-dessus. -->
           <span class="lang-card-tap-hint" aria-hidden="true">
             <span class="lang-card-tap-text">Touchez</span>
             <span class="lang-card-tap-arrow">➜</span>
           </span>
-          <span class="lang-card-flag">🇪🇹</span>
-          <span class="lang-card-name">Afaan Oromoo Barachuu</span>
-          <span class="lang-card-sub">Apprendre l'Oromo</span>
         </button>
 
         <!--
@@ -294,13 +293,6 @@
           point 7 de la demande (voir commentaire détaillé là-bas).
         -->
         <details class="lang-card-info lang-card-info--fr" data-lang="learn_french" id="langCardInfoFr" open>
-          <summary class="lang-card-info-summary">
-            <span class="lang-card-info-label">Odeeffannoo waa'ee "Afaan Faransaayii Barachuu"</span>
-            <span class="lang-card-info-icons" aria-hidden="true">
-              <span class="lang-card-info-i">i</span>
-              <span class="lang-card-info-chevron">▾</span>
-            </span>
-          </summary>
           <!--
             🆕 (24/07/2026) Contenu enrichi — modèle repris de l'appli
             sœur VACHÉBO (Espagnol), voir Bug_1_-_exemple_correctif_appli_espagnol.jpeg :
@@ -318,17 +310,23 @@
             <li>📥 Waraqaalee PDF, iskiriinii malee deebi'anii qo'achuuf</li>
             <li>📴 Bilisaa, galmee malee, erga fe'amee booda interneetii malee illee ni hojjeta (kutaa 🎤 "Irra Deebi'i" malee, kan yeroo hunda interneetii barbaadu)</li>
           </ul>
-        </details>
-
-        <!-- Panneau infos — carte Oromo — puces en FRANÇAIS (audience). -->
-        <details class="lang-card-info lang-card-info--or" data-lang="learn_oromo" id="langCardInfoOr" open>
+          <!-- 🆕 (24/07/2026) <summary> déplacé en fin de <details> — le
+               bouton de bascule (libellé + icône ℹ) se trouve désormais en
+               bas du panneau, comme .lang-card-toggle-bar dans VACHÉBO,
+               au lieu d'un résumé en haut. Aucun changement JS requis :
+               le navigateur affiche/masque le contenu selon [open] quelle
+               que soit la position du <summary> dans le DOM (spec HTML). -->
           <summary class="lang-card-info-summary">
-            <span class="lang-card-info-label">Infos sur « Apprendre l'Oromo »</span>
+            <span class="lang-card-info-label">Odeeffannoo waa'ee "Afaan Faransaayii Barachuu"</span>
             <span class="lang-card-info-icons" aria-hidden="true">
               <span class="lang-card-info-i">i</span>
               <span class="lang-card-info-chevron">▾</span>
             </span>
           </summary>
+        </details>
+
+        <!-- Panneau infos — carte Oromo — puces en FRANÇAIS (audience). -->
+        <details class="lang-card-info lang-card-info--or" data-lang="learn_oromo" id="langCardInfoOr" open>
           <!-- 🆕 (24/07/2026) Contenu enrichi — voir commentaire de la carte Français ci-dessus. -->
           <p class="lang-card-info-intro">Taphad'Meuh t'apprend les mots qui comptent, pour les utiliser dans de vraies situations.</p>
           <ul class="lang-card-info-list">
@@ -338,6 +336,14 @@
             <li>📥 Fiches téléchargeables en PDF, pour réviser sans écran</li>
             <li>📴 Gratuit, sans inscription, utilisable hors-ligne une fois installée (sauf l'onglet 🎤 Répète, qui a toujours besoin d'internet)</li>
           </ul>
+          <!-- 🆕 (24/07/2026) <summary> déplacé en fin de <details> — voir commentaire de la carte Français ci-dessus. -->
+          <summary class="lang-card-info-summary">
+            <span class="lang-card-info-label">Infos sur « Apprendre l'Oromo »</span>
+            <span class="lang-card-info-icons" aria-hidden="true">
+              <span class="lang-card-info-i">i</span>
+              <span class="lang-card-info-chevron">▾</span>
+            </span>
+          </summary>
         </details>
 
       </div><!-- /.launcher-cards -->
@@ -386,31 +392,40 @@
 
     <!--
       Titre fixe en haut — mis à jour par _buildHomeGuide().
-      🆕 Étendu à 3 zones (voir _updateQuickNav() dans app.js, §5b) :
-        • gauche  : nav rapide 🏠 Accueil / ❓ Guide (écran courant,
-                    désactivé) / 📚 Modules — 📚 reste MASQUÉ tant que
-                    le guide n'a jamais été validé pour ce mode (bouton
-                    "Commencer" jamais cliqué), pour que l'apprenant
-                    voie bien tout le guide à la toute première visite.
-                    🏠/❓ restent toujours visibles : ils ramènent vers
-                    un écran déjà vu, ils ne font sauter aucun contenu.
+      🆕 (24/07/2026, fusion Home+Guide, voir Bilan_technique.md §6.24) :
+      #home et #guide, séparés plus tôt le même jour pour corriger un bug
+      d'icône ❓ inopérante, sont réunis à nouveau en un SEUL écran — mais
+      cette fois sur le modèle de l'appli sœur VACHÉBO (écran unique
+      Accueil + Guide), pas un simple retour à l'ancien agencement.
+      Conséquence directe sur la nav rapide : les icônes 🏠 Accueil et
+      ❓ Guide n'ont plus de sens ici, puisque les deux menaient
+      précisément vers CET écran — display supprimé, pas seulement masqué.
+        • gauche  : 📚 Modules — reste MASQUÉ tant que le guide n'a jamais
+                    été validé pour ce mode (bouton "Commencer" jamais
+                    cliqué), pour que l'apprenant voie bien tout le guide
+                    à la toute première visite (règle inchangée, voir
+                    _updateQuickNav() dans app.js, §5c).
         • centre  : titre (inchangé)
         • droite  : 🚪 Quitter — toujours visible, y compris ici.
+      Changer de langue : bouton dédié de la nav basse ("Changer de
+      langue"), ou icône 🏠 des écrans Sections/Leçon (goToAccueil(),
+      inchangée — elle ramène au Lanceur, pas à ce dashboard).
     -->
     <div class="home-topbar">
       <div class="back-btn-group" id="homeQnGroup">
-        <button class="back-btn-icon" id="homeQnGuideBtn" onclick="goToGuide()" aria-label="Guide">❓</button>
         <button class="back-btn-icon" id="homeQnModulesBtn" onclick="navGoModules()" aria-label="Modules">📚</button>
       </div>
       <span class="home-topbar-title" id="homeTopbarTitle"></span>
       <button class="back-btn-icon quit-icon-btn" id="homeQuitBtn" onclick="openQuitModal()" aria-label="Quitter">🚪</button>
     </div>
 
-    <!-- En-tête coloré — IDs mis à jour par _buildHomeGuide() -->
+    <!-- En-tête coloré — IDs mis à jour par _buildHomeGuide().
+         🆕 (24/07/2026) Ordre recalé sur VACHÉBO : logo → drapeaux → titre
+         → sous-titre → badges (le titre suivait auparavant directement la
+         topbar, avant le logo). -->
     <div class="home-guide-header" id="homeGuideHeader">
-      <h1 class="home-guide-title" id="homeTitle"></h1>
 
-      <!-- Logo centré entre le titre et les drapeaux -->
+      <!-- 1. Logo centré entre le titre et les drapeaux -->
       <div class="home-guide-logo-wrap">
         <img
           class="home-guide-logo"
@@ -421,12 +436,18 @@
         >
       </div>
 
+      <!-- 2. Drapeaux langue source → langue apprise -->
       <div class="home-guide-flags" id="homeGuideFlagsRow"></div>
+
+      <!-- 3. Titre + sous-titre -->
+      <h1 class="home-guide-title" id="homeTitle"></h1>
       <p class="home-guide-subtitle" id="homeGuideSubtitle"></p>
+
+      <!-- 4. Badges de fonctionnalités -->
       <div class="home-guide-badges" id="homeGuideBadges"></div>
 
       <!--
-        🆕 Installation hors-ligne — mise en avant directe (recettage utilisateur :
+        5. Installation hors-ligne — mise en avant directe (recettage utilisateur :
         les instructions étaient invisibles, enfouies dans l'accordéon "Hors ligne").
         • #homeInstallBtn      : bouton natif "un seul tap" (Android/Chrome/Edge) —
           masqué par défaut, affiché par _updateInstallUI() dans app.js UNIQUEMENT
@@ -444,38 +465,9 @@
            peuplé dynamiquement par renderHome() dans app.js. -->
       <div class="home-progress-wrap" id="homeProgressWrap" style="display:none"></div>
 
-      <!--
-        🆕 (23/07/2026) Bloc "En bref" déplacé — repositionné à nouveau,
-        cette fois EN TÊTE de #guideBody (voir plus bas), donc APRÈS
-        la barre sticky Commencer + PDF au lieu d'avant.
-        Raison : remonter la ligne "Commencer"/PDF au-dessus de ce bloc,
-        pour que l'apprenant n'ait pas à faire défiler tout le résumé
-        "L'essentiel en 30 secondes" avant d'apercevoir le bouton qui
-        le fait réellement avancer. Nouvel ordre visuel de l'en-tête :
-        badges → installation → (progression) → Commencer/PDF → l'essentiel.
-        Historique : ce bloc était déjà en tête de #guideBody à
-        l'origine, puis avait été remonté ICI (dans le header, avant
-        Commencer) pour reprendre la mise en page de l'app espagnole
-        (badges → installation → l'essentiel → Commencer) — voir
-        Bilan_technique.md §6.17. Le retour arrière ci-dessous n'annule
-        pas cette mise en page espagnole sur le FOND (l'essentiel reste
-        juste après l'en-tête, bien visible), seulement sur l'ORDRE
-        relatif au bouton Commencer, jugé prioritaire par les retours
-        apprenants (trop de défilement pour l'atteindre).
-        Comme précédemment, cela ne casse rien : la bascule de langue
-        de _buildHomeGuide() repose sur querySelectorAll('.home-lang-block')
-        et s'applique quel que soit l'endroit du DOM ; _exportGuide() ne
-        récupère que les <details class="hg-section"> (jamais ce bloc),
-        donc ce déplacement n'affecte pas non plus le PDF.
-      -->
     </div><!-- /.home-guide-header -->
 
-    <!-- Bouton Commencer + bouton PDF Guide côte à côte dans la barre sticky —
-         🆕 (23/07/2026) remonté juste après l'en-tête (badges/installation/
-         progression), donc AVANT le bloc "L'essentiel en 30 secondes"
-         (déplacé plus bas, en tête de #guideBody) : l'apprenant voit
-         désormais le bouton qui fait avancer sans avoir à défiler le
-         résumé au préalable. Voir commentaire ci-dessus. -->
+    <!-- 6. Bouton Commencer + bouton PDF Guide côte à côte dans la barre sticky -->
     <div class="home-start-sticky">
       <div class="home-start-row">
         <button class="btn-start-main" id="homeStartBtn" onclick="showScreen('sections-level1')"></button>
@@ -483,47 +475,22 @@
       </div>
     </div>
 
-  </div><!-- /#home (dashboard uniquement — le guide vit désormais dans #guide, voir juste en dessous) -->
-
-
-  <!-- ════════════════════════════════════════════════════════════════
-       ÉCRAN 1b — GUIDE EXPLICATIF  (#guide)
-       ────────────────────────────────────────────────────────────────
-       🆕 (24/07/2026) Écran désormais SÉPARÉ de #home (dashboard).
-       Auparavant les deux vivaient dans le même <div id="home">, ce qui
-       rendait l'icône ❓ inopérante depuis #home (elle rechargeait le
-       même écran). Séparation demandée suite à un retour terrain :
-         • #home  → ❓ visible (mène ici), 🏠 supprimé (redondant : on y
-           est déjà, et "Changer de langue" fait déjà ce travail plus bas
-           dans la nav basse)
-         • #guide → 🏠 visible (ramène à #home), ❓ supprimé (on y est déjà)
-       Les deux icônes ne pointent donc plus jamais vers l'écran sur
-       lequel on se trouve déjà — voir _QUICK_NAV_MAP dans app.js (§5c).
-
-       CONTENU : reprend tel quel l'ancien corps du guide (deux blocs
-       statiques bilingues, un par langue cible — .home-lang-block —
-       dont un seul est visible via _buildHomeGuide(), inchangée).
-       ════════════════════════════════════════════════════════════════ -->
-  <div id="guide" class="screen">
-
-    <!-- Barre fixe en haut — 🏠 Accueil (retour au dashboard #home) et
-         📚 Modules (mêmes règles de masquage que sur #home — voir
-         _updateQuickNav() dans app.js, §5c) + 🚪 Quitter. -->
-    <div class="home-topbar">
-      <div class="back-btn-group" id="guideQnGroup">
-        <button class="back-btn-icon" id="guideQnHomeBtn" onclick="goToHome()" aria-label="Accueil">🏠</button>
-        <button class="back-btn-icon" id="guideQnModulesBtn" onclick="navGoModules()" aria-label="Modules">📚</button>
-      </div>
-      <span class="home-topbar-title" id="guideTopbarTitle"></span>
-      <button class="back-btn-icon quit-icon-btn" id="guideQuitBtn" onclick="openQuitModal()" aria-label="Quitter">🚪</button>
-    </div>
-
-    <!-- Petit en-tête (titre uniquement — logo/drapeaux/badges/installation
-         restent sur #home, ils n'ont pas leur place sur un écran d'aide) -->
-    <div class="home-guide-header" id="guideHeader">
-      <h1 class="home-guide-title" id="guideTitle"></h1>
-    </div>
-
+    <!--
+      7-9. CORPS DU GUIDE — fusionné ici depuis l'ancien écran #guide séparé
+      (voir Bilan_technique.md §6.24). Contient, pour chaque bloc de langue :
+      7. l'encadré "🚀 L'essentiel en 30 secondes" (hg-tldr, en tête de bloc)
+      9. l'accordéon complet du Guide (Comment ça marche, Points forts,
+         Comparaison, Quel navigateur choisir, L'audio, Hors ligne,
+         Réinitialiser un module, Remerciements, À propos).
+      Pas d'encadré "8. confirmation de langue configurée" ici : cet élément,
+      présent chez VACHÉBO, y confirme la VARIANTE régionale choisie parmi
+      7 (Espagne, Mexique…) — Taphad'Meuh n'a qu'une seule variante par
+      langue, le bandeau n'a donc pas d'équivalent fonctionnel ici ; les
+      drapeaux + le titre juste au-dessus remplissent déjà ce rôle de
+      confirmation visuelle.
+      Seul le bloc correspondant au mode actif est visible, géré par
+      _buildHomeGuide() via la classe .home-lang-hidden.
+    -->
     <!--
       ══════════════════════════════════════════════════════════════
       CORPS DU GUIDE — deux blocs statiques (un par langue)
@@ -1513,7 +1480,7 @@
 
     </div><!-- /#guideBody -->
 
-  </div><!-- /#guide -->
+  </div><!-- /#home (écran unique fusionné : dashboard + guide, style VACHÉBO — voir Bilan_technique.md §6.24) -->
 
 
   <!-- ════════════════════════════════════════════════════════════════
@@ -1521,27 +1488,44 @@
        ════════════════════════════════════════════════════════════════ -->
   <div id="sections-level1" class="screen">
     <div class="sections-header">
-      <div class="sections-header-left">
+      <!-- 🆕 (24/07/2026) Réagencement calqué sur l'appli sœur VACHÉBO
+           (demande utilisateur, Bug_5) : la rangée titre + drapeau
+           (.sections-top-row) passe EN PREMIER, puis la rangée icônes +
+           logo (.sections-top-icons-row) juste en dessous, avec le logo
+           centré entre 2 groupes de 2 icônes — au lieu de l'ancien
+           empilement icônes → logo → titre dans une colonne unique à
+           gauche du drapeau. IDs inchangés (_updateQuickNav, _fillHeader
+           dans app.js les ciblent par getElementById, indépendamment de
+           leur position dans le DOM). -->
+      <div class="sections-top-row">
+        <div class="sections-header-left">
+          <h2 id="sectionsTitle"></h2>
+        </div>
+        <div class="sections-flag" id="sectionsFlagRight"></div>
+      </div>
+
+      <div class="sections-top-icons-row">
         <div class="back-btn-group">
           <button class="back-btn-icon" id="sectionsBackHomeBtn" onclick="goToAccueil()" aria-label="Accueil">🏠</button>
           <button class="back-btn-icon" id="sectionsBackGuideBtn" onclick="goToGuide()" aria-label="Guide">❓</button>
-          <!-- 🆕 📚 Modules (écran courant → désactivé par _updateQuickNav) + 🚪 Quitter -->
-          <button class="back-btn-icon" id="sectionsQnModulesBtn" onclick="navGoModules()" aria-label="Modules">📚</button>
-          <button class="back-btn-icon quit-icon-btn" id="sectionsQuitBtn" onclick="openQuitModal()" aria-label="Quitter">🚪</button>
         </div>
         <!-- 🆕 Logo complet, même image que le Lanceur et le Guide -->
         <div class="sections-header-logo-wrap">
           <img class="sections-header-logo" src="img/Logo-appli-or-fr.png" alt="Taphad'Meuh"
                width="1408" height="768" loading="lazy" decoding="async">
         </div>
-        <h2 id="sectionsTitle"></h2>
-        <div class="progress-bar-wrap">
-          <div class="progress-bar" id="globalProgress" style="width:0%"></div>
+        <div class="back-btn-group">
+          <!-- 📚 Modules (écran courant → désactivé par _updateQuickNav) + 🚪 Quitter -->
+          <button class="back-btn-icon" id="sectionsQnModulesBtn" onclick="navGoModules()" aria-label="Modules">📚</button>
+          <button class="back-btn-icon quit-icon-btn" id="sectionsQuitBtn" onclick="openQuitModal()" aria-label="Quitter">🚪</button>
         </div>
-        <div class="progress-label" id="progressLabel"></div>
-        <div class="sections-stars" id="sectionsStars"></div>
       </div>
-      <div class="sections-flag" id="sectionsFlagRight"></div>
+
+      <div class="progress-bar-wrap">
+        <div class="progress-bar" id="globalProgress" style="width:0%"></div>
+      </div>
+      <div class="progress-label" id="progressLabel"></div>
+      <div class="sections-stars" id="sectionsStars"></div>
     </div>
     <div class="level-tab-bar">
       <button class="level-tab active" id="lvlTab1" onclick="showScreen('sections-level1')">
@@ -1561,27 +1545,35 @@
        ════════════════════════════════════════════════════════════════ -->
   <div id="sections-level2" class="screen">
     <div class="sections-header">
-      <div class="sections-header-left">
+      <div class="sections-top-row">
+        <div class="sections-header-left">
+          <h2 id="sectionsTitle2"></h2>
+        </div>
+        <div class="sections-flag" id="sectionsFlagRight2"></div>
+      </div>
+
+      <div class="sections-top-icons-row">
         <div class="back-btn-group">
           <button class="back-btn-icon" id="sectionsBackHomeBtn2" onclick="goToAccueil()" aria-label="Accueil">🏠</button>
           <button class="back-btn-icon" id="sectionsBackGuideBtn2" onclick="goToGuide()" aria-label="Guide">❓</button>
-          <!-- 🆕 📚 Modules (écran courant → désactivé par _updateQuickNav) + 🚪 Quitter -->
-          <button class="back-btn-icon" id="sectionsQnModulesBtn2" onclick="navGoModules()" aria-label="Modules">📚</button>
-          <button class="back-btn-icon quit-icon-btn" id="sectionsQuitBtn2" onclick="openQuitModal()" aria-label="Quitter">🚪</button>
         </div>
         <!-- 🆕 Logo complet, même image que le Lanceur et le Guide -->
         <div class="sections-header-logo-wrap">
           <img class="sections-header-logo" src="img/Logo-appli-or-fr.png" alt="Taphad'Meuh"
                width="1408" height="768" loading="lazy" decoding="async">
         </div>
-        <h2 id="sectionsTitle2"></h2>
-        <div class="progress-bar-wrap">
-          <div class="progress-bar" id="globalProgress2" style="width:0%"></div>
+        <div class="back-btn-group">
+          <!-- 📚 Modules (écran courant → désactivé par _updateQuickNav) + 🚪 Quitter -->
+          <button class="back-btn-icon" id="sectionsQnModulesBtn2" onclick="navGoModules()" aria-label="Modules">📚</button>
+          <button class="back-btn-icon quit-icon-btn" id="sectionsQuitBtn2" onclick="openQuitModal()" aria-label="Quitter">🚪</button>
         </div>
-        <div class="progress-label" id="progressLabel2"></div>
-        <div class="sections-stars" id="sectionsStars2"></div>
       </div>
-      <div class="sections-flag" id="sectionsFlagRight2"></div>
+
+      <div class="progress-bar-wrap">
+        <div class="progress-bar" id="globalProgress2" style="width:0%"></div>
+      </div>
+      <div class="progress-label" id="progressLabel2"></div>
+      <div class="sections-stars" id="sectionsStars2"></div>
     </div>
     <div class="level-tab-bar">
       <button class="level-tab" id="lvlTab1b" onclick="showScreen('sections-level1','back')">
