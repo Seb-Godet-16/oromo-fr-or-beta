@@ -16,7 +16,7 @@
 | Thèmes par mode | 48 (32 Niveau 1 Vocabulaire + 16 Niveau 2 Dialogue) |
 | Mots/expressions par mode | ~387 entrées (Français) · ~396 entrées (Oromo) |
 | Fonctionnement hors-ligne | ✅ 100 % après première visite (Service Worker) |
-| Taille totale du code source | ~695 Ko (6 fichiers principaux, 14 513 lignes) |
+| Taille totale du code source | ~795 Ko (6 fichiers principaux, 16 366 lignes) |
 | Indicateur hors-ligne | ✅ Bandeau persistant, proactif (couvre 🎤 Répète ET 🔊 Écouter — voir §6.14) |
 | Guide navigateur | 🆕 Comparatif Android/iOS des 10 navigateurs les plus utilisés au monde (voir §6.15) |
 | Repérage visuel des modules | 🆕 Système à 3 états (nouveau / en cours / terminé à 100%) en plus des étoiles ⭐ (voir §6.18) |
@@ -30,11 +30,11 @@
 
 | Fichier | Taille | Lignes | Rôle |
 |---|---|---|---|
-| `js/app.js` | 252 Ko | 5 790 | Moteur applicatif complet (158 fonctions nommées, dont le bandeau hors-ligne §3e, le suivi "modules déjà ouverts" §7, la vérification proactive des mises à jour SW §20 — voir §6.19 —, le clin d'œil mascotte sur quiz sans-faute §14 — voir §6.22 — et 🆕 `goToHome()` / `_QUICK_NAV_MAP.guide` pour l'écran Guide désormais séparé — voir §6.23 ; plan interne `SECTIONS DE CE FICHIER` resynchronisé le 24/07/2026, voir §6.23) |
-| `css/style.css` | 172 Ko | 5 082 | Styles + système de thèmes dual (dont §16b bandeau hors-ligne, §7 états visuels des cartes-module, §2 tokens de marque `--c-flag-red/black/cream` — voir §6.22 — et 🆕 `#home`/`#guide` partageant le même fond dégradé et les mêmes classes `.home-guide-*`, écrans désormais séparés — voir §6.23 ; plan interne `PLAN DU FICHIER` intégralement recalculé le 24/07/2026, voir §6.23) |
+| `js/app.js` | 256 Ko | 5 905 | Moteur applicatif complet (dont le bandeau hors-ligne §3e, le suivi "modules déjà ouverts" §7, la vérification proactive des mises à jour SW §20 — voir §6.19 —, le clin d'œil mascotte sur quiz sans-faute §14 — voir §6.22 —, l'écran Home+Guide fusionné et `goToHome()` supprimée — voir §6.24 —, et 🆕 la modale "Nav verrouillée" `#nav-locked-modal` + suppression du stub mort `_closeOnboarding()` — voir §6.25 ; plan interne `SECTIONS DE CE FICHIER` resynchronisé le 25/07/2026, voir §6.25) |
+| `css/style.css` | 178 Ko | 5 219 | Styles + système de thèmes dual (dont §16b bandeau hors-ligne, §7 états visuels des cartes-module, §2 tokens de marque `--c-flag-red/black/cream` — voir §6.22 —, l'écran Home+Guide fusionné (agencement VACHÉBO) — voir §6.24 — et 🆕 §NAVLOCKED, la modale "Nav verrouillée" — voir §6.25 ; plan interne `PLAN DU FICHIER` intégralement recalculé le 25/07/2026, voir §6.25) |
 | `js/data-fr.js` | 106 Ko | 1 428 | Dataset mode "Apprendre le Français" |
 | `js/data-or.js` | 103 Ko | 1 383 | Dataset mode "Apprendre l'Oromo" |
-| `index.html` | 124 Ko | 1 824 | Structure HTML — 🆕 6 écrans (dont Guide `#guide` désormais séparé de Home, voir §6.23) + 2 modales + bandeau hors-ligne + guide "Quel navigateur choisir ?" + logo étendu aux écrans Sections (§6.22) ; plan interne `PLAN DU FICHIER` resynchronisé le 24/07/2026 (voir §6.23) |
+| `index.html` | 119 Ko | 1 806 | Structure HTML — 🆕 5 écrans (Home et Guide de nouveau fusionnés en un seul `#home`, voir §6.24) + 3 modales (dont 🆕 `#nav-locked-modal`, voir §6.25) + bandeau hors-ligne + guide "Quel navigateur choisir ?" + logo étendu aux écrans Sections (§6.22) ; plan interne `PLAN DU FICHIER` resynchronisé le 25/07/2026 (voir §6.25) |
 | `sw.js` | 33 Ko | 625 | Service Worker — Cache First / Network First |
 | `manifest.json` | — | — | PWA — icônes, orientation, screenshots |
 | `deploy.yml` | — | — | CI/CD GitHub Actions |
@@ -61,13 +61,15 @@
 
 Depuis l'écran Sections, deux icônes remplacent l'ancien bouton retour unique :
 - **🏠** (`goToAccueil()`) → écran Lanceur (`#app-launcher`, choix Français/Oromo) — même mécanisme que le bouton "Changer de langue" de la nav basse.
-- **❓** (`goToGuide()`) → 🆕 écran Guide (`#guide`, guide explicatif bilingue) — identique au bouton "Guide" de la nav basse. **Depuis le 24/07/2026 (§6.23)**, Home (`#home`) et Guide (`#guide`) sont deux écrans séparés : `goToGuide()` mène désormais à `#guide` et non plus au dashboard `#home` (voir §6.23 pour le détail du correctif).
+- **❓** (`goToGuide()`) → écran `#home` (dashboard + guide explicatif bilingue, écran unique depuis la fusion du 24/07/2026 — voir §6.24) — identique au bouton "Guide" de la nav basse. Le nom `goToGuide()` est conservé tel quel pour ne pas toucher tous les `onclick="goToGuide()"` du HTML, même si la cible n'est plus un écran `#guide` distinct (celui-ci a existé quelques heures le 24/07/2026 avant d'être refusionné avec `#home`, voir §6.23 puis §6.24).
+
+🆕 **(25/07/2026, §6.25)** Sur le Lanceur, avant tout choix de langue, `navGoModules()` et `showOnboardingGuide()` (déclenchés par 📚/❓ de la nav basse) affichent désormais une petite modale bilingue (`#nav-locked-modal`) au lieu de tenter une navigation incohérente — voir §6.25.
 
 ---
 
 ## 3. Sections de `app.js` — numéros de lignes exacts
 
-⚠️ **Table non resynchronisée lors de cette session** (§6.23, 24/07/2026) — comme signalé en §6.22, elle reflète encore une session antérieure et nécessiterait une resynchronisation ligne-par-ligne dédiée. Elle ne montre donc pas les nouvelles fonctions/lignes issues de la séparation Home/Guide (`goToHome()`, `_QUICK_NAV_MAP.guide`, etc. — voir plan interne à jour en en-tête de `app.js`, ou §6.23 ci-dessus, pour les repères exacts et actuels).
+⚠️ **Table non resynchronisée lors de cette session** (§6.25, 25/07/2026) — comme signalé en §6.22/§6.23, elle reflète encore une session antérieure (avant la séparation puis la refusion de Home/Guide, §6.23/§6.24) et nécessiterait une resynchronisation ligne-par-ligne dédiée. Elle ne montre donc ni la fusion Home+Guide (`_buildHomeGuide()`, `goToHome()` supprimée) ni la modale "Nav verrouillée" (`openNavLockedModal()`/`closeNavLockedModal()`) ni la suppression du stub `_closeOnboarding()` — voir le plan interne à jour en en-tête de `app.js`, ou §6.24/§6.25 ci-dessous, pour les repères exacts et actuels.
 
 | # | Section | Fonctions clés | Ligne exacte |
 |---|---|---|---|
@@ -430,11 +432,49 @@ Aucune section entière n'était manquante cette fois-ci (contrairement à `app.
 
 ---
 
+### §6.24 — 🆕 Refusion de Home et Guide, agencement VACHÉBO (24/07/2026, 2e correctif du même jour)
+
+⚠️ **Entrée rédigée rétroactivement le 25/07/2026** : les trois fichiers de code (`app.js`, `index.html`, `style.css`) citent tous "§6.24" depuis le 24/07/2026 pour ce correctif, mais l'entrée correspondante n'avait alors jamais été ajoutée à ce Bilan — trou de documentation comblé ici, a posteriori, à partir des commentaires datés laissés dans le code.
+
+**Contexte** : la séparation Home/Guide du §6.23 (plus tôt le même jour) corrigeait bien le bug d'icône ❓ inopérante, mais introduisait une navigation à deux temps peu naturelle : `initApp()` affichait d'abord `#home` (tableau de bord), puis basculait aussitôt sur `#guide` à la première visite d'un mode. Décision prise le jour même de revenir à un écran unique — mais pas un simple retour arrière à l'ancien `#home` de Juin 2026 : un réagencement complet calqué sur l'application sœur **VACHÉBO** (logo → drapeaux → titre → sous-titre → badges → installation → bouton Commencer/PDF → accordéons du guide).
+
+**Correctif** :
+1. **`index.html`** : `#home` et `#guide` (créés quelques heures plus tôt en §6.23) sont réunis en un seul `<div id="home" class="screen">`. La topbar ne garde que 📚 Modules + 🚪 Quitter — 🏠 et ❓ sont retirés, tous deux redondants puisqu'ils menaient vers cet écran lui-même. Le fichier raccourcit d'environ 40 lignes (topbar et petit en-tête dupliqués supprimés).
+2. **`app.js`** : `goToHome()` (créée en §6.23 pour l'icône 🏠 de l'ex-`#guide`) est supprimée — elle n'a plus de raison d'être. `goToGuide()` cible à nouveau `showScreen('home', ...)` ; son nom est conservé tel quel pour ne pas devoir modifier tous les `onclick="goToGuide()"` du HTML (icônes ❓ de Sections/Leçon). `_maybeShowOnboarding()` revient à un choix binaire simple : `#sections-level1` si le mode est déjà onboardé, sinon `#home`. `_QUICK_NAV_MAP` perd son entrée `'guide'` dédiée. `_buildHomeGuide()` reste la fonction unique qui peuple tout l'écran (dashboard + bon bloc de langue du guide).
+3. **`style.css`** : `#guide` retiré des sélecteurs partagés (redevenus `#home` seul) ; nouvel agencement VACHÉBO du dashboard.
+
+**Resynchronisation des trois plans internes** — chaque ancre revérifiée par recherche directe, comme aux sessions précédentes.
+
+**Fichiers modifiés** : `index.html`, `app.js`, `style.css`, `README.md` (diagramme de flux utilisateur, historique).
+
+---
+
+### §6.25 — 🐞 Modale "Nav verrouillée" sur le Lanceur + nettoyage (25/07/2026)
+
+**Contexte** : sur le Lanceur (`#app-launcher`), avant tout choix de langue, les icônes ❓ Guide et 📚 Modules de la nav basse sont grisées (`opacity:.35`, voir `_updateBottomNav()` §5b) — mais restaient **cliquables**. `navGoModules()` et `showOnboardingGuide()` ne comportaient aucun garde-fou : appelées avec `currentMode === ''`, elles pouvaient planter ou afficher un écran incohérent, `data-fr.js`/`data-or.js` n'étant pas encore injecté à ce stade.
+
+**Correctif** :
+1. **`app.js`** : garde-fou `if (!currentMode) { openNavLockedModal(); return; }` ajouté en tête de `navGoModules()` et `showOnboardingGuide()`. Nouvelles fonctions `openNavLockedModal()`/`closeNavLockedModal()` (§5d, juste après `closeQuitModal()`).
+2. **`index.html`** : nouvelle modale statique `#nav-locked-modal`, calquée sur `#quit-app-modal` — contenu 100 % bilingue en dur (Français puis Afaan Oromoo) puisqu'aucune langue n'est encore choisie à ce stade, donc pas de `L()` possible. Un seul bouton "D'accord · Tole".
+3. **`style.css`** : nouveau bloc `§NAVLOCKED`, overlay + `.modal-content` calqués sur `#quit-app-modal`, bouton plein `var(--c-primary)`.
+
+**Nettoyage — code obsolète supprimé** : `_closeOnboarding()`, stub à corps vide conservé depuis la suppression de l'ancienne modale onboarding legacy ("pour compatibilité des appels existants"), n'avait en réalité plus aucun appelant nulle part dans le projet. Supprimé ; la doc `ARCHITECTURE` du bloc §17 mise à jour en conséquence (le marquage "vu" de l'onboarding est en réalité géré par `showScreen()` à la sortie de `#home`, pas par cette fonction).
+
+**Resynchronisation complète des trois plans internes**, comme aux sessions précédentes — chaque ancre revérifiée par recherche directe. Au passage, correction d'une erreur de groupement héritée du 23/07/2026 dans le plan de `app.js` : `goToAccueil()`/`goToGuide()` sont physiquement dans le bloc §5c (après son bandeau), pas §5b comme l'indiquait le plan depuis cette date.
+
+**Documentation** : `README.md` — le diagramme "User flow" décrivait encore Home et Guide comme deux écrans séparés (périmé depuis le §6.24 du 24/07/2026, jamais corrigé alors) ; entièrement réécrit pour refléter l'écran `#home` unique actuel, plus une mention de la nouvelle modale. Ce Bilan technique lui-même comblait un trou : §6.24 (la fusion) était citée partout dans le code depuis le 24/07/2026 mais n'existait pas encore ici — ajoutée rétroactivement ci-dessus.
+
+**Hors périmètre de cette session** — comme signalé en §6.22/§6.23 : les tables détaillées §3 (`app.js`), §4 (`style.css`) et §5 (`index.html`) restent périmées (dernière resynchronisation ligne-par-ligne : 12/07/2026, §6.21) et nécessiteraient une session dédiée pour être revérifiées une par une.
+
+**Fichiers modifiés** : `app.js`, `index.html`, `style.css` (correctif + nettoyage + resynchronisation des plans internes), `README.md`, `Bilan_technique.md`.
+
+---
+
 ## 7. Points de vigilance / dettes techniques
 
 | Point | Niveau | Détail |
 |---|---|---|
-| `app.js` monolithique | ⚠️ Moyen | 5 790 lignes, 158 fonctions — maintenable grâce aux `§` mais migration ES modules complexe (handlers `onclick` inline). Plan interne en en-tête du fichier **resynchronisé le 24/07/2026** (voir §6.23) |
+| `app.js` monolithique | ⚠️ Moyen | 5 905 lignes — maintenable grâce aux `§` mais migration ES modules complexe (handlers `onclick` inline). Plan interne en en-tête du fichier **resynchronisé le 25/07/2026** (voir §6.25) |
 | 🆕 Mises à jour PWA (`registration.update()`) | ✅ OK | Vérification proactive sur retour au premier plan + toutes les 60 min, en plus du cycle natif du navigateur — voir §6.19. Échec silencieux et sans risque si hors-ligne |
 | `unsafe-inline` CSP | ⚠️ Moyen | Nécessaire pour les `onclick` générés dynamiquement par `innerHTML` et pour GitHub Pages (pas de headers HTTP customs) |
 | Voix Oromo TTS | ⚠️ Moyen, ✅ communiqué hors ligne | `om-ET` absente sur la plupart des appareils — l'utilisateur entend souvent du Somali ou de l'Amharique. Hors connexion, si aucune voix de la cascade n'est installée localement, la langue par défaut du système peut être utilisée à la place — désormais signalé par le bandeau hors-ligne (voir §6.14) |
@@ -445,7 +485,7 @@ Aucune section entière n'était manquante cette fois-ci (contrairement à `app.
 | Mode sombre | ✅ OK | `prefers-color-scheme` supporté (§24b) + correctifs WCAG AA (§29) |
 | Accessibilité | ✅ Partiel | `aria-*` présents sur les éléments critiques — navigation clavier supportée (§18 CSS / §16 JS) |
 | Données | ✅ OK | 48 thèmes × 2 modes — cohérence vérifiée entre `data-fr.js` et `data-or.js` |
-| Icônes retour 🏠/❓ | ✅ OK | Testées en navigateur réel (Playwright/Chromium) : destinations, aria-label, absence d'erreur JS. 🆕 Depuis le 24/07/2026 (§6.23), chaque écran Home/Guide n'affiche plus que l'icône vers l'écran opposé (plus de doublon 🏠+❓ sur le même écran) |
+| Icônes retour 🏠/❓ | ✅ OK | Testées en navigateur réel (Playwright/Chromium) : destinations, aria-label, absence d'erreur JS. Depuis le 24/07/2026 (§6.24), Home et Guide sont de nouveau un seul écran `#home` ; 🏠/❓ y sont retirés (redondants), seuls 📚 Modules + 🚪 Quitter restent en topbar |
 | Carte(s) de progression Home | ✅ OK | Testé pour 0, 1 (parcours actif ou non) et 2 parcours — pas de `:has()` CSS (incompatible Safari < 15.4, hors cible iOS 14.5+) |
 | Compatibilité `:has()` CSS | ✅ OK | Évité volontairement ; taille de cercle pilotée par classe JS (`--single`) plutôt que par sélecteur `:has()` |
 | 🆕 Suivi "modules déjà ouverts" (badge Nouveau) | ✅ OK, ⚠️ 3ᵉ clé localStorage par mode | `openedThemes` (§6.18) s'ajoute à `done` : deux clés indépendantes par mode à surveiller en cas d'évolution du système de progression. `isOpened()` retombe sur `isDone()` par sécurité (anciennes progressions déjà sauvegardées avant l'ajout de cette clé ne réaffichent pas "Nouveau" à tort) |
@@ -488,5 +528,8 @@ Aucune section entière n'était manquante cette fois-ci (contrairement à `app.
 | 12/07/2026 | 🆕 Étape 8 : ajout d'une période dans l'historique en en-tête de `app.js` (08/07 → 12/07/2026) + resynchronisation complète du plan interne `SECTIONS DE CE FICHIER`, désynchronisé depuis l'ajout de §3e — deux sections entières (§3e, §20b) en étaient absentes et ont été ajoutées — voir §6.20. Table §3 entièrement revérifiée par recherche directe et compteur `app.js` (5 299 lignes) à jour — Sébastien Godet + Claude Sonnet 5 |
 | 12/07/2026 | 🆕 Étape 9 : relecture complète de l'application et resynchronisation des commentaires à numéros de ligne — recalcul intégral du plan interne `PLAN DU FICHIER` de `style.css` (périmé depuis le 10/07/2026, décalages de +3 à +94 lignes) et de `index.html` (+8 à +9 lignes), correction d'un nouveau décalage de +3 lignes apparu dans le plan `SECTIONS DE CE FICHIER` de `app.js` depuis l'étape 8 — voir §6.21. Aucune ligne de code fonctionnel modifiée ; nombre de lignes inchangé pour les trois fichiers (`app.js` : 5 303 lignes, `style.css` : 4 467 lignes, `index.html` : 1 307 lignes) — Sébastien Godet + Claude Sonnet 5 |
 | 24/07/2026 | 🆕 Étape 10 : identité de marque reprise du logo (`Logo-appli-or-fr.png`), en s'inspirant du projet frère VACHÉBO — tokens `--c-flag-red/black/cream` transversaux aux deux thèmes, footer du lanceur et carte "L'essentiel en 30 secondes" recolorés, logo complet ajouté aux headers de l'écran Modules, mélange d'éléments culturels (🗼🛖🌳🐓☕🥐) en footer + clin d'œil sur quiz sans-faute, crème mixée dans `--c-grad-home` — voir §6.22. Correctif au passage d'un bug latent de z-index (`.modal` sous `.app-toast`, même bug déjà corrigé chez VACHÉBO le 22/07). Resynchronisation complète des 3 plans internes ; découverte au passage d'un écart de fond préexistant entre ce Bilan (dernières valeurs : 12/07/2026) et le code reçu ce soir, non comblé (hors périmètre, voir §6.22) — Sébastien Godet + Claude Sonnet 5 |
+| 24/07/2026 | 🆕 Étape 11 : 🐞 retour terrain — l'icône ❓ de l'écran Home rechargeait le même écran (Home et Guide partageaient le même `#home`). `#home` scindé en deux écrans distincts `#home` (dashboard) et `#guide` (guide explicatif), chacun n'affichant plus que l'icône vers l'écran opposé. Nouvelle fonction `goToHome()` ; `goToGuide()` recentrée sur `#guide`. Première visite d'un mode : enchaînement automatique Home → Guide sans taper ❓. Resynchronisation complète des 3 plans internes — voir §6.23 — Sébastien Godet + Claude Sonnet 5 |
+| 24/07/2026 | 🆕 Étape 12 : 2e correctif du même jour — la navigation à deux temps introduite par l'étape 11 (Home puis bascule auto vers Guide) jugée peu naturelle. `#home` et `#guide` réunis à nouveau en un seul écran, mais réagencé sur le modèle de l'appli sœur VACHÉBO (logo → drapeaux → titre → sous-titre → badges → installation → Commencer/PDF → accordéons) plutôt qu'un simple retour à l'ancien agencement Taphad'Meuh. `goToHome()` supprimée (redevenue inutile). Resynchronisation complète des 3 plans internes — voir §6.24 *(entrée d'historique et section §6.24 elles-mêmes ajoutées rétroactivement le 25/07/2026, voir étape 13 — le code citait déjà "§6.24" depuis ce jour-là sans que ce Bilan ne la documente)* — Sébastien Godet + Claude Sonnet 5 |
+| 25/07/2026 | 🆕 Étape 13 : 🐞 sur le Lanceur, avant choix de langue, ❓ Guide et 📚 Modules de la nav basse étaient grisés mais cliquables sans retour (risque de plantage, dataset non chargé). Ajout d'une modale bilingue `#nav-locked-modal` (`openNavLockedModal()`/`closeNavLockedModal()`) expliquant la raison. Suppression du stub mort `_closeOnboarding()`. Comblement de deux trous de documentation : §6.24 (fusion Home+Guide du 24/07, citée partout dans le code mais absente de ce Bilan) et l'étape 11/12 manquante de cette table. Resynchronisation complète des 3 plans internes, correction d'une erreur de groupement héritée du 23/07 (`goToAccueil()`/`goToGuide()` en §5c, pas §5b), mise à jour du README (diagramme "User flow" périmé) — voir §6.25 — Sébastien Godet + Claude Sonnet 5 |
 
 *Journal détaillé (dont la citation complète du retour de recettage du 03/07) : voir le bloc de commentaire `HISTORIQUE DE L'APPLICATION` en tête de `app.js`.*

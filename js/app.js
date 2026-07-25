@@ -12,73 +12,77 @@
      └─ app.js       → Ce fichier : logique applicative complète
 
    SECTIONS DE CE FICHIER (ordre d'apparition réel) :
-      1.   Variables d'état globales (let/const)             ligne   122
-      —    Utilitaire bilingue L() / langKeys()              ligne   195
-      2.   Point d'entrée — initApp(mode)                    ligne   295
-      3.   Synthèse vocale + prononciation Oromo             ligne   496
-     3a2.  Surlignage mot par mot — pendant la lecture TTS   ligne   920
-     3a3.  Vitesse de lecture — paliers (Cartes Flash,       ligne  1055
+      1.   Variables d'état globales (let/const)             ligne   149
+      —    Utilitaire bilingue L() / langKeys()              ligne   208
+      2.   Point d'entrée — initApp(mode)                    ligne   322
+      3.   Synthèse vocale + prononciation Oromo             ligne   526
+     3a2.  Surlignage mot par mot — pendant la lecture TTS   ligne   950
+     3a3.  Vitesse de lecture — paliers (Cartes Flash,       ligne  1085
            Répète, Dialogue, Vocabulaire, Quiz Vocabulaire)
-     3b.   Retour haptique — _vibrateFeedback()              ligne  1158
-     3b2.  Confetti — animation de félicitations (stars)     ligne  1180
-     3c.   Interruption audio — visibilitychange / focus     ligne  1261
-     3d.   KeepAlive watchdog — Chrome / Android             ligne  1302
-     3e.   🆕 Bandeau hors-ligne — connectivité              ligne  1344
+     3b.   Retour haptique — _vibrateFeedback()              ligne  1188
+     3b2.  Confetti — animation de félicitations (stars)     ligne  1210
+     3c.   Interruption audio — visibilitychange / focus     ligne  1291
+     3d.   KeepAlive watchdog — Chrome / Android             ligne  1332
+     3e.   🆕 Bandeau hors-ligne — connectivité              ligne  1374
            (navigator.onLine) — voir §6.14
-      4.   Persistance de la progression (étoiles)           ligne  1456
-     4a.   🆕 Suivi "modules déjà ouverts" (badge Nouveau)    ligne  1487
+      4.   Persistance de la progression (étoiles)           ligne  1486
+     4a.   🆕 Suivi "modules déjà ouverts" (badge Nouveau)    ligne  1517
            (dans §4, voir §6.18)
-     4c.   Réinitialisation — confirmResetProgress()         ligne  1573  (dans §4)
-     4b.   Restauration de session quiz (sessionStorage)     ligne  1744
-      5.   Navigation entre écrans                           ligne  1856
-     5b.   Navigation basse — helpers                        ligne  2012
-           dont goToAccueil()/goToGuide() — icônes 🏠/❓       ligne  2271
-           (🆕 24/07/2026, 2e correctif : goToHome() supprimée,
-           #home et #guide réunis en un seul écran — voir §6.24
-           du Bilan technique)
-     5c.   🆕 Navigation rapide en haut — icônes 📚🚪 sur       ligne  2130
-           #home (🏠/❓ retirés, redondants sur l'écran fusionné),
-           🏠❓📚🚪 sur Sections/Leçon (_QUICK_NAV_MAP)
-     5d.   🆕 Modale "Quitter l'application" (#quit-app-modal) ligne  2301
-           — openQuitModal() / quitAppClose() / quitAppRestart()
-      6.   Écran Home — bouton Commencer + carte(s) de       ligne  2426
+     4c.   Réinitialisation — confirmResetProgress()         ligne  1600  (dans §4)
+     4b.   Restauration de session quiz (sessionStorage)     ligne  1774
+      5.   Navigation entre écrans                           ligne  1886
+     5b.   Navigation basse — helpers (dont _updateBottomNav(), ligne  2086
+           qui grise Guide/Modules sur le Lanceur tant qu'aucune
+           langue n'est choisie — voir §5d, #nav-locked-modal)
+     5c.   🆕 Navigation rapide en haut — icônes 🏠 ❓ 📚 🚪 sur  ligne  2205
+           tous les écrans (_QUICK_NAV_MAP), + navGoModules(),
+           lessonGoBack(), goToAccueil()/goToGuide() — ce dernier
+           groupe est physiquement ICI (pas en §5b, corrigé le
+           25/07/2026 — l'ancien plan le plaçait à tort sous 5b)
+     5d.   🆕 Modale "Quitter l'application" (#quit-app-modal)  ligne  2385
+           — openQuitModal()/closeQuitModal()/quitAppRestart()/
+           quitAppClose() ; + (25/07/2026) modale "Nav verrouillée"
+           (#nav-locked-modal) — openNavLockedModal()/
+           closeNavLockedModal(), avant choix de langue au Lanceur
+      6.   Écran Home — bouton Commencer + carte(s) de       ligne  2533
            progression (1 par parcours ayant des modules
            réussis — _getOtherModeProgress(), voir plus bas)
-      7.   Écran Sections — grille des thèmes                ligne  2585
-      8.   Ouverture d'un thème (écran Lesson + onglets)     ligne  2739
-           switchTab() : onglets + repositionnement          ligne  2901
+      7.   Écran Sections — grille des thèmes                ligne  2692
+      8.   Ouverture d'un thème (écran Lesson + onglets)     ligne  2846
+           switchTab() : onglets + repositionnement          ligne  3005
            du bouton PDF en mode Cartes (fixed via JS)
-      9.   Cartes Flash — vocabulaire interactif             ligne  2933
-     10.   Quiz 10 questions — avec étoiles progressives     ligne  3108
+      9.   Cartes Flash — vocabulaire interactif             ligne  3040
+     10.   Quiz 10 questions — avec étoiles progressives     ligne  3215
            (dont Quiz Alphabet, sans barre de vitesse — voir §3a3)
-     11.   Dialogue — scènes de situation                    ligne  3428
-     12.   Vocabulaire — lexique visuel cliquable            ligne  3488
-     13b.  Onglet Répète — badges voix (🔊) + reconnaissance  ligne  3536
+     11.   Dialogue — scènes de situation                    ligne  3535
+     12.   Vocabulaire — lexique visuel cliquable            ligne  3595
+     13b.  Onglet Répète — badges voix (🔊) + reconnaissance  ligne  3643
            vocale (🎙️), vitesse dédiée — voir §3a3
-     13.   Quiz Dialogue — questions sur le dialogue         ligne  4281
-     14.   Utilitaires & chaînes de résultats bilingues      ligne  4392
-     17.   Guide utilisateur — Onboarding — 🆕 auto-affiché   ligne  4488
-           à la 1ʳᵉ visite d'un mode (_maybeShowOnboarding())
-      —    Écran Home + Guide — 🆕 (24/07/2026, 2e correctif  ligne  4584
+     13.   Quiz Dialogue — questions sur le dialogue         ligne  4388
+     14.   Utilitaires & chaînes de résultats bilingues      ligne  4499
+     17.   Guide utilisateur — Onboarding — 🆕 auto-affiché   ligne  4595
+           à la 1ʳᵉ visite d'un mode (_maybeShowOnboarding()) ;
+           (25/07/2026) _closeOnboarding() (stub mort) supprimée
+      —    Écran Home + Guide — 🆕 (24/07/2026, 2e correctif  ligne  4628
            du jour) écran UNIQUE #home à nouveau (agencement
            VACHÉBO, pas l'ancien) — _buildHomeGuide()
-     18.   Crédits — showCredits()                           ligne  4722
-     15.   Initialisation du launcher                        ligne  4836
-     15b.  🆕 Panneaux infos dépliables des cartes de langue  ligne  4869
+     18.   Crédits — showCredits()                           ligne  4806
+     15.   Initialisation du launcher                        ligne  4950
+     15b.  🆕 Panneaux infos dépliables des cartes de langue  ligne  4983
            (état par défaut + préférence manuelle — voir §7
            de la demande de refonte du Lanceur, 22/07/2026)
-     16.   Accessibilité clavier                             ligne  4941
-     19.   Spinner de chargement des données                 ligne  4953
-     19b.  Viewport height fix — Android Chrome / Brave      ligne  4996
-     20.   Enregistrement du Service Worker (PWA)            ligne  5058
+     16.   Accessibilité clavier                             ligne  5055
+     19.   Spinner de chargement des données                 ligne  5067
+     19b.  Viewport height fix — Android Chrome / Brave      ligne  5110
+     20.   Enregistrement du Service Worker (PWA)            ligne  5172
            + 🆕 vérification proactive des mises à jour
            au premier plan et toutes les 60 min — voir §6.19
-     20b.  🆕 Installation PWA — bouton natif "Installer     ligne  5148
+     20b.  🆕 Installation PWA — bouton natif "Installer     ligne  5262
            l'app" (bouton natif Android/Chrome, rappel iOS)
-     21.   Exports PDF — window.print() + @media print       ligne  5249
-     21a.  Export Guide (accordéons de l'écran #home)         ligne  5462
-     21b.  Export Vocabulaire (leçon Niveau 1)               ligne  5563
-     21c.  Export Situation (leçon Niveau 2 — dialogue)      ligne  5659
+     21.   Exports PDF — window.print() + @media print       ligne  5363
+     21a.  Export Guide (accordéons de l'écran #home)         ligne  5560
+     21b.  Export Vocabulaire (leçon Niveau 1)               ligne  5678
+     21c.  Export Situation (leçon Niveau 2 — dialogue)      ligne  5774
    ============================================================
    🆕 Plan resynchronisé le 23/07/2026 : ajout des sections 5c
    (navigation rapide 🏠❓📚 étendue à tous les écrans, jusqu'ici
@@ -105,6 +109,17 @@
    d'une resynchronisation intégrale ligne par ligne — à prévoir dans
    une prochaine passe dédiée, comme pour les précédentes.
    ============================================================
+   🆕 Resynchronisé le 25/07/2026 (Bilan_technique.md §6.25) — la
+   "prochaine passe dédiée" annoncée ci-dessus : recalcul intégral de
+   TOUTES les ancres par recherche directe dans le fichier final (pas
+   par arithmétique de décalage), suite à l'ajout de la modale "Nav
+   verrouillée" (#nav-locked-modal, §5d) et à la suppression du stub
+   mort _closeOnboarding() (§17). Au passage, correction d'une erreur
+   de groupement héritée des passes précédentes : goToAccueil()/
+   goToGuide() sont physiquement dans le bloc §5c (après son bandeau),
+   pas §5b comme l'indiquait le plan depuis le 23/07/2026 — déplacés
+   au bon endroit ci-dessus.
+   ============================================================
 
    HISTORIQUE DE L'APPLICATION
    ============================================================
@@ -127,6 +142,11 @@
                 parcours + correctif d'accessibilité (contraste texte/
                 fond WCAG 2.1 AA sur les dégradés bleu/rouge et
                 vert/or des cartes). Avec Claude Sonnet 5.
+
+   Du 22/07/2026 au 25/07/2026 : Expériences utilisatrice (Sandrine
+                                  avec application espagnole VACHÉBO,
+                                  Moi) et correctifs avec Claude
+                                  Sonnet 5.
    ============================================================ */
 
 
@@ -2301,6 +2321,17 @@ function _updateQuickNav(screenId) {
  * va sur l'écran du niveau mémorisé (ou niveau 1 par défaut).
  */
 function navGoModules() {
+  /* 🆕 (25/07/2026) Garde-fou : bouton tapé depuis le Lanceur, alors
+     qu'aucune langue n'est encore choisie (bouton grisé mais toujours
+     cliquable — voir _updateBottomNav(), §5b). Sans ce garde-fou,
+     renderSections() plantait ou affichait un écran incohérent puisque
+     data-fr.js/data-or.js n'est pas encore injecté. On explique la
+     raison via une petite modale bilingue plutôt que de laisser
+     l'apprenant sans aucun retour. */
+  if (!currentMode) {
+    openNavLockedModal();
+    return;
+  }
   _stopCardAudio(); // annule un éventuel drill "répéter x fois" en quittant la leçon
   const target = (_currentThemeLevel === 2) ? 'sections-level2' : 'sections-level1';
   /* Direction : depuis lesson = back, sinon forward */
@@ -2408,6 +2439,29 @@ function openQuitModal() {
 /** Referme la modale Quitter sans action (bouton "Annuler" ou tap hors-carte). */
 function closeQuitModal() {
   const modal = document.getElementById('quit-app-modal');
+  if (!modal) return;
+  modal.classList.add('modal-hidden');
+  modal.style.pointerEvents = 'none';
+}
+
+/**
+ * 🆕 (25/07/2026) Ouvre la modale "nav verrouillée" (#nav-locked-modal).
+ * Appelée par navGoModules() / showOnboardingGuide() quand ces boutons
+ * sont tapés depuis le Lanceur alors qu'aucune langue n'est encore
+ * choisie (currentMode === ''). Contenu 100% statique/bilingue défini
+ * directement dans index.html — rien à injecter ici, cette fonction ne
+ * fait qu'afficher la modale.
+ */
+function openNavLockedModal() {
+  const modal = document.getElementById('nav-locked-modal');
+  if (!modal) return;
+  modal.classList.remove('modal-hidden');
+  modal.style.pointerEvents = '';
+}
+
+/** Referme la modale "nav verrouillée" (bouton "D'accord · Tole"). */
+function closeNavLockedModal() {
+  const modal = document.getElementById('nav-locked-modal');
   if (!modal) return;
   modal.classList.add('modal-hidden');
   modal.style.pointerEvents = 'none';
@@ -4556,8 +4610,16 @@ function _escAttr(s) {
 
    ARCHITECTURE :
      _maybeShowOnboarding() → point d'entrée appelé par initApp()
-     _closeOnboarding()     → ferme + marque vu dans localStorage
      showOnboardingGuide()  → fonction publique (lien "Relire")
+
+   🆕 (25/07/2026) _closeOnboarding() SUPPRIMÉE : c'était un stub à
+   corps vide, conservé jusqu'ici "pour compatibilité des appels
+   existants" — vérification faite, plus aucun appelant nulle part
+   dans le projet (ni app.js, ni index.html). Le marquage "vu" à la
+   fermeture de l'onboarding est en réalité géré par showScreen(), qui
+   pose le flag localStorage dès qu'on QUITTE #home (voir §21a /
+   commentaire de l'écran Home + Guide plus bas) — _OB_KEY_FR/_OB_KEY_OR
+   restent utilisées, elles, dans executeResetProgress().
 
    ACCORDÉONS : utilise <details>/<summary> natifs — zéro JS pour
    l'ouverture/fermeture, juste du CSS (voir §19 de style.css).
@@ -4729,23 +4791,19 @@ function _maybeShowOnboarding() {
 }
 
 /**
- * Ferme la modale onboarding legacy.
- * @deprecated Le DOM #onboarding-modal n'existe plus. Corps vidé (W1).
- *             Les constantes _OB_KEY_FR / _OB_KEY_OR restent utilisées
- *             dans executeResetProgress() — ne pas les supprimer.
- *             Déclaration conservée pour compatibilité des appels existants.
- */
-function _closeOnboarding() {
-  /* Corps volontairement vide — modale supprimée du DOM (W1). */
-}
-
-/**
  * Ouvre le guide depuis le bouton "Guide" de la nav basse.
  * 🆕 (24/07/2026, 2e correctif du jour) Affiche à nouveau #home —
  * fusion Home+Guide, voir Bilan_technique.md §6.24 — sans toucher au
  * flag d'onboarding (accessible à tout moment, même une fois onboardé).
  */
 function showOnboardingGuide() {
+  /* 🆕 (25/07/2026) Même garde-fou que navGoModules() : depuis le
+     Lanceur, sans langue choisie, on explique plutôt que de naviguer
+     vers un #home incohérent (mode vide → L()/isFrench() indéfinis). */
+  if (!currentMode) {
+    openNavLockedModal();
+    return;
+  }
   showScreen('home');
 }
 

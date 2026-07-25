@@ -41,7 +41,7 @@ Taphad'Meuh/
 │   └── style.css           ← All styles — dual theme system (theme-french / theme-oromo)
 │
 ├── js/
-│   ├── app.js              ← Full application engine (5 670 lines, 21 sections)
+│   ├── app.js              ← Full application engine (5 905 lines, 21 sections)
 │   ├── data-fr.js          ← Dataset — "Learn French" mode (48 themes, 1 428 lines)
 │   └── data-or.js          ← Dataset — "Learn Oromo" mode  (48 themes, 1 383 lines)
 │
@@ -62,11 +62,10 @@ Taphad'Meuh/
 [Launcher]  →  choose language
      │
      ▼
-   [Home]  →  dashboard (Start/Continue button + progress card(s))
-     │  ▲
-     │  │  🆕 first visit only (per mode) : auto-redirect right after Home
-     │  └──❓── [Guide]  →  bilingual explanatory guide (accordions)
-     │         🏠 back to [Home]
+   [Home]  →  dashboard + bilingual explanatory guide, ONE merged screen
+              (dashboard: Start/Continue button + progress card(s) ;
+               guide: accordions, reachable any time via 📚/Guide nav)
+     │
      ▼
  [Sections]  →  grid of 48 modules  (Niveau 1 ×32 + Niveau 2 ×16)
      │
@@ -79,16 +78,18 @@ Taphad'Meuh/
               └── 🎤 Répète         (Speech Recognition — mic required)
 ```
 
-**🆕 (24/07/2026)** `Home` and `Guide` used to be a single merged screen (`#home`), which made the ❓ icon reload the very screen it was already on. They are now two separate screens, each showing only the icon that leads to the *other* one. On a learner's very first visit for a given mode (Français or Oromo), the app shows `Home` then immediately slides into `Guide` — no tap needed. 🏠 from `Guide` returns to `Home`, where "Commencer" starts the modules (and marks that mode as onboarded, so this auto-redirect only happens once per mode).
+**🆕 (24/07/2026, agencement VACHÉBO)** `Home` and `Guide` are a single merged screen (`#home`) — not two separate screens as an earlier same-day fix had briefly made them (that intermediate split caused a two-step, unnatural navigation). The layout follows the sister app VACHÉBO: logo → flags → title → subtitle → badges → install prompt → Commencer/PDF → guide accordions. "Commencer" starts the modules and marks that mode as onboarded (each mode's guide auto-shows on its own very first visit; later launches skip straight to Modules).
 
-**Back navigation (Sections / Lesson screens)** — two dedicated icons instead of a single "← Back" button, so the learner can jump straight to either destination :
+**Back navigation (Sections / Lesson screens)** — a dedicated icon row lets the learner jump straight to any destination:
 
 ```
-[Sections]  ──🏠──▶  [Launcher]   (choose Français / Oromo again — same as the
-                                   bottom-nav "Change language" button)
-            ──❓──▶  [Guide]      (bilingual explanatory guide — 🏠 from
-                                   there returns to [Home], not [Launcher])
+[Sections/Lesson]  ──🏠──▶  [Launcher]   (choose Français / Oromo again)
+                    ──❓──▶  [Home]       (same merged screen, guide part)
+                    ──📚──▶  [Sections]  (jump back to the modules grid)
+                    ──🚪──▶  quit confirmation modal
 ```
+
+**🆕 (25/07/2026)** On the Launcher, before any language is chosen, the bottom nav's ❓ Guide and 📚 Modules icons are visibly dimmed — tapping them now explains why (a small bilingual popup) instead of silently doing nothing: a language must be picked first, after which both work normally from anywhere.
 
 ---
 
@@ -229,7 +230,7 @@ Cache name is auto-versioned by GitHub Actions (`GITHUB_RUN_NUMBER`) on every de
 
 ### `app.js` — fichier unique volontairement monolithique
 
-Le moteur applicatif tient dans un seul fichier (5 670 lignes, 21 sections commentées).
+Le moteur applicatif tient dans un seul fichier (5 905 lignes, 21 sections commentées).
 Ce choix est délibéré : zéro étape de build, compatibilité maximale, hébergement statique sans bundler.
 
 Si le projet grossit significativement, une migration vers des modules ES (`import`/`export`) est envisageable. Elle nécessiterait :
@@ -282,6 +283,8 @@ Les autres thèmes de Niveau 1 génèrent leurs questions à la volée depuis `w
 | 24/07/2026 | Identité de marque reprise du logo (`Logo-appli-or-fr.png`), en s'inspirant du projet frère VACHÉBO : tokens `--c-flag-red/black/cream` communs aux deux thèmes, footer du lanceur et carte "L'essentiel en 30 secondes" recolorés, logo complet ajouté aux headers de l'écran Modules, mélange d'éléments culturels (🗼🛖🌳🐓☕🥐) en footer + clin d'œil sur un quiz sans-faute, crème mixée dans le dégradé d'accueil. Correctif au passage d'un bug latent de z-index (`.modal` recouvert par `.app-toast`). Resynchronisation complète des 3 plans internes — voir Bilan technique §6.22 (`app.js` : 5 670 lignes, `style.css` : 4 999 lignes, `index.html` : 1 754 lignes) (Sébastien + Claude Sonnet 5) |
 | 24/07/2026 | 🐞 Correctif retour terrain : Home et Guide (`#home`) étaient fusionnés en un seul écran, rendant l'icône ❓ inopérante depuis Home (elle rechargeait le même écran). Séparés en deux écrans distincts `#home` (dashboard) et `#guide` (guide explicatif) ; chacun n'affiche plus que l'icône vers l'AUTRE écran (`#home` → ❓ seule, `#guide` → 🏠 seule). Nouvelle fonction `goToHome()`, `goToGuide()` recentrée sur `#guide`. Resynchronisation complète des 3 plans internes — voir Bilan technique §6.23 (`app.js` : 5 796 lignes, `style.css` : 5 082 lignes, `index.html` : 1 824 lignes) (Sébastien + Claude Sonnet 5) |
 | 24/07/2026 | Suite directe de l'étape précédente : à la toute première visite d'un mode (jamais onboardé), l'apprenant voit désormais automatiquement l'écran Guide juste après Home, sans avoir à taper ❓ lui-même (`_maybeShowOnboarding()` bascule sur `#guide` au lieu de laisser `#home` affiché sans action). Une fois "Commencer" cliqué depuis Home (flag onboarding posé), les lancements suivants sautent directement aux Modules, comme avant. Resynchronisation du plan interne de `app.js` — voir Bilan technique §6.23 (`app.js` : 5 790 lignes) (Sébastien + Claude Sonnet 5) |
+| 25/07/2026 | 🐞 Correctif retour terrain : sur le Lanceur, avant tout choix de langue, les icônes ❓ Guide et 📚 Modules de la nav basse étaient grisées mais restaient cliquables sans aucun retour (elles pouvaient planter ou afficher un écran incohérent, `data-fr/or.js` n'étant pas encore chargé). Ajout d'une petite modale bilingue (`#nav-locked-modal`, `openNavLockedModal()`/`closeNavLockedModal()`) qui explique la raison et se ferme au tap. Suppression au passage du stub mort `_closeOnboarding()` (corps vide, plus aucun appelant depuis la fusion Home+Guide). Correction d'une erreur de groupement héritée du 23/07/2026 dans le plan interne de `app.js` (`goToAccueil()`/`goToGuide()` sont physiquement dans le bloc §5c, pas §5b). Resynchronisation complète des 3 plans internes + mise à jour du diagramme "User flow" ci-dessus, périmé depuis la fusion Home+Guide (il décrivait encore deux écrans séparés) — voir Bilan technique §6.25 (`app.js` : 5 905 lignes, `style.css` : 5 219 lignes, `index.html` : 1 806 lignes) (Sébastien + Claude Sonnet 5) |
+| 22/07/2026 → 25/07/2026 | Expériences utilisatrice (Sandrine avec application espagnole VACHÉBO, Moi) et correctifs avec Claude Sonnet 5. |
 
 *Journal détaillé (dont le retour de recettage complet du 03/07) disponible en commentaire d'en-tête dans `app.js`.*
 

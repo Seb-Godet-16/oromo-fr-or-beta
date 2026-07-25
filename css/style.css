@@ -22,54 +22,56 @@
  * ║  rendu visuel.                                                  ║
  * ╠══════════════════════════════════════════════════════════════════╣
  * ║  PLAN DU FICHIER                                                ║
- * ║   §1        Reset & base                          ligne    99  ║
- * ║   §2        Variables de thème (:root / fallback) ligne   223  ║
- * ║   §3        Thème Français (html.theme-french)    ligne   302  ║
- * ║   §4        Thème Oromo (html.theme-oromo)        ligne   344  ║
- * ║   §5        Écran 0 — Lanceur (dont 🆕            ligne   381  ║
+ * ║   §1        Reset & base                          ligne   109  ║
+ * ║   §2        Variables de thème (:root / fallback) ligne   233  ║
+ * ║   §3        Thème Français (html.theme-french)    ligne   312  ║
+ * ║   §4        Thème Oromo (html.theme-oromo)        ligne   354  ║
+ * ║   §5        Écran 0 — Lanceur (dont 🆕            ligne   391  ║
  * ║             .launcher-quit-btn)                                ║
- * ║   §6        🆕 Écran 1 — Home + Guide fusionnés   ligne   888  ║
+ * ║   §6        🆕 Écran 1 — Home + Guide fusionnés   ligne   898  ║
  * ║             (#home, agencement VACHÉBO, 24/07/2026,             ║
  * ║             2e correctif — voir Bilan_technique.md §6.24)       ║
- * ║   §7        Écran 2 — Sections                    ligne   979  ║
- * ║   §8        Écran 3 — Leçon (dont .back-btn-icon  ligne  1147  ║
+ * ║   §7        Écran 2 — Sections                    ligne   989  ║
+ * ║   §8        Écran 3 — Leçon (dont .back-btn-icon  ligne  1157  ║
  * ║             icônes 🏠/❓; 🆕 .lesson-quick-nav)                  ║
- * ║   §9        Composants : Flashcards               ligne  1459  ║
- * ║   §10       Composants : Alphabet                 ligne  1661  ║
- * ║   §11       Composants : Quiz                     ligne  1761  ║
- * ║   §12       Composants : Dialogues / Situations   ligne  1875  ║
- * ║   §13       Composants : Vocabulaire              ligne  1980  ║
- * ║   §14       Modale Remerciements                  ligne  2048  ║
- * ║   §15       Footer commun                         ligne  2139  ║
- * ║   §16       Toast notification                    ligne  2159  ║
- * ║   §16b   🆕 Bandeau hors-ligne persistant          ligne  2195  ║
- * ║   §17       Onglet Répète (dont 🆕 .repeat-        ligne  2259  ║
+ * ║   §9        Composants : Flashcards               ligne  1469  ║
+ * ║   §10       Composants : Alphabet                 ligne  1671  ║
+ * ║   §11       Composants : Quiz                     ligne  1771  ║
+ * ║   §12       Composants : Dialogues / Situations   ligne  1885  ║
+ * ║   §13       Composants : Vocabulaire              ligne  1990  ║
+ * ║   §14       Modale Remerciements                  ligne  2058  ║
+ * ║   §15       Footer commun                         ligne  2169  ║
+ * ║   §16       Toast notification                    ligne  2189  ║
+ * ║   §16b   🆕 Bandeau hors-ligne persistant          ligne  2225  ║
+ * ║   §17       Onglet Répète (dont 🆕 .repeat-        ligne  2289  ║
  * ║             badges-intro, phrase d'intro 2 badges)              ║
- * ║   §18       Focus clavier                         ligne  2557  ║
- * ║   §19       Guide utilisateur (.ob-*, dont 🆕      ligne  2575  ║
+ * ║   §18       Focus clavier                         ligne  2587  ║
+ * ║   §19       Guide utilisateur (.ob-*, dont 🆕      ligne  2605  ║
  * ║             "Quel navigateur choisir ?")                        ║
- * ║   §20       Spinner de chargement                 ligne  3043  ║
- * ║   §22       🆕 Écran Home + Guide fusionnés       ligne  3080  ║
+ * ║   §20       Spinner de chargement                 ligne  3073  ║
+ * ║   §22       🆕 Écran Home + Guide fusionnés       ligne  3110  ║
  * ║             (#home — fond dégradé, layout, voir §6)             ║
- * ║   §23       Écran Sections redesigné (dont        ligne  3498  ║
+ * ║   §23       Écran Sections redesigné (dont        ligne  3528  ║
  * ║             .back-btn-group)                                   ║
- * ║   §24       Responsive : tablette & desktop       ligne  3688  ║
- * ║   §24b      Mode sombre                           ligne  3778  ║
- * ║   §24c      Responsive : mode paysage mobile      ligne  3898  ║
- * ║   §25       Boutons d'export PDF                  ligne  3971  ║
- * ║   §26       Barre de navigation basse             ligne  4071  ║
- * ║   §27       Onglets niveau 1 / 2                  ligne  4198  ║
- * ║   §28       Écrans sections level (no-scroll)     ligne  4293  ║
- * ║   §20e      Grille thèmes écrans level            ligne  4491  ║
- * ║   §CONFETTI Animation de félicitations ⭐⭐⭐      ligne  4512  ║
- * ║   §PROGRESS Carte(s) de progression (Home,        ligne  4583  ║
+ * ║   §24       Responsive : tablette & desktop       ligne  3718  ║
+ * ║   §24b      Mode sombre                           ligne  3808  ║
+ * ║   §24c      Responsive : mode paysage mobile      ligne  3928  ║
+ * ║   §25       Boutons d'export PDF                  ligne  4001  ║
+ * ║   §26       Barre de navigation basse             ligne  4101  ║
+ * ║   §27       Onglets niveau 1 / 2                  ligne  4228  ║
+ * ║   §28       Écrans sections level (no-scroll)     ligne  4323  ║
+ * ║   §20e      Grille thèmes écrans level            ligne  4521  ║
+ * ║   §CONFETTI Animation de félicitations ⭐⭐⭐      ligne  4542  ║
+ * ║   §PROGRESS Carte(s) de progression (Home,        ligne  4613  ║
  * ║             1 ou 2 selon les parcours commencés)                ║
- * ║   §CONFIRM  Modale confirmation suppression       ligne  4706  ║
- * ║   §QUITMODAL 🆕 Modale "Quitter l'application"     ligne  4825  ║
+ * ║   §CONFIRM  Modale confirmation suppression       ligne  4736  ║
+ * ║   §QUITMODAL 🆕 Modale "Quitter l'application"     ligne  4855  ║
  * ║             (#quit-app-modal, icône 🚪 nav rapide)              ║
- * ║   §ANTISPAM E-mail affiché à l'envers (CSS RTL)  ligne  4875  ║
- * ║   §SPEAKING Feedback visuel bouton audio (TTS)    ligne  4955  ║
- * ║   §29       Correctifs accessibilité mode sombre  ligne  5013  ║
+ * ║   §NAVLOCKED 🆕 (25/07/2026) Modale "Nav verrouillée"  ligne  4958 ║
+ * ║             (#nav-locked-modal) avant choix de langue           ║
+ * ║   §ANTISPAM E-mail affiché à l'envers (CSS RTL)  ligne  5021  ║
+ * ║   §SPEAKING Feedback visuel bouton audio (TTS)    ligne  5048  ║
+ * ║   §29       Correctifs accessibilité mode sombre  ligne  5106  ║
  * ║  ── Plan resynchronisé le 23/07/2026 : ajout d'une navigation    ║
  * ║  rapide (🏠❓📚) en haut de CHAQUE écran (jusqu'ici réservée à    ║
  * ║  Sections) + bouton 🚪 Quitter partout et sa modale dédiée       ║
@@ -94,6 +96,11 @@
  * ║  écran unique). Voir index.html, app.js (§5c, _QUICK_NAV_MAP) et ║
  * ║  Bilan_technique.md §6.24. Toutes les ancres ci-dessus ont été   ║
  * ║  recalculées par recherche directe dans le fichier final.        ║
+ * ║  ── Resynchronisé le 25/07/2026 : ajout de §NAVLOCKED (modale    ║
+ * ║  "Nav verrouillée", #nav-locked-modal — explique pourquoi        ║
+ * ║  Guide/Modules ne répondent pas au 1er clic sur le Lanceur avant ║
+ * ║  choix de langue). Toutes les ancres ci-dessus recalculées par   ║
+ * ║  recherche directe (Bilan_technique.md §6.25).                  ║
  * ╚══════════════════════════════════════════════════════════════════╝
  */
 
@@ -4946,6 +4953,69 @@ footer a:hover{text-decoration:underline}
 @media(prefers-color-scheme:dark){
   .btn-quit-cancel{color:#aaa}
 }
+
+/* ════════════════════════════════════════════════════════════════
+   🆕 (25/07/2026) §NAVLOCKED — MODALE "NAV VERROUILLÉE" AVANT CHOIX
+   DE LANGUE  (#nav-locked-modal)
+   ════════════════════════════════════════════════════════════════
+   Ouverte depuis navGoModules() / showOnboardingGuide() (app.js, §5d)
+   quand l'apprenant tape ❓/📚 sur le lanceur avant tout choix de
+   langue. Overlay identique à #quit-app-modal (fixed + backdrop
+   blur) ; bloc dédié plutôt que règles partagées, pour ne pas
+   coupler ce nouvel élément aux modales existantes.
+   ════════════════════════════════════════════════════════════════ */
+#nav-locked-modal{
+  position:fixed;
+  top:0; left:0;
+  width:100%; height:100%;
+  background-color:rgba(0,0,0,.45);
+  backdrop-filter:blur(5px);
+  -webkit-backdrop-filter:blur(5px);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:10000;
+  padding:16px;
+  box-sizing:border-box;
+}
+#nav-locked-modal .modal-content{
+  max-width:360px;
+  animation:modalScaleIn .25s cubic-bezier(.34,1.56,.64,1);
+}
+.nav-locked-title{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
+  margin-bottom:12px;
+  font-size:1.1em;
+  text-align:center;
+}
+.nav-locked-msg{
+  font-size:.88em;
+  line-height:1.55;
+  margin-bottom:20px;
+  opacity:.85;
+  text-align:center;
+}
+.nav-locked-actions{
+  display:flex;
+  justify-content:center;
+}
+#navLockedOkBtn{
+  width:100%;
+  padding:13px;
+  border:none;
+  border-radius:12px;
+  font-weight:700;
+  font-size:.95em;
+  cursor:pointer;
+  background:var(--c-primary);
+  color:#fff;
+  transition:transform .1s ease, filter .1s ease;
+}
+#navLockedOkBtn:hover{filter:brightness(.92)}
+#navLockedOkBtn:active{transform:scale(.97)}
 
 /* ══════════════════════════════════════════════════════════════════
    ANTISPAM — Adresse e-mail affichée à l'envers dans le HTML,

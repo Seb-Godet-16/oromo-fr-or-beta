@@ -34,19 +34,21 @@
   ║  PLAN DU FICHIER                                                ║
   ║   <head>    Métadonnées, PWA, Open Graph, feuille de styles     ║
   ║   Écran 0   Lanceur (#app-launcher, dont 🆕 bouton              ║
-  ║             Quitter)                          ligne    172      ║
+  ║             Quitter)                          ligne    160      ║
   ║   Écran 1   🆕 Home + Guide fusionnés (#home, dont              ║
-  ║             nav rapide 📚+🚪 et corps d'accordéons)   ligne    396      ║
-  ║   Écran 2a  Niveau 1 Modules (#sections-level1) ligne  1494      ║
-  ║   Écran 2b  Niveau 2 Modules (#sections-level2) ligne  1551      ║
+  ║             nav rapide 📚+🚪 et corps d'accordéons)   ligne    375      ║
+  ║   Écran 2a  Niveau 1 Modules (#sections-level1) ligne  1439      ║
+  ║   Écran 2b  Niveau 2 Modules (#sections-level2) ligne  1496      ║
   ║   Écran 3   Leçon (#lesson, dont 🆕 rangée                       ║
-  ║             .lesson-quick-nav)                ligne   1604      ║
-  ║   Modale    Remerciements (#credits-modal)    ligne   1700      ║
-  ║   Modale    Confirmation suppression          ligne   1733      ║
-  ║   Modale 🆕 Quitter l'application              ligne   1760      ║
+  ║             .lesson-quick-nav)                ligne   1545      ║
+  ║   Modale    Remerciements (#credits-modal)    ligne   1637      ║
+  ║   Modale    Confirmation suppression          ligne   1673      ║
+  ║   Modale 🆕 Quitter l'application              ligne   1693      ║
   ║             (#quit-app-modal)                                   ║
-  ║   Nav       Barre de navigation basse         ligne   1777      ║
-  ║   Scripts   Chargement de app.js              ligne   1819      ║
+  ║   Modale 🆕 (25/07/2026) Nav verrouillée       ligne   1721      ║
+  ║             (#nav-locked-modal, avant choix de langue)          ║
+  ║   Nav       Barre de navigation basse         ligne   1751      ║
+  ║   Scripts   Chargement de app.js              ligne   1804      ║
   ║  🆕 24/07/2026 (2e correctif du jour) : #home et #guide,        ║
   ║  séparés plus tôt dans la journée pour corriger l'icône ❓       ║
   ║  inopérante, sont réunis à nouveau — mais réagencés sur le      ║
@@ -1716,8 +1718,46 @@
 
 
   <!-- ════════════════════════════════════════════════════════════════
+       🆕 (25/07/2026) MODALE — NAV VERROUILLÉE AVANT CHOIX DE LANGUE
+       (#nav-locked-modal)
+       ────────────────────────────────────────────────────────────────
+       Ouverte quand l'apprenant tape sur ❓ Guide ou 📚 Modules dans la
+       nav basse alors qu'aucune langue n'est encore choisie (écran
+       #app-launcher — ces 2 boutons y sont grisés mais restaient
+       cliquables sans aucun retour visible). Explique POURQUOI ça ne
+       fait rien pour l'instant : il faut d'abord choisir Français ou
+       Afaan Oromoo ci-dessus. Voir openNavLockedModal() / navGoModules()
+       / showOnboardingGuide() dans app.js, §5d.
+       Contenu 100% statique et bilingue (comme #quit-app-modal en
+       mode "onLauncher") puisqu'on ne connaît pas encore la langue
+       de l'apprenant à ce stade — donc pas de L() ici.
+       ════════════════════════════════════════════════════════════════ -->
+  <div id="nav-locked-modal" class="modal-hidden" style="pointer-events:none">
+    <div class="modal-content">
+      <h3 class="nav-locked-title">🔒 Pas encore disponible · Hin argamu amma</h3>
+      <p class="nav-locked-msg">
+        Choisis d'abord ta langue ci-dessus 👆 (Français ou Afaan Oromoo). Une fois ton choix fait, Guide et Modules seront directement accessibles depuis cette barre, à tout moment.
+        <br><br>
+        Duraan dursii afaan kee filadhu 👆 (Faransaayi ykn Afaan Oromoo). Erga filatee booda, Gargaarsaa fi Kutaaleen bakka kanarraa yeroo hundaa bilisaan argamu.
+      </p>
+      <div class="nav-locked-actions">
+        <button id="navLockedOkBtn" onclick="closeNavLockedModal()">D'accord · Tole</button>
+      </div>
+    </div>
+  </div><!-- /#nav-locked-modal -->
+
+
+  <!-- ════════════════════════════════════════════════════════════════
        BARRE DE NAVIGATION BASSE  (#bottom-nav)
-       Cachée sur l'écran lanceur ; visible dès que l'app est initialisée.
+       🆕 (25/07/2026) Commentaire corrigé — était faux : la nav n'est
+       PAS cachée sur le lanceur. Elle y est bien visible (classe
+       .visible posée par _updateBottomNav(), app.js §5b), avec
+       Langue/Infos actifs et Guide/Modules grisés (opacity .35) tant
+       qu'aucune langue n'est choisie — ces 2 derniers restaient
+       cliquables sans retour avant l'ajout de #nav-locked-modal (voir
+       navGoModules()/showOnboardingGuide()). Seul cas réellement
+       masqué (opacity:0 + pointer-events:none) : #home, lors de la
+       toute première visite d'un mode jamais onboardé.
        ════════════════════════════════════════════════════════════════ -->
   <nav id="bottom-nav" class="bottom-nav" aria-label="Navigation principale">
     <button class="nav-btn" id="navBtnLang" onclick="showScreen('app-launcher','back')" aria-label="Changer de langue">
