@@ -1952,6 +1952,29 @@ function showScreen(id, dir) {
     }
   });
 
+  /* 🐞 CORRECTIF (25/07/2026) — écrans vides signalés par l'utilisateur
+     (grille Modules vide ; écran Home avec titre/badges/boutons
+     Commencer+PDF vides mais bouton d'installation correctement
+     libellé). Cause : pour un apprenant REVENANT sur l'app, la nav
+     basse est rendue visible dès le chargement du script, AVANT tout
+     choix de langue pour cette session (voir §15 plus bas, IIFE sur
+     'bottom-nav'). S'il tape Guide/Modules depuis le Lanceur à ce
+     moment-là, currentMode vaut encore '' et ALL_THEMES est encore
+     vide : renderHome()/renderSections() se contentent de ne rien
+     peupler ("if (!ALL_THEMES.length) return", §6/§7) — mais rien plus
+     bas ici n'empêchait l'écran de passer quand même en "active".
+     Résultat : écran vide, onglet de nav actif, apprenant bloqué sans
+     indice sur ce qui s'est passé. On redirige ces écrans dépendants
+     des données vers le Lanceur tant qu'aucun mode n'est choisi — la
+     nav elle-même reste inchangée (elle sert justement à permettre à
+     un revenant de relancer l'app sans repasser par le Lanceur une
+     fois un mode choisi ; ce correctif ne couvre que la fenêtre AVANT
+     ce choix). */
+  const _DATA_DEPENDENT_SCREENS = ['home', 'sections-level1', 'sections-level2', 'lesson'];
+  if (!currentMode && _DATA_DEPENDENT_SCREENS.indexOf(id) !== -1) {
+    id = 'app-launcher';
+  }
+
   const nextScreen = document.getElementById(id);
   if (!nextScreen) return;
 
@@ -4845,7 +4868,18 @@ function showCredits() {
   }
 
   const modal = document.getElementById('credits-modal');
-  if (modal) modal.style.display = 'flex';
+  if (modal) {
+    modal.style.display = 'flex';
+    /* 🐞 CORRECTIF (25/07/2026) — voir aussi le max-height/overflow-y
+       ajoutés à .modal-content dans style.css (même correctif, 2 volets).
+       .modal-content garde sa propre position de scroll tant que le
+       nœud n'est pas recréé (seul innerHTML de #credits-modal-body est
+       remplacé plus haut) : sans cette ligne, rouvrir la modale après
+       l'avoir fermée en ayant défilé jusqu'aux Remerciements réafficherait
+       directement ce scroll-là au lieu du haut ("Qui suis-je ?"). */
+    const modalContent = modal.querySelector('.modal-content');
+    if (modalContent) modalContent.scrollTop = 0;
+  }
 }
 
 /**

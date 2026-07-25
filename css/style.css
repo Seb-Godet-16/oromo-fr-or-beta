@@ -2082,6 +2082,26 @@ html.theme-french .btn-reset-theme:hover{
   text-align:center;
   position:relative;
   box-shadow:0 4px 15px rgba(0,0,0,0.2);
+  /* 🐞 CORRECTIF (25/07/2026) — BUG "atterrissage en plein milieu du
+     texte" sur #credits-modal : .modal centre .modal-content à la fois
+     verticalement et horizontalement (align-items/justify-content:center,
+     voir règle .modal ci-dessus) SANS jamais définir de limite de hauteur
+     ni de scroll. Tant que le contenu tient sur un écran, ça ne se voit
+     pas — c'est le cas pour #custom-confirm-modal et #quit-app-modal
+     (texte court fixe). Mais dès que le contenu dépasse la hauteur de
+     la fenêtre (typiquement : dépliage de l'accordéon "Qui suis-je ?"
+     dans #credits-modal, avec ses 4 paragraphes + carte contact), le
+     centrage vertical pousse le haut de la carte au-dessus du haut de
+     l'écran — invisible ET inatteignable en l'absence de scroll — d'où
+     l'impression d'« atterrir en plein milieu du texte », sans moyen de
+     remonter au titre ni d'accéder au bouton "Fermer" en bas : tout est
+     bloqué. Le scroll interne ci-dessous rend la carte elle-même
+     défilable dès qu'elle approche le bord de l'écran, tout en gardant
+     les autres modales (contenu toujours court) visuellement inchangées. */
+  max-height:85vh;
+  overflow-y:auto;
+  -webkit-overflow-scrolling:touch; /* défilement inertiel iOS Safari */
+  box-sizing:border-box;
 }
 
 .modal-content h3{
