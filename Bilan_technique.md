@@ -13,7 +13,7 @@
 | Stack technique | Vanilla JS (ES2020) · CSS3 · HTML5 — zéro dépendance |
 | Hébergement | GitHub Pages + GitHub Actions (CI/CD automatisé) |
 | Modes d'apprentissage | 2 (Apprendre le Français / Apprendre l'Oromo) |
-| Thèmes par mode | 48 (32 Niveau 1 Vocabulaire + 16 Niveau 2 Dialogue) |
+| Thèmes par mode | 53 (37 Niveau 1 Vocabulaire + 16 Niveau 2 Dialogue) |
 | Mots/expressions par mode | ~387 entrées (Français) · ~396 entrées (Oromo) |
 | Fonctionnement hors-ligne | ✅ 100 % après première visite (Service Worker) |
 | Taille totale du code source | ~795 Ko (6 fichiers principaux, 16 366 lignes) |
@@ -467,6 +467,32 @@ Aucune section entière n'était manquante cette fois-ci (contrairement à `app.
 **Hors périmètre de cette session** — comme signalé en §6.22/§6.23 : les tables détaillées §3 (`app.js`), §4 (`style.css`) et §5 (`index.html`) restent périmées (dernière resynchronisation ligne-par-ligne : 12/07/2026, §6.21) et nécessiteraient une session dédiée pour être revérifiées une par une.
 
 **Fichiers modifiés** : `app.js`, `index.html`, `style.css` (correctif + nettoyage + resynchronisation des plans internes), `README.md`, `Bilan_technique.md`.
+
+---
+
+### §6.26 — 🆕 Scission du thème `sante` en `sante` + `secu` (méthode VACHÉBO, 28/08/2026)
+
+**Contexte** : le thème Niveau 1 `sante` (🏥 La Santé / Fayyaa) avait été élargi le 28/08/2026 (même journée, étape précédente) avec 9 mots de vocabulaire de sécurité générale (danger, police, pompiers, au secours, appeler à l'aide, se perdre, vol, attention, prudent(e)), mélangeant désormais deux champs sémantiques distincts (médical vs sécurité/urgences) dans une même rubrique de 30 mots.
+
+**Correctif** — scission en deux thèmes Niveau 1 distincts, sur le même principe qu'un correctif équivalent déjà appliqué sur le projet frère VACHÉBO :
+- `sante` **conserve son id existant** et repasse à ses **21 mots médicaux d'origine** (douleur, fièvre, médecin, hôpital, pharmacie, ambulance, urgences…) — **zéro impact sur la progression déjà sauvegardée** des utilisateurs sur ce thème.
+- Nouveau thème `secu` (**nouvel id**, donc progression vierge pour tous) créé juste après `sante` dans les deux fichiers de données, emoji 🚨 (distinct de 🏥), reprenant tels quels les 9 mots de sécurité — nom FR "La Sécurité" / sous-titre Oromo "Nageenya" (miroir strict avec `data-or.js` : `name: 'Nageenya'` / `sub: 'La Sécurité'`).
+
+**Effets de bord traités dans le même lot** :
+1. Niveau 1 : 36 → **37** thèmes ; Total : 52 → **53** — `_TOTAL_THEMES_PER_MODE` (`app.js`) mis à jour en conséquence.
+2. Renumérotation complète des commentaires `// N/52 -- ...` en `// N/53 -- ...` dans `data-fr.js` et `data-or.js` : dénominateur changé sur les 30 premiers thèmes (`sante` inclus, numéro inchangé), nouveau repère `31/53` pour `secu`, et tous les thèmes suivants (ex Voyage, Pays…) décalés de +1 (`31/52`→`32/53`, etc. jusqu'à `52/52`→`53/53`).
+3. **7 occurrences** de comptage (`36`/`52`) resynchronisées dans le Guide bilingue d'`index.html` (écran Home Français et Oromo, écran Sections, cartes "L'essentiel en 30 secondes").
+4. Table §1 (Vue d'ensemble) de ce Bilan mise à jour (48→53, valeur déjà périmée avant cette session — voir point de vigilance ci-dessous).
+
+**Traduction provisoire** : le titre Oromo "Nageenya" est une traduction IA provisoire, à valider par Mussa Sembro comme le reste du lot du 28/08/2026 via le classeur de révision Excel dédié.
+
+**Vérifications effectuées** :
+- Syntaxique : `node --check` sur `data-fr.js`, `data-or.js`, `app.js` — aucune erreur.
+- Programmatique (script Node dédié, lecture directe des tableaux de données) : 37 ids uniques en Niveau 1 des deux côtés (aucun doublon, aucun oubli) ; miroir strict FR/OR confirmé sur la liste complète des ids (même ordre) ; `sante` = 21 mots des deux côtés, `secu` = 9 mots des deux côtés (21+9 = 30, aucune perte ni doublon par rapport à l'ancien `sante` à 30 mots) ; contenu mot-à-mot de `secu` identique entre `data-fr.js` et `data-or.js` (aucun écart de traduction/emoji) ; `secu` positionné immédiatement après `sante` dans les deux fichiers ; total `LEVEL1 + LEVEL2` = 53 des deux côtés.
+
+**⚠️ Point de vigilance signalé au passage** : la table §1 de ce Bilan affichait encore **48** thèmes avant cette session (jamais mise à jour lors de l'étape précédente du même jour, qui était pourtant déjà passée à 52) — corrigée directement à 53 ici, sans session de resynchronisation dédiée pour le reste de cette table (mots/expressions par mode notamment, non revérifié).
+
+**Fichiers modifiés** : `data-fr.js`, `data-or.js`, `app.js`, `index.html` (7 occurrences de comptage), `README.md`, `Bilan_technique.md` (§1, §6.26).
 
 ---
 

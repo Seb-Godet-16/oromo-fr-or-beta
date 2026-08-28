@@ -195,7 +195,7 @@ let openedThemes = [];      // 🆕 Tableau d'ids de thèmes déjà ouverts au m
    🆕 (28/08/2026) 32→36 thèmes Niveau 1 : ajout Étape 1 (vocabulaire
    grand débutant — adj, connect, quantfreq, argent + enrichissements
    num/fam/objets/sante), voir README. */
-const _TOTAL_THEMES_PER_MODE = 52;
+const _TOTAL_THEMES_PER_MODE = 53;
 
 /* ── Réglages audio TTS (Cartes Flash) ──────────────────────────────
    Paliers de vitesse à TAPER (pas de slider continu) : plus rapide à

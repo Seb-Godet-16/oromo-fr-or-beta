@@ -30,7 +30,7 @@
 
 const LEVEL1_THEMES_OR = [
 
-  // 1/52 -- Qubeewwan -- L'Alphabet
+  // 1/53 -- Qubeewwan -- L'Alphabet
   {
     id: 'alpha', level: 1, emoji: '🔤',
     name: 'Qubeewwan', sub: 'L\'Alphabet',
@@ -67,7 +67,7 @@ const LEVEL1_THEMES_OR = [
     ]
   },
 
-  // 2/52 -- Nagaa Gaafachuu -- Les Salutations
+  // 2/53 -- Nagaa Gaafachuu -- Les Salutations
   {
     id: 'salut', level: 1, emoji: '👋',
     name: 'Nagaa Gaafachuu', sub: 'Les Salutations',
@@ -89,7 +89,7 @@ const LEVEL1_THEMES_OR = [
     ]
   },
 
-  // 3/52 -- Ofii Beeksisuu -- Se Présenter
+  // 3/53 -- Ofii Beeksisuu -- Se Présenter
   {
     id: 'pres', level: 1, emoji: '🙋',
     name: 'Ofii Beeksisuu', sub: 'Se Présenter',
@@ -105,7 +105,7 @@ const LEVEL1_THEMES_OR = [
     ]
   },
 
-  // 4/52 -- Jechi Murteessoo -- Expressions Essentielles
+  // 4/53 -- Jechi Murteessoo -- Expressions Essentielles
   {
     id: 'expr', level: 1, emoji: '💬',
     name: 'Jechi Murteessoo', sub: 'Expressions Essentielles',
@@ -127,7 +127,7 @@ const LEVEL1_THEMES_OR = [
     ]
   },
 
-  // 5/52 -- Gaaffii Addaadaa -- Mots interrogatifs
+  // 5/53 -- Gaaffii Addaadaa -- Mots interrogatifs
  {
     id: 'interro', level: 1, emoji: '❓',
     name: 'Gaaffii Addaadaa', sub: 'Mots interrogatifs',
@@ -144,7 +144,7 @@ const LEVEL1_THEMES_OR = [
     ]
   },
 
-  // 6/52 -- Jechoota Walitti Hidhu -- Mots de Liaison
+  // 6/53 -- Jechoota Walitti Hidhu -- Mots de Liaison
   {
     id: 'connect', level: 1, emoji: '🔗',
     name: 'Jechoota Walitti Hidhu', sub: 'Mots de Liaison',
@@ -159,7 +159,7 @@ const LEVEL1_THEMES_OR = [
     ]
   },
 
-  // 7/52 -- Lakkoofsa -- Les Nombres
+  // 7/53 -- Lakkoofsa -- Les Nombres
   {
     id: 'num', level: 1, emoji: '🔢',
     name: 'Lakkoofsa', sub: 'Les Nombres',
@@ -190,7 +190,7 @@ const LEVEL1_THEMES_OR = [
     ]
   },
 
-  // 8/52 -- Sa'atii fi Sanaata -- L'Heure et le Calendrier
+  // 8/53 -- Sa'atii fi Sanaata -- L'Heure et le Calendrier
  {
     id: 'temps', level: 1, emoji: '🕐',
     name: 'Sa\'atii fi Sanaata', sub: 'L\'Heure et le Calendrier',
@@ -218,7 +218,7 @@ const LEVEL1_THEMES_OR = [
     ]
   },
 
-  // 9/52 -- Baay'ina, Yeroo fi Deddeebii -- Quantité, Fréquence & Temps
+  // 9/53 -- Baay'ina, Yeroo fi Deddeebii -- Quantité, Fréquence & Temps
   {
     id: 'quantfreq', level: 1, emoji: '📊',
     name: 'Baay\'ina, Yeroo fi Deddeebii', sub: 'Quantité, Fréquence & Temps',
@@ -234,7 +234,7 @@ const LEVEL1_THEMES_OR = [
     ]
   },
 
-  // 10/52 -- Qilleensa fi Haala Biraa -- La Météo et le Climat
+  // 10/53 -- Qilleensa fi Haala Biraa -- La Météo et le Climat
  {
     id: 'meteo', level: 1, emoji: '🌤️',
     name: 'Qilleensa fi Haala Biraa', sub: 'La Météo et le Climat',
@@ -253,7 +253,7 @@ const LEVEL1_THEMES_OR = [
     ]
   },
 
-  // 11/52 -- Gochaalee -- Les Verbes
+  // 11/53 -- Gochaalee -- Les Verbes
   {
     id: 'verb', level: 1, emoji: '📝',
     name: 'Gochaalee', sub: 'Les Verbes',
@@ -295,7 +295,7 @@ const LEVEL1_THEMES_OR = [
     ]
   },
 
-  // 12/52 -- Miiraawwan -- Les Émotions
+  // 12/53 -- Miiraawwan -- Les Émotions
   {
     id: 'emot', level: 1, emoji: '😄',
     name: 'Miiraawwan', sub: 'Les Émotions',
@@ -319,7 +319,7 @@ const LEVEL1_THEMES_OR = [
     ]
   },
 
-  // 13/52 -- Maatii -- La Famille
+  // 13/53 -- Maatii -- La Famille
   {
     id: 'fam', level: 1, emoji: '👨‍👩‍👧',
     name: 'Maatii', sub: 'La Famille',
@@ -342,7 +342,7 @@ const LEVEL1_THEMES_OR = [
     ]
   },
 
-  // 14/52 -- Halluu -- Les Couleurs
+  // 14/53 -- Halluu -- Les Couleurs
   {
     id: 'col', level: 1, emoji: '🎨',
     name: 'Halluu', sub: 'Les Couleurs',
@@ -355,7 +355,7 @@ const LEVEL1_THEMES_OR = [
     ]
   },
 
-  // 15/52 -- Sifoota Bu'uuraa -- Adjectifs de Base
+  // 15/53 -- Sifoota Bu'uuraa -- Adjectifs de Base
   {
     id: 'adj', level: 1, emoji: '🔄',
     name: 'Sifoota Bu\'uuraa', sub: 'Adjectifs de Base',
@@ -378,7 +378,7 @@ const LEVEL1_THEMES_OR = [
     ]
   },
 
-  // 16/52 -- Jireenya Guyyaa Guyyaa -- La Vie Quotidienne
+  // 16/53 -- Jireenya Guyyaa Guyyaa -- La Vie Quotidienne
   {
     id: 'routine', level: 1, emoji: '🌅',
     name: 'Jireenya Guyyaa Guyyaa', sub: 'La Vie Quotidienne',
@@ -401,7 +401,7 @@ const LEVEL1_THEMES_OR = [
     ]
   },
 
-  // 17/52 -- Nyaata -- La Nourriture
+  // 17/53 -- Nyaata -- La Nourriture
  {
     id: 'nour', level: 1, emoji: '🍽️',
     name: 'Nyaata', sub: 'La Nourriture',
@@ -426,7 +426,7 @@ const LEVEL1_THEMES_OR = [
     ]
   },
 
-  // 18/52 -- Dhugaatii -- Les Boissons
+  // 18/53 -- Dhugaatii -- Les Boissons
  {
     id: 'bois', level: 1, emoji: '🥤',
     name: 'Dhugaatii', sub: 'Les Boissons',
@@ -441,7 +441,7 @@ const LEVEL1_THEMES_OR = [
     ]
   },
 
-  // 19/52 -- Mana Nyaataa Keessatti -- Au Restaurant
+  // 19/53 -- Mana Nyaataa Keessatti -- Au Restaurant
   {
     id: 'rest', level: 1, emoji: '🍽️',
     name: 'Mana Nyaataa Keessatti', sub: 'Au Restaurant',
@@ -460,7 +460,7 @@ const LEVEL1_THEMES_OR = [
     ]
   },
 
-  // 20/52 -- Maallaqa -- L'Argent
+  // 20/53 -- Maallaqa -- L'Argent
   {
     id: 'argent', level: 1, emoji: '💰',
     name: 'Maallaqa', sub: 'L\'Argent',
@@ -479,7 +479,7 @@ const LEVEL1_THEMES_OR = [
     ]
   },
 
-  // 21/52 -- Karaa Kee Argachuu -- S'Orienter
+  // 21/53 -- Karaa Kee Argachuu -- S'Orienter
  {
     id: 'orient', level: 1, emoji: '🧭',
    name: 'Karaa Kee Argachuu', sub: 'S\'Orienter',
@@ -492,7 +492,7 @@ const LEVEL1_THEMES_OR = [
     ]
   },
 
-  // 22/52 -- Iddoowwan -- Les Lieux
+  // 22/53 -- Iddoowwan -- Les Lieux
  {
     id: 'lieux', level: 1, emoji: '🏙️',
     name: 'Iddoowwan', sub: 'Les Lieux',
@@ -516,7 +516,7 @@ const LEVEL1_THEMES_OR = [
     ]
   },
 
-  // 23/52 -- Gejjiba -- Les Transports
+  // 23/53 -- Gejjiba -- Les Transports
  {
     id: 'trans', level: 1, emoji: '🚌',
     name: 'Gejjiba', sub: 'Les Transports',
@@ -534,7 +534,7 @@ const LEVEL1_THEMES_OR = [
     ]
   },
 
-  // 24/52 -- Qaamaa -- Le Corps
+  // 24/53 -- Qaamaa -- Le Corps
  {
     id: 'corps', level: 1, emoji: '🧍',
     name: 'Qaamaa', sub: 'Le Corps',
@@ -553,7 +553,7 @@ const LEVEL1_THEMES_OR = [
     ]
   },
 
-  // 25/52 -- Mi'oota Guyyuu -- Objets du Quotidien
+  // 25/53 -- Mi'oota Guyyuu -- Objets du Quotidien
  {
     id: 'objets', level: 1, emoji: '🔑',
     name: 'Mi\'oota Guyyuu', sub: 'Objets du Quotidien',
@@ -581,7 +581,7 @@ const LEVEL1_THEMES_OR = [
     ]
   },
 
-  // 26/52 -- Mana Jireenyaa -- Le Logement
+  // 26/53 -- Mana Jireenyaa -- Le Logement
   {
     id: 'log', level: 1, emoji: '🏠',
     name: 'Mana Jireenyaa', sub: 'Le Logement',
@@ -595,7 +595,7 @@ const LEVEL1_THEMES_OR = [
     ]
   },
 
-  // 27/52 -- Meeshaalee Manaa fi Meeshaalee Hojii -- Meubles et Équipements
+  // 27/53 -- Meeshaalee Manaa fi Meeshaalee Hojii -- Meubles et Équipements
  {
     id: 'muebles_equipamiento', level: 1, emoji: '🪑',
     name: 'Meeshaalee Manaa fi Meeshaalee Hojii', sub: 'Meubles et Équipements',
@@ -611,7 +611,7 @@ const LEVEL1_THEMES_OR = [
     ]
   },
 
-  // 28/52 -- Uffata -- Les Vêtements
+  // 28/53 -- Uffata -- Les Vêtements
   {
     id: 'veth', level: 1, emoji: '👗',
     name: 'Uffata', sub: 'Les Vêtements',
@@ -628,7 +628,7 @@ const LEVEL1_THEMES_OR = [
     ]
   },
 
-  // 29/52 -- Ogummaawwan Hojii -- Les Professions
+  // 29/53 -- Ogummaawwan Hojii -- Les Professions
   {
     id: 'met', level: 1, emoji: '💼',
     name: 'Ogummaawwan Hojii', sub: 'Les Professions',
@@ -646,7 +646,7 @@ const LEVEL1_THEMES_OR = [
     ]
   },
 
-  // 30/52 -- Fayyaa -- La Santé
+  // 30/53 -- Fayyaa -- La Santé
   {
     id: 'sante', level: 1, emoji: '🏥',
     name: 'Fayyaa', sub: 'La Santé',
@@ -662,7 +662,15 @@ const LEVEL1_THEMES_OR = [
       {et:'Farmaasiitii',fr:'La pharmacie',em:'🏪'}, {et:'Qoricha',fr:'Le médicament',em:'💊'},
       {et:'Haaphii qoricha',fr:'Le comprimé',em:'💊'}, {et:'Vaaksiniifi',fr:'Le vaccin',em:'💉'},
       {et:'Mallattoo madaa',fr:'Le pansement adhésif',em:'🩹'}, {et:'Xaxaa madaa',fr:'Le bandage',em:'🩼'},
-      {et:'Ambulaansii',fr:'L\'ambulance',em:'🚑'}, {et:'Bakka ariifachiisaa',fr:'Les urgences',em:'🆘'},
+      {et:'Ambulaansii',fr:'L\'ambulance',em:'🚑'}, {et:'Bakka ariifachiisaa',fr:'Les urgences',em:'🆘'}
+    ]
+  },
+
+  // 31/53 -- Nageenya -- La Sécurité
+  {
+    id: 'secu', level: 1, emoji: '🚨',
+    name: 'Nageenya', sub: 'La Sécurité',
+    words: [
       {et:'Balaa',fr:'Le danger',em:'⚠️'},
       {et:'Poolisii',fr:'La police',em:'👮'}, {et:'Ibiddaa dhaamsitoota',fr:'Les pompiers',em:'🚒'},
       {et:'Na gargaaraa!',fr:'Au secours !',em:'🆘'}, {et:'Gargaarsa waamuu',fr:'Appeler à l\'aide',em:'📢'},
@@ -671,7 +679,7 @@ const LEVEL1_THEMES_OR = [
     ]
   },
 
-  // 31/52 -- Imala -- Le Voyage
+  // 32/53 -- Imala -- Le Voyage
   {
     id: 'viaje', level: 1, emoji: '🧳',
     name: 'Imala', sub: 'Le Voyage',
@@ -689,7 +697,7 @@ const LEVEL1_THEMES_OR = [
     ]
   },
 
-  // 32/52 -- Biyyoota -- Les Pays
+  // 33/53 -- Biyyoota -- Les Pays
   {
     id: 'pays', level: 1, emoji: '🌍',
     name: 'Biyyoota', sub: 'Les Pays',
@@ -709,7 +717,7 @@ const LEVEL1_THEMES_OR = [
     ]
   },
 
-  // 33/52 -- Hojiiwwan Yeroo Boqonnaa -- Les Loisirs
+  // 34/53 -- Hojiiwwan Yeroo Boqonnaa -- Les Loisirs
   {
     id: 'ocio', level: 1, emoji: '⛰️',
     name: 'Hojiiwwan Yeroo Boqonnaa', sub: 'Les Loisirs',
@@ -726,7 +734,7 @@ const LEVEL1_THEMES_OR = [
     ]
   },
 
-  // 34/52 -- Biqiltuuwwan -- Les Plantes
+  // 35/53 -- Biqiltuuwwan -- Les Plantes
   {
     id: 'plan', level: 1, emoji: '🌿',
     name: 'Biqiltuuwwan', sub: 'Les Plantes',
@@ -747,7 +755,7 @@ const LEVEL1_THEMES_OR = [
     ]
   },
 
-  // 35/52 -- Bineensota -- Les Animaux
+  // 36/53 -- Bineensota -- Les Animaux
   {
     id: 'anim', level: 1, emoji: '🐘',
     name: 'Bineensota', sub: 'Les Animaux',
@@ -769,7 +777,7 @@ const LEVEL1_THEMES_OR = [
     ]
   },
 
-  // 36/52 -- Qonnaafi Horsiisa Loonii -- L'Agriculture et L'Élevage
+  // 37/53 -- Qonnaafi Horsiisa Loonii -- L'Agriculture et L'Élevage
   {
     id: 'agri', level: 1, emoji: '🌾',
     name: 'Qonnaafi Horsiisa Loonii', sub: 'L\'Agriculture et L\'Élevage',
@@ -804,7 +812,7 @@ const LEVEL1_THEMES_OR = [
 
 const LEVEL2_THEMES_OR = [
 
-  // 37/52 -- Nama Nagaa Gaafachuu -- Saluer Quelqu'un
+  // 38/53 -- Nama Nagaa Gaafachuu -- Saluer Quelqu'un
   {
     id: 'salut2', level: 2, emoji: '👋',
     name: 'Nama Nagaa Gaafachuu', sub: 'Saluer Quelqu\'un', type: 'dialog',
@@ -845,7 +853,7 @@ const LEVEL2_THEMES_OR = [
     ]
   },
 
-  // 38/52 -- Of Beeksisuu -- Se Présenter
+  // 39/53 -- Of Beeksisuu -- Se Présenter
   {
     id: 'pres2', level: 2, emoji: '🙋',
     name: 'Of Beeksisuu', sub: 'Se Présenter', type: 'dialog',
@@ -887,7 +895,7 @@ const LEVEL2_THEMES_OR = [
     ]
   },
 
-  // 39/52 -- Kallattii Gaafadhu -- Demander son Chemin
+  // 40/53 -- Kallattii Gaafadhu -- Demander son Chemin
   {
     id: 'chemin2', level: 2, emoji: '🗺️',
     name: 'Kallattii Gaafadhu', sub: 'Demander son Chemin', type: 'dialog',
@@ -928,7 +936,7 @@ const LEVEL2_THEMES_OR = [
     ]
   },
 
-  // 40/52 -- Kaaffeetti Ajajuu -- Commander au Café
+  // 41/53 -- Kaaffeetti Ajajuu -- Commander au Café
   {
     id: 'bar2', level: 2, emoji: '☕',
    name: 'Kaaffeetti Ajajuu', sub: 'Commander au Café', type: 'dialog',
@@ -969,7 +977,7 @@ const LEVEL2_THEMES_OR = [
     ]
   },
 
-  // 41/52 -- Nyaata Ajajadhu -- Commander un Repas
+  // 42/53 -- Nyaata Ajajadhu -- Commander un Repas
  {
     id: 'resto2', level: 2, emoji: '🍽️',
     name: 'Nyaata Ajajadhu', sub: 'Commander un Repas', type: 'dialog',
@@ -1011,7 +1019,7 @@ const LEVEL2_THEMES_OR = [
     ]
   },
 
-  // 42/52 -- Gabaa deemu -- Faire les Courses
+  // 43/53 -- Gabaa deemu -- Faire les Courses
  {
     id: 'compras2', level: 2, emoji: '🛍️',
     name: 'Gabaa deemu', sub: 'Faire les Courses', type: 'dialog',
@@ -1052,7 +1060,7 @@ const LEVEL2_THEMES_OR = [
     ]
   },
 
-  // 43/52 -- Naannoo Keessa Socho'uu -- Se Déplacer
+  // 44/53 -- Naannoo Keessa Socho'uu -- Se Déplacer
   {
     id: 'transp2', level: 2, emoji: '🚌',
     name: 'Naannoo Keessa Socho\'uu', sub: 'Se Déplacer', type: 'dialog',
@@ -1094,7 +1102,7 @@ const LEVEL2_THEMES_OR = [
     ]
   },
 
-  // 44/52 -- Hoteela Gahuu -- Arriver à l'Hôtel
+  // 45/53 -- Hoteela Gahuu -- Arriver à l'Hôtel
   {
     id: 'hotel2', level: 2, emoji: '🏨',
    name: 'Hoteela Gahuu', sub: 'Arriver à l\'Hôtel', type: 'dialog',
@@ -1136,7 +1144,7 @@ const LEVEL2_THEMES_OR = [
     ]
   },
 
-  // 45/52 -- Bakka Jireenyaa Barbaadi -- Chercher un Logement
+  // 46/53 -- Bakka Jireenyaa Barbaadi -- Chercher un Logement
   {
     id: 'logement2', level: 2, emoji: '🏠',
     name: 'Bakka Jireenyaa Barbaadi', sub: 'Chercher un Logement', type: 'dialog',
@@ -1177,7 +1185,7 @@ const LEVEL2_THEMES_OR = [
     ]
   },
 
-  // 46/52 -- Waa'ee Qilleensaa Haasa'uu -- Parler de la Météo
+  // 47/53 -- Waa'ee Qilleensaa Haasa'uu -- Parler de la Météo
   {
     id: 'meteo2', level: 2, emoji: '☀️',
     name: 'Waa\'ee Qilleensaa Haasa\'uu', sub: 'Parler de la Météo', type: 'dialog',
@@ -1218,7 +1226,7 @@ const LEVEL2_THEMES_OR = [
     ]
   },
 
-  // 47/52 -- Yeroo fi Qilleensa -- L'Heure et la Météo
+  // 48/53 -- Yeroo fi Qilleensa -- L'Heure et la Météo
  {
     id: 'temps2', level: 2, emoji: '🕐',
     name: 'Yeroo fi Qilleensa', sub: 'L\'Heure et la Météo', type: 'dialog',
@@ -1261,7 +1269,7 @@ const LEVEL2_THEMES_OR = [
     ]
   },
 
-  // 48/52 -- Jireenya Guyyuu -- La Vie Quotidienne
+  // 49/53 -- Jireenya Guyyuu -- La Vie Quotidienne
   {
     id: 'routine2', level: 2, emoji: '🌅',
     name: 'Jireenya Guyyuu', sub: 'La Vie Quotidienne', type: 'dialog',
@@ -1303,7 +1311,7 @@ const LEVEL2_THEMES_OR = [
     ]
   },
 
-  // 49/52 -- Hojiiwwan Yeroo Boqonnaa -- Les Loisirs
+  // 50/53 -- Hojiiwwan Yeroo Boqonnaa -- Les Loisirs
   {
     id: 'gustos2', level: 2, emoji: '❤️',
     name: 'Hojiiwwan Yeroo Boqonnaa', sub: 'Les Loisirs', type: 'dialog',
@@ -1346,7 +1354,7 @@ const LEVEL2_THEMES_OR = [
     ]
   },
 
-  // 50/52 -- Halkan Ala -- Sortir le Soir
+  // 51/53 -- Halkan Ala -- Sortir le Soir
   {
     id: 'fiesta2', level: 2, emoji: '🎉',
    name: 'Halkan Ala', sub: 'Sortir le Soir', type: 'dialog',
@@ -1387,7 +1395,7 @@ const LEVEL2_THEMES_OR = [
     ]
   },
 
-  // 51/52 -- Mana Qorichaa -- À la Pharmacie
+  // 52/53 -- Mana Qorichaa -- À la Pharmacie
  {
     id: 'farmacia2', level: 2, emoji: '💊',
     name: 'Mana Qorichaa', sub: 'À la Pharmacie', type: 'dialog',
@@ -1429,7 +1437,7 @@ const LEVEL2_THEMES_OR = [
     ]
   },
 
-  // 52/52 -- Bakka Doktoraatti -- Chez le Médecin
+  // 53/53 -- Bakka Doktoraatti -- Chez le Médecin
   {
     id: 'medico2', level: 2, emoji: '🩺',
     name: 'Bakka Doktoraatti', sub: 'Chez le Médecin', type: 'dialog',
