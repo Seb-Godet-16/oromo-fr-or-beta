@@ -188,11 +188,14 @@ let done = [];              // Tableau d'objets { id, stars } sauvegardé dans l
 let openedThemes = [];      // 🆕 Tableau d'ids de thèmes déjà ouverts au moins une fois (voir OPENED_KEY)
 
 /* Nombre total de thèmes par parcours — identique dans les deux modes
-   (32 Niveau 1 + 16 Niveau 2 = 48). Constante volontairement figée ici :
+   (36 Niveau 1 + 16 Niveau 2 = 52). Constante volontairement figée ici :
    permet de calculer le % / les étoiles de l'AUTRE parcours (celui non
    actif) depuis son seul localStorage, sans injecter son dataset complet
-   juste pour compter ses thèmes (voir _getOtherModeProgress, écran Home). */
-const _TOTAL_THEMES_PER_MODE = 48;
+   juste pour compter ses thèmes (voir _getOtherModeProgress, écran Home).
+   🆕 (28/08/2026) 32→36 thèmes Niveau 1 : ajout Étape 1 (vocabulaire
+   grand débutant — adj, connect, quantfreq, argent + enrichissements
+   num/fam/objets/sante), voir README. */
+const _TOTAL_THEMES_PER_MODE = 52;
 
 /* ── Réglages audio TTS (Cartes Flash) ──────────────────────────────
    Paliers de vitesse à TAPER (pas de slider continu) : plus rapide à
@@ -2583,7 +2586,7 @@ function _getProgress() {
  * Calcule la progression de l'AUTRE parcours (celui non actif),
  * en lisant directement sa clé localStorage — sans injecter son
  * dataset (data-fr.js / data-or.js), inutile juste pour un total
- * de thèmes qui est fixe et identique dans les deux modes (48).
+ * de thèmes qui est fixe et identique dans les deux modes (52).
  * Utilisé par renderHome() pour savoir s'il faut afficher une
  * 2ᵉ carte de progression sur l'écran Accueil.
  * @returns {{ total: number, n: number, pct: number,

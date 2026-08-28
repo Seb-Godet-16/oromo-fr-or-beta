@@ -42,8 +42,8 @@ Taphad'Meuh/
 │
 ├── js/
 │   ├── app.js              ← Full application engine (5 905 lines, 21 sections)
-│   ├── data-fr.js          ← Dataset — "Learn French" mode (48 themes, 1 428 lines)
-│   └── data-or.js          ← Dataset — "Learn Oromo" mode  (48 themes, 1 383 lines)
+│   ├── data-fr.js          ← Dataset — "Learn French" mode (52 themes, 1 524 lines)
+│   └── data-or.js          ← Dataset — "Learn Oromo" mode  (52 themes, 1 479 lines)
 │
 ├── sw.js                   ← Service Worker — Cache First / Network First + SVG fallbacks
 ├── manifest.json           ← PWA manifest — icons, theme colors, orientation
@@ -67,7 +67,7 @@ Taphad'Meuh/
                guide: accordions, reachable any time via 📚/Guide nav)
      │
      ▼
- [Sections]  →  grid of 48 modules  (Niveau 1 ×32 + Niveau 2 ×16)
+ [Sections]  →  grid of 52 modules  (Niveau 1 ×36 + Niveau 2 ×16)
      │
      ▼
  [Lesson]  →  tabs per module
@@ -201,7 +201,7 @@ Both paths started     →  2 cards side by side (🇫🇷 and 🇪🇹), since 
                            numbers differ between the two
 ```
 
-The "other" path's total theme count (48) is a fixed constant
+The "other" path's total theme count (52) is a fixed constant
 (`_TOTAL_THEMES_PER_MODE` in `app.js`) rather than read from its dataset —
 avoids injecting the other mode's `data-*.js` file just to display a stat.
 
@@ -285,6 +285,7 @@ Les autres thèmes de Niveau 1 génèrent leurs questions à la volée depuis `w
 | 24/07/2026 | Suite directe de l'étape précédente : à la toute première visite d'un mode (jamais onboardé), l'apprenant voit désormais automatiquement l'écran Guide juste après Home, sans avoir à taper ❓ lui-même (`_maybeShowOnboarding()` bascule sur `#guide` au lieu de laisser `#home` affiché sans action). Une fois "Commencer" cliqué depuis Home (flag onboarding posé), les lancements suivants sautent directement aux Modules, comme avant. Resynchronisation du plan interne de `app.js` — voir Bilan technique §6.23 (`app.js` : 5 790 lignes) (Sébastien + Claude Sonnet 5) |
 | 25/07/2026 | 🐞 Correctif retour terrain : sur le Lanceur, avant tout choix de langue, les icônes ❓ Guide et 📚 Modules de la nav basse étaient grisées mais restaient cliquables sans aucun retour (elles pouvaient planter ou afficher un écran incohérent, `data-fr/or.js` n'étant pas encore chargé). Ajout d'une petite modale bilingue (`#nav-locked-modal`, `openNavLockedModal()`/`closeNavLockedModal()`) qui explique la raison et se ferme au tap. Suppression au passage du stub mort `_closeOnboarding()` (corps vide, plus aucun appelant depuis la fusion Home+Guide). Correction d'une erreur de groupement héritée du 23/07/2026 dans le plan interne de `app.js` (`goToAccueil()`/`goToGuide()` sont physiquement dans le bloc §5c, pas §5b). Resynchronisation complète des 3 plans internes + mise à jour du diagramme "User flow" ci-dessus, périmé depuis la fusion Home+Guide (il décrivait encore deux écrans séparés) — voir Bilan technique §6.25 (`app.js` : 5 905 lignes, `style.css` : 5 219 lignes, `index.html` : 1 806 lignes) (Sébastien + Claude Sonnet 5) |
 | 22/07/2026 → 25/07/2026 | Expériences utilisatrice (Sandrine avec application espagnole VACHÉBO, Moi) et correctifs avec Claude Sonnet 5. |
+| 28/08/2026 | **Étape 1 (méthode VACHÉBO)** : enrichissement du vocabulaire Niveau 1 pour grands débutants — 4 nouveaux thèmes (`adj` Adjectifs de Base, `connect` Mots de Liaison, `quantfreq` Quantité/Fréquence/Temps, `argent` L'Argent) + enrichissement de 4 thèmes existants (`num` +10 ordinaux, `fam` +11 famille étendue, `objets` +12 vocabulaire numérique/tech, `sante` +9 vocabulaire de sécurité générale — ids inchangés pour préserver la progression déjà sauvegardée). 32→36 thèmes Niveau 1 (48→52 au total), `_TOTAL_THEMES_PER_MODE` mis à jour, comptage des thèmes renuméroté dans les 2 fichiers de données, textes du Guide (FR + Oromo) resynchronisés dans `index.html`. Traductions oromo provisoires (IA), en attente de relecture par Mussa Sembro via le classeur de révision Excel dédié — 2 entrées (jumeaux, accident) volontairement omises du code faute de traduction fiable, 1 doublon fusionné (« Peu / Un peu ») (`data-fr.js` : 1 524 lignes, `data-or.js` : 1 479 lignes, `app.js` : 5 913 lignes, `index.html` : 1 806 lignes) (Sébastien + Claude Sonnet 5) |
 
 *Journal détaillé (dont le retour de recettage complet du 03/07) disponible en commentaire d'en-tête dans `app.js`.*
 
