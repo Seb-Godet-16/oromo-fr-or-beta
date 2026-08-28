@@ -34,44 +34,46 @@
  * ║   §7        Écran 2 — Sections                    ligne   989  ║
  * ║   §8        Écran 3 — Leçon (dont .back-btn-icon  ligne  1157  ║
  * ║             icônes 🏠/❓; 🆕 .lesson-quick-nav)                  ║
- * ║   §9        Composants : Flashcards               ligne  1469  ║
- * ║   §10       Composants : Alphabet                 ligne  1671  ║
- * ║   §11       Composants : Quiz                     ligne  1771  ║
- * ║   §12       Composants : Dialogues / Situations   ligne  1885  ║
- * ║   §13       Composants : Vocabulaire              ligne  1990  ║
- * ║   §14       Modale Remerciements                  ligne  2058  ║
- * ║   §15       Footer commun                         ligne  2169  ║
- * ║   §16       Toast notification                    ligne  2189  ║
- * ║   §16b   🆕 Bandeau hors-ligne persistant          ligne  2225  ║
- * ║   §17       Onglet Répète (dont 🆕 .repeat-        ligne  2289  ║
+ * ║   §9        Composants : Flashcards (dont 🆕      ligne  1478  ║
+ * ║             centrage vertical sûr des faces .fc-*,               ║
+ * ║             voir Bilan_technique.md §6.26)                       ║
+ * ║   §10       Composants : Alphabet                 ligne  1701  ║
+ * ║   §11       Composants : Quiz                     ligne  1801  ║
+ * ║   §12       Composants : Dialogues / Situations   ligne  1915  ║
+ * ║   §13       Composants : Vocabulaire              ligne  2020  ║
+ * ║   §14       Modale Remerciements                  ligne  2088  ║
+ * ║   §15       Footer commun                         ligne  2199  ║
+ * ║   §16       Toast notification                    ligne  2219  ║
+ * ║   §16b   🆕 Bandeau hors-ligne persistant          ligne  2255  ║
+ * ║   §17       Onglet Répète (dont 🆕 .repeat-        ligne  2319  ║
  * ║             badges-intro, phrase d'intro 2 badges)              ║
- * ║   §18       Focus clavier                         ligne  2587  ║
- * ║   §19       Guide utilisateur (.ob-*, dont 🆕      ligne  2605  ║
+ * ║   §18       Focus clavier                         ligne  2617  ║
+ * ║   §19       Guide utilisateur (.ob-*, dont 🆕      ligne  2635  ║
  * ║             "Quel navigateur choisir ?")                        ║
- * ║   §20       Spinner de chargement                 ligne  3073  ║
- * ║   §22       🆕 Écran Home + Guide fusionnés       ligne  3110  ║
+ * ║   §20       Spinner de chargement                 ligne  3103  ║
+ * ║   §22       🆕 Écran Home + Guide fusionnés       ligne  3140  ║
  * ║             (#home — fond dégradé, layout, voir §6)             ║
- * ║   §23       Écran Sections redesigné (dont        ligne  3528  ║
+ * ║   §23       Écran Sections redesigné (dont        ligne  3558  ║
  * ║             .back-btn-group)                                   ║
- * ║   §24       Responsive : tablette & desktop       ligne  3718  ║
- * ║   §24b      Mode sombre                           ligne  3808  ║
- * ║   §24c      Responsive : mode paysage mobile      ligne  3928  ║
- * ║   §25       Boutons d'export PDF                  ligne  4001  ║
- * ║   §26       Barre de navigation basse             ligne  4101  ║
- * ║   §27       Onglets niveau 1 / 2                  ligne  4228  ║
- * ║   §28       Écrans sections level (no-scroll)     ligne  4323  ║
- * ║   §20e      Grille thèmes écrans level            ligne  4521  ║
- * ║   §CONFETTI Animation de félicitations ⭐⭐⭐      ligne  4542  ║
- * ║   §PROGRESS Carte(s) de progression (Home,        ligne  4613  ║
+ * ║   §24       Responsive : tablette & desktop       ligne  3748  ║
+ * ║   §24b      Mode sombre                           ligne  3838  ║
+ * ║   §24c      Responsive : mode paysage mobile      ligne  3958  ║
+ * ║   §25       Boutons d'export PDF                  ligne  4031  ║
+ * ║   §26       Barre de navigation basse             ligne  4131  ║
+ * ║   §27       Onglets niveau 1 / 2                  ligne  4258  ║
+ * ║   §28       Écrans sections level (no-scroll)     ligne  4353  ║
+ * ║   §20e      Grille thèmes écrans level            ligne  4551  ║
+ * ║   §CONFETTI Animation de félicitations ⭐⭐⭐      ligne  4572  ║
+ * ║   §PROGRESS Carte(s) de progression (Home,        ligne  4643  ║
  * ║             1 ou 2 selon les parcours commencés)                ║
- * ║   §CONFIRM  Modale confirmation suppression       ligne  4736  ║
- * ║   §QUITMODAL 🆕 Modale "Quitter l'application"     ligne  4855  ║
+ * ║   §CONFIRM  Modale confirmation suppression       ligne  4766  ║
+ * ║   §QUITMODAL 🆕 Modale "Quitter l'application"     ligne  4885  ║
  * ║             (#quit-app-modal, icône 🚪 nav rapide)              ║
- * ║   §NAVLOCKED 🆕 (25/07/2026) Modale "Nav verrouillée"  ligne  4958 ║
+ * ║   §NAVLOCKED 🆕 (25/07/2026) Modale "Nav verrouillée"  ligne  4988 ║
  * ║             (#nav-locked-modal) avant choix de langue           ║
- * ║   §ANTISPAM E-mail affiché à l'envers (CSS RTL)  ligne  5021  ║
- * ║   §SPEAKING Feedback visuel bouton audio (TTS)    ligne  5048  ║
- * ║   §29       Correctifs accessibilité mode sombre  ligne  5106  ║
+ * ║   §ANTISPAM E-mail affiché à l'envers (CSS RTL)  ligne  5051  ║
+ * ║   §SPEAKING Feedback visuel bouton audio (TTS)    ligne  5078  ║
+ * ║   §29       Correctifs accessibilité mode sombre  ligne  5136  ║
  * ║  ── Plan resynchronisé le 23/07/2026 : ajout d'une navigation    ║
  * ║  rapide (🏠❓📚) en haut de CHAQUE écran (jusqu'ici réservée à    ║
  * ║  Sections) + bouton 🚪 Quitter partout et sa modale dédiée       ║
@@ -101,6 +103,13 @@
  * ║  Guide/Modules ne répondent pas au 1er clic sur le Lanceur avant ║
  * ║  choix de langue). Toutes les ancres ci-dessus recalculées par   ║
  * ║  recherche directe (Bilan_technique.md §6.25).                  ║
+ * ║  ── Resynchronisé le 28/08/2026 : correctif §9 — centrage        ║
+ * ║  vertical des faces .fc-front/.fc-back (justify-content:center   ║
+ * ║  → flex-start + marges auto 1er/dernier enfant) pour ne plus     ║
+ * ║  couper haut ET bas du contenu qui déborde (ex. tableau de       ║
+ * ║  conjugaison des cartes Verbes sur petit écran). +21 lignes,     ║
+ * ║  toutes les ancres à partir de §10 décalées en conséquence       ║
+ * ║  (Bilan_technique.md §6.26).                                     ║
  * ╚══════════════════════════════════════════════════════════════════╝
  */
 
@@ -1505,9 +1514,30 @@ html.theme-french .btn-reset-theme:hover{
   display:flex;
   flex-direction:column;
   align-items:center;
-  justify-content:center;
+  justify-content:flex-start; /* centrage réel via marges auto ci-dessous, voir commentaire */
   padding:20px 16px;
 }
+/* Centrage vertical "sûr" (bug §Étape 1 bis — cartes Verbes à conjugaison longue) :
+   justify-content:center coupait le haut ET le bas du contenu qui dépasse la
+   hauteur de la carte (le scroll flexbox se positionne au milieu de l'espace
+   centré, rendant le début inaccessible même avec overflow-y:auto en mode-cartes).
+   Remplacé par la technique des marges automatiques : le 1er enfant reçoit
+   margin-top:auto, le dernier margin-bottom:auto. Tant que le contenu tient
+   dans la carte, l'espace libre se répartit également au-dessus/en dessous
+   → rendu identique à un centrage classique. Dès que le contenu déborde,
+   l'espace libre vaut 0, les marges auto s'annulent, et le contenu s'aligne
+   en haut (jamais coupé) : seul le bas dépasse, et devient scrollable via
+   overflow-y:auto (mode-cartes). Volontairement PAS `justify-content:safe
+   center` : ce mot-clé n'a un comportement de repli harmonisé entre moteurs
+   que depuis peu (Chrome aligné sur la spec Align début 2024) et reste
+   incertain sur d'anciens WebKit — hors du plafond Safari 14.5+ du projet.
+   Les marges auto, elles, sont supportées par tous les moteurs flexbox
+   depuis l'origine. Sélecteur *:first-child/*:last-child générique car le
+   nombre d'enfants varie (emoji optionnel, hint OU tableau de conjugaison). */
+.fc-front > *:first-child,
+.fc-back  > *:first-child{margin-top:auto}
+.fc-front > *:last-child,
+.fc-back  > *:last-child{margin-bottom:auto}
 
 /* Face recto : fond blanc */
 .fc-front{background:#fff;box-shadow:0 4px 20px #0002}
