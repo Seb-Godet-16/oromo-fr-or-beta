@@ -12,77 +12,80 @@
      └─ app.js       → Ce fichier : logique applicative complète
 
    SECTIONS DE CE FICHIER (ordre d'apparition réel) :
-      1.   Variables d'état globales (let/const)             ligne   149
-      —    Utilitaire bilingue L() / langKeys()              ligne   208
-      2.   Point d'entrée — initApp(mode)                    ligne   322
-      3.   Synthèse vocale + prononciation Oromo             ligne   526
-     3a2.  Surlignage mot par mot — pendant la lecture TTS   ligne   950
-     3a3.  Vitesse de lecture — paliers (Cartes Flash,       ligne  1085
+      1.   Variables d'état globales (let/const)             ligne   169
+      —    Utilitaire bilingue L() / langKeys()              ligne   231
+      2.   Point d'entrée — initApp(mode)                    ligne   345
+      3.   Synthèse vocale + prononciation Oromo             ligne   549
+     3a2.  Surlignage mot par mot — pendant la lecture TTS   ligne   973
+     3a3.  Vitesse de lecture — paliers (Cartes Flash,       ligne  1108
            Répète, Dialogue, Vocabulaire, Quiz Vocabulaire)
-     3b.   Retour haptique — _vibrateFeedback()              ligne  1188
-     3b2.  Confetti — animation de félicitations (stars)     ligne  1210
-     3c.   Interruption audio — visibilitychange / focus     ligne  1291
-     3d.   KeepAlive watchdog — Chrome / Android             ligne  1332
-     3e.   🆕 Bandeau hors-ligne — connectivité              ligne  1374
+     3b.   Retour haptique — _vibrateFeedback()              ligne  1211
+     3b2.  Confetti — animation de félicitations (stars)     ligne  1233
+     3c.   Interruption audio — visibilitychange / focus     ligne  1314
+     3d.   KeepAlive watchdog — Chrome / Android             ligne  1355
+     3e.   🆕 Bandeau hors-ligne — connectivité              ligne  1397
            (navigator.onLine) — voir §6.14
-      4.   Persistance de la progression (étoiles)           ligne  1486
-     4a.   🆕 Suivi "modules déjà ouverts" (badge Nouveau)    ligne  1517
+      4.   Persistance de la progression (étoiles)           ligne  1509
+     4a.   🆕 Suivi "modules déjà ouverts" (badge Nouveau)    ligne  1540
            (dans §4, voir §6.18)
-     4c.   Réinitialisation — confirmResetProgress()         ligne  1600  (dans §4)
-     4b.   Restauration de session quiz (sessionStorage)     ligne  1774
-      5.   Navigation entre écrans                           ligne  1886
-     5b.   Navigation basse — helpers (dont _updateBottomNav(), ligne  2086
+     4c.   Réinitialisation — confirmResetProgress()         ligne  1626  (dans §4)
+     4b.   Restauration de session quiz (sessionStorage)     ligne  1797
+      5.   Navigation entre écrans                           ligne  1909
+     5b.   Navigation basse — helpers (dont _updateBottomNav(), ligne  2109
            qui grise Guide/Modules sur le Lanceur tant qu'aucune
            langue n'est choisie — voir §5d, #nav-locked-modal)
-     5c.   🆕 Navigation rapide en haut — icônes 🏠 ❓ 📚 🚪 sur  ligne  2205
+     5c.   🆕 Navigation rapide en haut — icônes 🏠 ❓ 📚 🚪 sur  ligne  2228
            tous les écrans (_QUICK_NAV_MAP), + navGoModules(),
            lessonGoBack(), goToAccueil()/goToGuide() — ce dernier
            groupe est physiquement ICI (pas en §5b, corrigé le
            25/07/2026 — l'ancien plan le plaçait à tort sous 5b)
-     5d.   🆕 Modale "Quitter l'application" (#quit-app-modal)  ligne  2385
+     5d.   🆕 Modale "Quitter l'application" (#quit-app-modal)  ligne  2408
            — openQuitModal()/closeQuitModal()/quitAppRestart()/
            quitAppClose() ; + (25/07/2026) modale "Nav verrouillée"
            (#nav-locked-modal) — openNavLockedModal()/
            closeNavLockedModal(), avant choix de langue au Lanceur
-      6.   Écran Home — bouton Commencer + carte(s) de       ligne  2533
+      6.   Écran Home — bouton Commencer + carte(s) de       ligne  2556
            progression (1 par parcours ayant des modules
            réussis — _getOtherModeProgress(), voir plus bas)
-      7.   Écran Sections — grille des thèmes                ligne  2692
-      8.   Ouverture d'un thème (écran Lesson + onglets)     ligne  2846
-           switchTab() : onglets + repositionnement          ligne  3005
+      7.   Écran Sections — grille des thèmes ; 🆕            ligne  2715
+           (28/08/2026) Niveau 1 regroupé en 6 catégories
+           repliables + carte "▶ Continuer" (THEME_CATEGORIES_L1,
+           _buildLevel1Body()) — voir §6.27 ; Niveau 2 inchangé
+      8.   Ouverture d'un thème (écran Lesson + onglets)     ligne  3050
+           switchTab() : onglets + repositionnement          ligne  3212
            du bouton PDF en mode Cartes (fixed via JS)
-      9.   Cartes Flash — vocabulaire interactif             ligne  3040
-     10.   Quiz 10 questions — avec étoiles progressives     ligne  3215
+      9.   Cartes Flash — vocabulaire interactif             ligne  3244
+     10.   Quiz 10 questions — avec étoiles progressives     ligne  3419
            (dont Quiz Alphabet, sans barre de vitesse — voir §3a3)
-     11.   Dialogue — scènes de situation                    ligne  3535
-     12.   Vocabulaire — lexique visuel cliquable            ligne  3595
-     13b.  Onglet Répète — badges voix (🔊) + reconnaissance  ligne  3643
+     11.   Dialogue — scènes de situation                    ligne  3739
+     12.   Vocabulaire — lexique visuel cliquable            ligne  3799
+     13b.  Onglet Répète — badges voix (🔊) + reconnaissance  ligne  3847
            vocale (🎙️), vitesse dédiée — voir §3a3
-     13.   Quiz Dialogue — questions sur le dialogue         ligne  4388
-     14.   Utilitaires & chaînes de résultats bilingues      ligne  4499
-     17.   Guide utilisateur — Onboarding — 🆕 auto-affiché   ligne  4595
+     13.   Quiz Dialogue — questions sur le dialogue         ligne  4592
+     14.   Utilitaires & chaînes de résultats bilingues      ligne  4703
+     17.   Guide utilisateur — Onboarding — 🆕 auto-affiché   ligne  4799
            à la 1ʳᵉ visite d'un mode (_maybeShowOnboarding()) ;
            (25/07/2026) _closeOnboarding() (stub mort) supprimée
-      —    Écran Home + Guide — 🆕 (24/07/2026, 2e correctif  ligne  4628
+      —    Écran Home + Guide — 🆕 (24/07/2026, 2e correctif  ligne  4832
            du jour) écran UNIQUE #home à nouveau (agencement
            VACHÉBO, pas l'ancien) — _buildHomeGuide()
-     18.   Crédits — showCredits()                           ligne  4806
-     15.   Initialisation du launcher                        ligne  4950
-     15b.  🆕 Panneaux infos dépliables des cartes de langue  ligne  4983
+     18.   Crédits — showCredits()                           ligne  5010
+     15.   Initialisation du launcher                        ligne  5154
+     15b.  🆕 Panneaux infos dépliables des cartes de langue  ligne  5187
            (état par défaut + préférence manuelle — voir §7
            de la demande de refonte du Lanceur, 22/07/2026)
-     16.   Accessibilité clavier                             ligne  5055
-     19.   Spinner de chargement des données                 ligne  5067
-     19b.  Viewport height fix — Android Chrome / Brave      ligne  5110
-     20.   Enregistrement du Service Worker (PWA)            ligne  5172
+     16.   Accessibilité clavier                             ligne  5259
+     19.   Spinner de chargement des données                 ligne  5271
+     19b.  Viewport height fix — Android Chrome / Brave      ligne  5314
+     20.   Enregistrement du Service Worker (PWA)            ligne  5376
            + 🆕 vérification proactive des mises à jour
            au premier plan et toutes les 60 min — voir §6.19
-     20b.  🆕 Installation PWA — bouton natif "Installer     ligne  5262
+     20b.  🆕 Installation PWA — bouton natif "Installer     ligne  5466
            l'app" (bouton natif Android/Chrome, rappel iOS)
-     21.   Exports PDF — window.print() + @media print       ligne  5363
-     21a.  Export Guide (accordéons de l'écran #home)         ligne  5560
-     21b.  Export Vocabulaire (leçon Niveau 1)               ligne  5678
-     21c.  Export Situation (leçon Niveau 2 — dialogue)      ligne  5774
+     21.   Exports PDF — window.print() + @media print       ligne  5567
+     21a.  Export Guide (accordéons de l'écran #home)         ligne  5764
+     21b.  Export Vocabulaire (leçon Niveau 1)               ligne  5882
+     21c.  Export Situation (leçon Niveau 2 — dialogue)      ligne  5978
    ============================================================
    🆕 Plan resynchronisé le 23/07/2026 : ajout des sections 5c
    (navigation rapide 🏠❓📚 étendue à tous les écrans, jusqu'ici
@@ -119,6 +122,18 @@
    goToGuide() sont physiquement dans le bloc §5c (après son bandeau),
    pas §5b comme l'indiquait le plan depuis le 23/07/2026 — déplacés
    au bon endroit ci-dessus.
+   ============================================================
+   🆕 Resynchronisé le 28/08/2026 (Bilan_technique.md §6.27, étape 3
+   méthode VACHÉBO) : ajout du regroupement du Niveau 1 en 6 catégories
+   repliables + carte "▶ Continuer" (THEME_CATEGORIES_L1 et les
+   fonctions _getCategoryProgress()/_getContinueTargetL1()/
+   _buildContinueCard()/_computeAutoOpenCategoryIds()/
+   _buildCategoryAccordion()/_buildLevel1Body(), toutes dans §7, juste
+   avant renderSections()). +181 lignes insérées à cet endroit précis ;
+   toutes les ancres à partir de §8 ont décalé d'exactement +181 lignes
+   en conséquence — recalcul intégral par recherche directe dans le
+   fichier final (pas par arithmétique de décalage), TTS_RATE_TIERS
+   confirmé inchangé (§3a3, ligne 1108, avant le point d'insertion).
    ============================================================
 
    HISTORIQUE DE L'APPLICATION
@@ -2699,9 +2714,189 @@ function _buildProgressCardHTML(card, idx) {
 /* ============================================================
    7. ÉCRAN SECTIONS — GRILLE DES THÈMES
    ============================================================
-   Affiche deux grilles (Niveau 1 et Niveau 2) avec les cartes
-   de thèmes et la progression globale.
+   Affiche les modules des deux niveaux avec la progression globale.
+   Niveau 1 (37 thèmes) : 🆕 (28/08/2026) regroupé en 6 catégories
+   repliables + carte "▶ Continuer" (voir _buildLevel1Body ci-dessous).
+   Niveau 2 (16 dialogues) : grille plate inchangée.
    ============================================================ */
+
+/* ── 🆕 (28/08/2026) Regroupement du Niveau 1 en catégories repliables ──
+   Le Niveau 1 (37 thèmes) était affiché en une seule grille plate — long
+   à parcourir pour l'apprenant. Regroupement en 6 catégories thématiques
+   (accordéons natifs <details>/<summary>), chacune conservant SA PROPRE
+   grille de cartes-thèmes inchangée (_buildThemeCard n'est pas modifiée).
+   Le Niveau 2 (16 dialogues, #grid2) reste plat — volume déjà gérable.
+
+   ⚠️ Il existait déjà en CSS un bloc mort .level-details/.level-summary/
+   .level-chevron, jamais câblé à aucun HTML (reliquat d'une tentative
+   antérieure, ou copie de VACHÉBO) — non réutilisé ici volontairement,
+   remplacé par des classes dédiées (.theme-category, .category-summary,
+   .category-chevron, voir style.css §20f) pour ne pas hériter d'un bug
+   potentiel non diagnostiqué.
+
+   THEME_CATEGORIES_L1 : configuration figée. Les "id" de catégorie sont
+   utilisés comme clé de mémorisation d'ouverture/fermeture entre deux
+   rendus (voir _buildLevel1Body) — ne pas les renommer. Les ids de
+   THÈMES qu'elles regroupent proviennent tels quels de data-fr.js /
+   data-or.js (aucune donnée dupliquée, aucun id modifié).
+   Traductions oromo des 6 titres de catégorie : provisoires (IA), en
+   attente de relecture par Mussa Sembro — même statut que le lot de
+   vocabulaire du 28/08/2026 (voir README, historique du projet). */
+const THEME_CATEGORIES_L1 = [
+  { id: 'bases', emoji: '🌱', fr: 'Les Bases',
+    or: "Wantoota Bu'uuraa",
+    ids: ['alpha', 'salut', 'pres', 'expr', 'interro', 'connect'] },
+  { id: 'nombres', emoji: '🔢', fr: 'Chiffres, Temps & Météo',
+    or: 'Lakkoofsa, Yeroo fi Haala Qilleensaa',
+    ids: ['num', 'temps', 'quantfreq', 'meteo'] },
+  { id: 'perso', emoji: '😊', fr: 'Se Décrire, Ressentir & Rester en Sécurité',
+    or: "Of Ibsuu, Dhaga'amuu fi Nageenya Eeguu",
+    ids: ['verb', 'emot', 'col', 'adj', 'corps', 'sante', 'secu'] },
+  { id: 'maison', emoji: '🏠', fr: 'Maison, Famille & Métiers',
+    or: 'Mana, Maatii fi Hojiiwwan',
+    ids: ['fam', 'routine', 'objets', 'log', 'muebles_equipamiento', 'veth', 'met'] },
+  { id: 'repas', emoji: '🍽️', fr: 'Repas, Argent & Déplacements',
+    or: 'Nyaata, Maallaqaa fi Deemsa',
+    ids: ['nour', 'bois', 'rest', 'argent', 'orient', 'lieux', 'trans'] },
+  { id: 'monde', emoji: '🌍', fr: 'Voyage, Nature & Le Monde',
+    or: 'Imala, Uumamaa fi Addunyaa',
+    ids: ['viaje', 'pays', 'ocio', 'plan', 'anim', 'agri'] }
+];
+
+/**
+ * @param {Object} cat - Entrée de THEME_CATEGORIES_L1
+ * @returns {{done:number, total:number}} Thèmes à 3 étoiles / total de la catégorie
+ */
+function _getCategoryProgress(cat) {
+  const total = cat.ids.length;
+  const doneCount = cat.ids.filter((id) => getThemeStars(id) === 3).length;
+  return { done: doneCount, total: total };
+}
+
+/**
+ * Détermine le thème à proposer sur la carte "▶ Continuer" en tête du
+ * Niveau 1 : priorité au thème déjà entamé mais pas encore maîtrisé à
+ * 100 %, sinon le premier thème jamais ouvert — dans l'ORDRE D'AFFICHAGE
+ * des catégories (pas l'ordre brut de ALL_THEMES, qui suit data-fr/or.js).
+ * @returns {Object|null} Objet thème depuis ALL_THEMES, ou null si le
+ *   Niveau 1 est entièrement terminé à 100 %.
+ */
+function _getContinueTargetL1() {
+  const orderedIds = THEME_CATEGORIES_L1.reduce((acc, cat) => acc.concat(cat.ids), []);
+  const inProgressId = orderedIds.find((id) => isOpened(id) && getThemeStars(id) < 3);
+  const targetId = inProgressId || orderedIds.find((id) => !isOpened(id));
+  if (!targetId) return null;
+  return ALL_THEMES.find((t) => t.id === targetId) || null;
+}
+
+/**
+ * Construit la carte "▶ Continuer" affichée en tête de la grille Niveau 1
+ * (ou le message de félicitations si tout est déjà terminé à 100 %).
+ * Élément séparé du bouton "Commencer/Continuer" de l'écran Home
+ * (homeStartBtn) — pas un doublon, voir Bilan_technique.md §6.27.
+ * @returns {string} HTML
+ */
+function _buildContinueCard() {
+  const target = _getContinueTargetL1();
+  if (!target) {
+    return '<div class="continue-card continue-card-done">'
+      + '<div class="continue-card-emoji">🎉</div>'
+      + '<div class="continue-card-text">'
+      + L('Bravo ! Tous les modules du Niveau 1 sont terminés à 100 %.',
+          'Baga gammaddan! Moojuulonni Sadarkaa 1 hundi 100% xumuramaniiru.')
+      + '</div></div>';
+  }
+  const title     = _themeTitle(target);
+  const mainTitle = title.main ? title.main.charAt(0).toUpperCase() + title.main.slice(1) : '';
+  const label     = isOpened(target.id) ? L('▶ Continuer', '▶ Itti Fufi') : L('▶ Commencer', '▶ Jalqabi');
+  return '<div class="continue-card" role="button" tabindex="0" '
+    + 'aria-label="' + _escAttr(label + ' — ' + mainTitle) + '" '
+    + 'onclick="openTheme(\'' + escJS(target.id) + '\')">'
+    + '<div class="continue-card-emoji">' + target.emoji + '</div>'
+    + '<div class="continue-card-body">'
+    + '<div class="continue-card-label">' + label + '</div>'
+    + '<div class="continue-card-title">' + mainTitle + '</div>'
+    + '</div>'
+    + '<div class="continue-card-arrow">›</div>'
+    + '</div>';
+}
+
+/**
+ * Calcule l'auto-dépli initial (premier rendu SEULEMENT — voir
+ * _buildLevel1Body) : la première catégorie pas encore terminée à 100 %
+ * + la suivante ; si tout est déjà terminé, seule la première catégorie.
+ * @returns {Set<string>} ids de catégories à ouvrir
+ */
+function _computeAutoOpenCategoryIds() {
+  const idx = THEME_CATEGORIES_L1.findIndex((cat) => {
+    const prog = _getCategoryProgress(cat);
+    return prog.done < prog.total;
+  });
+  if (idx === -1) return new Set([THEME_CATEGORIES_L1[0].id]);
+  const ids = [THEME_CATEGORIES_L1[idx].id];
+  if (THEME_CATEGORIES_L1[idx + 1]) ids.push(THEME_CATEGORIES_L1[idx + 1].id);
+  return new Set(ids);
+}
+
+/**
+ * Construit un accordéon de catégorie (<details>) avec sa grille de
+ * cartes-thèmes à l'intérieur.
+ * @param {Object} cat - Entrée de THEME_CATEGORIES_L1
+ * @param {Set<string>|null} previousOpenIds - État ouvert/fermé capturé
+ *   avant le re-rendu (null au tout premier rendu, voir _buildLevel1Body)
+ * @param {Set<string>|null} autoOpenIds - Auto-dépli, utilisé seulement
+ *   quand previousOpenIds est null
+ * @returns {string} HTML
+ */
+function _buildCategoryAccordion(cat, previousOpenIds, autoOpenIds) {
+  const isOpen = previousOpenIds ? previousOpenIds.has(cat.id) : autoOpenIds.has(cat.id);
+  const prog   = _getCategoryProgress(cat);
+  const label      = L(cat.fr, cat.or);
+  const labelTransl = L(cat.or, cat.fr);
+
+  const cardsHtml = cat.ids
+    .map((id) => ALL_THEMES.find((t) => t.id === id))
+    .filter(Boolean)
+    .map((t) => _buildThemeCard(t))
+    .join('');
+
+  return '<details class="theme-category" data-cat-id="' + cat.id + '"' + (isOpen ? ' open' : '') + '>'
+    + '<summary class="category-summary">'
+    + '<span class="category-icon">' + cat.emoji + '</span>'
+    + '<span class="category-label">' + label
+    + '<span class="category-label-transl">' + labelTransl + '</span>'
+    + '</span>'
+    + '<span class="category-progress' + (prog.done === prog.total ? ' category-progress-done' : '') + '">'
+    + prog.done + ' / ' + prog.total
+    + '</span>'
+    + '<span class="category-chevron">▾</span>'
+    + '</summary>'
+    + '<div class="themes-grid">' + cardsHtml + '</div>'
+    + '</details>';
+}
+
+/**
+ * Construit le contenu complet de #grid1 : carte "Continuer" + les 6
+ * accordéons de catégorie. Préserve l'état ouvert/fermé choisi
+ * manuellement par l'apprenant entre deux rendus (fin de quiz, retour
+ * d'écran…) en le relisant dans le DOM avant écrasement — seul le tout
+ * premier rendu (aucun .theme-category encore présent) utilise
+ * l'auto-dépli de _computeAutoOpenCategoryIds().
+ * @param {HTMLElement|null} grid1 - Élément #grid1 AVANT écrasement
+ * @returns {string} HTML à injecter dans #grid1
+ */
+function _buildLevel1Body(grid1) {
+  const existing = grid1 ? grid1.querySelectorAll('.theme-category') : [];
+  const previousOpenIds = existing.length
+    ? new Set(Array.from(existing).filter((el) => el.open).map((el) => el.dataset.catId))
+    : null;
+  const autoOpenIds = previousOpenIds ? null : _computeAutoOpenCategoryIds();
+
+  return _buildContinueCard()
+    + THEME_CATEGORIES_L1
+      .map((cat) => _buildCategoryAccordion(cat, previousOpenIds, autoOpenIds))
+      .join('');
+}
 
 /**
  * Rend la grille de modules.
@@ -2768,12 +2963,13 @@ function renderSections(activeLevel) {
     if (el2) el2.innerHTML = lbl2 + '<span class="level-tab-transl">' + lbl2transl + '</span>';
   });
 
-  /* ── Grilles de thèmes ── */
+  /* ── Grilles de thèmes ──
+     🆕 (28/08/2026) grid1 (Niveau 1) est désormais regroupé en catégories
+     repliables via _buildLevel1Body() — voir le bloc de commentaire juste
+     au-dessus de THEME_CATEGORIES_L1. grid2 (Niveau 2) reste inchangé. */
   const grid1 = document.getElementById('grid1');
   const grid2 = document.getElementById('grid2');
-  if (grid1) grid1.innerHTML = ALL_THEMES
-    .filter((t) => t.level === 1)
-    .map((t) => _buildThemeCard(t)).join('');
+  if (grid1) grid1.innerHTML = _buildLevel1Body(grid1);
   if (grid2) grid2.innerHTML = ALL_THEMES
     .filter((t) => t.level === 2)
     .map((t) => _buildThemeCard(t)).join('');

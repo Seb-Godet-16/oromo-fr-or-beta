@@ -16,11 +16,12 @@
 | Thèmes par mode | 53 (37 Niveau 1 Vocabulaire + 16 Niveau 2 Dialogue) |
 | Mots/expressions par mode | ~387 entrées (Français) · ~396 entrées (Oromo) |
 | Fonctionnement hors-ligne | ✅ 100 % après première visite (Service Worker) |
-| Taille totale du code source | ~795 Ko (6 fichiers principaux, 16 366 lignes) |
+| Taille totale du code source | ~825 Ko (6 fichiers principaux, 16 956 lignes) |
 | Indicateur hors-ligne | ✅ Bandeau persistant, proactif (couvre 🎤 Répète ET 🔊 Écouter — voir §6.14) |
 | Guide navigateur | 🆕 Comparatif Android/iOS des 10 navigateurs les plus utilisés au monde (voir §6.15) |
 | Repérage visuel des modules | 🆕 Système à 3 états (nouveau / en cours / terminé à 100%) en plus des étoiles ⭐ (voir §6.18) |
 | Mises à jour PWA | 🆕 Vérification proactive (retour au premier plan + filet toutes les 60 min), en plus du cycle natif du navigateur (voir §6.19) |
+| Grille Niveau 1 | 🆕 37 thèmes regroupés en 6 catégories repliables + carte "▶ Continuer" ciblant le prochain thème pertinent (voir §6.27) |
 
 ---
 
@@ -30,12 +31,12 @@
 
 | Fichier | Taille | Lignes | Rôle |
 |---|---|---|---|
-| `js/app.js` | 256 Ko | 5 905 | Moteur applicatif complet (dont le bandeau hors-ligne §3e, le suivi "modules déjà ouverts" §7, la vérification proactive des mises à jour SW §20 — voir §6.19 —, le clin d'œil mascotte sur quiz sans-faute §14 — voir §6.22 —, l'écran Home+Guide fusionné et `goToHome()` supprimée — voir §6.24 —, et 🆕 la modale "Nav verrouillée" `#nav-locked-modal` + suppression du stub mort `_closeOnboarding()` — voir §6.25 ; plan interne `SECTIONS DE CE FICHIER` resynchronisé le 25/07/2026, voir §6.25) |
-| `css/style.css` | 178 Ko | 5 219 | Styles + système de thèmes dual (dont §16b bandeau hors-ligne, §7 états visuels des cartes-module, §2 tokens de marque `--c-flag-red/black/cream` — voir §6.22 —, l'écran Home+Guide fusionné (agencement VACHÉBO) — voir §6.24 — et 🆕 §NAVLOCKED, la modale "Nav verrouillée" — voir §6.25 ; plan interne `PLAN DU FICHIER` intégralement recalculé le 25/07/2026, voir §6.25) |
-| `js/data-fr.js` | 106 Ko | 1 428 | Dataset mode "Apprendre le Français" |
-| `js/data-or.js` | 103 Ko | 1 383 | Dataset mode "Apprendre l'Oromo" |
-| `index.html` | 119 Ko | 1 806 | Structure HTML — 🆕 5 écrans (Home et Guide de nouveau fusionnés en un seul `#home`, voir §6.24) + 3 modales (dont 🆕 `#nav-locked-modal`, voir §6.25) + bandeau hors-ligne + guide "Quel navigateur choisir ?" + logo étendu aux écrans Sections (§6.22) ; plan interne `PLAN DU FICHIER` resynchronisé le 25/07/2026 (voir §6.25) |
-| `sw.js` | 33 Ko | 625 | Service Worker — Cache First / Network First |
+| `js/app.js` | 266 Ko | 6 109 | Moteur applicatif complet (dont le bandeau hors-ligne §3e, le suivi "modules déjà ouverts" §7, la vérification proactive des mises à jour SW §20 — voir §6.19 —, le clin d'œil mascotte sur quiz sans-faute §14 — voir §6.22 —, l'écran Home+Guide fusionné et `goToHome()` supprimée — voir §6.24 —, la modale "Nav verrouillée" `#nav-locked-modal` + suppression du stub mort `_closeOnboarding()` — voir §6.25 —, et 🆕 le regroupement du Niveau 1 en catégories repliables + carte "Continuer" (`THEME_CATEGORIES_L1`, `_buildLevel1Body()`, §7) — voir §6.27 ; plan interne `SECTIONS DE CE FICHIER` resynchronisé le 28/08/2026, voir §6.27) |
+| `css/style.css` | 185 Ko | 5 388 | Styles + système de thèmes dual (dont §16b bandeau hors-ligne, §7 états visuels des cartes-module, §2 tokens de marque `--c-flag-red/black/cream` — voir §6.22 —, l'écran Home+Guide fusionné (agencement VACHÉBO) — voir §6.24 —, §NAVLOCKED, la modale "Nav verrouillée" — voir §6.25 —, et 🆕 §20f, catégories Niveau 1 + carte "Continuer" — voir §6.27) |
+| `js/data-fr.js` | 113 Ko | 1 532 | Dataset mode "Apprendre le Français" — 37 thèmes Niveau 1 (voir §6.26) |
+| `js/data-or.js` | 110 Ko | 1 487 | Dataset mode "Apprendre l'Oromo" — 37 thèmes Niveau 1 (voir §6.26) |
+| `index.html` | 120 Ko | 1 811 | Structure HTML — 🆕 5 écrans (Home et Guide de nouveau fusionnés en un seul `#home`, voir §6.24) + 3 modales (dont `#nav-locked-modal`, voir §6.25) + bandeau hors-ligne + guide "Quel navigateur choisir ?" + logo étendu aux écrans Sections (§6.22) + 🆕 `#grid1` en `.level1-body` (catégories Niveau 1, voir §6.27) ; plan interne `PLAN DU FICHIER` resynchronisé le 25/07/2026 (voir §6.25 — pas touché par §6.27, seule une classe CSS a changé sur une ligne existante) |
+| `sw.js` | 33 Ko | 624 | Service Worker — Cache First / Network First |
 | `manifest.json` | — | — | PWA — icônes, orientation, screenshots |
 | `deploy.yml` | — | — | CI/CD GitHub Actions |
 
@@ -48,8 +49,9 @@
  [Home / Guide]  →  onboarding au 1er lancement de chaque mode
      │                                                     ▲
      ▼                                                     │ ❓ (icône Guide)
- [Sections]  →  grille 2 colonnes — 48 modules (Niv. 1 × 32 + Niv. 2 × 16)
-     │      ╲
+ [Sections]  →  53 modules (Niv. 1 × 37 + Niv. 2 × 16) ; 🆕 Niv. 1
+     │      ╲     regroupé en 6 catégories repliables + carte
+     ▼       ╲    "▶ Continuer" (voir §6.27) — Niv. 2 grille plate
      ▼       ╲ 🏠 (icône Accueil → retour au Lanceur, changer de langue)
  [Leçon]  →  5 onglets par module
               ├── 🃏 Cartes Flash    (flip + TTS)
@@ -496,11 +498,53 @@ Aucune section entière n'était manquante cette fois-ci (contrairement à `app.
 
 ---
 
+### §6.27 — 🆕 Niveau 1 regroupé en catégories repliables + carte "Continuer" (méthode VACHÉBO, 28/08/2026)
+
+**Contexte** : après les étapes 1 et 2 du même jour (§6.26 et l'entrée précédente), le Niveau 1 compte 37 thèmes affichés en une seule grille plate (`#grid1`) — longue à parcourir pour l'apprenant, sans repère visuel de progression par grand domaine.
+
+**Correctif** — regroupement en **6 catégories thématiques repliables** (accordéons natifs `<details>`/`<summary>`, zéro JS pour l'ouverture/fermeture, même principe que les accordéons du Guide `.hg-section`) :
+
+| Catégorie | Thèmes (ids) | Nb |
+|---|---|---|
+| 🌱 Les Bases | `alpha, salut, pres, expr, interro, connect` | 6 |
+| 🔢 Chiffres, Temps & Météo | `num, temps, quantfreq, meteo` | 4 |
+| 😊 Se Décrire, Ressentir & Rester en Sécurité | `verb, emot, col, adj, corps, sante, secu` | 7 |
+| 🏠 Maison, Famille & Métiers | `fam, routine, objets, log, muebles_equipamiento, veth, met` | 7 |
+| 🍽️ Repas, Argent & Déplacements | `nour, bois, rest, argent, orient, lieux, trans` | 7 |
+| 🌍 Voyage, Nature & Le Monde | `viaje, pays, ocio, plan, anim, agri` | 6 |
+
+Plus une carte **"▶ Continuer"** en tête de grille, avant les catégories, qui pointe vers :
+1. le thème déjà entamé (`isOpened`) mais pas encore maîtrisé à 100 % (`getThemeStars < 3`) s'il y en a un ;
+2. sinon le premier thème jamais ouvert, dans l'ordre d'affichage des catégories ;
+3. sinon (Niveau 1 entièrement à 100 %) un message de félicitations à la place du lien.
+
+**Auto-dépli** : au tout premier rendu, seule la première catégorie non terminée à 100 % + la suivante sont ouvertes (toutes fermées sinon si tout est fini, sauf la première). **Aux rendus suivants** (fin de quiz, retour d'écran…), l'état ouvert/fermé de chaque catégorie est relu directement dans le DOM avant d'écraser `#grid1` : un dépliage manuel de l'apprenant n'est donc plus jamais écrasé par l'auto-dépli, qui ne s'applique qu'une seule fois par session d'app.
+
+**Implémentation** :
+1. **`app.js`** (§7, juste avant `renderSections()`) : `THEME_CATEGORIES_L1` (config figée, ids de catégorie utilisés comme clé de mémorisation d'ouverture) + `_getCategoryProgress()`, `_getContinueTargetL1()`, `_buildContinueCard()`, `_computeAutoOpenCategoryIds()`, `_buildCategoryAccordion()`, `_buildLevel1Body()`. `renderSections()` modifié pour que `#grid1` utilise `_buildLevel1Body()` ; `#grid2` (Niveau 2, 16 thèmes) inchangé — volume déjà gérable sans ce découpage.
+2. **`index.html`** : `#grid1` renommé de `.themes-grid` à `.level1-body` — il n'est plus lui-même une grille (sinon il aurait hérité du `display:grid` 2/4 colonnes destiné aux cartes-thèmes) mais un empilement vertical de la carte "Continuer" et des accordéons, chacun conservant SA PROPRE `.themes-grid` interne.
+3. **`style.css`** : nouveau bloc `§20f`, juste après la grille responsive existante des écrans Level (§20e) — `.level1-body`, `.continue-card` (+ variante `.continue-card-done` pour le message de félicitations), `.theme-category`/`.category-summary`/`.category-icon`/`.category-label`/`.category-progress`/`.category-chevron`, avec surcharges mode sombre ajoutées à côté du bloc `.level-details` existant (§24b).
+
+**⚠️ CSS mort repéré, volontairement non réutilisé** : il existait déjà un bloc complet `.level-details`/`.level-summary`/`.level-chevron` (chevron animé, fond arrondi, ombre) — jamais câblé à aucun HTML, ni dans `index.html` ni ailleurs. Reliquat probable d'une tentative antérieure de cette même fonctionnalité jamais terminée, ou copie brute depuis le projet frère VACHÉBO. Ce bloc n'a pas été réutilisé tel quel — remplacé par des classes dédiées (`.theme-category`, `.category-summary`, `.category-chevron`) pour ne pas hériter d'un bug potentiel jamais diagnostiqué dans ce CSS mort.
+
+**Traductions provisoires** : les 6 titres de catégorie en Oromo sont des traductions IA provisoires, à valider par Mussa Sembro comme le reste du lot du 28/08/2026.
+
+**Resynchronisation complète du plan interne d'`app.js`** — le `THEME_CATEGORIES_L1` et les fonctions associées (155 lignes) ont été insérés en §7, juste avant `renderSections()` ; toutes les ancres à partir de §8 ont décalé de +181 lignes en conséquence. Chaque ancre revérifiée par recherche directe dans le fichier final (pas par arithmétique de décalage), y compris après un second décalage de +15 lignes provoqué par la resynchronisation du plan lui-même (le plan documentant sa propre taille, l'ajouter dedans déplace tout ce qui le suit — recalcul final vérifié anchor par anchor).
+
+**Vérifications effectuées** :
+- Syntaxique : `node --check app.js` — aucune erreur.
+- Programmatique (harnais Node `vm`, dépendances stubbées) : couverture exacte des 37 ids Niveau 1 par les 6 catégories (aucun doublon, aucun oubli) ; cible "Continuer" correcte à l'état neuf (`alpha`), après complétion d'une catégorie (bascule sur la suivante), et à 100 % (`null` → message de félicitations) ; auto-dépli correct dans les 3 mêmes états ; rendu HTML de `_buildLevel1Body()` et `_buildCategoryAccordion()` sans exception.
+- Visuel : non testé dans un navigateur réel lors de cette session (pas d'accès DOM/rendu graphique dans l'environnement d'implémentation) — **à vérifier par Sébastien** sur Chrome desktop + Android avant mise en production, notamment le comportement natif `<details>`/`<summary>` (accessibilité clavier, focus visuel) et le rendu du dégradé de la carte "Continuer" en mode sombre.
+
+**Fichiers modifiés** : `app.js`, `index.html`, `style.css`, `README.md` (diagramme "User flow", historique), `Bilan_technique.md` (§6.27).
+
+---
+
 ## 7. Points de vigilance / dettes techniques
 
 | Point | Niveau | Détail |
 |---|---|---|
-| `app.js` monolithique | ⚠️ Moyen | 5 905 lignes — maintenable grâce aux `§` mais migration ES modules complexe (handlers `onclick` inline). Plan interne en en-tête du fichier **resynchronisé le 25/07/2026** (voir §6.25) |
+| `app.js` monolithique | ⚠️ Moyen | 6 109 lignes — maintenable grâce aux `§` mais migration ES modules complexe (handlers `onclick` inline). Plan interne en en-tête du fichier **resynchronisé le 28/08/2026** (voir §6.27) |
 | 🆕 Mises à jour PWA (`registration.update()`) | ✅ OK | Vérification proactive sur retour au premier plan + toutes les 60 min, en plus du cycle natif du navigateur — voir §6.19. Échec silencieux et sans risque si hors-ligne |
 | `unsafe-inline` CSP | ⚠️ Moyen | Nécessaire pour les `onclick` générés dynamiquement par `innerHTML` et pour GitHub Pages (pas de headers HTTP customs) |
 | Voix Oromo TTS | ⚠️ Moyen, ✅ communiqué hors ligne | `om-ET` absente sur la plupart des appareils — l'utilisateur entend souvent du Somali ou de l'Amharique. Hors connexion, si aucune voix de la cascade n'est installée localement, la langue par défaut du système peut être utilisée à la place — désormais signalé par le bandeau hors-ligne (voir §6.14) |
@@ -557,5 +601,8 @@ Aucune section entière n'était manquante cette fois-ci (contrairement à `app.
 | 24/07/2026 | 🆕 Étape 11 : 🐞 retour terrain — l'icône ❓ de l'écran Home rechargeait le même écran (Home et Guide partageaient le même `#home`). `#home` scindé en deux écrans distincts `#home` (dashboard) et `#guide` (guide explicatif), chacun n'affichant plus que l'icône vers l'écran opposé. Nouvelle fonction `goToHome()` ; `goToGuide()` recentrée sur `#guide`. Première visite d'un mode : enchaînement automatique Home → Guide sans taper ❓. Resynchronisation complète des 3 plans internes — voir §6.23 — Sébastien Godet + Claude Sonnet 5 |
 | 24/07/2026 | 🆕 Étape 12 : 2e correctif du même jour — la navigation à deux temps introduite par l'étape 11 (Home puis bascule auto vers Guide) jugée peu naturelle. `#home` et `#guide` réunis à nouveau en un seul écran, mais réagencé sur le modèle de l'appli sœur VACHÉBO (logo → drapeaux → titre → sous-titre → badges → installation → Commencer/PDF → accordéons) plutôt qu'un simple retour à l'ancien agencement Taphad'Meuh. `goToHome()` supprimée (redevenue inutile). Resynchronisation complète des 3 plans internes — voir §6.24 *(entrée d'historique et section §6.24 elles-mêmes ajoutées rétroactivement le 25/07/2026, voir étape 13 — le code citait déjà "§6.24" depuis ce jour-là sans que ce Bilan ne la documente)* — Sébastien Godet + Claude Sonnet 5 |
 | 25/07/2026 | 🆕 Étape 13 : 🐞 sur le Lanceur, avant choix de langue, ❓ Guide et 📚 Modules de la nav basse étaient grisés mais cliquables sans retour (risque de plantage, dataset non chargé). Ajout d'une modale bilingue `#nav-locked-modal` (`openNavLockedModal()`/`closeNavLockedModal()`) expliquant la raison. Suppression du stub mort `_closeOnboarding()`. Comblement de deux trous de documentation : §6.24 (fusion Home+Guide du 24/07, citée partout dans le code mais absente de ce Bilan) et l'étape 11/12 manquante de cette table. Resynchronisation complète des 3 plans internes, correction d'une erreur de groupement héritée du 23/07 (`goToAccueil()`/`goToGuide()` en §5c, pas §5b), mise à jour du README (diagramme "User flow" périmé) — voir §6.25 — Sébastien Godet + Claude Sonnet 5 |
+| 28/08/2026 | ⚠️ **Trou de documentation signalé** : « Étape 1 (méthode VACHÉBO) » du README (enrichissement du vocabulaire Niveau 1, 4 thèmes créés + 4 enrichis, 32→36 puis 48→52) n'a pas de section §6 dédiée dans ce Bilan — non comblé faute de contexte détaillé de cette session, comme pour le trou §6.16/§6.17 déjà signalé plus haut. Voir directement le README ou le commentaire d'en-tête `HISTORIQUE` de `app.js` pour le détail de cette étape |
+| 28/08/2026 | 🆕 Étape 14 (« Étape 2 » du README, méthode VACHÉBO) : scission du thème `sante` élargi à l'étape précédente en deux thèmes distincts — `sante` (21 mots médicaux, id conservé) et `secu` (9 mots de sécurité, nouvel id) — voir §6.26 pour le détail complet — Sébastien Godet + Claude Sonnet 5 |
+| 28/08/2026 | 🆕 Étape 15 (« Étape 3 » du README, méthode VACHÉBO) : le Niveau 1 (37 thèmes) était affiché en une grille plate, longue à parcourir — regroupement en 6 catégories thématiques repliables (accordéons natifs `<details>`/`<summary>`) + carte "▶ Continuer" ciblant le prochain thème pertinent (en cours > neuf > félicitations si 100%), auto-dépli de la catégorie en cours au premier rendu puis préservation des choix manuels de l'apprenant ensuite. CSS mort préexistant (`.level-details`) repéré et volontairement non réutilisé. Resynchronisation complète du plan interne de `app.js` (+181 lignes en §7, avant `renderSections()`) — voir §6.27 pour le détail complet — Sébastien Godet + Claude Sonnet 5 |
 
 *Journal détaillé (dont la citation complète du retour de recettage du 03/07) : voir le bloc de commentaire `HISTORIQUE DE L'APPLICATION` en tête de `app.js`.*

@@ -1488,7 +1488,12 @@
       </button>
     </div>
     <div class="sections-body">
-      <div class="themes-grid" id="grid1"></div>
+      <!-- 🆕 (28/08/2026) Niveau 1 regroupé en catégories repliables — voir
+           app.js §7 (_buildLevel1Body). Ce conteneur n'est plus une grille
+           lui-même (ex-.themes-grid) : il empile la carte "▶ Continuer" et
+           les accordéons de catégorie, chacun contenant SA PROPRE grille
+           .themes-grid inchangée. Niveau 2 (#grid2 ci-dessous) reste plat. -->
+      <div class="level1-body" id="grid1"></div>
     </div>
   </div><!-- /#sections-level1 -->
 

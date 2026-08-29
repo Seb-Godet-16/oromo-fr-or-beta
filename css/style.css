@@ -3950,6 +3950,16 @@ footer a:hover{text-decoration:underline}
   .level-details[open] .level-summary{border-bottom-color:rgba(255,255,255,.08);}
   .sections-stars-inner{background:rgba(255,255,255,.15);}
 
+  /* ── 🆕 (28/08/2026) Catégories Niveau 1 + carte "Continuer" (§20f) ── */
+  .theme-category{background:#26262e;box-shadow:none;}
+  .category-summary{background:#1f1f28;border-bottom-color:rgba(255,255,255,.08);}
+  .category-summary:hover{background:#2e2e3a;}
+  .theme-category:not([open]) .category-summary{border-bottom-color:transparent;}
+  .category-label{color:#e0e0e0;}
+  .category-label-transl{color:#999;}
+  .category-progress{background:#26262e;color:#aaa;}
+  .continue-card-done{background:#26262e;color:#e0e0e0;box-shadow:none;}
+
   /* ── Body desktop ── */
   body{background:#111115;}
 }
@@ -4568,6 +4578,135 @@ footer a:hover{text-decoration:underline}
     grid-template-columns:1fr 1fr 1fr 1fr;
   }
 }
+
+/* ════════════════════════════════════════════════════════════════
+   §20f — 🆕 (28/08/2026) NIVEAU 1 : CATÉGORIES REPLIABLES + CARTE
+   "CONTINUER"  (voir app.js §7, _buildLevel1Body)
+   ════════════════════════════════════════════════════════════════
+   #grid1 (.level1-body) n'est plus une grille : c'est un empilement
+   vertical de la carte "Continuer" puis des 6 accordéons de catégorie
+   (.theme-category). Chaque accordéon contient SA PROPRE .themes-grid,
+   qui hérite déjà des règles §20e ci-dessus (sélecteur générique
+   ".sections-body .themes-grid", peu importe la profondeur d'imbrication)
+   — donc 2 colonnes en mobile, 4 en ≥520px, sans règle dupliquée ici.
+   ════════════════════════════════════════════════════════════════ */
+.level1-body{
+  display:flex;
+  flex-direction:column;
+  gap:14px;
+}
+
+/* ── Carte "▶ Continuer" ── */
+.continue-card{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:14px 16px;
+  background:linear-gradient(135deg,var(--c-primary),var(--c-accent));
+  border-radius:16px;
+  box-shadow:0 3px 10px rgba(0,0,0,.15);
+  cursor:pointer;
+  color:#fff;
+}
+.continue-card:active{transform:scale(.98)}
+.continue-card-emoji{font-size:1.8rem;flex-shrink:0}
+.continue-card-body{flex:1;min-width:0}
+.continue-card-label{
+  font-size:.68rem;
+  font-weight:800;
+  text-transform:uppercase;
+  letter-spacing:.8px;
+  opacity:.85;
+}
+.continue-card-title{
+  font-size:1rem;
+  font-weight:700;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.continue-card-arrow{font-size:1.6rem;flex-shrink:0;opacity:.85}
+
+/* Variante : Niveau 1 déjà terminé à 100% — message, pas un lien */
+.continue-card-done{
+  background:var(--c-card-complete-bg);
+  color:var(--c-primary);
+  cursor:default;
+  box-shadow:0 2px 8px rgba(0,0,0,.07);
+}
+.continue-card-done .continue-card-text{
+  font-size:.88rem;
+  font-weight:700;
+  line-height:1.4;
+}
+
+/* ── Accordéon de catégorie ── */
+.theme-category{
+  background:#fff;
+  border-radius:16px;
+  overflow:hidden;
+  box-shadow:0 2px 8px rgba(0,0,0,.07);
+}
+.category-summary{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:12px 14px;
+  cursor:pointer;
+  list-style:none;
+  user-select:none;
+  background:var(--c-footer-bg);
+  border-bottom:1px solid var(--c-footer-border);
+  transition:background .15s;
+}
+.category-summary::-webkit-details-marker{display:none}
+.category-summary:hover{background:var(--c-card-progress-bg)}
+/* Fermé : pas de séparateur visible en bas du résumé */
+.theme-category:not([open]) .category-summary{border-bottom-color:transparent}
+
+.category-icon{font-size:1.3rem;flex-shrink:0}
+.category-label{
+  flex:1;
+  min-width:0;
+  font-size:.85rem;
+  font-weight:700;
+  color:var(--c-primary);
+  line-height:1.3;
+}
+.category-label-transl{
+  display:block;
+  font-size:.7rem;
+  font-weight:400;
+  color:#777;
+  margin-top:1px;
+}
+.category-progress{
+  font-size:.72rem;
+  font-weight:700;
+  color:#777;
+  background:#fff;
+  padding:3px 8px;
+  border-radius:20px;
+  flex-shrink:0;
+  white-space:nowrap;
+}
+.category-progress-done{
+  color:var(--c-done);
+}
+.category-chevron{
+  font-size:.7rem;
+  color:#aaa;
+  transition:transform .2s;
+  flex-shrink:0;
+}
+.theme-category[open] .category-chevron{transform:rotate(180deg)}
+
+/* Grille interne : padding porté ici (pas par .sections-body, qui ne
+   contient plus directement de .themes-grid en Niveau 1) */
+.theme-category .themes-grid{
+  padding:12px;
+}
+
 /* ════════════════════════════════════════════════════════════════
    §CONFETTI — Animation de félicitations ⭐⭐⭐ (100%)
    ════════════════════════════════════════════════════════════════
