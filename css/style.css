@@ -1470,13 +1470,21 @@ html.theme-french .btn-reset-theme:hover{
 .tab.active{background:var(--c-primary);color:#fff}
 
 /* Étiquette de section dans le contenu des onglets */
+/* 🆕 (29/08/2026) text-transform:uppercase + letter-spacing:1px retirés :
+   sur l'onglet Cartes Flash (#lesson.mode-cartes), ce bandeau élargissait
+   suffisamment le texte pour passer sur 2 lignes selon la variante affichée
+   (Cartes standard vs Alphabet), débordant de la hauteur fixe ~28px prévue
+   pour lui en mode Cartes (voir plan de layout juste avant #lesson.mode-cartes
+   plus bas dans ce fichier). Taille réduite à .68rem (déjà utilisée ailleurs
+   comme taille de texte secondaire, ex. .repeat-card-counter) en marge de
+   sécurité complémentaire. Le retour à la ligne reste possible (aucun
+   white-space:nowrap) pour ne jamais tronquer un texte exceptionnellement
+   long — filet de sécurité volontairement conservé. */
 .section-label{
-  font-size:.7rem;
+  font-size:.68rem;
   color:#888;
   text-align:center;
   margin:0 0 8px;
-  text-transform:uppercase;
-  letter-spacing:1px;
 }
 
 
