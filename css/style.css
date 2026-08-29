@@ -1180,10 +1180,10 @@ html.theme-french .btn-reset-theme:hover{
    ────────────────────────────────────────────────────────────────── */
 .lesson-header{
   background:var(--c-grad-lesson);
-  padding:10px 14px 8px;
+  padding:8px 14px 6px;
   display:flex;
   flex-direction:column;
-  gap:8px;
+  gap:5px;
 }
 
 /* 🆕 Rangée de navigation rapide (🏠❓📚🚪) — ajoutée AU-DESSUS de
@@ -1205,9 +1205,9 @@ html.theme-french .btn-reset-theme:hover{
 }
 .lesson-header-top h3{
   color:#fff;
-  font-size:.95rem;
+  font-size:.82rem;
   flex:1;
-  line-height:1.25;
+  line-height:1.2;
   margin:0;
 }
 
@@ -1221,7 +1221,7 @@ html.theme-french .btn-reset-theme:hover{
 }
 
 /* Alias de compatibilité — certains sélecteurs ciblent .lesson-header h3 */
-.lesson-header h3{color:#fff;font-size:.95rem;flex:1;line-height:1.25}
+.lesson-header h3{color:#fff;font-size:.82rem;flex:1;line-height:1.2}
 
 /*
   #lessonEmoji : emoji du thème affiché dans l'en-tête de leçon.

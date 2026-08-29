@@ -3592,8 +3592,8 @@ function renderFlash() {
   }
 
   const sectionLabel = L(
-    'Fuuldura : Français 🇫🇷 — Duuba : Afaan Oromoo 🇪🇹 · Kaardicha garagalchi !',
-    'Recto : Afaan Oromoo 🇪🇹 — Verso : Français 🇫🇷 · Cliquez pour retourner !'
+    'Fuuldura : Français 🇫🇷 — Duuba : Oromoo 🇪🇹 · Kaardicha garagalchi !',
+    'Recto : Oromo 🇪🇹 — Verso : Français 🇫🇷 · Cliquez pour retourner !'
   );
   const flipAria    = L('Garagalchi kaardicha', 'Retourner la carte');
   const prevLabel   = L('← Kan duraa',          '← Précédent');
@@ -6199,8 +6199,8 @@ function _exportVocab() {
   const flag    = isFrench() ? '\ud83c\uddeb\ud83c\uddf7' : '\ud83c\uddea\ud83c\uddf9';
   const title   = _themeTitle(CT);
 
-  const colSrc = isFrench() ? 'Fran\u00e7ais \ud83c\uddeb\ud83c\uddf7' : 'Afaan Oromoo \ud83c\uddea\ud83c\uddf9';
-  const colTgt = isFrench() ? 'Afaan Oromoo \ud83c\uddea\ud83c\uddf9' : 'Fran\u00e7ais \ud83c\uddeb\ud83c\uddf7';
+  const colSrc = isFrench() ? 'Fran\u00e7ais \ud83c\uddeb\ud83c\uddf7' : 'Oromo \ud83c\uddea\ud83c\uddf9';
+  const colTgt = isFrench() ? 'Oromo \ud83c\uddea\ud83c\uddf9' : 'Fran\u00e7ais \ud83c\uddeb\ud83c\uddf7';
 
   const rows = CT.words.map((w, i) => {
     const mainWord = w[keys.src] || '';
@@ -6324,8 +6324,8 @@ function _exportSituation() {
         + '</tr>';
     }).join('');
 
-    const vColSrc = isFrench() ? 'Fran\u00e7ais \ud83c\uddeb\ud83c\uddf7'     : 'Afaan Oromoo \ud83c\uddea\ud83c\uddf9';
-    const vColTgt = isFrench() ? 'Afaan Oromoo \ud83c\uddea\ud83c\uddf9'  : 'Fran\u00e7ais \ud83c\uddeb\ud83c\uddf7';
+    const vColSrc = isFrench() ? 'Fran\u00e7ais \ud83c\uddeb\ud83c\uddf7'     : 'Oromo \ud83c\uddea\ud83c\uddf9';
+    const vColTgt = isFrench() ? 'Oromo \ud83c\uddea\ud83c\uddf9'  : 'Fran\u00e7ais \ud83c\uddeb\ud83c\uddf7';
 
     vocabHTML = '<h2>' + (isFrench() ? '\ud83d\udcda Jechoota murteessoo' : '\ud83d\udcda Lexique essentiel') + '</h2>'
       + '<table class="vtable">'
@@ -6378,8 +6378,8 @@ function _exportSituation() {
         : (sitIdx + 1) + ' / ' + CT.situations.length + ' haala')
     : '';
 
-  const dColSrc = isFrench() ? 'Fran\u00e7ais \ud83c\uddeb\ud83c\uddf7'    : 'Afaan Oromoo \ud83c\uddea\ud83c\uddf9';
-  const dColTgt = isFrench() ? 'Afaan Oromoo \ud83c\uddea\ud83c\uddf9'  : 'Fran\u00e7ais \ud83c\uddeb\ud83c\uddf7';
+  const dColSrc = isFrench() ? 'Fran\u00e7ais \ud83c\uddeb\ud83c\uddf7'    : 'Oromo \ud83c\uddea\ud83c\uddf9';
+  const dColTgt = isFrench() ? 'Oromo \ud83c\uddea\ud83c\uddf9'  : 'Fran\u00e7ais \ud83c\uddeb\ud83c\uddf7';
   // W9.1 — isFrench() = mode learn_french = UI en Français → 'Locuteur' ; sinon UI en Oromo → 'Dubbataa'
   const locLabel = isFrench() ? 'Locuteur' : 'Dubbataa';
 
