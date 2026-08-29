@@ -38,17 +38,20 @@
   ║   Écran 1   🆕 Home + Guide fusionnés (#home, dont              ║
   ║             nav rapide 📚+🚪 et corps d'accordéons)   ligne    375      ║
   ║   Écran 2a  Niveau 1 Modules (#sections-level1) ligne  1439      ║
-  ║   Écran 2b  Niveau 2 Modules (#sections-level2) ligne  1496      ║
+  ║   Écran 2b  Niveau 2 Modules (#sections-level2) ligne  1505      ║
+  ║             🆕 (29/08/2026) grid1 et grid2 partagent la classe   ║
+  ║             générique .categories-body (catégories repliables   ║
+  ║             + carte "▶ Continuer" sur les DEUX niveaux)          ║
   ║   Écran 3   Leçon (#lesson, dont 🆕 rangée                       ║
-  ║             .lesson-quick-nav)                ligne   1545      ║
-  ║   Modale    Remerciements (#credits-modal)    ligne   1637      ║
-  ║   Modale    Confirmation suppression          ligne   1673      ║
-  ║   Modale 🆕 Quitter l'application              ligne   1693      ║
+  ║             .lesson-quick-nav)                ligne   1574      ║
+  ║   Modale    Remerciements (#credits-modal)    ligne   1658      ║
+  ║   Modale    Confirmation suppression          ligne   1691      ║
+  ║   Modale 🆕 Quitter l'application              ligne   1718      ║
   ║             (#quit-app-modal)                                   ║
-  ║   Modale 🆕 (25/07/2026) Nav verrouillée       ligne   1721      ║
+  ║   Modale 🆕 (25/07/2026) Nav verrouillée       ligne   1746      ║
   ║             (#nav-locked-modal, avant choix de langue)          ║
-  ║   Nav       Barre de navigation basse         ligne   1751      ║
-  ║   Scripts   Chargement de app.js              ligne   1804      ║
+  ║   Nav       Barre de navigation basse         ligne   1773      ║
+  ║   Scripts   Chargement de app.js              ligne   1815      ║
   ║  🆕 24/07/2026 (2e correctif du jour) : #home et #guide,        ║
   ║  séparés plus tôt dans la journée pour corriger l'icône ❓       ║
   ║  inopérante, sont réunis à nouveau — mais réagencés sur le      ║
@@ -60,6 +63,15 @@
   ║  dans app.js (§5c) et Bilan_technique.md §6.24. Le fichier a    ║
   ║  raccourci d'environ 40 lignes par rapport à la version à deux  ║
   ║  écrans séparés (topbar + petit en-tête dupliqués supprimés).   ║
+  ║                                                                  ║
+  ║  🆕 29/08/2026 (Bilan_technique.md §6.28, étape 4 méthode        ║
+  ║  VACHÉBO) : #grid1 ET #grid2 partagent désormais la classe      ║
+  ║  générique .categories-body (ex-.level1-body, renommée) — le    ║
+  ║  Niveau 2 (dialogues) reçoit le même regroupement en catégories ║
+  ║  repliables + carte "▶ Continuer" que le Niveau 1, via app.js   ║
+  ║  §7. +6 lignes insérées ; toutes les ancres à partir de "Écran  ║
+  ║  2b" ont décalé en conséquence — recalcul intégral par          ║
+  ║  recherche directe dans le fichier final.                       ║
   ║                                                                  ║
   ╚══════════════════════════════════════════════════════════════════╝
 -->
@@ -1492,8 +1504,10 @@
            app.js §7 (_buildLevel1Body). Ce conteneur n'est plus une grille
            lui-même (ex-.themes-grid) : il empile la carte "▶ Continuer" et
            les accordéons de catégorie, chacun contenant SA PROPRE grille
-           .themes-grid inchangée. Niveau 2 (#grid2 ci-dessous) reste plat. -->
-      <div class="level1-body" id="grid1"></div>
+           .themes-grid inchangée. Classe .categories-body générique — voir
+           §sections-level2 ci-dessous, même traitement depuis le
+           29/08/2026 (_buildLevel2Body). -->
+      <div class="categories-body" id="grid1"></div>
     </div>
   </div><!-- /#sections-level1 -->
 
@@ -1541,7 +1555,11 @@
       </button>
     </div>
     <div class="sections-body">
-      <div class="themes-grid" id="grid2"></div>
+      <!-- 🆕 (29/08/2026) Niveau 2 regroupé en catégories repliables (4
+           catégories, THEME_CATEGORIES_L2) — même traitement que le
+           Niveau 1 ci-dessus, via app.js §7 (_buildLevel2Body), avec sa
+           propre carte "▶ Continuer". -->
+      <div class="categories-body" id="grid2"></div>
     </div>
   </div><!-- /#sections-level2 -->
 

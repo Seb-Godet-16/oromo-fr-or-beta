@@ -3950,7 +3950,8 @@ footer a:hover{text-decoration:underline}
   .level-details[open] .level-summary{border-bottom-color:rgba(255,255,255,.08);}
   .sections-stars-inner{background:rgba(255,255,255,.15);}
 
-  /* ── 🆕 (28/08/2026) Catégories Niveau 1 + carte "Continuer" (§20f) ── */
+  /* ── 🆕 (28/08/2026, généralisé aux 2 niveaux le 29/08/2026)
+     Catégories Niveau 1 + Niveau 2 + carte "Continuer" (§20f) ── */
   .theme-category{background:#26262e;box-shadow:none;}
   .category-summary{background:#1f1f28;border-bottom-color:rgba(255,255,255,.08);}
   .category-summary:hover{background:#2e2e3a;}
@@ -4580,17 +4581,22 @@ footer a:hover{text-decoration:underline}
 }
 
 /* ════════════════════════════════════════════════════════════════
-   §20f — 🆕 (28/08/2026) NIVEAU 1 : CATÉGORIES REPLIABLES + CARTE
-   "CONTINUER"  (voir app.js §7, _buildLevel1Body)
+   §20f — 🆕 (28/08/2026) NIVEAU 1, généralisé (29/08/2026) au
+   NIVEAU 2 : CATÉGORIES REPLIABLES + CARTE "CONTINUER"
+   (voir app.js §7, _buildCategorizedGrid / _buildLevel1Body /
+   _buildLevel2Body)
    ════════════════════════════════════════════════════════════════
-   #grid1 (.level1-body) n'est plus une grille : c'est un empilement
-   vertical de la carte "Continuer" puis des 6 accordéons de catégorie
-   (.theme-category). Chaque accordéon contient SA PROPRE .themes-grid,
-   qui hérite déjà des règles §20e ci-dessus (sélecteur générique
-   ".sections-body .themes-grid", peu importe la profondeur d'imbrication)
-   — donc 2 colonnes en mobile, 4 en ≥520px, sans règle dupliquée ici.
+   #grid1 ET #grid2 (.categories-body — ex-.level1-body, renommée en
+   classe générique le 29/08/2026 car réutilisée par les deux niveaux)
+   ne sont plus des grilles : chacune est un empilement vertical de sa
+   propre carte "Continuer" puis de ses accordéons de catégorie
+   (.theme-category — 6 pour le Niveau 1, 4 pour le Niveau 2). Chaque
+   accordéon contient SA PROPRE .themes-grid, qui hérite déjà des
+   règles §20e ci-dessus (sélecteur générique ".sections-body
+   .themes-grid", peu importe la profondeur d'imbrication) — donc
+   2 colonnes en mobile, 4 en ≥520px, sans règle dupliquée ici.
    ════════════════════════════════════════════════════════════════ */
-.level1-body{
+.categories-body{
   display:flex;
   flex-direction:column;
   gap:14px;

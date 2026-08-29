@@ -49,43 +49,46 @@
            réussis — _getOtherModeProgress(), voir plus bas)
       7.   Écran Sections — grille des thèmes ; 🆕            ligne  2715
            (28/08/2026) Niveau 1 regroupé en 6 catégories
-           repliables + carte "▶ Continuer" (THEME_CATEGORIES_L1,
-           _buildLevel1Body()) — voir §6.27 ; Niveau 2 inchangé
-      8.   Ouverture d'un thème (écran Lesson + onglets)     ligne  3050
-           switchTab() : onglets + repositionnement          ligne  3212
+           repliables + carte "▶ Continuer" (THEME_CATEGORIES_L1)
+           — voir §6.27 ; 🆕 (29/08/2026) Niveau 2 reçoit le même
+           traitement (THEME_CATEGORIES_L2, 4 catégories) via la
+           fonction généralisée _buildCategorizedGrid(), utilisée
+           par _buildLevel1Body() et _buildLevel2Body() — §6.28
+      8.   Ouverture d'un thème (écran Lesson + onglets)     ligne  3120
+           switchTab() : onglets + repositionnement          ligne  3282
            du bouton PDF en mode Cartes (fixed via JS)
-      9.   Cartes Flash — vocabulaire interactif             ligne  3244
-     10.   Quiz 10 questions — avec étoiles progressives     ligne  3419
+      9.   Cartes Flash — vocabulaire interactif             ligne  3314
+     10.   Quiz 10 questions — avec étoiles progressives     ligne  3489
            (dont Quiz Alphabet, sans barre de vitesse — voir §3a3)
-     11.   Dialogue — scènes de situation                    ligne  3739
-     12.   Vocabulaire — lexique visuel cliquable            ligne  3799
-     13b.  Onglet Répète — badges voix (🔊) + reconnaissance  ligne  3847
+     11.   Dialogue — scènes de situation                    ligne  3809
+     12.   Vocabulaire — lexique visuel cliquable            ligne  3869
+     13b.  Onglet Répète — badges voix (🔊) + reconnaissance  ligne  3917
            vocale (🎙️), vitesse dédiée — voir §3a3
-     13.   Quiz Dialogue — questions sur le dialogue         ligne  4592
-     14.   Utilitaires & chaînes de résultats bilingues      ligne  4703
-     17.   Guide utilisateur — Onboarding — 🆕 auto-affiché   ligne  4799
+     13.   Quiz Dialogue — questions sur le dialogue         ligne  4662
+     14.   Utilitaires & chaînes de résultats bilingues      ligne  4773
+     17.   Guide utilisateur — Onboarding — 🆕 auto-affiché   ligne  4869
            à la 1ʳᵉ visite d'un mode (_maybeShowOnboarding()) ;
            (25/07/2026) _closeOnboarding() (stub mort) supprimée
-      —    Écran Home + Guide — 🆕 (24/07/2026, 2e correctif  ligne  4832
+      —    Écran Home + Guide — 🆕 (24/07/2026, 2e correctif  ligne  4902
            du jour) écran UNIQUE #home à nouveau (agencement
            VACHÉBO, pas l'ancien) — _buildHomeGuide()
-     18.   Crédits — showCredits()                           ligne  5010
-     15.   Initialisation du launcher                        ligne  5154
-     15b.  🆕 Panneaux infos dépliables des cartes de langue  ligne  5187
+     18.   Crédits — showCredits()                           ligne  5080
+     15.   Initialisation du launcher                        ligne  5224
+     15b.  🆕 Panneaux infos dépliables des cartes de langue  ligne  5257
            (état par défaut + préférence manuelle — voir §7
            de la demande de refonte du Lanceur, 22/07/2026)
-     16.   Accessibilité clavier                             ligne  5259
-     19.   Spinner de chargement des données                 ligne  5271
-     19b.  Viewport height fix — Android Chrome / Brave      ligne  5314
-     20.   Enregistrement du Service Worker (PWA)            ligne  5376
+     16.   Accessibilité clavier                             ligne  5329
+     19.   Spinner de chargement des données                 ligne  5341
+     19b.  Viewport height fix — Android Chrome / Brave      ligne  5384
+     20.   Enregistrement du Service Worker (PWA)            ligne  5446
            + 🆕 vérification proactive des mises à jour
            au premier plan et toutes les 60 min — voir §6.19
-     20b.  🆕 Installation PWA — bouton natif "Installer     ligne  5466
+     20b.  🆕 Installation PWA — bouton natif "Installer     ligne  5536
            l'app" (bouton natif Android/Chrome, rappel iOS)
-     21.   Exports PDF — window.print() + @media print       ligne  5567
-     21a.  Export Guide (accordéons de l'écran #home)         ligne  5764
-     21b.  Export Vocabulaire (leçon Niveau 1)               ligne  5882
-     21c.  Export Situation (leçon Niveau 2 — dialogue)      ligne  5978
+     21.   Exports PDF — window.print() + @media print       ligne  5637
+     21a.  Export Guide (accordéons de l'écran #home)         ligne  5834
+     21b.  Export Vocabulaire (leçon Niveau 1)               ligne  5952
+     21c.  Export Situation (leçon Niveau 2 — dialogue)      ligne  6048
    ============================================================
    🆕 Plan resynchronisé le 23/07/2026 : ajout des sections 5c
    (navigation rapide 🏠❓📚 étendue à tous les écrans, jusqu'ici
@@ -134,6 +137,23 @@
    en conséquence — recalcul intégral par recherche directe dans le
    fichier final (pas par arithmétique de décalage), TTS_RATE_TIERS
    confirmé inchangé (§3a3, ligne 1108, avant le point d'insertion).
+   ============================================================
+   🆕 Resynchronisé le 29/08/2026 (Bilan_technique.md §6.28, étape 4
+   méthode VACHÉBO) : même regroupement en catégories repliables +
+   carte "▶ Continuer" appliqué au Niveau 2 (THEME_CATEGORIES_L2, 4
+   catégories, emojis distincts du Niveau 1). Les fonctions de l'étape
+   3 sont généralisées (paramètre categories) plutôt que dupliquées :
+   _getContinueTargetL1() → _getContinueTarget(categories),
+   _buildContinueCard()/_computeAutoOpenCategoryIds() prennent
+   désormais categories en paramètre, _buildCategoryAccordion() était
+   déjà générique (inchangée). Nouvelle fonction partagée
+   _buildCategorizedGrid(grid, categories, doneTextFr, doneTextOr),
+   appelée par _buildLevel1Body() (Niveau 1) et la nouvelle
+   _buildLevel2Body() (Niveau 2) — toutes dans §7, juste avant
+   renderSections(). +70 lignes nettes insérées à cet endroit précis ;
+   toutes les ancres à partir de §8 ont décalé d'exactement +70 lignes
+   en conséquence — recalcul intégral par recherche directe dans le
+   fichier final (pas par arithmétique de décalage).
    ============================================================
 
    HISTORIQUE DE L'APPLICATION
@@ -2717,15 +2737,22 @@ function _buildProgressCardHTML(card, idx) {
    Affiche les modules des deux niveaux avec la progression globale.
    Niveau 1 (37 thèmes) : 🆕 (28/08/2026) regroupé en 6 catégories
    repliables + carte "▶ Continuer" (voir _buildLevel1Body ci-dessous).
-   Niveau 2 (16 dialogues) : grille plate inchangée.
+   Niveau 2 (16 dialogues) : 🆕 (29/08/2026) même traitement — 4
+   catégories repliables + sa propre carte "▶ Continuer" (voir
+   _buildLevel2Body), via la fonction de rendu généralisée
+   _buildCategorizedGrid() partagée par les deux niveaux.
    ============================================================ */
 
-/* ── 🆕 (28/08/2026) Regroupement du Niveau 1 en catégories repliables ──
+/* ── 🆕 (28/08/2026) Regroupement du Niveau 1 en catégories repliables,
+   généralisé (29/08/2026) au Niveau 2 ──
    Le Niveau 1 (37 thèmes) était affiché en une seule grille plate — long
    à parcourir pour l'apprenant. Regroupement en 6 catégories thématiques
    (accordéons natifs <details>/<summary>), chacune conservant SA PROPRE
    grille de cartes-thèmes inchangée (_buildThemeCard n'est pas modifiée).
-   Le Niveau 2 (16 dialogues, #grid2) reste plat — volume déjà gérable.
+   Le Niveau 2 (16 dialogues) a reçu le même traitement le 29/08/2026,
+   avec sa propre constante de regroupement (THEME_CATEGORIES_L2) et des
+   emojis de catégorie volontairement différents de ceux du Niveau 1,
+   pour distinguer les deux niveaux d'un coup d'œil.
 
    ⚠️ Il existait déjà en CSS un bloc mort .level-details/.level-summary/
    .level-chevron, jamais câblé à aucun HTML (reliquat d'une tentative
@@ -2734,13 +2761,14 @@ function _buildProgressCardHTML(card, idx) {
    .category-chevron, voir style.css §20f) pour ne pas hériter d'un bug
    potentiel non diagnostiqué.
 
-   THEME_CATEGORIES_L1 : configuration figée. Les "id" de catégorie sont
-   utilisés comme clé de mémorisation d'ouverture/fermeture entre deux
-   rendus (voir _buildLevel1Body) — ne pas les renommer. Les ids de
-   THÈMES qu'elles regroupent proviennent tels quels de data-fr.js /
-   data-or.js (aucune donnée dupliquée, aucun id modifié).
-   Traductions oromo des 6 titres de catégorie : provisoires (IA), en
-   attente de relecture par Mussa Sembro — même statut que le lot de
+   THEME_CATEGORIES_L1 / THEME_CATEGORIES_L2 : configuration figée. Les
+   "id" de catégorie sont utilisés comme clé de mémorisation d'ouverture/
+   fermeture entre deux rendus (voir _buildCategorizedGrid) — ne pas les
+   renommer. Les ids de THÈMES qu'elles regroupent proviennent tels
+   quels de data-fr.js / data-or.js (aucune donnée dupliquée, aucun id
+   modifié).
+   Traductions oromo des titres de catégorie (6 + 4) : provisoires (IA),
+   en attente de relecture par Mussa Sembro — même statut que le lot de
    vocabulaire du 28/08/2026 (voir README, historique du projet). */
 const THEME_CATEGORIES_L1 = [
   { id: 'bases', emoji: '🌱', fr: 'Les Bases',
@@ -2763,8 +2791,28 @@ const THEME_CATEGORIES_L1 = [
     ids: ['viaje', 'pays', 'ocio', 'plan', 'anim', 'agri'] }
 ];
 
+/* 🆕 (29/08/2026) Regroupement du Niveau 2 (16 dialogues) en 4 catégories
+   repliables — même principe que THEME_CATEGORIES_L1 ci-dessus (regroupement
+   d'affichage uniquement, aucun impact sur data-fr.js/data-or.js ni sur les
+   clés de progression). Emojis volontairement différents du Niveau 1
+   (👋🎉🧳⛅ vs 🌱🔢😊🏠🍽️🌍) pour distinguer les deux niveaux d'un coup d'œil. */
+const THEME_CATEGORIES_L2 = [
+  { id: 'rencontres', emoji: '👋', fr: 'Rencontres & Orientation',
+    or: "Wal-Arguu fi Karaa Argachuu",
+    ids: ['salut2', 'pres2', 'chemin2'] },
+  { id: 'sorties', emoji: '🎉', fr: 'Sorties, Repas & Loisirs',
+    or: "Ba'uu, Nyaataa fi Bashannana",
+    ids: ['bar2', 'resto2', 'fiesta2', 'gustos2'] },
+  { id: 'quotidien', emoji: '🧳', fr: 'S\'installer au Quotidien',
+    or: 'Guyyaa Guyyaan Jiraachuu',
+    ids: ['hotel2', 'logement2', 'routine2', 'compras2', 'transp2'] },
+  { id: 'sante', emoji: '⛅', fr: 'Météo, Temps & Santé',
+    or: 'Haala Qilleensaa, Yeroo fi Fayyaa',
+    ids: ['meteo2', 'temps2', 'farmacia2', 'medico2'] }
+];
+
 /**
- * @param {Object} cat - Entrée de THEME_CATEGORIES_L1
+ * @param {Object} cat - Entrée de THEME_CATEGORIES_L1 ou THEME_CATEGORIES_L2
  * @returns {{done:number, total:number}} Thèmes à 3 étoiles / total de la catégorie
  */
 function _getCategoryProgress(cat) {
@@ -2774,15 +2822,17 @@ function _getCategoryProgress(cat) {
 }
 
 /**
- * Détermine le thème à proposer sur la carte "▶ Continuer" en tête du
- * Niveau 1 : priorité au thème déjà entamé mais pas encore maîtrisé à
- * 100 %, sinon le premier thème jamais ouvert — dans l'ORDRE D'AFFICHAGE
- * des catégories (pas l'ordre brut de ALL_THEMES, qui suit data-fr/or.js).
+ * Détermine le thème à proposer sur la carte "▶ Continuer" en tête d'un
+ * niveau donné : priorité au thème déjà entamé mais pas encore maîtrisé
+ * à 100 %, sinon le premier thème jamais ouvert — dans l'ORDRE
+ * D'AFFICHAGE des catégories (pas l'ordre brut de ALL_THEMES, qui suit
+ * data-fr/or.js). Générique Niveau 1 / Niveau 2 depuis le 29/08/2026.
+ * @param {Array<Object>} categories - THEME_CATEGORIES_L1 ou THEME_CATEGORIES_L2
  * @returns {Object|null} Objet thème depuis ALL_THEMES, ou null si le
- *   Niveau 1 est entièrement terminé à 100 %.
+ *   niveau est entièrement terminé à 100 %.
  */
-function _getContinueTargetL1() {
-  const orderedIds = THEME_CATEGORIES_L1.reduce((acc, cat) => acc.concat(cat.ids), []);
+function _getContinueTarget(categories) {
+  const orderedIds = categories.reduce((acc, cat) => acc.concat(cat.ids), []);
   const inProgressId = orderedIds.find((id) => isOpened(id) && getThemeStars(id) < 3);
   const targetId = inProgressId || orderedIds.find((id) => !isOpened(id));
   if (!targetId) return null;
@@ -2790,20 +2840,23 @@ function _getContinueTargetL1() {
 }
 
 /**
- * Construit la carte "▶ Continuer" affichée en tête de la grille Niveau 1
- * (ou le message de félicitations si tout est déjà terminé à 100 %).
- * Élément séparé du bouton "Commencer/Continuer" de l'écran Home
+ * Construit la carte "▶ Continuer" affichée en tête de la grille d'un
+ * niveau (ou le message de félicitations si tout est déjà terminé à
+ * 100 %). Élément séparé du bouton "Commencer/Continuer" de l'écran Home
  * (homeStartBtn) — pas un doublon, voir Bilan_technique.md §6.27.
+ * Générique Niveau 1 / Niveau 2 depuis le 29/08/2026 (§6.28).
+ * @param {Array<Object>} categories - THEME_CATEGORIES_L1 ou THEME_CATEGORIES_L2
+ * @param {string} doneTextFr - Message de félicitations (texte source = fr)
+ * @param {string} doneTextOr - Message de félicitations (texte source = oromo)
  * @returns {string} HTML
  */
-function _buildContinueCard() {
-  const target = _getContinueTargetL1();
+function _buildContinueCard(categories, doneTextFr, doneTextOr) {
+  const target = _getContinueTarget(categories);
   if (!target) {
     return '<div class="continue-card continue-card-done">'
       + '<div class="continue-card-emoji">🎉</div>'
       + '<div class="continue-card-text">'
-      + L('Bravo ! Tous les modules du Niveau 1 sont terminés à 100 %.',
-          'Baga gammaddan! Moojuulonni Sadarkaa 1 hundi 100% xumuramaniiru.')
+      + L(doneTextFr, doneTextOr)
       + '</div></div>';
   }
   const title     = _themeTitle(target);
@@ -2823,27 +2876,29 @@ function _buildContinueCard() {
 
 /**
  * Calcule l'auto-dépli initial (premier rendu SEULEMENT — voir
- * _buildLevel1Body) : la première catégorie pas encore terminée à 100 %
- * + la suivante ; si tout est déjà terminé, seule la première catégorie.
+ * _buildCategorizedGrid) : la première catégorie pas encore terminée à
+ * 100 % + la suivante ; si tout est déjà terminé, seule la première
+ * catégorie. Générique Niveau 1 / Niveau 2 depuis le 29/08/2026.
+ * @param {Array<Object>} categories - THEME_CATEGORIES_L1 ou THEME_CATEGORIES_L2
  * @returns {Set<string>} ids de catégories à ouvrir
  */
-function _computeAutoOpenCategoryIds() {
-  const idx = THEME_CATEGORIES_L1.findIndex((cat) => {
+function _computeAutoOpenCategoryIds(categories) {
+  const idx = categories.findIndex((cat) => {
     const prog = _getCategoryProgress(cat);
     return prog.done < prog.total;
   });
-  if (idx === -1) return new Set([THEME_CATEGORIES_L1[0].id]);
-  const ids = [THEME_CATEGORIES_L1[idx].id];
-  if (THEME_CATEGORIES_L1[idx + 1]) ids.push(THEME_CATEGORIES_L1[idx + 1].id);
+  if (idx === -1) return new Set([categories[0].id]);
+  const ids = [categories[idx].id];
+  if (categories[idx + 1]) ids.push(categories[idx + 1].id);
   return new Set(ids);
 }
 
 /**
  * Construit un accordéon de catégorie (<details>) avec sa grille de
  * cartes-thèmes à l'intérieur.
- * @param {Object} cat - Entrée de THEME_CATEGORIES_L1
+ * @param {Object} cat - Entrée de THEME_CATEGORIES_L1 ou THEME_CATEGORIES_L2
  * @param {Set<string>|null} previousOpenIds - État ouvert/fermé capturé
- *   avant le re-rendu (null au tout premier rendu, voir _buildLevel1Body)
+ *   avant le re-rendu (null au tout premier rendu, voir _buildCategorizedGrid)
  * @param {Set<string>|null} autoOpenIds - Auto-dépli, utilisé seulement
  *   quand previousOpenIds est null
  * @returns {string} HTML
@@ -2876,26 +2931,62 @@ function _buildCategoryAccordion(cat, previousOpenIds, autoOpenIds) {
 }
 
 /**
- * Construit le contenu complet de #grid1 : carte "Continuer" + les 6
- * accordéons de catégorie. Préserve l'état ouvert/fermé choisi
- * manuellement par l'apprenant entre deux rendus (fin de quiz, retour
- * d'écran…) en le relisant dans le DOM avant écrasement — seul le tout
- * premier rendu (aucun .theme-category encore présent) utilise
+ * Construit le contenu complet d'une grille catégorisée (#grid1 OU
+ * #grid2) : carte "Continuer" + les accordéons de catégorie du niveau
+ * demandé. Préserve l'état ouvert/fermé choisi manuellement par
+ * l'apprenant entre deux rendus (fin de quiz, retour d'écran…) en le
+ * relisant dans le DOM avant écrasement — seul le tout premier rendu
+ * (aucun .theme-category encore présent DANS CETTE grille) utilise
  * l'auto-dépli de _computeAutoOpenCategoryIds().
+ * 🆕 (29/08/2026) Fonction généralisée à partir de l'ex-_buildLevel1Body,
+ * désormais partagée par _buildLevel1Body() et _buildLevel2Body() — voir
+ * Bilan_technique.md §6.28. Aucune duplication de logique entre niveaux.
+ * @param {HTMLElement|null} grid - Élément #grid1 ou #grid2 AVANT écrasement
+ * @param {Array<Object>} categories - THEME_CATEGORIES_L1 ou THEME_CATEGORIES_L2
+ * @param {string} doneTextFr - Message de félicitations si niveau 100% (texte fr)
+ * @param {string} doneTextOr - Message de félicitations si niveau 100% (texte or)
+ * @returns {string} HTML à injecter dans la grille
+ */
+function _buildCategorizedGrid(grid, categories, doneTextFr, doneTextOr) {
+  const existing = grid ? grid.querySelectorAll('.theme-category') : [];
+  const previousOpenIds = existing.length
+    ? new Set(Array.from(existing).filter((el) => el.open).map((el) => el.dataset.catId))
+    : null;
+  const autoOpenIds = previousOpenIds ? null : _computeAutoOpenCategoryIds(categories);
+
+  return _buildContinueCard(categories, doneTextFr, doneTextOr)
+    + categories
+      .map((cat) => _buildCategoryAccordion(cat, previousOpenIds, autoOpenIds))
+      .join('');
+}
+
+/**
+ * Construit le contenu complet de #grid1 (Niveau 1 — vocabulaire) :
+ * carte "Continuer" + les 6 accordéons de catégorie.
  * @param {HTMLElement|null} grid1 - Élément #grid1 AVANT écrasement
  * @returns {string} HTML à injecter dans #grid1
  */
 function _buildLevel1Body(grid1) {
-  const existing = grid1 ? grid1.querySelectorAll('.theme-category') : [];
-  const previousOpenIds = existing.length
-    ? new Set(Array.from(existing).filter((el) => el.open).map((el) => el.dataset.catId))
-    : null;
-  const autoOpenIds = previousOpenIds ? null : _computeAutoOpenCategoryIds();
+  return _buildCategorizedGrid(
+    grid1, THEME_CATEGORIES_L1,
+    'Bravo ! Tous les modules du Niveau 1 sont terminés à 100 %.',
+    'Baga gammaddan! Moojuulonni Sadarkaa 1 hundi 100% xumuramaniiru.'
+  );
+}
 
-  return _buildContinueCard()
-    + THEME_CATEGORIES_L1
-      .map((cat) => _buildCategoryAccordion(cat, previousOpenIds, autoOpenIds))
-      .join('');
+/**
+ * 🆕 (29/08/2026) Construit le contenu complet de #grid2
+ * (Niveau 2 — dialogues) : carte "Continuer" + les 4 accordéons de
+ * catégorie (THEME_CATEGORIES_L2) — voir Bilan_technique.md §6.28.
+ * @param {HTMLElement|null} grid2 - Élément #grid2 AVANT écrasement
+ * @returns {string} HTML à injecter dans #grid2
+ */
+function _buildLevel2Body(grid2) {
+  return _buildCategorizedGrid(
+    grid2, THEME_CATEGORIES_L2,
+    'Bravo ! Tous les dialogues du Niveau 2 sont terminés à 100 %.',
+    'Baga gammaddan! Dubbiin Sadarkaa 2 hundi 100% xumuramaniiru.'
+  );
 }
 
 /**
@@ -2964,15 +3055,14 @@ function renderSections(activeLevel) {
   });
 
   /* ── Grilles de thèmes ──
-     🆕 (28/08/2026) grid1 (Niveau 1) est désormais regroupé en catégories
-     repliables via _buildLevel1Body() — voir le bloc de commentaire juste
-     au-dessus de THEME_CATEGORIES_L1. grid2 (Niveau 2) reste inchangé. */
+     🆕 (28/08/2026) grid1 (Niveau 1) regroupé en catégories repliables
+     via _buildLevel1Body() — voir le bloc de commentaire juste au-dessus
+     de THEME_CATEGORIES_L1. 🆕 (29/08/2026) grid2 (Niveau 2) reçoit le
+     même traitement via _buildLevel2Body() — voir THEME_CATEGORIES_L2. */
   const grid1 = document.getElementById('grid1');
   const grid2 = document.getElementById('grid2');
   if (grid1) grid1.innerHTML = _buildLevel1Body(grid1);
-  if (grid2) grid2.innerHTML = ALL_THEMES
-    .filter((t) => t.level === 2)
-    .map((t) => _buildThemeCard(t)).join('');
+  if (grid2) grid2.innerHTML = _buildLevel2Body(grid2);
 }
 
 /**

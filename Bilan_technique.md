@@ -22,6 +22,7 @@
 | Repérage visuel des modules | 🆕 Système à 3 états (nouveau / en cours / terminé à 100%) en plus des étoiles ⭐ (voir §6.18) |
 | Mises à jour PWA | 🆕 Vérification proactive (retour au premier plan + filet toutes les 60 min), en plus du cycle natif du navigateur (voir §6.19) |
 | Grille Niveau 1 | 🆕 37 thèmes regroupés en 6 catégories repliables + carte "▶ Continuer" ciblant le prochain thème pertinent (voir §6.27) |
+| Grille Niveau 2 | 🆕 16 dialogues regroupés en 4 catégories repliables + sa propre carte "▶ Continuer" (voir §6.28) |
 
 ---
 
@@ -31,11 +32,11 @@
 
 | Fichier | Taille | Lignes | Rôle |
 |---|---|---|---|
-| `js/app.js` | 266 Ko | 6 109 | Moteur applicatif complet (dont le bandeau hors-ligne §3e, le suivi "modules déjà ouverts" §7, la vérification proactive des mises à jour SW §20 — voir §6.19 —, le clin d'œil mascotte sur quiz sans-faute §14 — voir §6.22 —, l'écran Home+Guide fusionné et `goToHome()` supprimée — voir §6.24 —, la modale "Nav verrouillée" `#nav-locked-modal` + suppression du stub mort `_closeOnboarding()` — voir §6.25 —, et 🆕 le regroupement du Niveau 1 en catégories repliables + carte "Continuer" (`THEME_CATEGORIES_L1`, `_buildLevel1Body()`, §7) — voir §6.27 ; plan interne `SECTIONS DE CE FICHIER` resynchronisé le 28/08/2026, voir §6.27) |
-| `css/style.css` | 185 Ko | 5 388 | Styles + système de thèmes dual (dont §16b bandeau hors-ligne, §7 états visuels des cartes-module, §2 tokens de marque `--c-flag-red/black/cream` — voir §6.22 —, l'écran Home+Guide fusionné (agencement VACHÉBO) — voir §6.24 —, §NAVLOCKED, la modale "Nav verrouillée" — voir §6.25 —, et 🆕 §20f, catégories Niveau 1 + carte "Continuer" — voir §6.27) |
+| `js/app.js` | 266 Ko | 6 199 | Moteur applicatif complet (dont le bandeau hors-ligne §3e, le suivi "modules déjà ouverts" §7, la vérification proactive des mises à jour SW §20 — voir §6.19 —, le clin d'œil mascotte sur quiz sans-faute §14 — voir §6.22 —, l'écran Home+Guide fusionné et `goToHome()` supprimée — voir §6.24 —, la modale "Nav verrouillée" `#nav-locked-modal` + suppression du stub mort `_closeOnboarding()` — voir §6.25 —, et 🆕 le regroupement des Niveaux 1 ET 2 en catégories repliables + carte "Continuer" (`THEME_CATEGORIES_L1`/`THEME_CATEGORIES_L2`, `_buildCategorizedGrid()` partagée, §7) — voir §6.27/§6.28 ; plan interne `SECTIONS DE CE FICHIER` resynchronisé le 29/08/2026, voir §6.28) |
+| `css/style.css` | 185 Ko | 5 394 | Styles + système de thèmes dual (dont §16b bandeau hors-ligne, §7 états visuels des cartes-module, §2 tokens de marque `--c-flag-red/black/cream` — voir §6.22 —, l'écran Home+Guide fusionné (agencement VACHÉBO) — voir §6.24 —, §NAVLOCKED, la modale "Nav verrouillée" — voir §6.25 —, et 🆕 §20f, catégories Niveau 1 ET 2 + carte "Continuer" via la classe générique `.categories-body` — voir §6.27/§6.28) |
 | `js/data-fr.js` | 113 Ko | 1 532 | Dataset mode "Apprendre le Français" — 37 thèmes Niveau 1 (voir §6.26) |
 | `js/data-or.js` | 110 Ko | 1 487 | Dataset mode "Apprendre l'Oromo" — 37 thèmes Niveau 1 (voir §6.26) |
-| `index.html` | 120 Ko | 1 811 | Structure HTML — 🆕 5 écrans (Home et Guide de nouveau fusionnés en un seul `#home`, voir §6.24) + 3 modales (dont `#nav-locked-modal`, voir §6.25) + bandeau hors-ligne + guide "Quel navigateur choisir ?" + logo étendu aux écrans Sections (§6.22) + 🆕 `#grid1` en `.level1-body` (catégories Niveau 1, voir §6.27) ; plan interne `PLAN DU FICHIER` resynchronisé le 25/07/2026 (voir §6.25 — pas touché par §6.27, seule une classe CSS a changé sur une ligne existante) |
+| `index.html` | 120 Ko | 1 829 | Structure HTML — 🆕 5 écrans (Home et Guide de nouveau fusionnés en un seul `#home`, voir §6.24) + 3 modales (dont `#nav-locked-modal`, voir §6.25) + bandeau hors-ligne + guide "Quel navigateur choisir ?" + logo étendu aux écrans Sections (§6.22) + 🆕 `#grid1` ET `#grid2` en `.categories-body` (catégories Niveau 1 et 2, voir §6.27/§6.28) ; plan interne `PLAN DU FICHIER` resynchronisé le 29/08/2026 (voir §6.28) |
 | `sw.js` | 33 Ko | 624 | Service Worker — Cache First / Network First |
 | `manifest.json` | — | — | PWA — icônes, orientation, screenshots |
 | `deploy.yml` | — | — | CI/CD GitHub Actions |
@@ -49,9 +50,10 @@
  [Home / Guide]  →  onboarding au 1er lancement de chaque mode
      │                                                     ▲
      ▼                                                     │ ❓ (icône Guide)
- [Sections]  →  53 modules (Niv. 1 × 37 + Niv. 2 × 16) ; 🆕 Niv. 1
-     │      ╲     regroupé en 6 catégories repliables + carte
-     ▼       ╲    "▶ Continuer" (voir §6.27) — Niv. 2 grille plate
+ [Sections]  →  53 modules (Niv. 1 × 37 + Niv. 2 × 16) ; 🆕 les deux
+     │      ╲     niveaux regroupés en catégories repliables (6 pour
+     ▼       ╲    Niv. 1, 4 pour Niv. 2) + leur propre carte
+     ▼       ╲    "▶ Continuer" (voir §6.27/§6.28)
      ▼       ╲ 🏠 (icône Accueil → retour au Lanceur, changer de langue)
  [Leçon]  →  5 onglets par module
               ├── 🃏 Cartes Flash    (flip + TTS)
@@ -537,6 +539,52 @@ Plus une carte **"▶ Continuer"** en tête de grille, avant les catégories, qu
 - Visuel : non testé dans un navigateur réel lors de cette session (pas d'accès DOM/rendu graphique dans l'environnement d'implémentation) — **à vérifier par Sébastien** sur Chrome desktop + Android avant mise en production, notamment le comportement natif `<details>`/`<summary>` (accessibilité clavier, focus visuel) et le rendu du dégradé de la carte "Continuer" en mode sombre.
 
 **Fichiers modifiés** : `app.js`, `index.html`, `style.css`, `README.md` (diagramme "User flow", historique), `Bilan_technique.md` (§6.27).
+
+---
+
+### §6.28 — 🆕 Niveau 2 (dialogues) regroupé en catégories repliables + carte "Continuer" (méthode VACHÉBO, 29/08/2026)
+
+**Contexte** : suite directe de §6.27 — le Niveau 1 avait reçu le regroupement en catégories repliables, le Niveau 2 (16 dialogues, `#grid2`) restait volontairement en grille plate ("volume déjà gérable"). Demande explicite de reproduire le même traitement sur le Niveau 2, y compris sa propre carte "▶ Continuer" (initialement non demandée, ajoutée sur confirmation explicite après validation du découpage en catégories).
+
+**Correctif** — regroupement en **4 catégories thématiques repliables**, avec des emojis volontairement différents du Niveau 1 (🌱🔢😊🏠🍽️🌍) pour distinguer les deux niveaux d'un coup d'œil :
+
+| Catégorie | Dialogues (ids) | Nb |
+|---|---|---|
+| 👋 Rencontres & Orientation | `salut2, pres2, chemin2` | 3 |
+| 🎉 Sorties, Repas & Loisirs | `bar2, resto2, fiesta2, gustos2` | 4 |
+| 🧳 S'installer au Quotidien | `hotel2, logement2, routine2, compras2, transp2` | 5 |
+| ⛅ Météo, Temps & Santé | `meteo2, temps2, farmacia2, medico2` | 4 |
+
+Même carte **"▶ Continuer"** que le Niveau 1 (logique identique : thème entamé non maîtrisé > premier thème neuf > félicitations si 100%), placée en tête de `#grid2`.
+
+**Implémentation — généralisation, zéro duplication de logique** :
+1. **`app.js`** (§7) : nouvelle constante `THEME_CATEGORIES_L2`, juste après `THEME_CATEGORIES_L1`. Les fonctions de §6.27 sont généralisées plutôt que dupliquées :
+   - `_getContinueTargetL1()` → `_getContinueTarget(categories)` (accepte désormais L1 ou L2 en paramètre) ;
+   - `_buildContinueCard()` → `_buildContinueCard(categories, doneTextFr, doneTextOr)` (message de félicitations paramétré, car le texte diffère entre "modules" Niveau 1 et "dialogues" Niveau 2) ;
+   - `_computeAutoOpenCategoryIds()` accepte désormais `categories` en paramètre ;
+   - `_getCategoryProgress()` et `_buildCategoryAccordion()` étaient déjà génériques (prenaient une catégorie en paramètre) — **inchangées**.
+   - Nouvelle fonction partagée `_buildCategorizedGrid(grid, categories, doneTextFr, doneTextOr)`, factorisant la logique commune (lecture de l'état ouvert/fermé existant dans le DOM, calcul de l'auto-dépli, construction carte Continuer + accordéons) — appelée par `_buildLevel1Body(grid1)` (Niveau 1) et la nouvelle `_buildLevel2Body(grid2)` (Niveau 2).
+   - `renderSections()` modifié : `#grid2` utilise désormais `_buildLevel2Body(grid2)` au lieu du `.filter(level===2).map(_buildThemeCard)` plat précédent.
+2. **`index.html`** : `.level1-body` renommée en `.categories-body` (classe générique), appliquée à la fois à `#grid1` ET `#grid2` — évite d'avoir deux classes séparées pour un comportement identique.
+3. **`style.css`** : `§20f` renommé `.level1-body` → `.categories-body` ; les règles `.continue-card`, `.theme-category`, `.category-*` (déjà génériques, sans préfixe "Niveau 1") sont réutilisées telles quelles, aucune règle dupliquée. Les surcharges mode sombre existantes (également génériques) s'appliquent automatiquement au Niveau 2 sans modification.
+
+**Traductions provisoires** : les 4 titres de catégorie en Oromo sont des traductions IA provisoires, à valider par Mussa Sembro comme le reste du lot du 28–29/08/2026.
+
+**Resynchronisation complète des 3 plans internes** :
+- `app.js` : +70 lignes nettes insérées en §7 (constante `THEME_CATEGORIES_L2` + généralisation des fonctions) ; toutes les ancres à partir de §8 recalculées par recherche directe dans le fichier final.
+- `index.html` : +6 lignes nettes (commentaires + classe renommée sur 2 lignes) ; ancres à partir de "Écran 2b" recalculées par recherche directe.
+- `style.css` : renommage de classe sans ajout/suppression de règle (836 accolades ouvrantes / 836 fermantes, identique avant/après) — **⚠️ point de vigilance signalé, pas corrigé dans cette étape** : le plan interne (`PLAN DU FICHIER`) de `style.css` présentait déjà un décalage important (~139 lignes) sur plusieurs sections antérieur à cette étape (dernière resynchronisation complète : 24/07/2026, §6.22) — non traité ici pour ne pas mélanger un correctif de documentation sans rapport avec cette étape fonctionnelle ; à prévoir dans une prochaine passe de resynchronisation dédiée.
+
+**Vérifications effectuées** :
+- Syntaxique : `node --check app.js`, `node --check data-fr.js`, `node --check data-or.js` — aucune erreur.
+- Miroir strict FR/OR : les 16 ids Niveau 2 confirmés identiques entre `data-fr.js` et `data-or.js` par diff programmatique.
+- Comptage programmatique **extrait directement du `app.js` final** (pas d'une recopie manuelle) : couverture exacte des 16 ids Niveau 2 par les 4 catégories de `THEME_CATEGORIES_L2` (aucun doublon, aucun oubli) ; Niveau 1 revérifié en parallèle par sécurité — 37/37 ids toujours corrects, aucune régression.
+- Comptage accolades CSS avant/après (`style.css`) : 836 / 836 dans les deux cas — aucune règle cassée ou dupliquée.
+- Variables CSS (`--c-*`) avant/après : 30 / 30, liste identique — aucune variable ajoutée par erreur.
+- Simulation de 3 scénarios utilisateur (apprenant neuf, mi-parcours avec 1 catégorie à 100% + 1 entamée, tout terminé à 100%), logique extraite directement du `app.js` final : cible "Continuer" et auto-dépli corrects dans les 3 cas.
+- Visuel : non testé dans un navigateur réel lors de cette session (pas d'accès DOM/rendu graphique dans l'environnement d'implémentation) — **à vérifier par Sébastien** avant mise en production (voir liste de vérifications ci-dessous).
+
+**Fichiers modifiés** : `app.js`, `index.html`, `style.css`, `README.md` (diagramme "User flow", historique), `Bilan_technique.md` (§6.28).
 
 ---
 
