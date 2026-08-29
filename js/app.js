@@ -1232,6 +1232,27 @@ function _stopCardAudio() {
   if (window.speechSynthesis) speechSynthesis.cancel();
 }
 
+/**
+ * 🆕 (29/08/2026, étape 6 méthode VACHÉBO) Point d'arrêt UNIQUE pour toute
+ * voix (TTS) et tout micro (SpeechRecognition) en cours, à appeler en tout
+ * début de CHAQUE navigation qui quitte ou recouvre l'écran actuellement
+ * affiché sans forcément passer par une transition d'écran complète
+ * (changement d'onglet, retournement de carte, flèches module suivant/
+ * précédent, icônes de nav rapide/nav basse, ouverture d'une modale par-
+ * dessus l'écran courant, tentative de fermeture d'app, passage en
+ * arrière-plan…).
+ *
+ * Combine _stopCardAudio() (voix + drill "répéter x fois", §3) et
+ * _stopRepeat() (micro, §13b) — centralisé ici plutôt que dupliqué à
+ * chaque point d'appel, pour qu'un futur point de navigation n'oublie pas
+ * l'un des deux. Sans effet si aucune voix ni micro n'est actif (les deux
+ * fonctions sous-jacentes sont déjà no-op dans ce cas).
+ */
+function _stopAllAudioAndMic() {
+  _stopCardAudio();
+  _stopRepeat();
+}
+
 
 /* ============================================================
    3b. RETOUR HAPTIQUE — _vibrateFeedback()
@@ -1349,12 +1370,19 @@ function _launchConfetti(isThreeStars) {
    résiduel, ou crash TTS.
 
    Solution : un unique écouteur visibilitychange sur document.
-   Dès que document.hidden passe à true, on appelle
-   speechSynthesis.cancel(). Cela :
+   Dès que document.hidden passe à true, on appelle désormais
+   _stopAllAudioAndMic() (🆕 29/08/2026, étape 6 — remplace l'ancien
+   appel direct à speechSynthesis.cancel() seul). Cela :
      • Coupe immédiatement la partie en cours.
-     • Invalide les setTimeout pendants : quand ils se déclenchent,
-       speakPart() appelle speechSynthesis.speak() mais le moteur
-       est déjà annulé — la lecture ne reprend pas.
+     • 🆕 Incrémente aussi _cardAudioToken (via _stopCardAudio()) :
+       un drill "répéter x fois" interrompu en plein milieu ne peut
+       plus relancer speak() de lui-même au retour au premier plan
+       (l'ancien appel direct à speechSynthesis.cancel() coupait bien
+       l'utterance en cours, mais n'invalidait pas le token — un
+       setTimeout de relance déjà programmé pouvait en théorie encore
+       se déclencher une fois l'app revenue au premier plan).
+     • 🆕 Coupe aussi le micro (via _stopRepeat()) si l'onglet Répète
+       était en train d'écouter au moment du passage en arrière-plan.
      • N'impacte pas la reprise : quand l'utilisateur revient sur
        l'app, il devra re-cliquer pour relancer manuellement
        (comportement cohérent avec le design actuel).
@@ -1367,7 +1395,7 @@ function _launchConfetti(isThreeStars) {
 if (window.speechSynthesis) {
   document.addEventListener('visibilitychange', () => {
     if (document.hidden) {
-      speechSynthesis.cancel();
+      _stopAllAudioAndMic(); // 🆕 (29/08/2026, étape 6) voix + micro + token drill
       /* Suspendre le watchdog TTS en arrière-plan pour économiser CPU/batterie */
       _stopTtsKeepAlive();
     } else {
@@ -2376,7 +2404,7 @@ function navGoModules() {
     openNavLockedModal();
     return;
   }
-  _stopCardAudio(); // annule un éventuel drill "répéter x fois" en quittant la leçon
+  _stopAllAudioAndMic(); // 🆕 (29/08/2026, étape 6) voix + micro (icône 📚 nav rapide / nav basse)
   const target = (_currentThemeLevel === 2) ? 'sections-level2' : 'sections-level1';
   /* Direction : depuis lesson = back, sinon forward */
   let current = null;
@@ -2392,7 +2420,7 @@ function navGoModules() {
  * Bouton retour de l'écran leçon → retourne au bon écran de niveau.
  */
 function lessonGoBack() {
-  _stopCardAudio(); // annule un éventuel drill "répéter x fois" en quittant la leçon
+  _stopAllAudioAndMic(); // 🆕 (29/08/2026, étape 6) voix + micro (bouton retour Leçon)
   const target = (_currentThemeLevel === 2) ? 'sections-level2' : 'sections-level1';
   renderSections(_currentThemeLevel);
   showScreen(target, 'back');
@@ -2404,6 +2432,20 @@ function lessonGoBack() {
  * bouton "Changer de langue" de la nav basse (navBtnLang).
  */
 function goToAccueil() {
+  _stopAllAudioAndMic(); // 🆕 (29/08/2026, étape 6)
+  showScreen('app-launcher', 'back');
+}
+
+/**
+ * 🆕 (29/08/2026, étape 6) Bouton "Changer de langue" de la nav basse
+ * (navBtnLang). Remplace l'ancien onclick inline "showScreen('app-launcher',
+ * 'back')" dans index.html — inline, il ne pouvait pas couper voix/micro
+ * avant la navigation. Même destination que goToAccueil() (icône 🏠 nav
+ * rapide), déclencheur différent : fonction dédiée plutôt que de renommer
+ * goToAccueil() partout, pour ne pas toucher aux autres onclick existants.
+ */
+function navGoLauncher() {
+  _stopAllAudioAndMic();
   showScreen('app-launcher', 'back');
 }
 
@@ -2427,6 +2469,7 @@ function goToAccueil() {
  * (icônes ❓ de #sections-level1/2 et #lesson).
  */
 function goToGuide() {
+  _stopAllAudioAndMic(); // 🆕 (29/08/2026, étape 6)
   showScreen('home', 'back');
 }
 
@@ -2445,6 +2488,8 @@ function goToGuide() {
  * localise tout son contenu texte dans la langue de l'apprenant.
  */
 function openQuitModal() {
+  _stopAllAudioAndMic(); // 🆕 (29/08/2026, étape 6) modale par-dessus l'écran courant
+
   /* Comme _openConfirmModal() : si la modale Infos/Crédits est
      ouverte en dessous, on la referme pour éviter un empilement. */
   const creditsModal = document.getElementById('credits-modal');
@@ -2529,7 +2574,7 @@ function quitAppRestart() {
  */
 function quitAppClose() {
   closeQuitModal();
-  _stopCardAudio(); // coupe une éventuelle lecture TTS/audio en cours
+  _stopAllAudioAndMic(); // 🆕 (29/08/2026, étape 6) voix + micro (déjà coupés à l'ouverture de la modale, gardé par sécurité)
 
   try { window.close(); } catch (e) { /* ignoré : voir commentaire ci-dessus */ }
 
@@ -3192,6 +3237,7 @@ function openTheme(id, dir) {
     );
     /* Le clic du badge ramène à la liste du bon niveau */
     badge.onclick = () => {
+      _stopAllAudioAndMic(); // 🆕 (29/08/2026, étape 6) voix + micro (badge Niv. cliquable)
       const target = CT.level === 2 ? 'sections-level2' : 'sections-level1';
       renderSections(CT.level);
       showScreen(target, 'back');
@@ -3369,10 +3415,27 @@ function switchTab(tab) {
  *                                     en plus du PDF (sinon, PDF seul → libellé dédié)
  * @returns {string}
  */
+/**
+ * Construit le bouton bascule "⚙️ Réglages audio + PDF" (repli/dépli),
+ * OU — si le panneau ne contiendrait QUE l'export PDF, sans aucun
+ * réglage audio (Quiz Alphabet, Quiz Dialogue) — un bouton PDF direct
+ * qui déclenche l'export au premier tap, sans repli/dépli intermédiaire :
+ * ouvrir un panneau pour n'y trouver qu'un seul bouton qui refait la
+ * même action ferait doublon (🆕 29/08/2026, retour recettage).
+ * Le panneau (quand il existe) est toujours injecté dans le DOM (même
+ * fermé) : l'attribut `hidden` le retire de l'affichage ET de l'arbre
+ * d'accessibilité tant qu'il n'est pas ouvert, plutôt que de le
+ * construire à la demande.
+ * @param {string}  innerHTML        - Contenu du panneau, déjà construit par l'appelant.
+ *                                     Ignoré quand hasAudioControls vaut false.
+ * @param {boolean} hasAudioControls - true si le panneau contient vitesse/badge/répétition
+ *                                     en plus du PDF (sinon, PDF seul → bouton direct)
+ * @returns {string}
+ */
 function _buildAudioSettingsHTML(innerHTML, hasAudioControls) {
-  const label = hasAudioControls
-    ? L('⚙️ Qindaa\'ina sagalee + PDF', '⚙️ Réglages audio + PDF')
-    : L('📄 Waraqaa PDF buusi', '📄 Télécharger (PDF)');
+  if (!hasAudioControls) return _buildDirectPdfBtnHTML();
+
+  const label = L('⚙️ Qindaa\'ina sagalee + PDF', '⚙️ Réglages audio + PDF');
   const open = _audioSettingsOpen;
   return '<div class="audio-settings">'
     + '<button type="button" class="audio-settings-toggle" id="audioSettingsToggle" '
@@ -3385,6 +3448,27 @@ function _buildAudioSettingsHTML(innerHTML, hasAudioControls) {
     + innerHTML
     + '</div>'
     + '</div>';
+}
+
+/**
+ * Bouton PDF direct — même habillage visuel que .audio-settings-toggle
+ * (pour rester cohérent d'un onglet à l'autre) mais SANS chevron ni
+ * aria-expanded/aria-controls, puisqu'il n'ouvre rien : un tap déclenche
+ * directement _exportVocab() ou _exportSituation() selon CT.type. Voir
+ * _buildLessonPdfBtnHTML() ci-dessous pour le bouton PDF "normal"
+ * (utilisé, lui, DANS un panneau qui contient aussi d'autres réglages).
+ * @returns {string}
+ */
+function _buildDirectPdfBtnHTML() {
+  if (!CT) return '';
+  const isDialog = CT.type === 'dialog';
+  const label = isDialog
+    ? L('Galmee haala kana buusi (PDF)', 'Télécharger cette situation (PDF)')
+    : L('Moojuula kana buusi (PDF)',     'Télécharger ce module (PDF)');
+  return '<button type="button" class="audio-settings-toggle" '
+    + 'onclick="' + (isDialog ? '_exportSituation()' : '_exportVocab()') + '">'
+    + '<span>📄 ' + esc(label) + '</span>'
+    + '</button>';
 }
 
 /**
@@ -3586,6 +3670,7 @@ function pickAlpha(i) {
 function flipCard() {
   const fc = document.getElementById('fc');
   if (!fc) return;
+  _stopAllAudioAndMic(); // 🆕 (29/08/2026, étape 6) coupe une voix en cours au retournement
   fc.classList.toggle('flipped');
 }
 
@@ -3822,7 +3907,7 @@ function renderQuiz10() {
       + '<button class="retry-btn" style="background:#888" onclick="q10Step=0;q10Score=0;q10Answered=false;_q10Questions=null;renderQuiz10()">' + r.retry + '</button>'
       + (isSuccess ? '<button class="retry-btn" onclick="renderSections(_currentThemeLevel);lessonGoBack()">' + r.finish + '</button>' : '')
       + '</div></div>'
-      + _buildAudioSettingsHTML(_buildLessonPdfBtnHTML(), false);
+      + _buildAudioSettingsHTML(null, false);
     renderSections(_currentThemeLevel || 1);
     return;
   }
@@ -3849,7 +3934,7 @@ function renderQuiz10() {
       + '<div class="quiz-options" style="grid-template-columns:1fr 1fr;gap:12px">' + opts + '</div>'
       + '<div class="quiz-feedback" id="q10fb"></div>'
       + '</div>'
-      + _buildAudioSettingsHTML(_buildLessonPdfBtnHTML(), false);
+      + _buildAudioSettingsHTML(null, false);
     setTimeout(() => { playAlphaAudio(q.audio); }, 400);
     q10Answered = false;
     return;
@@ -4856,7 +4941,7 @@ function renderDialogQuiz() {
       + '<button class="retry-btn" style="background:#888" onclick="dqStep=0;dqScore=0;dqAnswered=false;renderDialogQuiz()">' + r.retry + '</button>'
       + (isSuccess ? '<button class="retry-btn" onclick="renderSections(_currentThemeLevel);lessonGoBack()">' + r.finish + '</button>' : '')
       + '</div></div>'
-      + _buildAudioSettingsHTML(_buildLessonPdfBtnHTML(), false);
+      + _buildAudioSettingsHTML(null, false);
     renderSections(_currentThemeLevel || 1);
     return;
   }
@@ -4875,7 +4960,7 @@ function renderDialogQuiz() {
     + '<div class="quiz-options" style="grid-template-columns:1fr">' + opts + '</div>'
     + '<div class="quiz-feedback" id="dqfb"></div>'
     + '</div>'
-    + _buildAudioSettingsHTML(_buildLessonPdfBtnHTML(), false);
+    + _buildAudioSettingsHTML(null, false);
   dqAnswered = false;
 }
 
@@ -5220,6 +5305,7 @@ function showOnboardingGuide() {
     openNavLockedModal();
     return;
   }
+  _stopAllAudioAndMic(); // 🆕 (29/08/2026, étape 6) voix + micro (bouton "Guide" nav basse)
   showScreen('home');
 }
 
@@ -5228,6 +5314,8 @@ function showOnboardingGuide() {
    ============================================================ */
 
 function showCredits() {
+  _stopAllAudioAndMic(); // 🆕 (29/08/2026, étape 6) modale par-dessus l'écran courant
+
   /* Mise à jour bilingue du contenu selon le mode actif */
   const titleEl = document.getElementById('credits-modal-title');
   const bodyEl  = document.getElementById('credits-modal-body');

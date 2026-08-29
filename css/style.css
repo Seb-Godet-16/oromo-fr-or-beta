@@ -5409,7 +5409,9 @@ footer a:hover{text-decoration:underline}
    ══════════════════════════════════════════════════════════════════ */
 
 .audio-settings{
-  margin-top:10px;
+  /* Pas de marge ici : portée par .audio-settings-toggle (voir plus bas),
+     pour que le bouton PDF direct (_buildDirectPdfBtnHTML, sans wrapper
+     .audio-settings) reste espacé de la même façon que le bouton bascule. */
 }
 
 /* Bouton bascule — même langage visuel que .category-summary (§23,
@@ -5420,6 +5422,7 @@ footer a:hover{text-decoration:underline}
   display:flex;
   align-items:center;
   justify-content:center;
+  margin-top:10px;
   gap:6px;
   width:100%;
   background:var(--c-footer-bg);
