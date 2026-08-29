@@ -218,6 +218,12 @@ let q10Answered  = false;   // Quiz 10 questions : évite le double-clic
 let _q10Questions = null;   // Cache des questions générées pour le quiz en cours
                             // (évite de re-mélanger si l'utilisateur revient sur l'onglet)
 
+let _audioSettingsOpen = false; // 🆕 (29/08/2026) Panneau "⚙️ Réglages audio" (§8b) : ouvert/fermé.
+                            // Remis à false dans switchTab() — jamais mémorisé d'un onglet
+                            // ou d'un thème à l'autre. Persiste en revanche à travers les
+                            // re-rendus internes à UN MÊME onglet (carte suivante, question
+                            // de quiz suivante…) puisque ceux-ci ne passent pas par switchTab().
+
 /* ── Progression persistante ── */
 let done = [];              // Tableau d'objets { id, stars } sauvegardé dans localStorage
 let openedThemes = [];      // 🆕 Tableau d'ids de thèmes déjà ouverts au moins une fois (voir OPENED_KEY)
@@ -3253,22 +3259,11 @@ function openTheme(id, dir) {
   }).join('');
 
 
-  /* ── Bouton d'export PDF : afficher le bon selon le type de thème ──
-     Visibilité gérée via .is-hidden (définie dans style.css §25)
-     Le label reste simplement "PDF" dans les deux cas.              */
-  const btnVocab = document.getElementById('lessonExportVocab');
-  const btnSit   = document.getElementById('lessonExportSit');
-  if (btnVocab && btnSit) {
-    if (CT.type === 'dialog') {
-      btnVocab.classList.add('is-hidden');
-      btnSit.classList.remove('is-hidden');
-      btnSit.title = L('Galmee haala kana buusi', 'Télécharger cette situation (PDF)');
-    } else {
-      btnSit.classList.add('is-hidden');
-      btnVocab.classList.remove('is-hidden');
-      btnVocab.title = L('Moojuula kana buusi', 'Télécharger ce module (PDF)');
-    }
-  }
+  /* 🆕 (29/08/2026) Le bouton d'export PDF n'est plus dans le header (2
+     boutons statiques #lessonExportVocab/#lessonExportSit, retirés de
+     index.html) : il est désormais construit dynamiquement par
+     _buildLessonPdfBtnHTML() (§8b) et injecté dans le panneau "⚙️
+     Réglages audio" de CHAQUE onglet qui en affiche un — voir §6.29. */
 
   switchTab(tabs[0].k);
 
@@ -3307,6 +3302,13 @@ function switchTab(tab) {
   const lessonEl = document.getElementById('lesson');
   if (lessonEl) lessonEl.classList.toggle('mode-cartes', tab === 'flash');
 
+  /* 🆕 (29/08/2026) Panneau "⚙️ Réglages audio" (§8b) : replié à CHAQUE
+     changement d'onglet (et donc aussi à l'ouverture d'une leçon, cette
+     fonction étant appelée par openTheme() sur le 1er onglet) — jamais
+     d'état mémorisé d'un onglet à l'autre. */
+  _audioSettingsOpen = false;
+  if (lessonEl) lessonEl.classList.remove('audio-settings-open');
+
   if (tab !== 'repeat') _stopRepeat();
   if (tab !== 'flash')  _stopCardAudio(); // annule un drill "répéter x fois" si on quitte l'onglet Cartes Flash
 
@@ -3331,6 +3333,107 @@ function switchTab(tab) {
 
 
 /* ============================================================
+   8b. 🆕 (29/08/2026) PANNEAU "⚙️ RÉGLAGES AUDIO" — repli/dépli
+   ============================================================
+   Regroupe badge de qualité vocale, vitesse de lecture, boutons de
+   répétition et export PDF — auparavant toujours visibles et répartis
+   sur plusieurs rangées sous les onglets, ce qui surchargeait l'écran
+   dès l'ouverture d'une leçon (méthode VACHÉBO, étape 5 — voir Bilan
+   technique §6.29).
+
+   Widget partagé par TOUS les onglets qui affichent au moins un de ces
+   réglages : Cartes (+ Alphabet), Quiz (standard, Alphabet et le/les
+   écran(s) de résultat), Vocabulaire, Dialogue, Répète.
+
+   Le bouton PDF vivait auparavant dans le header de leçon
+   (.lesson-header-bot, 2 boutons statiques toujours visibles quel que
+   soit l'onglet actif). Il est désormais construit dynamiquement par
+   _buildLessonPdfBtnHTML() et injecté DANS le panneau de chaque onglet
+   — même disponibilité qu'avant (accessible depuis n'importe quel
+   onglet d'une leçon), simplement à un tap de plus.
+
+   État : _audioSettingsOpen (§1), remis à false dans switchTab() —
+   donc à CHAQUE changement d'onglet ET à l'ouverture d'une leçon.
+   ============================================================ */
+
+/**
+ * Construit le bouton bascule "⚙️ Réglages audio" (ou "📄 Télécharger
+ * (PDF)" si le panneau ne contient QUE l'export, sans aucun réglage
+ * audio — cas des Quiz Alphabet/Dialogue, qui n'ont pas de vitesse ni
+ * de badge de voix) + son panneau, replié par défaut.
+ * Le panneau est toujours injecté dans le DOM (même fermé) : l'attribut
+ * `hidden` le retire de l'affichage ET de l'arbre d'accessibilité tant
+ * qu'il n'est pas ouvert, plutôt que de le construire à la demande.
+ * @param {string}  innerHTML        - Contenu du panneau, déjà construit par l'appelant
+ * @param {boolean} hasAudioControls - true si le panneau contient vitesse/badge/répétition
+ *                                     en plus du PDF (sinon, PDF seul → libellé dédié)
+ * @returns {string}
+ */
+function _buildAudioSettingsHTML(innerHTML, hasAudioControls) {
+  const label = hasAudioControls
+    ? L('⚙️ Qindaa\'ina sagalee + PDF', '⚙️ Réglages audio + PDF')
+    : L('📄 Waraqaa PDF buusi', '📄 Télécharger (PDF)');
+  const open = _audioSettingsOpen;
+  return '<div class="audio-settings">'
+    + '<button type="button" class="audio-settings-toggle" id="audioSettingsToggle" '
+    + 'aria-expanded="' + (open ? 'true' : 'false') + '" aria-controls="audioSettingsPanel" '
+    + 'onclick="_toggleAudioSettings()">'
+    + '<span>' + esc(label) + '</span>'
+    + '<span class="audio-settings-chevron" aria-hidden="true">▾</span>'
+    + '</button>'
+    + '<div id="audioSettingsPanel" class="audio-settings-panel"' + (open ? '' : ' hidden') + '>'
+    + innerHTML
+    + '</div>'
+    + '</div>';
+}
+
+/**
+ * Ouvre/ferme le panneau Réglages audio et synchronise `aria-expanded`.
+ * En mode Cartes plein écran (#lesson.mode-cartes, sans scroll — voir
+ * style.css §28), le panneau ouvert peut dépasser la hauteur fixe de
+ * l'écran : une classe compagnon posée sur #lesson (.audio-settings-open)
+ * réactive alors temporairement le scroll de .lesson-body plutôt que de
+ * recalculer une hauteur de carte figée — évite de reproduire le type de
+ * régression d'affichage déjà rencontré sur cette mise en page (voir
+ * Bilan technique §6.27, étape équivalente sur les catégories repliables).
+ * Sans effet en dehors du mode Cartes (.lesson-body y est déjà scrollable
+ * par défaut).
+ */
+function _toggleAudioSettings() {
+  const btn   = document.getElementById('audioSettingsToggle');
+  const panel = document.getElementById('audioSettingsPanel');
+  if (!btn || !panel) return;
+  _audioSettingsOpen = !_audioSettingsOpen;
+  btn.setAttribute('aria-expanded', String(_audioSettingsOpen));
+  panel.hidden = !_audioSettingsOpen;
+  const lessonEl = document.getElementById('lesson');
+  if (lessonEl) lessonEl.classList.toggle('audio-settings-open', _audioSettingsOpen);
+}
+
+/**
+ * Bouton d'export PDF unique du thème ouvert, désormais intégré au
+ * panneau Réglages audio de chaque onglet plutôt qu'au header de leçon.
+ * Choisit la bonne cible (module vocabulaire ou situation de dialogue)
+ * selon CT.type — même logique que l'ancien code de openTheme() qui
+ * bascule .is-hidden entre les 2 boutons désormais retirés du HTML.
+ * Réutilise mot pour mot les libellés déjà traduits qui servaient de
+ * `.title` à ces anciens boutons.
+ * @returns {string}
+ */
+function _buildLessonPdfBtnHTML() {
+  if (!CT) return '';
+  if (CT.type === 'dialog') {
+    const lbl = L('Galmee haala kana buusi', 'Télécharger cette situation (PDF)');
+    return '<button type="button" class="btn-pdf-pill audio-settings-pdf-btn" '
+      + 'onclick="_exportSituation()" aria-label="' + _escAttr(lbl) + '">📄 PDF</button>';
+  }
+  const lbl = L('Moojuula kana buusi', 'Télécharger ce module (PDF)');
+  return '<button type="button" class="btn-pdf-pill audio-settings-pdf-btn" '
+    + 'onclick="_exportVocab()" aria-label="' + _escAttr(lbl) + '">📄 PDF</button>';
+}
+
+
+/* ============================================================
    9. CARTES FLASH — VOCABULAIRE INTERACTIF
    ============================================================
    Affiche les mots recto/verso avec animation de retournement.
@@ -3351,8 +3454,6 @@ function renderFlash() {
       '<div class="section-label">'
       + L('Qubee dhaggeeffachuuf irratti cuqaasi !', 'Cliquez sur une lettre pour l\'écouter !')
       + '</div>'
-      + '<div id="fcVoiceBadge" class="fc-voice-badge-wrap"></div>'
-      + '<div class="tab-tts-row-wrap">' + _buildTtsRateControlsHTML() + '</div>'
       + '<div class="alpha-grid">' + words.map((c, i) => {
           const bigLetter   = c[keys.src];
           const smallName   = c[keys.tgt];
@@ -3365,7 +3466,13 @@ function renderFlash() {
             + '</div>';
         }).join('')
       + '</div>'
-      + '<div id="alphaDetail" class="alpha-detail">' + buildAlphaDetail(card) + '</div>';
+      + '<div id="alphaDetail" class="alpha-detail">' + buildAlphaDetail(card) + '</div>'
+      + _buildAudioSettingsHTML(
+          '<div id="fcVoiceBadge" class="fc-voice-badge-wrap"></div>'
+          + _buildTtsRateControlsHTML()
+          + _buildLessonPdfBtnHTML(),
+          true
+        );
     _updateCardVoiceBadge();
     return;
   }
@@ -3414,7 +3521,6 @@ function renderFlash() {
 
   document.getElementById('tabContent').innerHTML =
     '<div class="section-label">' + sectionLabel + '</div>'
-    + '<div id="fcVoiceBadge" class="fc-voice-badge-wrap"></div>'
     + '<div class="fc-wrap"><div class="fc" id="fc" role="button" tabindex="0" '
     + 'aria-label="' + _escAttr(flipAria) + '" onclick="flipCard()">'
     + '<div class="fc-front">' + frontContent + '</div>'
@@ -3426,15 +3532,20 @@ function renderFlash() {
     + '<button onclick="nextCard()">' + nextLabel + '</button>'
     + '</div>'
     + '<div class="fc-audio-wrap">'
-    + _buildTtsRateControlsHTML()
     + '<button id="fcAudioBtn" class="audio-btn-big" onclick="playCardAudio(1)">' + audioBtn + '</button>'
-    + '<div class="tts-row tts-repeat-row">'
-    + '<span class="tts-row-label">🔁 ' + esc(repeatLabel) + '</span>'
-    + '<div class="tts-pills">'
-    + '<button type="button" id="fcRepeat2" class="tts-repeat-pill" aria-label="' + _escAttr(repeat2Aria) + '" onclick="playCardAudio(2)">×2</button>'
-    + '<button type="button" id="fcRepeat3" class="tts-repeat-pill" aria-label="' + _escAttr(repeat3Aria) + '" onclick="playCardAudio(3)">×3</button>'
-    + '</div>'
-    + '</div>'
+    + _buildAudioSettingsHTML(
+        '<div id="fcVoiceBadge" class="fc-voice-badge-wrap"></div>'
+        + _buildTtsRateControlsHTML()
+        + '<div class="tts-row tts-repeat-row">'
+        + '<span class="tts-row-label">🔁 ' + esc(repeatLabel) + '</span>'
+        + '<div class="tts-pills">'
+        + '<button type="button" id="fcRepeat2" class="tts-repeat-pill" aria-label="' + _escAttr(repeat2Aria) + '" onclick="playCardAudio(2)">×2</button>'
+        + '<button type="button" id="fcRepeat3" class="tts-repeat-pill" aria-label="' + _escAttr(repeat3Aria) + '" onclick="playCardAudio(3)">×3</button>'
+        + '</div>'
+        + '</div>'
+        + _buildLessonPdfBtnHTML(),
+        true
+      )
     + '</div>';
 
   /* Badge de voix TTS — se connecte à _resolveOromoVoice(), même résolveur
@@ -3710,7 +3821,8 @@ function renderQuiz10() {
       + '<div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:14px">'
       + '<button class="retry-btn" style="background:#888" onclick="q10Step=0;q10Score=0;q10Answered=false;_q10Questions=null;renderQuiz10()">' + r.retry + '</button>'
       + (isSuccess ? '<button class="retry-btn" onclick="renderSections(_currentThemeLevel);lessonGoBack()">' + r.finish + '</button>' : '')
-      + '</div></div>';
+      + '</div></div>'
+      + _buildAudioSettingsHTML(_buildLessonPdfBtnHTML(), false);
     renderSections(_currentThemeLevel || 1);
     return;
   }
@@ -3736,7 +3848,8 @@ function renderQuiz10() {
       + L('Dhaggeeffachuuf cuqaasi', 'Cliquez pour écouter') + '</div>'
       + '<div class="quiz-options" style="grid-template-columns:1fr 1fr;gap:12px">' + opts + '</div>'
       + '<div class="quiz-feedback" id="q10fb"></div>'
-      + '</div>';
+      + '</div>'
+      + _buildAudioSettingsHTML(_buildLessonPdfBtnHTML(), false);
     setTimeout(() => { playAlphaAudio(q.audio); }, 400);
     q10Answered = false;
     return;
@@ -3750,14 +3863,17 @@ function renderQuiz10() {
 
   document.getElementById('tabContent').innerHTML =
     '<div class="dialog-quiz-wrap">'
-    /* 🆕 (08/07/2026) Barre de vitesse — sans risque ici : contrairement au
-       Quiz Alphabet, l'audio de ce quiz ne joue qu'APRÈS la réponse (voir
-       checkQ10), donc ralentir ne peut pas avantager l'apprenant sur la
-       question en cours. Voir commentaire §3a3 plus haut dans ce fichier. */
-    + '<div class="tab-tts-row-wrap">' + _buildTtsRateControlsHTML() + '</div>'
     + '<div class="quiz-q"><div class="q-text">' + qStdLabel + '<br><b>' + q.q + '</b></div></div>'
     + '<div class="quiz-options" style="grid-template-columns:1fr">' + stdOpts + '</div>'
     + '<div class="quiz-feedback" id="q10fb"></div>'
+    /* 🆕 (08/07/2026) Barre de vitesse — sans risque ici : contrairement au
+       Quiz Alphabet, l'audio de ce quiz ne joue qu'APRÈS la réponse (voir
+       checkQ10), donc ralentir ne peut pas avantager l'apprenant sur la
+       question en cours. Voir commentaire §3a3 plus haut dans ce fichier.
+       🆕 (29/08/2026) Regroupée avec le PDF dans le panneau Réglages
+       audio (§8b) plutôt qu'affichée en permanence au-dessus de la
+       question. */
+    + _buildAudioSettingsHTML(_buildTtsRateControlsHTML() + _buildLessonPdfBtnHTML(), true)
     + '</div>';
   q10Answered = false;
 }
@@ -3857,11 +3973,11 @@ function renderDialog() {
 
   document.getElementById('tabContent').innerHTML =
     '<div class="sit-nav">' + sitBtns + '</div>'
-    + '<div class="tab-tts-row-wrap">' + _buildTtsRateControlsHTML() + '</div>'
     + '<div class="dialogue-box">'
     + '<div class="scene-img-big">' + sit.img + '</div>'
     + '<div class="bubble-wrap">' + bubbles + '</div>'
     + '</div>'
+    + _buildAudioSettingsHTML(_buildTtsRateControlsHTML() + _buildLessonPdfBtnHTML(), true)
     + (CT.quiz?.length > 0
       ? '<div class="action-row">'
           + '<button class="btn-start-quiz" onclick="switchTab(\'dquiz\')">'
@@ -3920,8 +4036,8 @@ function renderVocab() {
     + L('📚 Jechoota murteessoo — Sagalee dhaggeeffachuuf cuqaasi !',
         '📚 Lexique essentiel — Cliquez pour écouter l\'Oromo !')
     + '</div>'
-    + '<div class="tab-tts-row-wrap">' + _buildTtsRateControlsHTML() + '</div>'
     + '<div class="vocab-grid">' + chips + '</div>'
+    + _buildAudioSettingsHTML(_buildTtsRateControlsHTML() + _buildLessonPdfBtnHTML(), true)
     + '</div>'
     + (CT.quiz?.length > 0
       ? '<div class="action-row">'
@@ -4389,16 +4505,25 @@ function _renderRepeatUI(altLangMsg) {
       + '</div>';
   }
 
+  /* 🆕 (29/08/2026) Les 2 badges (🔊 voix + 🎙️ micro) et la vitesse,
+     auparavant toujours visibles en haut de l'onglet, sont désormais
+     regroupés avec le PDF dans le panneau Réglages audio (§8b), placé
+     APRÈS l'exercice (carte / feedback / contrôles / progression) pour
+     ne pas retarder l'affichage du contenu actif de la répétition. */
   document.getElementById('tabContent').innerHTML =
     altBanner
     + introLine
-    + '<div id="repeatVoiceBadge" class="repeat-voice-badge-wrap"></div>'
-    + langInfo
-    + '<div class="tab-tts-row-wrap">' + _buildTtsRateControlsHTML() + '</div>'
     + '<div id="repeat-card" class="repeat-card"></div>'
     + '<div id="repeat-feedback" class="repeat-feedback"></div>'
     + '<div id="repeat-controls" class="repeat-controls"></div>'
-    + '<div id="repeat-progress" class="repeat-progress-wrap"></div>';
+    + '<div id="repeat-progress" class="repeat-progress-wrap"></div>'
+    + _buildAudioSettingsHTML(
+        '<div id="repeatVoiceBadge" class="repeat-voice-badge-wrap"></div>'
+        + langInfo
+        + _buildTtsRateControlsHTML()
+        + _buildLessonPdfBtnHTML(),
+        true
+      );
 
   _updateRepeatVoiceBadge();
   _renderRepeatCard();
@@ -4730,7 +4855,8 @@ function renderDialogQuiz() {
       + '<div style="display:flex;gap:8px;justify-content:center;margin-top:14px;flex-wrap:wrap">'
       + '<button class="retry-btn" style="background:#888" onclick="dqStep=0;dqScore=0;dqAnswered=false;renderDialogQuiz()">' + r.retry + '</button>'
       + (isSuccess ? '<button class="retry-btn" onclick="renderSections(_currentThemeLevel);lessonGoBack()">' + r.finish + '</button>' : '')
-      + '</div></div>';
+      + '</div></div>'
+      + _buildAudioSettingsHTML(_buildLessonPdfBtnHTML(), false);
     renderSections(_currentThemeLevel || 1);
     return;
   }
@@ -4748,7 +4874,8 @@ function renderDialogQuiz() {
     + '<div class="quiz-q"><div class="q-text">' + qLabel + '<br><b>' + q.q + '</b></div></div>'
     + '<div class="quiz-options" style="grid-template-columns:1fr">' + opts + '</div>'
     + '<div class="quiz-feedback" id="dqfb"></div>'
-    + '</div>';
+    + '</div>'
+    + _buildAudioSettingsHTML(_buildLessonPdfBtnHTML(), false);
   dqAnswered = false;
 }
 

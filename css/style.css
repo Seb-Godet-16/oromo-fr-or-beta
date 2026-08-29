@@ -74,6 +74,9 @@
  * ║   §ANTISPAM E-mail affiché à l'envers (CSS RTL)  ligne  5051  ║
  * ║   §SPEAKING Feedback visuel bouton audio (TTS)    ligne  5078  ║
  * ║   §29       Correctifs accessibilité mode sombre  ligne  5136  ║
+ * ║   §30    🆕 Panneau "⚙️ Réglages audio" (écran   ligne  5401  ║
+ * ║             Leçon, repli/dépli — voir app.js §8b               ║
+ * ║             et Bilan_technique.md §6.29)                        ║
  * ║  ── Plan resynchronisé le 23/07/2026 : ajout d'une navigation    ║
  * ║  rapide (🏠❓📚) en haut de CHAQUE écran (jusqu'ici réservée à    ║
  * ║  Sections) + bouton 🚪 Quitter partout et sa modale dédiée       ║
@@ -1171,7 +1174,9 @@ html.theme-french .btn-reset-theme:hover{
 
 /* ── Lesson header : 2 lignes ─────────────────────────────────────
    Ligne 1 (.lesson-header-top)  : ← badge emoji titre
-   Ligne 2 (.lesson-header-bot)  : bouton PDF  +  flèches nav
+   Ligne 2 (.lesson-header-bot)  : flèches nav (alignées à droite)
+   🆕 (29/08/2026) Le bouton PDF a quitté cette ligne — voir §8b dans
+   app.js et .audio-settings ci-dessous (§30).
    ────────────────────────────────────────────────────────────────── */
 .lesson-header{
   background:var(--c-grad-lesson);
@@ -1206,11 +1211,12 @@ html.theme-french .btn-reset-theme:hover{
   margin:0;
 }
 
-/* Ligne 2 : bouton PDF à gauche, flèches à droite */
+/* Ligne 2 : flèches de navigation, alignées à droite (seul élément
+   restant depuis que le bouton PDF est passé dans .audio-settings) */
 .lesson-header-bot{
   display:flex;
   align-items:center;
-  justify-content:space-between;
+  justify-content:flex-end;
   gap:8px;
 }
 
@@ -1675,13 +1681,10 @@ html.theme-french .btn-reset-theme:hover{
   margin-left:2px;
 }
 
-/* 🆕 (07/07/2026) Enrobage du widget de vitesse partagé quand il est inséré
-   en haut d'un onglet (Alphabet, Lexique, Dialogue, Répète) plutôt que
-   directement sous une carte flash comme à l'origine — juste un peu d'air
-   avant le contenu qui suit. */
-.tab-tts-row-wrap{
-  margin-bottom:12px;
-}
+/* 🆕 (29/08/2026) .tab-tts-row-wrap (enrobage du widget de vitesse en
+   haut d'onglet) a été retirée : ce rôle est repris par le padding de
+   .audio-settings-panel (§30), la vitesse étant désormais à l'intérieur
+   du panneau "⚙️ Réglages audio" sur tous les onglets concernés. */
 
 /* Surlignage mot par mot pendant la lecture TTS (voir _attachHighlighting
    dans app.js). Dégradé silencieux si l'événement 'boundary' n'est pas
@@ -4042,19 +4045,19 @@ footer a:hover{text-decoration:underline}
    §25 — BOUTONS D'EXPORT PDF
    ══════════════════════════════════════════════════════════════════
    .btn-export-pdf : bouton générique (ancien style, conservé pour compatibilité)
-   .btn-pdf-pill   : nouveau pill compact intégré dans les headers
-                     (home-start-sticky pour le guide, lesson-header pour les leçons)
-
-   VISIBILITÉ :
-   Les boutons #lessonExportVocab et #lessonExportSit portent la
-   classe .is-hidden par défaut. app.js retire cette classe sur le bon
-   bouton via classList.remove('is-hidden') selon le type de thème.
+   .btn-pdf-pill   : pill compact réutilisé à 2 endroits :
+                     - home-start-sticky (bouton du Guide, toujours visible)
+                     - le panneau "⚙️ Réglages audio" de l'écran Leçon (§8b
+                       dans app.js), un par onglet, construit dynamiquement
+                       par _buildLessonPdfBtnHTML() selon CT.type — plus de
+                       boutons statiques ni de bascule .is-hidden ici depuis
+                       le 29/08/2026 (voir §30 .audio-settings ci-dessous).
    ══════════════════════════════════════════════════════════════════ */
 
 /* Classe utilitaire — masque un élément sans inline style */
 .is-hidden{display:none!important}
 
-/* ── Bouton PDF pill — ligne basse du header leçon ──────────────────
+/* ── Bouton PDF pill — réutilisé dans .audio-settings-panel ──────────
    Fond blanc opaque, texte couleur thème, ombre légère.
    Compact mais clairement lisible — affiche uniquement "📄 PDF".    */
 .btn-pdf-pill{
@@ -5391,4 +5394,85 @@ footer a:hover{text-decoration:underline}
   .repeat-unavailable{
     background:#eef0f4;
   }
+}
+
+
+/* ══════════════════════════════════════════════════════════════════
+   §30 — 🆕 (29/08/2026) PANNEAU "⚙️ RÉGLAGES AUDIO"  (écran Leçon)
+   ══════════════════════════════════════════════════════════════════
+   Regroupe badge de qualité vocale, vitesse de lecture, boutons de
+   répétition et export PDF derrière un bouton unique replié par
+   défaut — voir app.js §8b et Bilan_technique.md §6.29 (étape 5
+   VACHÉBO). Réutilise .tts-row / .tts-pills / .fc-voice-badge-wrap /
+   .repeat-voice-badge-wrap / .btn-pdf-pill déjà définis plus haut :
+   seuls le bouton bascule et son enrobage sont nouveaux ici.
+   ══════════════════════════════════════════════════════════════════ */
+
+.audio-settings{
+  margin-top:10px;
+}
+
+/* Bouton bascule — même langage visuel que .category-summary (§23,
+   accordéon de catégories de l'écran Sections) : fond neutre, chevron
+   qui pivote à l'ouverture. En <button> (et non <details>) pour piloter
+   explicitement aria-expanded/aria-controls. */
+.audio-settings-toggle{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
+  width:100%;
+  background:var(--c-footer-bg);
+  border:1px solid var(--c-footer-border);
+  border-radius:50px;
+  color:var(--c-primary);
+  font-size:.78rem;
+  font-weight:700;
+  font-family:inherit;
+  padding:8px 14px;
+  cursor:pointer;
+  transition:background .15s;
+}
+.audio-settings-toggle:hover{background:var(--c-card-progress-bg)}
+.audio-settings-toggle:active{transform:scale(.98)}
+
+.audio-settings-chevron{
+  font-size:.7rem;
+  color:#aaa;
+  transition:transform .2s;
+  flex-shrink:0;
+}
+.audio-settings-toggle[aria-expanded="true"] .audio-settings-chevron{
+  transform:rotate(180deg);
+}
+
+/* Panneau — fond légèrement distinct de la page pour bien délimiter
+   la zone de réglages une fois ouverte. */
+.audio-settings-panel{
+  margin-top:8px;
+  padding:12px;
+  background:var(--c-footer-bg);
+  border-radius:14px;
+}
+.audio-settings-panel[hidden]{display:none}
+
+/* Le badge de voix / la vitesse / la répétition gardent leur propre
+   marge basse (héritée de .fc-voice-badge-wrap, .tts-row…) — seul le
+   bouton PDF, en dernier dans le panneau, a besoin d'un peu d'air. */
+.audio-settings-pdf-btn{
+  display:flex;
+  margin:10px auto 0;
+}
+
+/* ── Mode Cartes plein écran (#lesson.mode-cartes, sans scroll —
+   voir §28) : le panneau ouvert peut dépasser la hauteur fixe de
+   l'écran. Plutôt que de recalculer le max-height figé de .fc-wrap
+   (calc(var(--app-h) - 470px), voir §28), on réactive simplement le
+   scroll de .lesson-body pendant que le panneau est ouvert — évite de
+   reproduire le type de régression d'affichage déjà rencontré sur
+   cette mise en page (voir Bilan_technique.md §6.27). Sans effet
+   ailleurs qu'en mode Cartes : .lesson-body y est déjà scrollable par
+   défaut. Classe posée par _toggleAudioSettings() dans app.js. ── */
+#lesson.mode-cartes.audio-settings-open .lesson-body{
+  overflow-y:auto;
 }

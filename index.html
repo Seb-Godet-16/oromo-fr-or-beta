@@ -1601,22 +1601,12 @@
         <h3 id="lessonTitle"></h3>
       </div>
 
-      <!-- ── Ligne 2 : bouton PDF (gauche) + flèches navigation (droite) ── -->
+      <!-- ── Ligne 2 : flèches de navigation entre modules (alignées à droite) ──
+           🆕 (29/08/2026) Les boutons PDF ont quitté cette ligne : ils sont
+           désormais construits dynamiquement par _buildLessonPdfBtnHTML()
+           (app.js §8b) et intégrés au panneau "⚙️ Réglages audio" de chaque
+           onglet, avec le badge de voix, la vitesse et la répétition. -->
       <div class="lesson-header-bot">
-        <!--
-          Boutons PDF — pill lisible avec texte.
-          Un seul bouton actif à la fois selon le type de thème (vocab ou dialog).
-          Visibilité gérée par app.js via .is-hidden.
-        -->
-        <button class="btn-pdf-pill is-hidden" id="lessonExportVocab"
-                onclick="_exportVocab()" aria-label="Télécharger ce module en PDF">
-          📄 <span id="lessonExportVocabLabel">PDF</span>
-        </button>
-        <button class="btn-pdf-pill is-hidden" id="lessonExportSit"
-                onclick="_exportSituation()" aria-label="Télécharger cette situation en PDF">
-          📄 <span id="lessonExportSitLabel">PDF</span>
-        </button>
-
         <!-- Flèches prev / next entre modules — agrandies et plus contrastées -->
         <div class="lesson-nav-arrows">
           <button class="lesson-nav-btn" id="lessonPrevBtn" onclick="lessonNav(-1)" title="Module précédent">‹</button>
