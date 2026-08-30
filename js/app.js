@@ -12,86 +12,86 @@
      └─ app.js       → Ce fichier : logique applicative complète
 
    SECTIONS DE CE FICHIER (ordre d'apparition réel) :
-      1.   Variables d'état globales (let/const)             ligne   179
-      —    Utilitaire bilingue L() / langKeys()              ligne   241
-      2.   Point d'entrée — initApp(mode)                    ligne   355
-      3.   Synthèse vocale + prononciation Oromo             ligne   557
-     3a2.  Surlignage mot par mot — pendant la lecture TTS   ligne   981
-     3a3.  Vitesse de lecture — paliers (Cartes Flash,       ligne  1116
+      1.   Variables d'état globales (let/const)             ligne   186
+      —    Utilitaire bilingue L() / langKeys()              ligne   248
+      2.   Point d'entrée — initApp(mode)                    ligne   362
+      3.   Synthèse vocale + prononciation Oromo             ligne   564
+     3a2.  Surlignage mot par mot — pendant la lecture TTS   ligne   988
+     3a3.  Vitesse de lecture — paliers (Cartes Flash,       ligne  1123
            Répète, Dialogue, Vocabulaire, Quiz Vocabulaire)
-     3b.   Retour haptique — _vibrateFeedback()              ligne  1219
-     3b2.  Confetti — animation de félicitations (stars)     ligne  1241
-     3c.   Interruption audio — visibilitychange / focus     ligne  1322
-     3d.   KeepAlive watchdog — Chrome / Android             ligne  1363
-     3e.   🆕 Bandeau hors-ligne — connectivité              ligne  1405
+     3b.   Retour haptique — _vibrateFeedback()              ligne  1226
+     3b2.  Confetti — animation de félicitations (stars)     ligne  1248
+     3c.   Interruption audio — visibilitychange / focus     ligne  1329
+     3d.   KeepAlive watchdog — Chrome / Android             ligne  1370
+     3e.   🆕 Bandeau hors-ligne — connectivité              ligne  1412
            (navigator.onLine) — voir §6.14
-      4.   Persistance de la progression (étoiles)           ligne  1517
-     4a.   🆕 Suivi "modules déjà ouverts" (badge Nouveau)    ligne  1548
+      4.   Persistance de la progression (étoiles)           ligne  1524
+     4a.   🆕 Suivi "modules déjà ouverts" (badge Nouveau)    ligne  1555
            (dans §4, voir §6.18)
-     4c.   Réinitialisation — confirmResetProgress()         ligne  1634  (dans §4)
-     4b.   Restauration de session quiz (sessionStorage)     ligne  1805
-      5.   Navigation entre écrans                           ligne  1917
-     5b.   Navigation basse — helpers (dont _updateBottomNav(), ligne  2117
+     4c.   Réinitialisation — confirmResetProgress()         ligne  1641  (dans §4)
+     4b.   Restauration de session quiz (sessionStorage)     ligne  1812
+      5.   Navigation entre écrans                           ligne  1924
+     5b.   Navigation basse — helpers (dont _updateBottomNav(), ligne  2124
            qui grise Guide/Modules sur le Lanceur tant qu'aucune
            langue n'est choisie — voir §5d, #nav-locked-modal)
-     5c.   🆕 Navigation rapide en haut — icônes 🏠 ❓ 📚 🚪 sur  ligne  2236
+     5c.   🆕 Navigation rapide en haut — icônes 🏠 ❓ 📚 🚪 sur  ligne  2243
            tous les écrans (_QUICK_NAV_MAP), + navGoModules(),
            lessonGoBack(), goToAccueil()/goToGuide() — ce dernier
            groupe est physiquement ICI (pas en §5b, corrigé le
            25/07/2026 — l'ancien plan le plaçait à tort sous 5b)
-     5d.   🆕 Modale "Quitter l'application" (#quit-app-modal)  ligne  2416
+     5d.   🆕 Modale "Quitter l'application" (#quit-app-modal)  ligne  2423
            — openQuitModal()/closeQuitModal()/quitAppRestart()/
            quitAppClose() ; + (25/07/2026) modale "Nav verrouillée"
            (#nav-locked-modal) — openNavLockedModal()/
            closeNavLockedModal(), avant choix de langue au Lanceur
-      6.   Écran Home — bouton Commencer + carte(s) de       ligne  2564
+      6.   Écran Home — bouton Commencer + carte(s) de       ligne  2571
            progression (1 par parcours ayant des modules
            réussis — _getOtherModeProgress(), voir plus bas)
-      7.   Écran Sections — grille des thèmes ; 🆕            ligne  2723
+      7.   Écran Sections — grille des thèmes ; 🆕            ligne  2730
            (28/08/2026) Niveau 1 regroupé en 6 catégories
            repliables + carte "▶ Continuer" (THEME_CATEGORIES_L1)
            — voir §6.27 ; 🆕 (29/08/2026) Niveau 2 reçoit le même
            traitement (THEME_CATEGORIES_L2, 4 catégories) via la
            fonction généralisée _buildCategorizedGrid(), utilisée
            par _buildLevel1Body() et _buildLevel2Body() — §6.28
-      8.   Ouverture d'un thème (écran Lesson + onglets) —   ligne  3128
+      8.   Ouverture d'un thème (écran Lesson + onglets) —   ligne  3135
            🆕 (30/08/2026) badge "Niv. 1/2" du header retiré
            (retour terrain, doublon avec nav rapide — voir index.html/
            style.css §8)
-           switchTab() : onglets + repositionnement          ligne  3274
+           switchTab() : onglets + repositionnement          ligne  3281
            du bouton PDF en mode Cartes (fixed via JS)
-      9.   Cartes Flash — vocabulaire interactif             ligne  3306
-     10.   Quiz 10 questions — avec étoiles progressives     ligne  3481
+      9.   Cartes Flash — vocabulaire interactif             ligne  3313
+     10.   Quiz 10 questions — avec étoiles progressives     ligne  3488
            (dont Quiz Alphabet, sans barre de vitesse — voir §3a3)
-     11.   Dialogue — scènes de situation                    ligne  3801
-     12.   Vocabulaire — lexique visuel cliquable            ligne  3861
-     13b.  Onglet Répète — badges voix (🔊) + reconnaissance  ligne  3909
+     11.   Dialogue — scènes de situation                    ligne  3808
+     12.   Vocabulaire — lexique visuel cliquable            ligne  3868
+     13b.  Onglet Répète — badges voix (🔊) + reconnaissance  ligne  3916
            vocale (🎙️), vitesse dédiée — voir §3a3
-     13.   Quiz Dialogue — questions sur le dialogue         ligne  4654
-     14.   Utilitaires & chaînes de résultats bilingues      ligne  4765
-     17.   Guide utilisateur — Onboarding — 🆕 auto-affiché   ligne  4861
+     13.   Quiz Dialogue — questions sur le dialogue         ligne  4674
+     14.   Utilitaires & chaînes de résultats bilingues      ligne  4785
+     17.   Guide utilisateur — Onboarding — 🆕 auto-affiché   ligne  4881
            à la 1ʳᵉ visite d'un mode (_maybeShowOnboarding()) ;
            (25/07/2026) _closeOnboarding() (stub mort) supprimée
-      —    Écran Home + Guide — 🆕 (24/07/2026, 2e correctif  ligne  4894
+      —    Écran Home + Guide — 🆕 (24/07/2026, 2e correctif  ligne  4914
            du jour) écran UNIQUE #home à nouveau (agencement
            VACHÉBO, pas l'ancien) — _buildHomeGuide()
-     18.   Crédits — showCredits()                           ligne  5072
-     15.   Initialisation du launcher                        ligne  5216
-     15b.  🆕 Panneaux infos dépliables des cartes de langue  ligne  5249
+     18.   Crédits — showCredits()                           ligne  5092
+     15.   Initialisation du launcher                        ligne  5236
+     15b.  🆕 Panneaux infos dépliables des cartes de langue  ligne  5269
            (état par défaut + préférence manuelle — voir §7
            de la demande de refonte du Lanceur, 22/07/2026)
-     16.   Accessibilité clavier                             ligne  5321
-     19.   Spinner de chargement des données                 ligne  5333
-     19b.  Viewport height fix — Android Chrome / Brave      ligne  5376
-     20.   Enregistrement du Service Worker (PWA)            ligne  5438
+     16.   Accessibilité clavier                             ligne  5341
+     19.   Spinner de chargement des données                 ligne  5353
+     19b.  Viewport height fix — Android Chrome / Brave      ligne  5396
+     20.   Enregistrement du Service Worker (PWA)            ligne  5458
            + 🆕 vérification proactive des mises à jour
            au premier plan et toutes les 60 min — voir §6.19
-     20b.  🆕 Installation PWA — bouton natif "Installer     ligne  5528
+     20b.  🆕 Installation PWA — bouton natif "Installer     ligne  5548
            l'app" (bouton natif Android/Chrome, rappel iOS)
-     21.   Exports PDF — window.print() + @media print       ligne  5629
-     21a.  Export Guide (accordéons de l'écran #home)         ligne  5826
-     21b.  Export Vocabulaire (leçon Niveau 1)               ligne  5944
-     21c.  Export Situation (leçon Niveau 2 — dialogue)      ligne  6040
+     21.   Exports PDF — window.print() + @media print       ligne  5649
+     21a.  Export Guide (accordéons de l'écran #home)         ligne  5846
+     21b.  Export Vocabulaire (leçon Niveau 1)               ligne  5964
+     21c.  Export Situation (leçon Niveau 2 — dialogue)      ligne  6060
    ============================================================
    🆕 Resynchronisé le 30/08/2026 : retour terrain header Leçon —
    bouton "← Modules" texte (lessonBackBtn, §2/_setUI) et badge
@@ -99,6 +99,13 @@
    la nav rapide et la nav basse (voir index.html/style.css §8).
    -2 lignes en §2, -16 lignes en §8 (-18 au total) ; toutes les
    ancres à partir de §3 décalées en conséquence.
+   ============================================================
+   🆕 Resynchronisé le 30/08/2026 (2e correctif du jour) : phrase
+   d'intro de l'onglet Répète (§13b, _renderRepeatUI) scindée en 2
+   lignes dédiées (une pour la voix 🔊, une pour le micro 🎙️) au lieu
+   d'une seule phrase continue — voir style.css §17 (.repeat-badges-
+   intro-line). +13 lignes ; toutes les ancres à partir de "13. Quiz
+   Dialogue" décalées en conséquence.
    ============================================================
    🆕 Plan resynchronisé le 23/07/2026 : ajout des sections 5c
    (navigation rapide 🏠❓📚 étendue à tous les écrans, jusqu'ici
@@ -4610,9 +4617,22 @@ function _renderRepeatUI(altLangMsg) {
      différente (ex : la voix qui parle peut être en Oromo natif pendant que
      le micro, lui, doit se rabattre sur le Somali) — d'où les 2 badges
      séparés qui suivent. */
+  /* 🆕 (30/08/2026) Retour terrain — phrase d'intro scindée en 2 lignes
+     dédiées (une pour la voix 🔊, une pour le micro 🎙️) au lieu d'une
+     seule phrase continue qui se coupait au hasard du retour à la ligne
+     (ex. "...ce que tu / dis :"), sans lien visuel avec les 2 badges
+     qu'elle annonce juste en dessous. Chaque ligne est désormais alignée
+     avec le badge correspondant (🔊 ligne 1 ↔ badge voix, 🎙️ ligne 2 ↔
+     badge micro) — voir .repeat-badges-intro-line dans style.css §17. */
   const introLine = '<div class="repeat-badges-intro">'
-    + L('Sagaleen tokko si dubbisa, kan biraa immoo dubbii kee dhaggeeffata:',
-        '🔊 Une voix te fait entendre le mot, 🎙️ un micro vérifie ce que tu dis :')
+    + '<div class="repeat-badges-intro-line">'
+    + L('🔊 Sagaleen tokko si dubbisa',
+        '🔊 Une voix te fait entendre le mot')
+    + '</div>'
+    + '<div class="repeat-badges-intro-line">'
+    + L('🎙️ Kan biraa immoo dubbii kee dhaggeeffata:',
+        '🎙️ Un micro vérifie ce que tu dis :')
+    + '</div>'
     + '</div>';
 
   /* Libellé du badge 🎙️ (reconnaissance/STT) — une seule constante réutilisée

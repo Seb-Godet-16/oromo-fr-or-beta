@@ -22,60 +22,60 @@
  * ║  rendu visuel.                                                  ║
  * ╠══════════════════════════════════════════════════════════════════╣
  * ║  PLAN DU FICHIER                                                ║
- * ║   §1        Reset & base                          ligne   115  ║
- * ║   §2        Variables de thème (:root / fallback) ligne   239  ║
- * ║   §3        Thème Français (html.theme-french)    ligne   318  ║
- * ║   §4        Thème Oromo (html.theme-oromo)        ligne   360  ║
- * ║   §5        Écran 0 — Lanceur (dont 🆕            ligne   397  ║
+ * ║   §1        Reset & base                          ligne   120  ║
+ * ║   §2        Variables de thème (:root / fallback) ligne   244  ║
+ * ║   §3        Thème Français (html.theme-french)    ligne   323  ║
+ * ║   §4        Thème Oromo (html.theme-oromo)        ligne   365  ║
+ * ║   §5        Écran 0 — Lanceur (dont 🆕            ligne   402  ║
  * ║             .launcher-quit-btn)                                ║
- * ║   §6        🆕 Écran 1 — Home + Guide fusionnés   ligne   904  ║
+ * ║   §6        🆕 Écran 1 — Home + Guide fusionnés   ligne   909  ║
  * ║             (#home, agencement VACHÉBO, 24/07/2026,             ║
  * ║             2e correctif — voir Bilan_technique.md §6.24)       ║
- * ║   §7        Écran 2 — Sections                    ligne   995  ║
- * ║   §8        Écran 3 — Leçon (dont .back-btn-icon  ligne  1163  ║
+ * ║   §7        Écran 2 — Sections                    ligne   1000  ║
+ * ║   §8        Écran 3 — Leçon (dont .back-btn-icon  ligne  1168  ║
  * ║             icônes 🏠/❓/📚/🚪 groupées ; flèches ‹›              ║
  * ║             sur la ligne du titre — 30/08/2026)                 ║
- * ║   §9        Composants : Flashcards (dont 🆕      ligne  1429  ║
+ * ║   §9        Composants : Flashcards (dont 🆕      ligne  1434  ║
  * ║             centrage vertical sûr des faces .fc-*,               ║
  * ║             voir Bilan_technique.md §6.26)                       ║
- * ║   §10       Composants : Alphabet                 ligne  1652  ║
- * ║   §11       Composants : Quiz                     ligne  1752  ║
- * ║   §12       Composants : Dialogues / Situations   ligne  1866  ║
- * ║   §13       Composants : Vocabulaire              ligne  1971  ║
- * ║   §14       Modale Remerciements                  ligne  2039  ║
- * ║   §15       Footer commun                         ligne  2150  ║
- * ║   §16       Toast notification                    ligne  2170  ║
- * ║   §16b   🆕 Bandeau hors-ligne persistant          ligne  2206  ║
- * ║   §17       Onglet Répète (dont 🆕 .repeat-        ligne  2270  ║
+ * ║   §10       Composants : Alphabet                 ligne  1657  ║
+ * ║   §11       Composants : Quiz                     ligne  1757  ║
+ * ║   §12       Composants : Dialogues / Situations   ligne  1871  ║
+ * ║   §13       Composants : Vocabulaire              ligne  1976  ║
+ * ║   §14       Modale Remerciements                  ligne  2044  ║
+ * ║   §15       Footer commun                         ligne  2155  ║
+ * ║   §16       Toast notification                    ligne  2175  ║
+ * ║   §16b   🆕 Bandeau hors-ligne persistant          ligne  2211  ║
+ * ║   §17       Onglet Répète (dont 🆕 .repeat-        ligne  2275  ║
  * ║             badges-intro, phrase d'intro 2 badges)              ║
- * ║   §18       Focus clavier                         ligne  2568  ║
- * ║   §19       Guide utilisateur (.ob-*, dont 🆕      ligne  2586  ║
+ * ║   §18       Focus clavier                         ligne  2581  ║
+ * ║   §19       Guide utilisateur (.ob-*, dont 🆕      ligne  2599  ║
  * ║             "Quel navigateur choisir ?")                        ║
- * ║   §20       Spinner de chargement                 ligne  3054  ║
- * ║   §22       🆕 Écran Home + Guide fusionnés       ligne  3091  ║
+ * ║   §20       Spinner de chargement                 ligne  3067  ║
+ * ║   §22       🆕 Écran Home + Guide fusionnés       ligne  3104  ║
  * ║             (#home — fond dégradé, layout, voir §6)             ║
- * ║   §23       Écran Sections redesigné (dont        ligne  3509  ║
+ * ║   §23       Écran Sections redesigné (dont        ligne  3522  ║
  * ║             .back-btn-group)                                   ║
- * ║   §24       Responsive : tablette & desktop       ligne  3699  ║
- * ║   §24b      Mode sombre                           ligne  3789  ║
- * ║   §24c      Responsive : mode paysage mobile      ligne  3909  ║
- * ║   §25       Boutons d'export PDF                  ligne  3982  ║
- * ║   §26       Barre de navigation basse             ligne  4082  ║
- * ║   §27       Onglets niveau 1 / 2                  ligne  4209  ║
- * ║   §28       Écrans sections level (no-scroll)     ligne  4304  ║
- * ║   §20e      Grille thèmes écrans level            ligne  4502  ║
- * ║   §CONFETTI Animation de félicitations ⭐⭐⭐      ligne  4523  ║
- * ║   §PROGRESS Carte(s) de progression (Home,        ligne  4594  ║
+ * ║   §24       Responsive : tablette & desktop       ligne  3712  ║
+ * ║   §24b      Mode sombre                           ligne  3802  ║
+ * ║   §24c      Responsive : mode paysage mobile      ligne  3922  ║
+ * ║   §25       Boutons d'export PDF                  ligne  3995  ║
+ * ║   §26       Barre de navigation basse             ligne  4095  ║
+ * ║   §27       Onglets niveau 1 / 2                  ligne  4222  ║
+ * ║   §28       Écrans sections level (no-scroll)     ligne  4317  ║
+ * ║   §20e      Grille thèmes écrans level            ligne  4515  ║
+ * ║   §CONFETTI Animation de félicitations ⭐⭐⭐      ligne  4536  ║
+ * ║   §PROGRESS Carte(s) de progression (Home,        ligne  4607  ║
  * ║             1 ou 2 selon les parcours commencés)                ║
- * ║   §CONFIRM  Modale confirmation suppression       ligne  4717  ║
- * ║   §QUITMODAL 🆕 Modale "Quitter l'application"     ligne  4836  ║
+ * ║   §CONFIRM  Modale confirmation suppression       ligne  4730  ║
+ * ║   §QUITMODAL 🆕 Modale "Quitter l'application"     ligne  4849  ║
  * ║             (#quit-app-modal, icône 🚪 nav rapide)              ║
- * ║   §NAVLOCKED 🆕 (25/07/2026) Modale "Nav verrouillée"  ligne  4939 ║
+ * ║   §NAVLOCKED 🆕 (25/07/2026) Modale "Nav verrouillée"  ligne  4952 ║
  * ║             (#nav-locked-modal) avant choix de langue           ║
- * ║   §ANTISPAM E-mail affiché à l'envers (CSS RTL)  ligne  5002  ║
- * ║   §SPEAKING Feedback visuel bouton audio (TTS)    ligne  5029  ║
- * ║   §29       Correctifs accessibilité mode sombre  ligne  5087  ║
- * ║   §30    🆕 Panneau "⚙️ Réglages audio" (écran   ligne  5352  ║
+ * ║   §ANTISPAM E-mail affiché à l'envers (CSS RTL)  ligne  5015  ║
+ * ║   §SPEAKING Feedback visuel bouton audio (TTS)    ligne  5042  ║
+ * ║   §29       Correctifs accessibilité mode sombre  ligne  5100  ║
+ * ║   §30    🆕 Panneau "⚙️ Réglages audio" (écran   ligne  5365  ║
  * ║             Leçon, repli/dépli — voir app.js §8b               ║
  * ║             et Bilan_technique.md §6.29)                        ║
  * ║  ── Plan resynchronisé le 23/07/2026 : ajout d'une navigation    ║
@@ -119,6 +119,11 @@
  * ║  "← Modules") supprimés, .lesson-nav-btn réduit (40px → 26px)     ║
  * ║  pour tenir à côté du titre. -55 lignes, toutes les ancres à      ║
  * ║  partir de §9 décalées en conséquence.                           ║
+ * ║  ── Resynchronisé le 30/08/2026 (2e correctif du jour) : phrase   ║
+ * ║  d'intro de l'onglet Répète (§17, .repeat-badges-intro) scindée   ║
+ * ║  en 2 lignes dédiées (.repeat-badges-intro-line, une par badge    ║
+ * ║  voix/micro) au lieu d'une seule phrase continue. +8 lignes,      ║
+ * ║  toutes les ancres à partir de §18 décalées en conséquence.       ║
  * ╚══════════════════════════════════════════════════════════════════╝
  */
 
@@ -2312,7 +2317,9 @@ footer a:hover{text-decoration:underline}
 
 /* 🆕 (08/07/2026) Phrase d'intro, une seule fois au-dessus des 2 badges
    (voix TTS 🔊 + reconnaissance STT 🎙️) — même style discret que le badge
-   "cas normal" ci-dessous, pour ne pas surcharger l'écran mobile. */
+   "cas normal" ci-dessous, pour ne pas surcharger l'écran mobile.
+   🆕 (30/08/2026) Retour terrain : scindée en 2 lignes dédiées (une par
+   badge) via .repeat-badges-intro-line, voir app.js §17 (_renderRepeatUI). */
 .repeat-badges-intro{
   font-size:.72rem;
   color:#888;
@@ -2320,6 +2327,12 @@ footer a:hover{text-decoration:underline}
   margin-bottom:6px;
   padding-right:2px;
   line-height:1.4;
+}
+.repeat-badges-intro-line{
+  display:block;
+}
+.repeat-badges-intro-line + .repeat-badges-intro-line{
+  margin-top:2px;
 }
 
 /* ── Info langue utilisée ──────────────────────────────────────── */
