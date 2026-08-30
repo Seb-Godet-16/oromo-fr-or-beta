@@ -4485,7 +4485,22 @@ footer a:hover{text-decoration:underline}
   flex:1;
   min-height:0;
   gap:8px;
-  justify-content:center;
+}
+
+/* Desktop uniquement (≥900px) : centrer verticalement le bloc Cartes Flash
+   quand la carte plafonnée par max-height (voir .fc-wrap ci-dessous) ne
+   remplit pas tout l'espace disponible — évite le vide visible en bas de
+   l'écran, avant la nav basse, sur grand écran à contenu court.
+   Volontairement PAS appliqué sur mobile : _adjustFlashcardHeight() (app.js)
+   y calcule déjà une hauteur de carte ajustée pour occuper l'espace
+   disponible sans vide résiduel ; centrer en plus y créait un vide
+   inattendu au-dessus de la carte et un risque de dépassement sur les
+   cartes à contenu long (conjugaisons) — retour terrain 30/08/2026, voir
+   Bilan technique. */
+@media (min-width:900px){
+  #lesson.mode-cartes #tabContent{
+    justify-content:center;
+  }
 }
 
 /* fc-wrap : prend tout l'espace restant dans #tabContent, plafonné par
