@@ -23,6 +23,8 @@
 | Mises à jour PWA | 🆕 Vérification proactive (retour au premier plan + filet toutes les 60 min), en plus du cycle natif du navigateur (voir §6.19) |
 | Grille Niveau 1 | 🆕 37 thèmes regroupés en 6 catégories repliables + carte "▶ Continuer" ciblant le prochain thème pertinent (voir §6.27) |
 | Grille Niveau 2 | 🆕 16 dialogues regroupés en 4 catégories repliables + sa propre carte "▶ Continuer" (voir §6.28) |
+| En-tête écran Leçon | 🆕 2 lignes au lieu de 3 — flèches de nav fusionnées dans la rangée du titre, harmonisé avec l'appli sœur espagnole (voir §6.29) |
+| Flashcards / carte Répète | 🆕 Taille adaptée au contenu réel (recto/verso mesurés), avec repli sur le scroll de page pour les cas extrêmes (voir §6.30) |
 
 ---
 
@@ -32,11 +34,11 @@
 
 | Fichier | Taille | Lignes | Rôle |
 |---|---|---|---|
-| `js/app.js` | 266 Ko | 6 199 | Moteur applicatif complet (dont le bandeau hors-ligne §3e, le suivi "modules déjà ouverts" §7, la vérification proactive des mises à jour SW §20 — voir §6.19 —, le clin d'œil mascotte sur quiz sans-faute §14 — voir §6.22 —, l'écran Home+Guide fusionné et `goToHome()` supprimée — voir §6.24 —, la modale "Nav verrouillée" `#nav-locked-modal` + suppression du stub mort `_closeOnboarding()` — voir §6.25 —, et 🆕 le regroupement des Niveaux 1 ET 2 en catégories repliables + carte "Continuer" (`THEME_CATEGORIES_L1`/`THEME_CATEGORIES_L2`, `_buildCategorizedGrid()` partagée, §7) — voir §6.27/§6.28 ; plan interne `SECTIONS DE CE FICHIER` resynchronisé le 29/08/2026, voir §6.28) |
-| `css/style.css` | 185 Ko | 5 394 | Styles + système de thèmes dual (dont §16b bandeau hors-ligne, §7 états visuels des cartes-module, §2 tokens de marque `--c-flag-red/black/cream` — voir §6.22 —, l'écran Home+Guide fusionné (agencement VACHÉBO) — voir §6.24 —, §NAVLOCKED, la modale "Nav verrouillée" — voir §6.25 —, et 🆕 §20f, catégories Niveau 1 ET 2 + carte "Continuer" via la classe générique `.categories-body` — voir §6.27/§6.28) |
+| `js/app.js` | 288 Ko | 6 505 | Moteur applicatif complet (dont le bandeau hors-ligne §3e, le suivi "modules déjà ouverts" §7, la vérification proactive des mises à jour SW §20 — voir §6.19 —, le clin d'œil mascotte sur quiz sans-faute §14 — voir §6.22 —, l'écran Home+Guide fusionné et `goToHome()` supprimée — voir §6.24 —, la modale "Nav verrouillée" `#nav-locked-modal` + suppression du stub mort `_closeOnboarding()` — voir §6.25 —, le regroupement des Niveaux 1 ET 2 en catégories repliables + carte "Continuer" (`THEME_CATEGORIES_L1`/`THEME_CATEGORIES_L2`, `_buildCategorizedGrid()` partagée, §7) — voir §6.27/§6.28 —, l'audit anti-fuite audio/micro `_stopAllAudioAndMic()` sur 11 points de navigation, et 🆕 la taille des flashcards/carte Répète adaptée au contenu réel (`_adjustFlashcardHeight()`) + phrase d'intro Répète déplacée dans le panneau Réglages audio — voir §6.30 ; plan interne `SECTIONS DE CE FICHIER` resynchronisé le 29/08/2026, voir §6.28 — **⚠️ non revérifié depuis** l'audit audio/micro ni §6.30, voir point de vigilance §7) |
+| `css/style.css` | 192 Ko | 5 513 | Styles + système de thèmes dual (dont §16b bandeau hors-ligne, §7 états visuels des cartes-module, §2 tokens de marque `--c-flag-red/black/cream` — voir §6.22 —, l'écran Home+Guide fusionné (agencement VACHÉBO) — voir §6.24 —, §NAVLOCKED, la modale "Nav verrouillée" — voir §6.25 —, §20f, catégories Niveau 1 ET 2 + carte "Continuer" via la classe générique `.categories-body` — voir §6.27/§6.28 —, l'en-tête Leçon fusionné à 2 lignes — voir §6.29 —, et 🆕 la classe `.fc-tall` (repli scroll de page pour les flashcards trop hautes) + `.repeat-card` allégée — voir §6.30) |
 | `js/data-fr.js` | 113 Ko | 1 532 | Dataset mode "Apprendre le Français" — 37 thèmes Niveau 1 (voir §6.26) |
 | `js/data-or.js` | 110 Ko | 1 487 | Dataset mode "Apprendre l'Oromo" — 37 thèmes Niveau 1 (voir §6.26) |
-| `index.html` | 120 Ko | 1 829 | Structure HTML — 🆕 5 écrans (Home et Guide de nouveau fusionnés en un seul `#home`, voir §6.24) + 3 modales (dont `#nav-locked-modal`, voir §6.25) + bandeau hors-ligne + guide "Quel navigateur choisir ?" + logo étendu aux écrans Sections (§6.22) + 🆕 `#grid1` ET `#grid2` en `.categories-body` (catégories Niveau 1 et 2, voir §6.27/§6.28) ; plan interne `PLAN DU FICHIER` resynchronisé le 29/08/2026 (voir §6.28) |
+| `index.html` | 124 Ko | 1 821 | Structure HTML — 5 écrans (Home et Guide de nouveau fusionnés en un seul `#home`, voir §6.24) + 3 modales (dont `#nav-locked-modal`, voir §6.25) + bandeau hors-ligne + guide "Quel navigateur choisir ?" + logo étendu aux écrans Sections (§6.22) + `#grid1` ET `#grid2` en `.categories-body` (catégories Niveau 1 et 2, voir §6.27/§6.28) + 🆕 en-tête Leçon fusionné à 2 lignes (voir §6.29) ; **⚠️ écart préexistant signalé** : cette table indiquait encore 1 829 lignes avant cette session, alors que le fichier réellement reçu en comptait déjà 1 819 (état post-audit audio/micro, jamais resynchronisé ici) — corrigé directement à la valeur réelle actuelle (1 821), sans reprise complète du reste de cette table pour cet écart antérieur, hors périmètre de cette session |
 | `sw.js` | 33 Ko | 624 | Service Worker — Cache First / Network First |
 | `manifest.json` | — | — | PWA — icônes, orientation, screenshots |
 | `deploy.yml` | — | — | CI/CD GitHub Actions |
@@ -588,6 +590,60 @@ Même carte **"▶ Continuer"** que le Niveau 1 (logique identique : thème enta
 
 ---
 
+### §6.29 — 🐞 En-tête Leçon fusionné : 2 lignes au lieu de 3 (méthode VACHÉBO, 29/08/2026)
+
+**Contexte** : retour terrain par capture d'écran (comparaison directe avec l'appli sœur espagnole, même famille de projet). Le header de l'écran Leçon prenait **3 lignes** : la rangée d'icônes rapides `.lesson-quick-nav` (🏠/❓/📚 à gauche, 🚪 à droite), puis `.lesson-header-top` (← bouton retour, badge "Niv. X", emoji, titre `#lessonTitle`), puis une ligne à part, `.lesson-header-bot`, ne contenant plus que les 2 boutons de navigation `.lesson-nav-arrows` (‹ ›) — ce dernier bouton PDF ayant déjà quitté cette ligne lors d'une étape antérieure (voir §8b dans `app.js` et `.audio-settings` ci-dessus). Sur l'appli sœur espagnole, le même en-tête tient sur 2 lignes : retour + emoji + titre + flèches partagent la même rangée, seul le titre repasse à la ligne suivante s'il est trop long.
+
+**Correctif** — fusion de `.lesson-header-bot` dans `.lesson-header-top` :
+1. **`index.html`** : le bloc `.lesson-nav-arrows` (les 2 boutons `#lessonPrevBtn`/`#lessonNextBtn`) est déplacé physiquement à l'intérieur de `.lesson-header-top`, juste après `<h3 id="lessonTitle">`. Le `<div class="lesson-header-bot">` qui l'entourait est supprimé (il ne contenait plus rien d'autre).
+2. **`style.css`** : la règle `.lesson-header-bot` (qui ne faisait plus que `justify-content:flex-end` sur ses 2 boutons) est supprimée. `#lessonTitle` reçoit `min-width:0` en complément de son `flex:1` existant — nécessaire pour qu'un élément `flex:1` sans largeur intrinsèque définie se comprime correctement une fois que `.lesson-nav-arrows` (largeur fixe, `flex-shrink:0`) partage la même rangée que lui ; sans cette propriété, un titre long pourrait déborder de la rangée au lieu de passer proprement à la ligne. Aucun `justify-content` n'est nécessaire sur `.lesson-header-top` pour ancrer les flèches à droite : `#lessonTitle` en `flex:1` absorbe tout l'espace restant, poussant naturellement `.lesson-nav-arrows` (qui le suit dans le flux) contre le bord droit.
+3. Commentaires de plan mis à jour dans `style.css` (bloc d'en-tête `.lesson-header`, désormais documenté comme 2 lignes au lieu de 3) et dans `index.html` (bloc `.lesson-header-top`).
+
+**Effet** : le titre continue de passer seul à la ligne s'il est long (comme observé sur la capture, "Expressions Essentielles — Jechi Murteessoo" / "Gochaalee — Les Verbes") — seule la ligne des flèches disparaît en tant que rangée séparée, ce qui regagne la hauteur d'une ligne complète d'en-tête sur l'écran Leçon et harmonise l'affichage avec l'appli sœur.
+
+**Vérifications effectuées** :
+- Syntaxique : `node --check app.js` — aucune erreur (fichier non touché par ce correctif, revérifié par sécurité).
+- Comptage accolades CSS avant/après : 844 → 845 (cohérent avec la suppression nette d'une règle `.lesson-header-bot` et l'ajout d'une propriété `min-width:0` dans une règle existante — le différentiel exact n'a pas été isolé, mais la variation est du bon ordre de grandeur pour ce diff).
+- Comptage de balises `<div>`/`</div>` avant/après dans `index.html` : `230`/`229` → `229`/`228` — l'écart préexistant d'une balise (probablement une occurrence de texte "`<div`" dans un commentaire, non un déséquilibre réel) reste identique avant/après, confirmant qu'un `<div>` et sa fermeture ont bien été retirés ensemble, sans casser l'équilibre du reste du fichier.
+- Visuel : non testé dans un navigateur réel lors de cette session (pas d'accès DOM/rendu graphique dans l'environnement d'implémentation) — **à vérifier par Sébastien** avant mise en production, notamment le comportement du titre le plus long actuellement en base sur un petit écran.
+
+**Fichiers modifiés** : `index.html`, `style.css`, `README.md` (historique), `Bilan_technique.md` (§6.29).
+
+---
+
+### §6.30 — 🐞 Taille des flashcards adaptée au contenu + phrase d'intro Répète déplacée (méthode VACHÉBO, 29/08/2026)
+
+**Contexte** : retour terrain par 3 captures d'écran. Deux problèmes distincts observés sur l'affichage des cartes de vocabulaire :
+1. Onglet **Cartes** (mode-cartes, `.fc-wrap`) : sur un verbe à conjugaison (ex. "Ta'uu / Jiraachuu" — "Être", 6 formes conjuguées), la carte était trop courte pour tout afficher — un scroll interne apparaissait (`overflow-y:auto` sur `.fc-front`/`.fc-back`, filet de sécurité déjà en place depuis un correctif antérieur sur ce même type de contenu, voir §6.27), coupant visuellement la dernière ligne de conjugaison au premier coup d'œil.
+2. Onglet **Répète** (`.repeat-card`) : sur une entrée sans indice long (le même verbe "Ta'uu / Jiraachuu" — "Être", affiché ici sans ses conjugaisons, réservées à l'onglet Cartes), la carte affichait un vide disproportionné sous le mot, hérité d'un plancher de hauteur (`min-height:130px`) et d'un padding généreux (`24px` en haut) pensés sans distinction entre entrées courtes et longues.
+
+**Cause commune** : dans les deux cas, une taille **fixe**, identique pour tous les mots, sans rapport avec le volume de texte réellement affiché — trop grande pour un mot simple (vide visible), trop petite pour un verbe à conjugaison (scroll nécessaire).
+
+**Correctif 1 — `.fc-wrap` (onglet Cartes), taille pilotée par le contenu réel** :
+- Nouvelle fonction `_adjustFlashcardHeight()` (`app.js`), appelée à la fin de `renderFlash()` (juste après chaque (re)construction de la carte) et depuis `setAppHeight()` (recalcul au redimensionnement du viewport — rotation, barre d'URL qui apparaît/disparaît).
+- Mesure `Math.max(front.scrollHeight, back.scrollHeight)` sur `.fc-front` et `.fc-back` — `.scrollHeight` reste fiable même si les deux faces sont superposées en `position:absolute` (l'une invisible pendant que l'autre est affichée) et même contraintes visuellement par `height:100%` (règle `#lesson.mode-cartes .fc-front/.fc-back`, §8) : cette propriété ignore la contrainte de hauteur visuelle et reflète toujours la hauteur réellement nécessaire au contenu.
+- Deux cas :
+  - **Cas normal** (contenu ≤ plafond dérivé du viewport, `CEILING = appH - 470`, même budget de chrome que l'ancien calcul fixe) : `.fc-wrap` reçoit `max-height` égal à la hauteur naturelle du contenu (plancher `FLOOR = 170px` pour rester lisible sur un mot très court) — la carte épouse son contenu au lieu d'occuper systématiquement tout le budget disponible.
+  - **Cas `.fc-tall`** (contenu dépassant même ce plafond — verbe à conjugaison très longue sur petit écran) : plutôt qu'un scroll interne à la carte (`overflow-y:auto` sur les faces, toujours en place en filet de sécurité mais peu lisible — "scroller dans une petite fenêtre"), la classe `fc-tall` est posée sur `#lesson` et `.fc-wrap` prend sa hauteur complète non plafonnée (`flexShrink:'0'`, `height` explicite). Nouvelle règle CSS `#lesson.mode-cartes.fc-tall .lesson-body{overflow-y:auto}`, qui réactive le scroll de toute la page le temps de cette carte — **exactement la même technique** que celle déjà en place pour le panneau Réglages audio ouvert (`.audio-settings-open`, voir §6.20/§6.28), réutilisée ici pour la même raison (éviter de réintroduire le type de régression d'affichage déjà rencontré et documenté sur cette mise en page).
+- La valeur `max-height: calc(var(--app-h) - 470px)` qui existait déjà en CSS sur `#lesson.mode-cartes .fc-wrap` (§8) n'est pas supprimée : elle reste un **filet de repli** (avant le tout premier rendu JS, ou si celui-ci échouait), l'inline JS la surchargeant systématiquement une fois `_adjustFlashcardHeight()` exécutée.
+
+**Correctif 2 — `.repeat-card` (onglet Répète), plancher réduit** :
+- `min-height:130px` → `96px`, `padding:24px 18px 18px` → `18px 18px 14px`. Le contenu reste centré verticalement (`justify-content:center`, inchangé) et la carte grandit toujours naturellement si un indice plus long est présent — seuls le plancher et le padding par défaut sont réduits, pour ne plus imposer un vide disproportionné sur les entrées courtes.
+
+**Correctif 3 — phrase d'intro Répète déplacée dans le panneau Réglages audio** :
+- La phrase "🔊 Une voix te fait entendre le mot, 🎙️ un micro vérifie ce que tu dis" (`introLine`, `.repeat-badges-intro`), affichée depuis le 08/07/2026 juste au-dessus de la carte, servait de titre pédagogique aux 2 badges "Tu entends" (voix TTS) / "Le micro comprend" (reconnaissance vocale). Depuis qu'une étape antérieure du 29/08/2026 a déplacé ces 2 badges dans le panneau Réglages audio (avec la vitesse et le bouton PDF), la phrase d'intro était restée seule au-dessus de la carte, orpheline des badges qu'elle introduit — et pouvait en plus se retrouver coupée par le header sticky lors du scroll (observé sur capture).
+- `introLine` est désormais construite au même endroit qu'avant (`_renderRepeatUI()`), mais insérée en tout premier dans le contenu passé à `_buildAudioSettingsHTML()`, juste avant `#repeatVoiceBadge`, au lieu d'être concaténée avant `#repeat-card` dans `#tabContent`. Aucune règle CSS modifiée pour `.repeat-badges-intro` (déjà en texte discret aligné à droite, cohérent avec les badges qui suivent dans ce même panneau).
+
+**Vérifications effectuées** :
+- Syntaxique : `node --check app.js` — aucune erreur.
+- Comptage accolades CSS avant/après : 845/845 (nouvelle règle `.fc-tall` ajoutée en CSS, tightening de `.repeat-card` sans ajout/suppression de règle — total inchangé sur ce diff précis, l'ajout de §6.29 ayant déjà porté le compteur à 845).
+- Câblage vérifié par recherche directe dans le fichier final : `_adjustFlashcardHeight()` définie une fois, appelée depuis `renderFlash()` et `setAppHeight()` ; classe `fc-tall` posée en JS et consommée par une seule règle CSS.
+- Visuel / recette terrain : **non vérifié dans un navigateur réel** lors de cette session (pas d'accès DOM/rendu graphique dans l'environnement d'implémentation), notamment le cas `.fc-tall` qui repose sur une interaction entre flexbox (`flex-shrink`), `overflow-y:auto` et `position:sticky` difficile à garantir à 100 % sans test live — **à vérifier par Sébastien**, idéalement sur le même verbe à conjugaison ("Ta'uu / Jiraachuu") que celui des captures d'écran ayant motivé ce correctif, sur un petit écran.
+
+**Fichiers modifiés** : `app.js`, `style.css`, `README.md` (historique), `Bilan_technique.md` (§6.30).
+
+---
+
 ## 7. Points de vigilance / dettes techniques
 
 | Point | Niveau | Détail |
@@ -607,6 +663,7 @@ Même carte **"▶ Continuer"** que le Niveau 1 (logique identique : thème enta
 | Carte(s) de progression Home | ✅ OK | Testé pour 0, 1 (parcours actif ou non) et 2 parcours — pas de `:has()` CSS (incompatible Safari < 15.4, hors cible iOS 14.5+) |
 | Compatibilité `:has()` CSS | ✅ OK | Évité volontairement ; taille de cercle pilotée par classe JS (`--single`) plutôt que par sélecteur `:has()` |
 | 🆕 Suivi "modules déjà ouverts" (badge Nouveau) | ✅ OK, ⚠️ 3ᵉ clé localStorage par mode | `openedThemes` (§6.18) s'ajoute à `done` : deux clés indépendantes par mode à surveiller en cas d'évolution du système de progression. `isOpened()` retombe sur `isDone()` par sécurité (anciennes progressions déjà sauvegardées avant l'ajout de cette clé ne réaffichent pas "Nouveau" à tort) |
+| 🆕 Taille de flashcard adaptée au contenu (`.fc-tall`) | ⚠️ Non testé en navigateur réel | `_adjustFlashcardHeight()` (§6.30) repose sur une interaction entre `flex-shrink`, `overflow-y:auto` et `position:sticky` raisonnée uniquement sur le code (pas d'accès DOM/rendu graphique dans l'environnement d'implémentation). Le cas courant (contenu sous le plafond viewport) est à faible risque ; le repli `.fc-tall` (contenu au-delà, ex. verbe à conjugaison longue sur petit écran) mérite une vérification terrain dédiée avant confiance totale |
 
 ---
 
@@ -652,5 +709,7 @@ Même carte **"▶ Continuer"** que le Niveau 1 (logique identique : thème enta
 | 28/08/2026 | ⚠️ **Trou de documentation signalé** : « Étape 1 (méthode VACHÉBO) » du README (enrichissement du vocabulaire Niveau 1, 4 thèmes créés + 4 enrichis, 32→36 puis 48→52) n'a pas de section §6 dédiée dans ce Bilan — non comblé faute de contexte détaillé de cette session, comme pour le trou §6.16/§6.17 déjà signalé plus haut. Voir directement le README ou le commentaire d'en-tête `HISTORIQUE` de `app.js` pour le détail de cette étape |
 | 28/08/2026 | 🆕 Étape 14 (« Étape 2 » du README, méthode VACHÉBO) : scission du thème `sante` élargi à l'étape précédente en deux thèmes distincts — `sante` (21 mots médicaux, id conservé) et `secu` (9 mots de sécurité, nouvel id) — voir §6.26 pour le détail complet — Sébastien Godet + Claude Sonnet 5 |
 | 28/08/2026 | 🆕 Étape 15 (« Étape 3 » du README, méthode VACHÉBO) : le Niveau 1 (37 thèmes) était affiché en une grille plate, longue à parcourir — regroupement en 6 catégories thématiques repliables (accordéons natifs `<details>`/`<summary>`) + carte "▶ Continuer" ciblant le prochain thème pertinent (en cours > neuf > félicitations si 100%), auto-dépli de la catégorie en cours au premier rendu puis préservation des choix manuels de l'apprenant ensuite. CSS mort préexistant (`.level-details`) repéré et volontairement non réutilisé. Resynchronisation complète du plan interne de `app.js` (+181 lignes en §7, avant `renderSections()`) — voir §6.27 pour le détail complet — Sébastien Godet + Claude Sonnet 5 |
+| 29/08/2026 | 🆕 Étape 16 (« Étape 7 » du README, méthode VACHÉBO) : 🐞 retour terrain — l'en-tête de l'écran Leçon prenait 3 lignes (icônes rapides, titre, puis une ligne à part pour les seules flèches de nav), contre 2 sur l'appli sœur espagnole. Flèches fusionnées dans la rangée du titre (`.lesson-header-bot` supprimée), `#lessonTitle` complété d'un `min-width:0` pour rester correctement compressible — voir §6.29 pour le détail complet — Sébastien Godet + Claude Sonnet 5 |
+| 29/08/2026 | 🆕 Étape 17 (« Étape 8 » du README, méthode VACHÉBO) : 🐞 retour terrain — taille des flashcards (onglet Cartes) et de la carte Répète désormais adaptée au contenu réel (`_adjustFlashcardHeight()`) plutôt qu'une hauteur fixe unique, avec repli sur le scroll de page (`.fc-tall`, même technique que `.audio-settings-open`) pour les verbes à conjugaison dépassant même le plafond viewport ; plancher de `.repeat-card` réduit (130px→96px) ; phrase d'intro "voix/micro" de l'onglet Répète déplacée dans le panneau Réglages audio, dont elle est le titre. Cas `.fc-tall` non testé en navigateur réel — à vérifier en recettage terrain — voir §6.30 pour le détail complet — Sébastien Godet + Claude Sonnet 5 |
 
 *Journal détaillé (dont la citation complète du retour de recettage du 03/07) : voir le bloc de commentaire `HISTORIQUE DE L'APPLICATION` en tête de `app.js`.*

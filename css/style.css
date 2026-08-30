@@ -3805,7 +3805,7 @@ footer a:hover{text-decoration:underline}
   body{
     background:#e8eaf0;
     display:flex;
-    align-items:flex-start;
+    align-items:center;
     justify-content:center;
     min-height:100vh;
     padding:30px 0;
@@ -3849,7 +3849,6 @@ footer a:hover{text-decoration:underline}
 @media (min-width:1200px){
   body{
     padding:40px 0;
-    align-items:flex-start;
   }
   .app{max-width:480px}
 }
@@ -4486,6 +4485,7 @@ footer a:hover{text-decoration:underline}
   flex:1;
   min-height:0;
   gap:8px;
+  justify-content:center;
 }
 
 /* fc-wrap : prend tout l'espace restant dans #tabContent, plafonné par
