@@ -5473,8 +5473,16 @@ function showCredits() {
            le Guide explicatif (§8), icônes différenciées par contributeur. */
         +         '<li>🛠️ <strong>Fédérico Calo</strong> — '
         +           '<a href="https://www.linkedin.com/in/federicocalo/" target="_blank" rel="noopener noreferrer">gargaarsa teeknikaa</a></li>'
+        /* 🆕 (30/08/2026) BROUILLON Oromo — segment "yaada isaa dirree
+           irraa..." ajouté, traduction à FAIRE VALIDER PAR MUSSA SEMBRO
+           avant publication (même règle que le reste du contenu Oromo
+           de cette fonction). Mussa est crédité pour le constat
+           (interface trop chargée pour de grands débutants), pas pour
+           la solution (regroupement en catégories, décision du porteur
+           du projet) — voir Bilan technique / README pour le contexte. */
         +         '<li>🌍 <strong>Mussa Sembro</strong> — '
-        +           '<a href="https://www.linkedin.com/in/mussa-sembro-137472174/" target="_blank" rel="noopener noreferrer">hiikkaa fi gorsa afaanii</a></li>'
+        +           '<a href="https://www.linkedin.com/in/mussa-sembro-137472174/" target="_blank" rel="noopener noreferrer">hiikkaa fi gorsa afaanii</a>, '
+        +           'akkasumas yaada isaa dirree irraa (interface-iin jalqabtoota guddaaf baay\'ee walxaxaa ta\'uu)</li>'
         +         '<li>👪 <strong>Maatii koo</strong> — deebi\'anii dubbisuu fi gorsa</li>'
         /* 🆕 BROUILLON Oromo — traduction à FAIRE VALIDER PAR MUSSA SEMBRO
            avant publication (même règle que pour le récit personnel Oromo
@@ -5520,7 +5528,8 @@ function showCredits() {
         +         '<li>🛠️ <strong>Fédérico Calo</strong> — '
         +           '<a href="https://www.linkedin.com/in/federicocalo/" target="_blank" rel="noopener noreferrer">aide technique</a></li>'
         +         '<li>🌍 <strong>Mussa Sembro</strong> — '
-        +           '<a href="https://www.linkedin.com/in/mussa-sembro-137472174/" target="_blank" rel="noopener noreferrer">traduction &amp; conseils linguistiques</a></li>'
+        +           '<a href="https://www.linkedin.com/in/mussa-sembro-137472174/" target="_blank" rel="noopener noreferrer">traduction &amp; conseils linguistiques</a>, '
+        +           'ainsi qu\'un retour terrain (interface trop chargée pour de grands débutants)</li>'
         +         '<li>👪 <strong>Mes parents</strong> — relecture &amp; conseils</li>'
         +         '<li>🔀 <strong>Christophe Elin &amp; Sandrine Le Goff</strong> — retours croisés Espagnol ↔ Français (VACHÉBO), profitant aussi à cette appli (bugs, personnalisation, navigation)</li>'
         +       '</ul>'
