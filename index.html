@@ -43,15 +43,17 @@
   ║             générique .categories-body (catégories repliables   ║
   ║             + carte "▶ Continuer" sur les DEUX niveaux)          ║
   ║   Écran 3   Leçon (#lesson, dont 🆕 rangée                       ║
-  ║             .lesson-quick-nav)                ligne   1574      ║
-  ║   Modale    Remerciements (#credits-modal)    ligne   1658      ║
-  ║   Modale    Confirmation suppression          ligne   1691      ║
-  ║   Modale 🆕 Quitter l'application              ligne   1718      ║
+  ║             .lesson-quick-nav — 🏠❓📚🚪 regroupées ;             ║
+  ║             flèches ‹›  désormais sur la ligne du titre,        ║
+  ║             30/08/2026)                        ligne   1574      ║
+  ║   Modale    Remerciements (#credits-modal)    ligne   1654      ║
+  ║   Modale    Confirmation suppression          ligne   1687      ║
+  ║   Modale 🆕 Quitter l'application              ligne   1714      ║
   ║             (#quit-app-modal)                                   ║
-  ║   Modale 🆕 (25/07/2026) Nav verrouillée       ligne   1746      ║
+  ║   Modale 🆕 (25/07/2026) Nav verrouillée       ligne   1742      ║
   ║             (#nav-locked-modal, avant choix de langue)          ║
-  ║   Nav       Barre de navigation basse         ligne   1773      ║
-  ║   Scripts   Chargement de app.js              ligne   1815      ║
+  ║   Nav       Barre de navigation basse         ligne   1769      ║
+  ║   Scripts   Chargement de app.js              ligne   1811      ║
   ║  🆕 24/07/2026 (2e correctif du jour) : #home et #guide,        ║
   ║  séparés plus tôt dans la journée pour corriger l'icône ❓       ║
   ║  inopérante, sont réunis à nouveau — mais réagencés sur le      ║
@@ -1576,43 +1578,39 @@
     <div class="lesson-header">
 
       <!--
-        🆕 Rangée de navigation rapide (voir _updateQuickNav() dans
-        app.js, §5b) : 🏠 Accueil / ❓ Guide / 📚 Modules à gauche,
-        🚪 Quitter isolé à droite. Le bouton "←" existant (ligne 1
-        ci-dessous) reste la navigation principale retour-liste ;
-        cette rangée ajoute la possibilité de sauter directement vers
-        n'importe quel autre écran.
+        🆕 (30/08/2026) Rangée de navigation rapide (voir _updateQuickNav()
+        dans app.js, §5b) : 🏠 Accueil / ❓ Guide / 📚 Modules / 🚪 Quitter,
+        les 4 icônes désormais regroupées ensemble (retour terrain :
+        harmonisation avec l'appli sœur espagnole — 🚪 vivait auparavant
+        seule, isolée à droite par justify-content:space-between).
       -->
       <div class="lesson-quick-nav">
         <div class="back-btn-group">
           <button class="back-btn-icon" id="lessonQnHomeBtn" onclick="goToAccueil()" aria-label="Accueil">🏠</button>
           <button class="back-btn-icon" id="lessonQnGuideBtn" onclick="goToGuide()" aria-label="Guide">❓</button>
           <button class="back-btn-icon" id="lessonQnModulesBtn" onclick="navGoModules()" aria-label="Modules">📚</button>
+          <button class="back-btn-icon quit-icon-btn" id="lessonQuitBtn" onclick="openQuitModal()" aria-label="Quitter">🚪</button>
         </div>
-        <button class="back-btn-icon quit-icon-btn" id="lessonQuitBtn" onclick="openQuitModal()" aria-label="Quitter">🚪</button>
       </div>
 
-      <!-- ── Ligne 1 : retour + badge niveau + emoji + titre ── -->
+      <!-- ── Ligne 2 : emoji + titre + flèches nav entre modules (à droite) ──
+           🆕 (30/08/2026) Retour terrain : le bouton "← Modules" texte et
+           le badge "Niv. 1/2" ont été supprimés (doublons avec l'icône 📚
+           ci-dessus et avec la nav basse) ; les flèches ‹ › — auparavant
+           sur leur propre ligne (.lesson-header-bot, supprimée) — rejoignent
+           la ligne du titre, alignées à droite comme sur l'appli sœur
+           espagnole. #lessonTitle garde flex:1 et absorbe l'espace restant,
+           passant seul à la ligne si le titre est long. Header réduit à
+           2 lignes (au lieu de 3), gain de lisibilité et d'espace. -->
       <div class="lesson-header-top">
-        <button class="back-btn" id="lessonBackBtn" onclick="lessonGoBack()">←</button>
-        <!-- Badge niveau cliquable : "Niv. 1" ou "Niv. 2" — renseigné par openTheme() -->
-        <button class="lesson-level-badge" id="lessonLevelBadge" onclick="lessonGoBack()"></button>
         <span id="lessonEmoji"></span>
         <h3 id="lessonTitle"></h3>
-      </div>
-
-      <!-- ── Ligne 2 : flèches de navigation entre modules (alignées à droite) ──
-           🆕 (29/08/2026) Les boutons PDF ont quitté cette ligne : ils sont
-           désormais construits dynamiquement par _buildLessonPdfBtnHTML()
-           (app.js §8b) et intégrés au panneau "⚙️ Réglages audio" de chaque
-           onglet, avec le badge de voix, la vitesse et la répétition. -->
-      <div class="lesson-header-bot">
-        <!-- Flèches prev / next entre modules — agrandies et plus contrastées -->
+        <!-- Flèches prev / next entre modules — style compact (cf. appli espagnole) -->
         <div class="lesson-nav-arrows">
           <button class="lesson-nav-btn" id="lessonPrevBtn" onclick="lessonNav(-1)" title="Module précédent">‹</button>
           <button class="lesson-nav-btn" id="lessonNextBtn" onclick="lessonNav(1)"  title="Module suivant">›</button>
         </div>
-      </div><!-- /.lesson-header-bot -->
+      </div>
 
     </div><!-- /.lesson-header -->
 

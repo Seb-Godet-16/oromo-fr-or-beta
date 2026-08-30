@@ -22,59 +22,60 @@
  * ║  rendu visuel.                                                  ║
  * ╠══════════════════════════════════════════════════════════════════╣
  * ║  PLAN DU FICHIER                                                ║
- * ║   §1        Reset & base                          ligne   109  ║
- * ║   §2        Variables de thème (:root / fallback) ligne   233  ║
- * ║   §3        Thème Français (html.theme-french)    ligne   312  ║
- * ║   §4        Thème Oromo (html.theme-oromo)        ligne   354  ║
- * ║   §5        Écran 0 — Lanceur (dont 🆕            ligne   391  ║
+ * ║   §1        Reset & base                          ligne   115  ║
+ * ║   §2        Variables de thème (:root / fallback) ligne   239  ║
+ * ║   §3        Thème Français (html.theme-french)    ligne   318  ║
+ * ║   §4        Thème Oromo (html.theme-oromo)        ligne   360  ║
+ * ║   §5        Écran 0 — Lanceur (dont 🆕            ligne   397  ║
  * ║             .launcher-quit-btn)                                ║
- * ║   §6        🆕 Écran 1 — Home + Guide fusionnés   ligne   898  ║
+ * ║   §6        🆕 Écran 1 — Home + Guide fusionnés   ligne   904  ║
  * ║             (#home, agencement VACHÉBO, 24/07/2026,             ║
  * ║             2e correctif — voir Bilan_technique.md §6.24)       ║
- * ║   §7        Écran 2 — Sections                    ligne   989  ║
- * ║   §8        Écran 3 — Leçon (dont .back-btn-icon  ligne  1157  ║
- * ║             icônes 🏠/❓; 🆕 .lesson-quick-nav)                  ║
- * ║   §9        Composants : Flashcards (dont 🆕      ligne  1478  ║
+ * ║   §7        Écran 2 — Sections                    ligne   995  ║
+ * ║   §8        Écran 3 — Leçon (dont .back-btn-icon  ligne  1163  ║
+ * ║             icônes 🏠/❓/📚/🚪 groupées ; flèches ‹›              ║
+ * ║             sur la ligne du titre — 30/08/2026)                 ║
+ * ║   §9        Composants : Flashcards (dont 🆕      ligne  1429  ║
  * ║             centrage vertical sûr des faces .fc-*,               ║
  * ║             voir Bilan_technique.md §6.26)                       ║
- * ║   §10       Composants : Alphabet                 ligne  1701  ║
- * ║   §11       Composants : Quiz                     ligne  1801  ║
- * ║   §12       Composants : Dialogues / Situations   ligne  1915  ║
- * ║   §13       Composants : Vocabulaire              ligne  2020  ║
- * ║   §14       Modale Remerciements                  ligne  2088  ║
- * ║   §15       Footer commun                         ligne  2199  ║
- * ║   §16       Toast notification                    ligne  2219  ║
- * ║   §16b   🆕 Bandeau hors-ligne persistant          ligne  2255  ║
- * ║   §17       Onglet Répète (dont 🆕 .repeat-        ligne  2319  ║
+ * ║   §10       Composants : Alphabet                 ligne  1652  ║
+ * ║   §11       Composants : Quiz                     ligne  1752  ║
+ * ║   §12       Composants : Dialogues / Situations   ligne  1866  ║
+ * ║   §13       Composants : Vocabulaire              ligne  1971  ║
+ * ║   §14       Modale Remerciements                  ligne  2039  ║
+ * ║   §15       Footer commun                         ligne  2150  ║
+ * ║   §16       Toast notification                    ligne  2170  ║
+ * ║   §16b   🆕 Bandeau hors-ligne persistant          ligne  2206  ║
+ * ║   §17       Onglet Répète (dont 🆕 .repeat-        ligne  2270  ║
  * ║             badges-intro, phrase d'intro 2 badges)              ║
- * ║   §18       Focus clavier                         ligne  2617  ║
- * ║   §19       Guide utilisateur (.ob-*, dont 🆕      ligne  2635  ║
+ * ║   §18       Focus clavier                         ligne  2568  ║
+ * ║   §19       Guide utilisateur (.ob-*, dont 🆕      ligne  2586  ║
  * ║             "Quel navigateur choisir ?")                        ║
- * ║   §20       Spinner de chargement                 ligne  3103  ║
- * ║   §22       🆕 Écran Home + Guide fusionnés       ligne  3140  ║
+ * ║   §20       Spinner de chargement                 ligne  3054  ║
+ * ║   §22       🆕 Écran Home + Guide fusionnés       ligne  3091  ║
  * ║             (#home — fond dégradé, layout, voir §6)             ║
- * ║   §23       Écran Sections redesigné (dont        ligne  3558  ║
+ * ║   §23       Écran Sections redesigné (dont        ligne  3509  ║
  * ║             .back-btn-group)                                   ║
- * ║   §24       Responsive : tablette & desktop       ligne  3748  ║
- * ║   §24b      Mode sombre                           ligne  3838  ║
- * ║   §24c      Responsive : mode paysage mobile      ligne  3958  ║
- * ║   §25       Boutons d'export PDF                  ligne  4031  ║
- * ║   §26       Barre de navigation basse             ligne  4131  ║
- * ║   §27       Onglets niveau 1 / 2                  ligne  4258  ║
- * ║   §28       Écrans sections level (no-scroll)     ligne  4353  ║
- * ║   §20e      Grille thèmes écrans level            ligne  4551  ║
- * ║   §CONFETTI Animation de félicitations ⭐⭐⭐      ligne  4572  ║
- * ║   §PROGRESS Carte(s) de progression (Home,        ligne  4643  ║
+ * ║   §24       Responsive : tablette & desktop       ligne  3699  ║
+ * ║   §24b      Mode sombre                           ligne  3789  ║
+ * ║   §24c      Responsive : mode paysage mobile      ligne  3909  ║
+ * ║   §25       Boutons d'export PDF                  ligne  3982  ║
+ * ║   §26       Barre de navigation basse             ligne  4082  ║
+ * ║   §27       Onglets niveau 1 / 2                  ligne  4209  ║
+ * ║   §28       Écrans sections level (no-scroll)     ligne  4304  ║
+ * ║   §20e      Grille thèmes écrans level            ligne  4502  ║
+ * ║   §CONFETTI Animation de félicitations ⭐⭐⭐      ligne  4523  ║
+ * ║   §PROGRESS Carte(s) de progression (Home,        ligne  4594  ║
  * ║             1 ou 2 selon les parcours commencés)                ║
- * ║   §CONFIRM  Modale confirmation suppression       ligne  4766  ║
- * ║   §QUITMODAL 🆕 Modale "Quitter l'application"     ligne  4885  ║
+ * ║   §CONFIRM  Modale confirmation suppression       ligne  4717  ║
+ * ║   §QUITMODAL 🆕 Modale "Quitter l'application"     ligne  4836  ║
  * ║             (#quit-app-modal, icône 🚪 nav rapide)              ║
- * ║   §NAVLOCKED 🆕 (25/07/2026) Modale "Nav verrouillée"  ligne  4988 ║
+ * ║   §NAVLOCKED 🆕 (25/07/2026) Modale "Nav verrouillée"  ligne  4939 ║
  * ║             (#nav-locked-modal) avant choix de langue           ║
- * ║   §ANTISPAM E-mail affiché à l'envers (CSS RTL)  ligne  5051  ║
- * ║   §SPEAKING Feedback visuel bouton audio (TTS)    ligne  5078  ║
- * ║   §29       Correctifs accessibilité mode sombre  ligne  5136  ║
- * ║   §30    🆕 Panneau "⚙️ Réglages audio" (écran   ligne  5401  ║
+ * ║   §ANTISPAM E-mail affiché à l'envers (CSS RTL)  ligne  5002  ║
+ * ║   §SPEAKING Feedback visuel bouton audio (TTS)    ligne  5029  ║
+ * ║   §29       Correctifs accessibilité mode sombre  ligne  5087  ║
+ * ║   §30    🆕 Panneau "⚙️ Réglages audio" (écran   ligne  5352  ║
  * ║             Leçon, repli/dépli — voir app.js §8b               ║
  * ║             et Bilan_technique.md §6.29)                        ║
  * ║  ── Plan resynchronisé le 23/07/2026 : ajout d'une navigation    ║
@@ -113,6 +114,11 @@
  * ║  conjugaison des cartes Verbes sur petit écran). +21 lignes,     ║
  * ║  toutes les ancres à partir de §10 décalées en conséquence       ║
  * ║  (Bilan_technique.md §6.26).                                     ║
+ * ║  ── Resynchronisé le 30/08/2026 : retour terrain header Leçon    ║
+ * ║  (§8) — .lesson-level-badge et .back-btn (ancien bouton texte     ║
+ * ║  "← Modules") supprimés, .lesson-nav-btn réduit (40px → 26px)     ║
+ * ║  pour tenir à côté du titre. -55 lignes, toutes les ancres à      ║
+ * ║  partir de §9 décalées en conséquence.                           ║
  * ╚══════════════════════════════════════════════════════════════════╝
  */
 
@@ -1173,14 +1179,13 @@ html.theme-french .btn-reset-theme:hover{
 /* #lesson layout moved to §28 — no-scroll fix */
 
 /* ── Lesson header : 2 lignes ─────────────────────────────────────
-   Ligne 1 (.lesson-quick-nav)   : 🏠❓📚 (gauche) + 🚪 (droite)
-   Ligne 2 (.lesson-header-top) : ← badge emoji titre flèches nav
-   🆕 (29/08/2026) Fusion de l'ancienne ligne "flèches nav" (autrefois
-   .lesson-header-bot, sa propre ligne 3) dans .lesson-header-top —
-   harmonisation avec l'appli sœur espagnole (VACHÉBO), qui tient sur
-   2 lignes au lieu de 3 : gain d'une ligne complète de hauteur d'en-
-   tête. Le bouton PDF avait déjà quitté cette ligne auparavant — voir
-   §8b dans app.js et .audio-settings ci-dessous (§30).
+   Ligne 1 (.lesson-quick-nav) : 🏠❓📚🚪 — 4 icônes regroupées
+   Ligne 2 (.lesson-header-top) : emoji + titre + flèches nav
+   🆕 (30/08/2026) Retour terrain : le bouton "← Modules" texte et le
+   badge "Niv. 1/2" (doublons avec l'icône 📚 de la ligne 1 et avec la
+   nav basse) sont supprimés ; 🚪 Quitter rejoint le groupe 🏠❓📚 au
+   lieu d'être isolé à droite. Harmonisation avec l'appli sœur
+   espagnole (VACHÉBO), qui tient sur 2 lignes au lieu de 3.
    ────────────────────────────────────────────────────────────────── */
 .lesson-header{
   background:var(--c-grad-lesson);
@@ -1190,24 +1195,20 @@ html.theme-french .btn-reset-theme:hover{
   gap:5px;
 }
 
-/* 🆕 Rangée de navigation rapide (🏠❓📚🚪) — ajoutée AU-DESSUS de
-   .lesson-header-top (voir _updateQuickNav() dans app.js, §5b).
-   Le groupe .back-btn-group (🏠❓📚) reste à gauche, 🚪 Quitter isolé
-   à droite pour rester visuellement distinct (comme sur #home). */
+/* Rangée de navigation rapide (🏠❓📚🚪) — voir _updateQuickNav() dans
+   app.js, §5b. 🆕 (30/08/2026) Les 4 icônes forment désormais un seul
+   groupe .back-btn-group (auparavant 🚪 isolé à droite via
+   justify-content:space-between, retour terrain : lisibilité). */
 .lesson-quick-nav{
   display:flex;
   align-items:center;
-  justify-content:space-between;
   gap:6px;
 }
 
-/* Ligne 2 : retour + badge + emoji + titre + flèches nav
-   🆕 (29/08/2026) .lesson-nav-arrows vit désormais ICI, dans la même
-   rangée que le titre (au lieu de sa propre ligne .lesson-header-bot,
-   supprimée) — harmonisation avec l'appli sœur espagnole, 2 lignes au
-   lieu de 3. .lesson-nav-arrows garde flex-shrink:0 (voir plus bas) :
-   il reste ancré à droite, poussé par #lessonTitle en flex:1 qui
-   absorbe tout l'espace restant et passe seul à la ligne si besoin. */
+/* Ligne 2 : emoji + titre + flèches nav
+   .lesson-nav-arrows garde flex-shrink:0 (voir plus bas) : il reste
+   ancré à droite, poussé par #lessonTitle en flex:1 qui absorbe tout
+   l'espace restant et passe seul à la ligne si le titre est long. */
 .lesson-header-top{
   display:flex;
   align-items:center;
@@ -1239,51 +1240,31 @@ html.theme-french .btn-reset-theme:hover{
 
 /* .lesson-body layout moved to §28 */
 
-/* ── Badge niveau cliquable dans le header de leçon ─────────────── */
-/*
-  Pastille "Niv. 1" / "Niv. 2" affichée entre le bouton ← et l'emoji
-  du thème. Cliquable → retour à la liste du niveau correspondant.
-  Style pill blanc semi-transparent sur fond de header coloré,
-  cohérent avec les badges du header sections.
-*/
-.lesson-level-badge{
-  background:rgba(255,255,255,.22);
-  border:1.5px solid rgba(255,255,255,.45);
-  border-radius:50px;
-  color:#fff;
-  font-size:.65rem;
-  font-weight:800;
-  padding:3px 10px;
-  cursor:pointer;
-  white-space:nowrap;
-  flex-shrink:0;
-  letter-spacing:.03em;
-  transition:background .15s, transform .1s;
-  min-height:28px;
-  display:flex;
-  align-items:center;
-}
-/* ── Flèches ‹ › de navigation entre modules dans le header leçon ── */
+/* ── Flèches ‹ › de navigation entre modules dans le header leçon ──
+   🆕 (30/08/2026) Rejoint désormais la ligne du titre (.lesson-header-top,
+   voir plus haut) et gabarit réduit — retour terrain : les boutons
+   étaient beaucoup trop grands pour tenir à côté du titre, harmonisation
+   avec la taille compacte de l'appli sœur espagnole. */
 /*
   .lesson-nav-arrows : conteneur flex en bout de header, aligné à droite.
-  .lesson-nav-btn    : bouton pill blanc semi-transparent, cohérent avec
-                       .lesson-level-badge et .back-btn sur le même fond
-                       dégradé. État :disabled → opacité réduite, non cliquable.
+  .lesson-nav-btn    : petit bouton rond, contour fin, semi-transparent
+                       sur le fond dégradé. État :disabled → opacité
+                       réduite, non cliquable.
 */
 .lesson-nav-arrows{
   display:flex;
-  gap:8px;
+  gap:5px;
   flex-shrink:0;
 }
 .lesson-nav-btn{
-  background:rgba(255,255,255,.22);
-  border:2px solid rgba(255,255,255,.55);
+  background:rgba(255,255,255,.16);
+  border:1.5px solid rgba(255,255,255,.5);
   border-radius:50%;
   color:#fff;
-  font-size:1.35rem;
-  font-weight:800;
-  width:40px;
-  height:40px;
+  font-size:1rem;
+  font-weight:700;
+  width:26px;
+  height:26px;
   display:flex;
   align-items:center;
   justify-content:center;
@@ -1291,14 +1272,14 @@ html.theme-french .btn-reset-theme:hover{
   line-height:1;
   transition:background .15s, transform .1s, box-shadow .15s;
   padding:0;
-  box-shadow:0 2px 8px rgba(0,0,0,.18);
+  box-shadow:0 1px 4px rgba(0,0,0,.15);
 }
 .lesson-nav-btn:hover:not(:disabled){
-  background:rgba(255,255,255,.38);
-  box-shadow:0 3px 12px rgba(0,0,0,.22);
+  background:rgba(255,255,255,.32);
+  box-shadow:0 2px 6px rgba(0,0,0,.18);
 }
 .lesson-nav-btn:active:not(:disabled){
-  background:rgba(255,255,255,.55);
+  background:rgba(255,255,255,.48);
   transform:scale(.88);
 }
 .lesson-nav-btn:disabled{
@@ -1352,36 +1333,6 @@ html.theme-french .btn-reset-theme:hover{
   }
 }
 
-.lesson-level-badge:hover{
-  background:rgba(255,255,255,.35);
-}
-.lesson-level-badge:active{
-  background:rgba(255,255,255,.5);
-  transform:scale(.94);
-}
-
-
-/*
-  !important nécessaires ici car .back-btn apparaît dans des
-  contextes à spécificité variable (en-têtes colorés, home).
-  La règle .sections-header/.lesson-header confirme la couleur
-  blanche quelle que soit la cascade.
-*/
-.back-btn{
-  background:none;
-  border:none;
-  color:#fff;
-  font-size:1rem!important;
-  font-weight:800!important;
-  cursor:pointer;
-  padding:4px 8px;
-  line-height:1;
-}
-.lesson-header .back-btn{
-  font-size:1rem!important;
-  font-weight:800!important;
-  color:#fff!important;
-}
 .sections-header .back-btn-icon{
   font-size:1rem!important;
   font-weight:800!important;
