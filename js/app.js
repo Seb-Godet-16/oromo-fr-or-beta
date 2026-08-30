@@ -3636,6 +3636,11 @@ function renderFlash() {
      que le bouton 🔊 ci-dessus, pour que le badge reflète toujours la voix
      réellement utilisée au clic. */
   _updateCardVoiceBadge();
+
+  /* 🆕 (29/08/2026) Taille de la carte adaptée au contenu réel (recto/verso)
+     plutôt qu'une hauteur fixe identique pour tous les mots — voir
+     _adjustFlashcardHeight() ci-dessous. */
+  _adjustFlashcardHeight();
 }
 
 /**
@@ -3662,6 +3667,77 @@ function pickAlpha(i) {
   speak(_spokenKey(card));
   const d = document.getElementById('alphaDetail');
   if (d) d.innerHTML = buildAlphaDetail(card);
+}
+
+/**
+ * 🆕 (29/08/2026) Ajuste la hauteur de la flashcard (#fc / .fc-wrap) à son
+ * contenu RÉEL, recto et verso confondus, au lieu d'une hauteur fixe
+ * identique pour tous les mots (ancien calc(--app-h - 470px) toujours
+ * occupé en entier — carte visuellement "vide" pour un mot simple sans
+ * conjugaison, mais parfois trop courte pour un verbe à conjugaison
+ * longue, qui devait alors scroller À L'INTÉRIEUR de la carte, ce qui
+ * masquait une partie du contenu au premier coup d'œil).
+ *
+ * .fc-front et .fc-back sont superposées en position:absolute (perspective
+ * 3D du retournement) donc invisibles l'une de l'autre côté hauteur :
+ * .scrollHeight mesure toujours le contenu total de CHACUNE, qu'elle soit
+ * actuellement visible ou non, et reste fiable même si height:100% (CSS
+ * §8 mode-cartes) la contraint visuellement — .scrollHeight ignore cette
+ * contrainte et reflète la hauteur réellement nécessaire au contenu.
+ *
+ * Bornes :
+ *   - FLOOR   : plancher de lisibilité pour un mot très court.
+ *   - CEILING : budget de chrome dérivé du viewport (--app-h) — onglets,
+ *               nav prev/suivant, bouton Écouter, nav basse… Cas normal :
+ *               la carte prend sa hauteur réelle, plafonnée ici.
+ *   - Cas .fc-tall (contenu qui dépasse même CEILING, ex. verbe à
+ *     conjugaison très longue sur petit écran) : plutôt qu'un scroll
+ *     INTERNE à la carte (overflow-y:auto sur .fc-front/.fc-back, §8 —
+ *     toujours en place mais peu lisible, "scroller dans une fenêtre"),
+ *     on réutilise la technique de .audio-settings-open (§28/§30) :
+ *     .lesson-body redevient scrollable, la carte prend sa hauteur
+ *     complète non plafonnée, et l'utilisateur scrolle normalement toute
+ *     la page (le bouton "Écouter" reste accessible via position:sticky).
+ */
+function _adjustFlashcardHeight() {
+  const lesson = document.getElementById('lesson');
+  const wrap   = document.querySelector('#lesson.mode-cartes .fc-wrap');
+  const fc     = document.getElementById('fc');
+  if (!lesson || !wrap || !fc) return;
+  const front = fc.querySelector('.fc-front');
+  const back  = fc.querySelector('.fc-back');
+  if (!front || !back) return;
+
+  const FLOOR   = 170;
+  const appH    = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--app-h')) || window.innerHeight;
+  const CEILING = Math.max(FLOOR, appH - 470);
+
+  const natural = Math.max(front.scrollHeight, back.scrollHeight);
+  const isTall  = natural > CEILING;
+
+  /* 🆕 (29/08/2026) Cas rare : même le plafond dérivé du viewport ne suffit
+     pas (verbe à conjugaison très longue sur petit écran). Plutôt que de
+     forcer un scroll INTERNE à la carte (overflow-y:auto sur .fc-front/
+     .fc-back, §8 — techniquement en place mais peu lisible : on scrolle
+     "dans une petite fenêtre"), on réutilise la même technique que le
+     panneau Réglages audio ouvert (.audio-settings-open, voir §28/§30
+     plus haut) : la carte prend sa hauteur RÉELLE, non plafonnée, et
+     .lesson-body redevient scrollable le temps de cette carte — l'utilisateur
+     scrolle alors normalement toute la page, bouton "Écouter" compris
+     (position:sticky s'applique naturellement dans un conteneur qui
+     scrolle). flexShrink:'0' empêche le moteur flex de re-comprimer la
+     carte pour la faire "rentrer" de force dans l'espace normalement
+     alloué. */
+  lesson.classList.toggle('fc-tall', isTall);
+  if (isTall) {
+    wrap.style.flexShrink = '0';
+    wrap.style.maxHeight  = 'none';
+    wrap.style.height     = natural + 'px';
+  } else {
+    wrap.style.flexShrink = '';
+    wrap.style.height     = '';
+    wrap.style.maxHeight  = Math.max(natural, FLOOR) + 'px';
+  }
 }
 
 /**
@@ -4510,6 +4586,13 @@ function _renderRepeatUnavailable(mainMsg, tip) {
  * 🔊 "Tu entends" (voix TTS, #repeatVoiceBadge) et 🎙️ "Le micro comprend"
  * (reconnaissance STT) — précédés d'une phrase d'intro qui explique la
  * différence entre les deux en langage simple.
+ * 🆕 (29/08/2026) Cette phrase d'intro vit désormais DANS le panneau
+ * "Réglages audio" (juste au-dessus des 2 badges), et non plus au-dessus
+ * de la carte : elle sert de titre à ces badges, qui ont eux-mêmes rejoint
+ * ce panneau le 29/08/2026 (voir plus bas) — les deux étaient devenus
+ * orphelins l'un de l'autre. Ça règle au passage un chevauchement visuel :
+ * affichée au-dessus de la carte, la phrase pouvait se retrouver coupée par
+ * le header sticky lors du scroll.
  * @param {string|null} altLangMsg  - (inutilisé) ancien bandeau d'alerte
  */
 function _renderRepeatUI(altLangMsg) {
@@ -4526,13 +4609,15 @@ function _renderRepeatUI(altLangMsg) {
     : '';
 
   /* 🆕 (08/07/2026) Phrase d'intro courte, affichée UNE FOIS au-dessus des 2
-     badges ci-dessous. But pédagogique demandé en recettage : dans cet
-     onglet, l'apprenant ENTEND un mot (synthèse vocale / TTS) PUIS le
-     RÉPÈTE, et sa prononciation est VÉRIFIÉE (reconnaissance vocale / STT).
-     Ce sont deux mécanismes distincts, avec chacun leur propre "langue"
-     potentiellement différente (ex : la voix qui parle peut être en Oromo
-     natif pendant que le micro, lui, doit se rabattre sur le Somali) — d'où
-     les 2 badges séparés qui suivent. */
+     badges ci-dessous (🆕 29/08/2026 : désormais dans le panneau Réglages
+     audio, voir _buildAudioSettingsHTML() plus bas, plutôt qu'au-dessus de
+     la carte). But pédagogique demandé en recettage : dans cet onglet,
+     l'apprenant ENTEND un mot (synthèse vocale / TTS) PUIS le RÉPÈTE, et sa
+     prononciation est VÉRIFIÉE (reconnaissance vocale / STT). Ce sont deux
+     mécanismes distincts, avec chacun leur propre "langue" potentiellement
+     différente (ex : la voix qui parle peut être en Oromo natif pendant que
+     le micro, lui, doit se rabattre sur le Somali) — d'où les 2 badges
+     séparés qui suivent. */
   const introLine = '<div class="repeat-badges-intro">'
     + L('Sagaleen tokko si dubbisa, kan biraa immoo dubbii kee dhaggeeffata:',
         '🔊 Une voix te fait entendre le mot, 🎙️ un micro vérifie ce que tu dis :')
@@ -4594,16 +4679,19 @@ function _renderRepeatUI(altLangMsg) {
      auparavant toujours visibles en haut de l'onglet, sont désormais
      regroupés avec le PDF dans le panneau Réglages audio (§8b), placé
      APRÈS l'exercice (carte / feedback / contrôles / progression) pour
-     ne pas retarder l'affichage du contenu actif de la répétition. */
+     ne pas retarder l'affichage du contenu actif de la répétition.
+     introLine les accompagne désormais dans ce même panneau (elle en est
+     le titre — voir doc de fonction ci-dessus) au lieu de rester seule
+     au-dessus de la carte. */
   document.getElementById('tabContent').innerHTML =
     altBanner
-    + introLine
     + '<div id="repeat-card" class="repeat-card"></div>'
     + '<div id="repeat-feedback" class="repeat-feedback"></div>'
     + '<div id="repeat-controls" class="repeat-controls"></div>'
     + '<div id="repeat-progress" class="repeat-progress-wrap"></div>'
     + _buildAudioSettingsHTML(
-        '<div id="repeatVoiceBadge" class="repeat-voice-badge-wrap"></div>'
+        introLine
+        + '<div id="repeatVoiceBadge" class="repeat-voice-badge-wrap"></div>'
         + langInfo
         + _buildTtsRateControlsHTML()
         + _buildLessonPdfBtnHTML(),
@@ -5649,6 +5737,9 @@ function _hideLoadingSpinner() {
     const navH = nav ? nav.getBoundingClientRect().height : 56;
     document.documentElement.style.setProperty('--app-h',        h    + 'px');
     document.documentElement.style.setProperty('--bottom-nav-h', navH + 'px');
+    /* 🆕 (29/08/2026) --app-h a changé (rotation, barre d'URL…) → replafonner
+       la flashcard actuellement affichée si l'onglet Cartes est actif. */
+    if (typeof _adjustFlashcardHeight === 'function') _adjustFlashcardHeight();
   }
 
   /* Appel immédiat — couvre le premier rendu */

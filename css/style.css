@@ -1173,10 +1173,14 @@ html.theme-french .btn-reset-theme:hover{
 /* #lesson layout moved to §28 — no-scroll fix */
 
 /* ── Lesson header : 2 lignes ─────────────────────────────────────
-   Ligne 1 (.lesson-header-top)  : ← badge emoji titre
-   Ligne 2 (.lesson-header-bot)  : flèches nav (alignées à droite)
-   🆕 (29/08/2026) Le bouton PDF a quitté cette ligne — voir §8b dans
-   app.js et .audio-settings ci-dessous (§30).
+   Ligne 1 (.lesson-quick-nav)   : 🏠❓📚 (gauche) + 🚪 (droite)
+   Ligne 2 (.lesson-header-top) : ← badge emoji titre flèches nav
+   🆕 (29/08/2026) Fusion de l'ancienne ligne "flèches nav" (autrefois
+   .lesson-header-bot, sa propre ligne 3) dans .lesson-header-top —
+   harmonisation avec l'appli sœur espagnole (VACHÉBO), qui tient sur
+   2 lignes au lieu de 3 : gain d'une ligne complète de hauteur d'en-
+   tête. Le bouton PDF avait déjà quitté cette ligne auparavant — voir
+   §8b dans app.js et .audio-settings ci-dessous (§30).
    ────────────────────────────────────────────────────────────────── */
 .lesson-header{
   background:var(--c-grad-lesson);
@@ -1197,7 +1201,13 @@ html.theme-french .btn-reset-theme:hover{
   gap:6px;
 }
 
-/* Ligne 1 : retour + badge + emoji + titre */
+/* Ligne 2 : retour + badge + emoji + titre + flèches nav
+   🆕 (29/08/2026) .lesson-nav-arrows vit désormais ICI, dans la même
+   rangée que le titre (au lieu de sa propre ligne .lesson-header-bot,
+   supprimée) — harmonisation avec l'appli sœur espagnole, 2 lignes au
+   lieu de 3. .lesson-nav-arrows garde flex-shrink:0 (voir plus bas) :
+   il reste ancré à droite, poussé par #lessonTitle en flex:1 qui
+   absorbe tout l'espace restant et passe seul à la ligne si besoin. */
 .lesson-header-top{
   display:flex;
   align-items:center;
@@ -1207,17 +1217,9 @@ html.theme-french .btn-reset-theme:hover{
   color:#fff;
   font-size:.82rem;
   flex:1;
+  min-width:0;
   line-height:1.2;
   margin:0;
-}
-
-/* Ligne 2 : flèches de navigation, alignées à droite (seul élément
-   restant depuis que le bouton PDF est passé dans .audio-settings) */
-.lesson-header-bot{
-  display:flex;
-  align-items:center;
-  justify-content:flex-end;
-  gap:8px;
 }
 
 /* Alias de compatibilité — certains sélecteurs ciblent .lesson-header h3 */
@@ -2454,15 +2456,22 @@ footer a:hover{text-decoration:underline}
   max-width:340px;
 }
 
-/* ── Carte du mot à répéter ────────────────────────────────────── */
+/* ── Carte du mot à répéter ────────────────────────────────────────
+   🆕 (29/08/2026) padding et plancher réduits : l'ancien min-height:130px
+   + padding généreux (24px en haut) créait une carte disproportionnée
+   pour les entrées sans indice (.repeat-card-hint absent — cas courant,
+   ex. verbes affichant juste l'infinitif ici, les conjugaisons restant
+   réservées à l'onglet Cartes). Le contenu reste centré verticalement
+   (justify-content:center) et la carte grandit naturellement si un indice
+   plus long est présent — seul le plancher/l'espace mort est réduit. */
 .repeat-card{
   background:#fff;
   border-radius:20px;
   box-shadow:0 4px 18px #0002;
-  padding:24px 18px 18px;
+  padding:18px 18px 14px;
   text-align:center;
   margin-bottom:12px;
-  min-height:130px;
+  min-height:96px;
   display:flex;
   flex-direction:column;
   align-items:center;
@@ -4483,8 +4492,11 @@ footer a:hover{text-decoration:underline}
    max-height pour que la carte n'occupe pas toute la hauteur disponible.
    flex:1 (requis) : donne à fc-wrap une hauteur résolue par le moteur
    flex → height:100% sur les faces (.fc-front/.fc-back) se calcule bien.
-   max-height:--app-h - 470px : réduit légèrement la carte vs flex pur
-   et laisse un souffle naturel entre "Écouter" et "Télécharger".
+   🆕 (29/08/2026) La valeur ci-dessous n'est plus qu'un FALLBACK (avant le
+   tout premier rendu JS, ou si celui-ci échouait) : _adjustFlashcardHeight()
+   (app.js) recalcule et pose max-height EN LIGNE à chaque carte, ajusté au
+   contenu réel (recto/verso) au lieu d'une taille fixe identique pour tous
+   les mots — voir cette fonction pour le détail des bornes plancher/plafond.
    (470px = 400px de base + ~70px pour les rangées vitesse/répétition,
    compactées ci-dessous, ajoutées sous le bouton Écouter.) */
 #lesson.mode-cartes .fc-wrap{
@@ -5485,5 +5497,17 @@ footer a:hover{text-decoration:underline}
    ailleurs qu'en mode Cartes : .lesson-body y est déjà scrollable par
    défaut. Classe posée par _toggleAudioSettings() dans app.js. ── */
 #lesson.mode-cartes.audio-settings-open .lesson-body{
+  overflow-y:auto;
+}
+
+/* ── Même technique, autre déclencheur : carte à conjugaison trop longue
+   même pour le plafond habituel de _adjustFlashcardHeight() (app.js,
+   §9) — ex. verbe à 6 formes conjuguées sur petit écran. Plutôt qu'un
+   scroll interne à la carte (overflow-y:auto sur .fc-front/.fc-back,
+   §9, techniquement toujours en place mais peu lisible), on réactive le
+   scroll de .lesson-body le temps de cette carte : l'utilisateur scrolle
+   alors toute la page normalement, bouton "Écouter" compris (sticky).
+   Classe posée par _adjustFlashcardHeight() dans app.js. ── */
+#lesson.mode-cartes.fc-tall .lesson-body{
   overflow-y:auto;
 }
