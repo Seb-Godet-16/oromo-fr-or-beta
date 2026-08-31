@@ -5488,8 +5488,10 @@ function showCredits() {
         +       '<ul class="hg-essential-list">'
         /* 🆕 (24/07/2026) Rubrique synthétisée — reprise et condensée depuis
            le Guide explicatif (§8), icônes différenciées par contributeur. */
-        +         '<li>🛠️ <strong>Fédérico Calo</strong> — '
-        +           '<a href="https://www.linkedin.com/in/federicocalo/" target="_blank" rel="noopener noreferrer">gargaarsa teeknikaa</a></li>'
+        /* 🐞 (31/08/2026) Lien hypertexte LinkedIn retiré (miroir du
+           correctif appliqué au bloc français ci-dessous) — texte en
+           clair, même police que les 2 autres entrées de la liste. */
+        +         '<li>🛠️ <strong>Fédérico Calo</strong> — gargaarsa teeknikaa</li>'
         /* 🆕 (31/08/2026) Texte remplacé par une formulation plus précise
            et plus courte, à la demande du porteur du projet (doc
            "Faire_les_modifications_suivantes", point 3) — insiste sur le
@@ -5498,8 +5500,7 @@ function showCredits() {
            elle-même. Brouillon Oromo à FAIRE VALIDER PAR MUSSA SEMBRO
            avant publication (même règle que le reste du contenu Oromo
            de cette fonction). Voir Bilan_technique.md §6.32. */
-        +         '<li>🌍 <strong>Mussa Sembro</strong> — '
-        +           '<a href="https://www.linkedin.com/in/mussa-sembro-137472174/" target="_blank" rel="noopener noreferrer">hiikkaa Afaan Oromoo mirkaneessuu fi sirreessuu, akkasumas yaada dirree irraa</a></li>'
+        +         '<li>🌍 <strong>Mussa Sembro</strong> — hiikkaa Afaan Oromoo mirkaneessuu fi sirreessuu, akkasumas yaada dirree irraa</li>'
         +         '<li>👪 <strong>Maatii koo</strong> — deebi\'anii dubbisuu fi gorsa</li>'
         /* 🆕 BROUILLON Oromo — traduction à FAIRE VALIDER PAR MUSSA SEMBRO
            avant publication (même règle que pour le récit personnel Oromo
@@ -5542,8 +5543,11 @@ function showCredits() {
         /* 🆕 (24/07/2026) Rubrique synthétisée — reprise et condensée depuis
            le Guide explicatif (§8), icônes différenciées par contributeur,
            cf. Bug_2 (capture de l'appli sœur). */
-        +         '<li>🛠️ <strong>Fédérico Calo</strong> — '
-        +           '<a href="https://www.linkedin.com/in/federicocalo/" target="_blank" rel="noopener noreferrer">aide technique</a></li>'
+        /* 🐞 (31/08/2026) Lien hypertexte LinkedIn retiré à la demande du
+           porteur du projet — texte en clair, même police que les 2 autres
+           entrées de la liste (Mes parents / Christophe Elin & Sandrine
+           Le Goff) qui n'ont jamais été des liens. */
+        +         '<li>🛠️ <strong>Fédérico Calo</strong> — aide technique</li>'
         /* 🆕 (31/08/2026) Texte remplacé — insiste sur la vérification
            et correction de la traduction oromo déjà réalisée par Mussa,
            plutôt que sur la traduction elle-même ; retiré le détail
@@ -5551,8 +5555,7 @@ function showCredits() {
            demandée par le porteur du projet, doc
            "Faire_les_modifications_suivantes", point 3). Voir
            Bilan_technique.md §6.32. */
-        +         '<li>🌍 <strong>Mussa Sembro</strong> — '
-        +           '<a href="https://www.linkedin.com/in/mussa-sembro-137472174/" target="_blank" rel="noopener noreferrer">vérification et correction de la traduction oromo &amp; retour terrain</a></li>'
+        +         '<li>🌍 <strong>Mussa Sembro</strong> — vérification et correction de la traduction oromo &amp; retour terrain</li>'
         +         '<li>👪 <strong>Mes parents</strong> — relecture &amp; conseils</li>'
         +         '<li>🔀 <strong>Christophe Elin &amp; Sandrine Le Goff</strong> — retours croisés Espagnol ↔ Français (VACHÉBO), profitant aussi à cette appli (bugs, personnalisation, navigation)</li>'
         +       '</ul>'
