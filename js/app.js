@@ -53,67 +53,64 @@
            — voir §6.27 ; 🆕 (29/08/2026) Niveau 2 reçoit le même
            traitement (THEME_CATEGORIES_L2, 4 catégories) via la
            fonction généralisée _buildCategorizedGrid(), utilisée
-           par _buildLevel1Body() et _buildLevel2Body() — §6.28
-      8.   Ouverture d'un thème (écran Lesson + onglets) —   ligne  3135
+           par _buildLevel1Body() et _buildLevel2Body() — §6.28 ;
+           🆕 (31/08/2026) _computeAutoOpenCategoryIds() n'ouvre
+           plus que la 1ʳᵉ catégorie au démarrage (au lieu de 2)
+           — voir §6.32
+      8.   Ouverture d'un thème (écran Lesson + onglets) —   ligne  3225
            🆕 (30/08/2026) badge "Niv. 1/2" du header retiré
            (retour terrain, doublon avec nav rapide — voir index.html/
            style.css §8)
-           switchTab() : onglets + repositionnement          ligne  3281
+           switchTab() : onglets + repositionnement          ligne  3361
            du bouton PDF en mode Cartes (fixed via JS)
-      9.   Cartes Flash — vocabulaire interactif             ligne  3313
-     10.   Quiz 10 questions — avec étoiles progressives     ligne  3488
+      9.   Cartes Flash — vocabulaire interactif             ligne  3539
+           🆕 (31/08/2026) icône 👆 + phrase "Cliquez pour voir
+           la traduction..." retirées du recto (redondant avec
+           le libellé Recto/Verso au-dessus) — voir §6.32
+     10.   Quiz 10 questions — avec étoiles progressives     ligne  3797
            (dont Quiz Alphabet, sans barre de vitesse — voir §3a3)
-     11.   Dialogue — scènes de situation                    ligne  3808
-     12.   Vocabulaire — lexique visuel cliquable            ligne  3868
-     13b.  Onglet Répète — badges voix (🔊) + reconnaissance  ligne  3916
+     11.   Dialogue — scènes de situation                    ligne  4122
+     12.   Vocabulaire — lexique visuel cliquable            ligne  4182
+     13b.  Onglet Répète — badges voix (🔊) + reconnaissance  ligne  4230
            vocale (🎙️), vitesse dédiée — voir §3a3
-     13.   Quiz Dialogue — questions sur le dialogue         ligne  4674
-     14.   Utilitaires & chaînes de résultats bilingues      ligne  4785
-     17.   Guide utilisateur — Onboarding — 🆕 auto-affiché   ligne  4881
+     13.   Quiz Dialogue — questions sur le dialogue         ligne  5009
+     14.   Utilitaires & chaînes de résultats bilingues      ligne  5122
+     17.   Guide utilisateur — Onboarding — 🆕 auto-affiché   ligne  5218
            à la 1ʳᵉ visite d'un mode (_maybeShowOnboarding()) ;
            (25/07/2026) _closeOnboarding() (stub mort) supprimée
-      —    Écran Home + Guide — 🆕 (24/07/2026, 2e correctif  ligne  4914
+      —    Écran Home + Guide — 🆕 (24/07/2026, 2e correctif  ligne  5298
            du jour) écran UNIQUE #home à nouveau (agencement
            VACHÉBO, pas l'ancien) — _buildHomeGuide()
-     18.   Crédits — showCredits()                           ligne  5438
-           🆕 (30/08/2026, 3e correctif) bullet Mussa Sembro
-           enrichi d'un retour terrain (interface trop chargée
-           pour de grands débutants) — FR + brouillon Oromo,
-           voir Bilan_technique.md §6.31
-     15.   Initialisation du launcher                        ligne  5590
-     15b.  🆕 Panneaux infos dépliables des cartes de langue  ligne  5623
+     18.   Crédits — showCredits()                           ligne  5433
+           🆕 (31/08/2026) bullet Mussa Sembro reformulé — FR +
+           brouillon Oromo, voir Bilan_technique.md §6.32
+     15.   Initialisation du launcher                        ligne  5591
+     15b.  🆕 Panneaux infos dépliables des cartes de langue  ligne  5624
            (état par défaut + préférence manuelle — voir §7
            de la demande de refonte du Lanceur, 22/07/2026)
-     16.   Accessibilité clavier                             ligne  5695
-     19.   Spinner de chargement des données                 ligne  5707
-     19b.  Viewport height fix — Android Chrome / Brave      ligne  5750
-     20.   Enregistrement du Service Worker (PWA)            ligne  5815
+     16.   Accessibilité clavier                             ligne  5696
+     19.   Spinner de chargement des données                 ligne  5708
+     19b.  Viewport height fix — Android Chrome / Brave      ligne  5751
+     20.   Enregistrement du Service Worker (PWA)            ligne  5816
            + 🆕 vérification proactive des mises à jour
            au premier plan et toutes les 60 min — voir §6.19
-     20b.  🆕 Installation PWA — bouton natif "Installer     ligne  5905
+     20b.  🆕 Installation PWA — bouton natif "Installer     ligne  5906
            l'app" (bouton natif Android/Chrome, rappel iOS)
-     21.   Exports PDF — window.print() + @media print       ligne  6006
-     21a.  Export Guide (accordéons de l'écran #home)         ligne  6203
-     21b.  Export Vocabulaire (leçon Niveau 1)               ligne  6321
-     21c.  Export Situation (leçon Niveau 2 — dialogue)      ligne  6417
+     21.   Exports PDF — window.print() + @media print       ligne  6007
+     21a.  Export Guide (accordéons de l'écran #home)         ligne  6204
+     21b.  Export Vocabulaire (leçon Niveau 1)               ligne  6322
+     21c.  Export Situation (leçon Niveau 2 — dialogue)      ligne  6418
    ============================================================
-   🆕 Resynchronisé le 30/08/2026 (3e correctif du jour) : bullet
-   Mussa Sembro (§18/showCredits, modale crédits) enrichi d'un retour
-   terrain (interface trop chargée pour de grands débutants) — FR +
-   brouillon Oromo à valider. +9 lignes en §18 ; toutes les ancres à
-   partir de §15 (section suivante dans l'ordre d'apparition réel)
-   décalées en conséquence — voir Bilan_technique.md §6.31.
-   ⚠️ DÉRIVE PRÉEXISTANTE DÉCOUVERTE (non liée à ce correctif) : les
-   ancres §18 à §21c ci-dessus étaient déjà décalées d'environ 320-330
-   lignes par rapport au fichier réel AVANT ce correctif (ex. §18
-   indiquait 5092, la ligne réelle de showCredits() était déjà 5416)
-   — écart antérieur non expliqué, ni introduit ni corrigé par les
-   resynchronisations partielles du 29/08 et du 30/08 (1er/2e
-   correctifs), qui ne portaient que sur des ancres antérieures à §18.
-   Corrigé ici par recalcul intégral (recherche directe, pas
-   arithmétique) pour §18 à §21c uniquement ; les sections §1 à §17
-   n'ont pas été revérifiées dans le cadre de cette session (hors
-   périmètre — non concernées par ce correctif).
+   🆕 Resynchronisé le 31/08/2026 : 4 correctifs demandés via le doc
+   "Faire_les_modifications_suivantes" — (1) _computeAutoOpenCategoryIds()
+   §7 n'ouvre plus que la 1ʳᵉ catégorie au démarrage (au lieu de 2) ;
+   (2) icône 👆 + phrase "Cliquez pour voir la traduction..." retirées
+   du recto des flashcards §9 (redondant, CSS mort .fc-front-hint
+   supprimé de style.css) ; (3) bullet Mussa Sembro §18/showCredits
+   reformulé (FR + brouillon Oromo) ; (4) paragraphe Remerciements
+   Mussa/parents scindé en 2 dans index.html (hors app.js). Détail
+   complet : Bilan_technique.md §6.32. Toutes les ancres de §7 à §21c
+   recalculées par recherche directe (pas arithmétique).
    ============================================================
    🆕 Resynchronisé le 30/08/2026 : retour terrain header Leçon —
    bouton "← Modules" texte (lessonBackBtn, §2/_setUI) et badge
@@ -2964,11 +2961,13 @@ function _buildContinueCard(categories, doneTextFr, doneTextOr) {
 
 /**
  * Calcule l'auto-dépli initial (premier rendu SEULEMENT — voir
- * _buildCategorizedGrid) : la première catégorie pas encore terminée à
- * 100 % + la suivante ; si tout est déjà terminé, seule la première
- * catégorie. Générique Niveau 1 / Niveau 2 depuis le 29/08/2026.
+ * _buildCategorizedGrid) : uniquement la première catégorie pas encore
+ * terminée à 100 % ; si tout est déjà terminé, la première catégorie du
+ * niveau. 🆕 (31/08/2026) Ne rouvre plus la catégorie suivante en plus —
+ * une seule catégorie ouverte au démarrage, voir Bilan_technique.md
+ * §6.32. Générique Niveau 1 / Niveau 2 depuis le 29/08/2026.
  * @param {Array<Object>} categories - THEME_CATEGORIES_L1 ou THEME_CATEGORIES_L2
- * @returns {Set<string>} ids de catégories à ouvrir
+ * @returns {Set<string>} id (unique) de la catégorie à ouvrir
  */
 function _computeAutoOpenCategoryIds(categories) {
   const idx = categories.findIndex((cat) => {
@@ -2976,9 +2975,7 @@ function _computeAutoOpenCategoryIds(categories) {
     return prog.done < prog.total;
   });
   if (idx === -1) return new Set([categories[0].id]);
-  const ids = [categories[idx].id];
-  if (categories[idx + 1]) ids.push(categories[idx + 1].id);
-  return new Set(ids);
+  return new Set([categories[idx].id]);
 }
 
 /**
@@ -3604,10 +3601,8 @@ function renderFlash() {
           return '<div class="fc-conj-line">' + l + '</div>';
         }).join('') + '</div>';
   } else {
-    const flipHint = L('Hiika isaa Afaan Oromootin arguuf cuqaasi', 'Cliquez pour voir la traduction en français');
     frontContent = emFront
-      + '<div class="fc-front-word" id="fcFrontWord" lang="' + keys.src + '">' + frontWordHTML + '</div>'
-      + '<div class="fc-front-hint">👆 ' + flipHint + '</div>';
+      + '<div class="fc-front-word" id="fcFrontWord" lang="' + keys.src + '">' + frontWordHTML + '</div>';
     backContent  = emBack
       + '<div class="fc-back-word" lang="' + keys.tgt + '">' + card[keys.tgt] + '</div>';
   }
@@ -5495,16 +5490,16 @@ function showCredits() {
            le Guide explicatif (§8), icônes différenciées par contributeur. */
         +         '<li>🛠️ <strong>Fédérico Calo</strong> — '
         +           '<a href="https://www.linkedin.com/in/federicocalo/" target="_blank" rel="noopener noreferrer">gargaarsa teeknikaa</a></li>'
-        /* 🆕 (30/08/2026) BROUILLON Oromo — segment "yaada isaa dirree
-           irraa..." ajouté, traduction à FAIRE VALIDER PAR MUSSA SEMBRO
+        /* 🆕 (31/08/2026) Texte remplacé par une formulation plus précise
+           et plus courte, à la demande du porteur du projet (doc
+           "Faire_les_modifications_suivantes", point 3) — insiste sur le
+           rôle de VÉRIFICATION/CORRECTION de Mussa sur la traduction
+           oromo (déjà faite dans l'app), plutôt que sur la traduction
+           elle-même. Brouillon Oromo à FAIRE VALIDER PAR MUSSA SEMBRO
            avant publication (même règle que le reste du contenu Oromo
-           de cette fonction). Mussa est crédité pour le constat
-           (interface trop chargée pour de grands débutants), pas pour
-           la solution (regroupement en catégories, décision du porteur
-           du projet) — voir Bilan technique / README pour le contexte. */
+           de cette fonction). Voir Bilan_technique.md §6.32. */
         +         '<li>🌍 <strong>Mussa Sembro</strong> — '
-        +           '<a href="https://www.linkedin.com/in/mussa-sembro-137472174/" target="_blank" rel="noopener noreferrer">hiikkaa fi gorsa afaanii</a>, '
-        +           'akkasumas yaada isaa dirree irraa (interface-iin jalqabtoota guddaaf baay\'ee walxaxaa ta\'uu)</li>'
+        +           '<a href="https://www.linkedin.com/in/mussa-sembro-137472174/" target="_blank" rel="noopener noreferrer">hiikkaa Afaan Oromoo mirkaneessuu fi sirreessuu, akkasumas yaada dirree irraa</a></li>'
         +         '<li>👪 <strong>Maatii koo</strong> — deebi\'anii dubbisuu fi gorsa</li>'
         /* 🆕 BROUILLON Oromo — traduction à FAIRE VALIDER PAR MUSSA SEMBRO
            avant publication (même règle que pour le récit personnel Oromo
@@ -5549,9 +5544,15 @@ function showCredits() {
            cf. Bug_2 (capture de l'appli sœur). */
         +         '<li>🛠️ <strong>Fédérico Calo</strong> — '
         +           '<a href="https://www.linkedin.com/in/federicocalo/" target="_blank" rel="noopener noreferrer">aide technique</a></li>'
+        /* 🆕 (31/08/2026) Texte remplacé — insiste sur la vérification
+           et correction de la traduction oromo déjà réalisée par Mussa,
+           plutôt que sur la traduction elle-même ; retiré le détail
+           entre parenthèses sur l'interface (formulation plus courte
+           demandée par le porteur du projet, doc
+           "Faire_les_modifications_suivantes", point 3). Voir
+           Bilan_technique.md §6.32. */
         +         '<li>🌍 <strong>Mussa Sembro</strong> — '
-        +           '<a href="https://www.linkedin.com/in/mussa-sembro-137472174/" target="_blank" rel="noopener noreferrer">traduction &amp; conseils linguistiques</a>, '
-        +           'ainsi qu\'un retour terrain (interface trop chargée pour de grands débutants)</li>'
+        +           '<a href="https://www.linkedin.com/in/mussa-sembro-137472174/" target="_blank" rel="noopener noreferrer">vérification et correction de la traduction oromo &amp; retour terrain</a></li>'
         +         '<li>👪 <strong>Mes parents</strong> — relecture &amp; conseils</li>'
         +         '<li>🔀 <strong>Christophe Elin &amp; Sandrine Le Goff</strong> — retours croisés Espagnol ↔ Français (VACHÉBO), profitant aussi à cette appli (bugs, personnalisation, navigation)</li>'
         +       '</ul>'

@@ -1521,7 +1521,6 @@ html.theme-french .btn-reset-theme:hover{
   text-align:center;
   line-height:1.3;
 }
-.fc-front-hint{font-size:.72rem;color:#bbb;margin-top:10px;letter-spacing:.5px}
 
 /* Face verso : dégradé coloré + texte blanc */
 .fc-back{
@@ -3863,7 +3862,6 @@ footer a:hover{text-decoration:underline}
     border-color:#38383f;
   }
   .fc-front-word,.fc-back-word{color:#f0f0f0;}
-  .fc-front-hint{color:#aaa;}
   .fc-conj-line{color:#bbb;}
 
   /* ── Quiz ── */
