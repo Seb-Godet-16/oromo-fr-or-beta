@@ -75,23 +75,45 @@
       —    Écran Home + Guide — 🆕 (24/07/2026, 2e correctif  ligne  4914
            du jour) écran UNIQUE #home à nouveau (agencement
            VACHÉBO, pas l'ancien) — _buildHomeGuide()
-     18.   Crédits — showCredits()                           ligne  5092
-     15.   Initialisation du launcher                        ligne  5236
-     15b.  🆕 Panneaux infos dépliables des cartes de langue  ligne  5269
+     18.   Crédits — showCredits()                           ligne  5438
+           🆕 (30/08/2026, 3e correctif) bullet Mussa Sembro
+           enrichi d'un retour terrain (interface trop chargée
+           pour de grands débutants) — FR + brouillon Oromo,
+           voir Bilan_technique.md §6.31
+     15.   Initialisation du launcher                        ligne  5590
+     15b.  🆕 Panneaux infos dépliables des cartes de langue  ligne  5623
            (état par défaut + préférence manuelle — voir §7
            de la demande de refonte du Lanceur, 22/07/2026)
-     16.   Accessibilité clavier                             ligne  5341
-     19.   Spinner de chargement des données                 ligne  5353
-     19b.  Viewport height fix — Android Chrome / Brave      ligne  5396
-     20.   Enregistrement du Service Worker (PWA)            ligne  5458
+     16.   Accessibilité clavier                             ligne  5695
+     19.   Spinner de chargement des données                 ligne  5707
+     19b.  Viewport height fix — Android Chrome / Brave      ligne  5750
+     20.   Enregistrement du Service Worker (PWA)            ligne  5815
            + 🆕 vérification proactive des mises à jour
            au premier plan et toutes les 60 min — voir §6.19
-     20b.  🆕 Installation PWA — bouton natif "Installer     ligne  5548
+     20b.  🆕 Installation PWA — bouton natif "Installer     ligne  5905
            l'app" (bouton natif Android/Chrome, rappel iOS)
-     21.   Exports PDF — window.print() + @media print       ligne  5649
-     21a.  Export Guide (accordéons de l'écran #home)         ligne  5846
-     21b.  Export Vocabulaire (leçon Niveau 1)               ligne  5964
-     21c.  Export Situation (leçon Niveau 2 — dialogue)      ligne  6060
+     21.   Exports PDF — window.print() + @media print       ligne  6006
+     21a.  Export Guide (accordéons de l'écran #home)         ligne  6203
+     21b.  Export Vocabulaire (leçon Niveau 1)               ligne  6321
+     21c.  Export Situation (leçon Niveau 2 — dialogue)      ligne  6417
+   ============================================================
+   🆕 Resynchronisé le 30/08/2026 (3e correctif du jour) : bullet
+   Mussa Sembro (§18/showCredits, modale crédits) enrichi d'un retour
+   terrain (interface trop chargée pour de grands débutants) — FR +
+   brouillon Oromo à valider. +9 lignes en §18 ; toutes les ancres à
+   partir de §15 (section suivante dans l'ordre d'apparition réel)
+   décalées en conséquence — voir Bilan_technique.md §6.31.
+   ⚠️ DÉRIVE PRÉEXISTANTE DÉCOUVERTE (non liée à ce correctif) : les
+   ancres §18 à §21c ci-dessus étaient déjà décalées d'environ 320-330
+   lignes par rapport au fichier réel AVANT ce correctif (ex. §18
+   indiquait 5092, la ligne réelle de showCredits() était déjà 5416)
+   — écart antérieur non expliqué, ni introduit ni corrigé par les
+   resynchronisations partielles du 29/08 et du 30/08 (1er/2e
+   correctifs), qui ne portaient que sur des ancres antérieures à §18.
+   Corrigé ici par recalcul intégral (recherche directe, pas
+   arithmétique) pour §18 à §21c uniquement ; les sections §1 à §17
+   n'ont pas été revérifiées dans le cadre de cette session (hors
+   périmètre — non concernées par ce correctif).
    ============================================================
    🆕 Resynchronisé le 30/08/2026 : retour terrain header Leçon —
    bouton "← Modules" texte (lessonBackBtn, §2/_setUI) et badge

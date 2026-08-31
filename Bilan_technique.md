@@ -16,7 +16,7 @@
 | Thèmes par mode | 53 (37 Niveau 1 Vocabulaire + 16 Niveau 2 Dialogue) |
 | Mots/expressions par mode | ~387 entrées (Français) · ~396 entrées (Oromo) |
 | Fonctionnement hors-ligne | ✅ 100 % après première visite (Service Worker) |
-| Taille totale du code source | ~825 Ko (6 fichiers principaux, 16 956 lignes) |
+| Taille totale du code source | ~868 Ko (6 fichiers principaux, 17 534 lignes — recalculé le 30/08/2026, voir §6.31 et §2) |
 | Indicateur hors-ligne | ✅ Bandeau persistant, proactif (couvre 🎤 Répète ET 🔊 Écouter — voir §6.14) |
 | Guide navigateur | 🆕 Comparatif Android/iOS des 10 navigateurs les plus utilisés au monde (voir §6.15) |
 | Repérage visuel des modules | 🆕 Système à 3 états (nouveau / en cours / terminé à 100%) en plus des étoiles ⭐ (voir §6.18) |
@@ -25,6 +25,7 @@
 | Grille Niveau 2 | 🆕 16 dialogues regroupés en 4 catégories repliables + sa propre carte "▶ Continuer" (voir §6.28) |
 | En-tête écran Leçon | 🆕 2 lignes au lieu de 3 — flèches de nav fusionnées dans la rangée du titre, harmonisé avec l'appli sœur espagnole (voir §6.29) |
 | Flashcards / carte Répète | 🆕 Taille adaptée au contenu réel (recto/verso mesurés), avec repli sur le scroll de page pour les cas extrêmes (voir §6.30) |
+| Remerciements — Mussa Sembro | 🆕 Retour terrain crédité (interface trop chargée pour de grands débutants), distinct de la traduction — dans les 4 emplacements "remerciements" de l'app, FR + brouillon Oromo (voir §6.31) |
 
 ---
 
@@ -34,11 +35,11 @@
 
 | Fichier | Taille | Lignes | Rôle |
 |---|---|---|---|
-| `js/app.js` | 288 Ko | 6 505 | Moteur applicatif complet (dont le bandeau hors-ligne §3e, le suivi "modules déjà ouverts" §7, la vérification proactive des mises à jour SW §20 — voir §6.19 —, le clin d'œil mascotte sur quiz sans-faute §14 — voir §6.22 —, l'écran Home+Guide fusionné et `goToHome()` supprimée — voir §6.24 —, la modale "Nav verrouillée" `#nav-locked-modal` + suppression du stub mort `_closeOnboarding()` — voir §6.25 —, le regroupement des Niveaux 1 ET 2 en catégories repliables + carte "Continuer" (`THEME_CATEGORIES_L1`/`THEME_CATEGORIES_L2`, `_buildCategorizedGrid()` partagée, §7) — voir §6.27/§6.28 —, l'audit anti-fuite audio/micro `_stopAllAudioAndMic()` sur 11 points de navigation, et 🆕 la taille des flashcards/carte Répète adaptée au contenu réel (`_adjustFlashcardHeight()`) + phrase d'intro Répète déplacée dans le panneau Réglages audio — voir §6.30 ; plan interne `SECTIONS DE CE FICHIER` resynchronisé le 29/08/2026, voir §6.28 — **⚠️ non revérifié depuis** l'audit audio/micro ni §6.30, voir point de vigilance §7) |
-| `css/style.css` | 192 Ko | 5 513 | Styles + système de thèmes dual (dont §16b bandeau hors-ligne, §7 états visuels des cartes-module, §2 tokens de marque `--c-flag-red/black/cream` — voir §6.22 —, l'écran Home+Guide fusionné (agencement VACHÉBO) — voir §6.24 —, §NAVLOCKED, la modale "Nav verrouillée" — voir §6.25 —, §20f, catégories Niveau 1 ET 2 + carte "Continuer" via la classe générique `.categories-body` — voir §6.27/§6.28 —, l'en-tête Leçon fusionné à 2 lignes — voir §6.29 —, et 🆕 la classe `.fc-tall` (repli scroll de page pour les flashcards trop hautes) + `.repeat-card` allégée — voir §6.30) |
+| `js/app.js` | 292 Ko | 6 548 | Moteur applicatif complet (dont le bandeau hors-ligne §3e, le suivi "modules déjà ouverts" §7, la vérification proactive des mises à jour SW §20 — voir §6.19 —, le clin d'œil mascotte sur quiz sans-faute §14 — voir §6.22 —, l'écran Home+Guide fusionné et `goToHome()` supprimée — voir §6.24 —, la modale "Nav verrouillée" `#nav-locked-modal` + suppression du stub mort `_closeOnboarding()` — voir §6.25 —, le regroupement des Niveaux 1 ET 2 en catégories repliables + carte "Continuer" (`THEME_CATEGORIES_L1`/`THEME_CATEGORIES_L2`, `_buildCategorizedGrid()` partagée, §7) — voir §6.27/§6.28 —, l'audit anti-fuite audio/micro `_stopAllAudioAndMic()` sur 11 points de navigation, la taille des flashcards/carte Répète adaptée au contenu réel (`_adjustFlashcardHeight()`) + phrase d'intro Répète déplacée dans le panneau Réglages audio — voir §6.30 —, et 🆕 le bullet Mussa Sembro de la modale crédits (§18/`showCredits()`) enrichi d'un retour terrain — voir §6.31 ; plan interne `SECTIONS DE CE FICHIER` **resynchronisé le 30/08/2026 pour §18 à §21c** (voir §6.31 — recalcul intégral par recherche directe, a révélé une dérive préexistante d'environ 320-330 lignes sur ces ancres, non liée à ce correctif ; §1 à §17 non revérifiées, hors périmètre) |
+| `css/style.css` | 196 Ko | 5 492 | Styles + système de thèmes dual (dont §16b bandeau hors-ligne, §7 états visuels des cartes-module, §2 tokens de marque `--c-flag-red/black/cream` — voir §6.22 —, l'écran Home+Guide fusionné (agencement VACHÉBO) — voir §6.24 —, §NAVLOCKED, la modale "Nav verrouillée" — voir §6.25 —, §20f, catégories Niveau 1 ET 2 + carte "Continuer" via la classe générique `.categories-body` — voir §6.27/§6.28 —, l'en-tête Leçon fusionné à 2 lignes — voir §6.29 —, et la classe `.fc-tall` (repli scroll de page pour les flashcards trop hautes) + `.repeat-card` allégée — voir §6.30) ; **⚠️ écart préexistant signalé** : cette table indiquait encore 5 513 lignes, alors que le fichier reçu pour cette session en comptait déjà 5 492 (non modifié par §6.31) — corrigé directement à la valeur réelle actuelle, sans investigation de cet écart antérieur, hors périmètre de cette session |
 | `js/data-fr.js` | 113 Ko | 1 532 | Dataset mode "Apprendre le Français" — 37 thèmes Niveau 1 (voir §6.26) |
 | `js/data-or.js` | 110 Ko | 1 487 | Dataset mode "Apprendre l'Oromo" — 37 thèmes Niveau 1 (voir §6.26) |
-| `index.html` | 124 Ko | 1 821 | Structure HTML — 5 écrans (Home et Guide de nouveau fusionnés en un seul `#home`, voir §6.24) + 3 modales (dont `#nav-locked-modal`, voir §6.25) + bandeau hors-ligne + guide "Quel navigateur choisir ?" + logo étendu aux écrans Sections (§6.22) + `#grid1` ET `#grid2` en `.categories-body` (catégories Niveau 1 et 2, voir §6.27/§6.28) + 🆕 en-tête Leçon fusionné à 2 lignes (voir §6.29) ; **⚠️ écart préexistant signalé** : cette table indiquait encore 1 829 lignes avant cette session, alors que le fichier réellement reçu en comptait déjà 1 819 (état post-audit audio/micro, jamais resynchronisé ici) — corrigé directement à la valeur réelle actuelle (1 821), sans reprise complète du reste de cette table pour cet écart antérieur, hors périmètre de cette session |
+| `index.html` | 124 Ko | 1 851 | Structure HTML — 5 écrans (Home et Guide de nouveau fusionnés en un seul `#home`, voir §6.24) + 3 modales (dont `#nav-locked-modal`, voir §6.25) + bandeau hors-ligne + guide "Quel navigateur choisir ?" + logo étendu aux écrans Sections (§6.22) + `#grid1` ET `#grid2` en `.categories-body` (catégories Niveau 1 et 2, voir §6.27/§6.28) + en-tête Leçon fusionné à 2 lignes (voir §6.29) + 🆕 paragraphes Remerciements (FR §8 "Remerciements" + Oromo §8 "Galateeffannaa") enrichis d'une 2e phrase sur Mussa Sembro — voir §6.31 ; **⚠️ écart préexistant signalé** : cette table indiquait encore 1 821 lignes avant cette session, alors que le fichier réellement reçu en comptait déjà 1 817 (non expliqué, hors périmètre de §6.29/§6.30) — corrigé directement à la valeur réelle actuelle (1 851 après §6.31), sans reprise complète du reste de cette table pour cet écart antérieur |
 | `sw.js` | 33 Ko | 624 | Service Worker — Cache First / Network First |
 | `manifest.json` | — | — | PWA — icônes, orientation, screenshots |
 | `deploy.yml` | — | — | CI/CD GitHub Actions |
@@ -644,6 +645,43 @@ Même carte **"▶ Continuer"** que le Niveau 1 (logique identique : thème enta
 
 ---
 
+### §6.31 — 📝 Remerciements enrichis : retour terrain de Mussa Sembro (30/08/2026)
+
+**Contexte** : l'appli sœur espagnole VACHÉBO crédite Mussa Sembro pour un retour UX direct sur Taphad'Meuh (interface jugée trop chargée pour de grands débutants). Confirmation du porteur du projet : Mussa est bien à l'origine de **ce constat précis** — en revanche, la solution qui en a découlé (regroupement des thèmes en catégories repliables, §6.27) est de son fait à lui, pas de celui de Mussa. Objectif : refléter ce retour terrain dans Taphad'Meuh, dans toutes les parties "remerciements" (pas dans "Qui suis-je ?"/"Eenyu ani?", hors périmètre de cette demande), en créditant le **constat** et non la **solution**, avec un phrasé volontairement sobre ne faisant pas explicitement le lien avec la catégorisation.
+
+**4 emplacements identifiés et modifiés** (2 rendus × 2 langues) :
+
+| # | Fichier | Emplacement | Langue |
+|---|---|---|---|
+| 1 | `app.js` (§18, `showCredits()`) | Bullet modale crédits `#credits-modal` | Oromo — brouillon IA |
+| 2 | `app.js` (§18, `showCredits()`) | Bullet modale crédits `#credits-modal` | Français |
+| 3 | `index.html` (Écran 1 `#home`, accordéon §8) | Paragraphe "Galateeffannaa" | Oromo — brouillon IA |
+| 4 | `index.html` (Écran 1 `#home`, accordéon §8) | Paragraphe "Remerciements" | Français |
+
+**Choix de formulation** (3 options proposées, validées par le porteur du projet) : *"traduction, conseils linguistiques et retour terrain (interface trop chargée pour de grands débutants)"* — volontairement sobre, sans lien explicite avec la catégorisation, pour ne pas laisser entendre que la solution vient de Mussa.
+
+**Choix de structure pour `index.html` FR** (2 options proposées) : le paragraphe Français existant attribuait déjà, de façon conjointe et floue, des "conseils sur l'ergonomie de l'application" à Mussa **et** à mes parents. Option retenue : **cette phrase existante reste intacte** (sa portée est plus large — ce ne sont pas les mêmes personnes ni le même sujet), et le nouveau retour terrain est ajouté en **phrase séparée**, spécifique à Mussa, à la fin du même paragraphe. Le paragraphe Oromo équivalent ne contenait pas cette phrase floue (asymétrie FR/OR pré-existante, non traitée ici — hors périmètre) ; la nouvelle phrase y est ajoutée de la même façon, en miroir de la version française.
+
+**Bullets `app.js`** — la mention existante (lien LinkedIn vers "traduction & conseils linguistiques" / "hiikkaa fi gorsa afaanii") est conservée telle quelle ; le retour terrain est ajouté à la suite, hors du lien, dans le même `<li>`.
+
+**Traduction Oromo** : brouillon IA pour les 2 segments ajoutés (bullet `app.js` + phrase `index.html`), à faire valider par Mussa Sembro comme le reste du lot en cours (même convention que §6.26/§6.27/§6.28).
+
+**Resynchronisation des plans internes** :
+- `app.js` : plan `SECTIONS DE CE FICHIER` (en-tête) — §18 (Crédits) et toutes les ancres suivantes dans l'ordre d'apparition réel (§15, §15b, §16, §19, §19b, §20, §20b, §21, §21a, §21b, §21c) recalculées par recherche directe (+9 lignes en §18). **Découverte fortuite** : ces ancres étaient déjà décalées d'environ 320-330 lignes par rapport au fichier réel *avant même ce correctif* (ex. §18 indiquait 5092, la ligne réelle de `showCredits()` était déjà 5416) — écart antérieur non expliqué, non introduit par ce correctif, non corrigé au-delà de §18-§21c (recalcul de §1 à §17 hors périmètre de cette session, voir point de vigilance §7).
+- `index.html` : plan `PLAN DU FICHIER` (en-tête) — "Écran 2a" et toutes les ancres suivantes (Écran 2b, Écran 3, les 4 modales, Nav, Scripts) recalculées par recherche directe (+18 lignes dans "Écran 1"). **Écart préexistant flagué** (non corrigé, hors périmètre) : "Écran 0" et "Écran 1" étaient déjà décalés de 23 à 32 lignes avant ce correctif.
+
+**Vérifications effectuées** :
+- Syntaxique : `node --check app.js` — aucune erreur.
+- Comptage de balises `<div>`/`</div>` dans `index.html` : `229`/`228` → toujours `229`/`228` (aucun `<div>` ajouté ou retiré par ce correctif, uniquement du texte dans des `<p>` existants ou nouveaux).
+- Mentions de "Mussa" : `app.js` 10 → 11 occurrences, `index.html` 5 → 8 occurrences (cohérent avec 2 bullets enrichis + 2 phrases ajoutées + commentaires de traçabilité).
+- 4 occurrences exactes de la nouvelle mention en code (recherche directe), aucun doublon, miroir FR/OR confirmé sur le sens (constat crédité, solution non attribuée).
+- Toutes les ancres de plan interne modifiées revérifiées par recherche directe (pas par arithmétique), comme l'exige la convention du projet.
+- Visuel : non testé dans un navigateur réel (pas d'accès DOM/rendu graphique dans l'environnement d'implémentation) — changement purement textuel à faible risque, mais **relecture Oromo par Mussa Sembro toujours en attente** avant publication.
+
+**Fichiers modifiés** : `app.js`, `index.html`, `README.md` (historique), `Bilan_technique.md` (§6.31, §1, §2).
+
+---
+
 ## 7. Points de vigilance / dettes techniques
 
 | Point | Niveau | Détail |
@@ -664,6 +702,7 @@ Même carte **"▶ Continuer"** que le Niveau 1 (logique identique : thème enta
 | Compatibilité `:has()` CSS | ✅ OK | Évité volontairement ; taille de cercle pilotée par classe JS (`--single`) plutôt que par sélecteur `:has()` |
 | 🆕 Suivi "modules déjà ouverts" (badge Nouveau) | ✅ OK, ⚠️ 3ᵉ clé localStorage par mode | `openedThemes` (§6.18) s'ajoute à `done` : deux clés indépendantes par mode à surveiller en cas d'évolution du système de progression. `isOpened()` retombe sur `isDone()` par sécurité (anciennes progressions déjà sauvegardées avant l'ajout de cette clé ne réaffichent pas "Nouveau" à tort) |
 | 🆕 Taille de flashcard adaptée au contenu (`.fc-tall`) | ⚠️ Non testé en navigateur réel | `_adjustFlashcardHeight()` (§6.30) repose sur une interaction entre `flex-shrink`, `overflow-y:auto` et `position:sticky` raisonnée uniquement sur le code (pas d'accès DOM/rendu graphique dans l'environnement d'implémentation). Le cas courant (contenu sous le plafond viewport) est à faible risque ; le repli `.fc-tall` (contenu au-delà, ex. verbe à conjugaison longue sur petit écran) mérite une vérification terrain dédiée avant confiance totale |
+| 🆕 Plans internes (`app.js`/`index.html`) partiellement désynchronisés | ⚠️ Moyen | §6.31 a révélé, en resynchronisant §18-§21c d'`app.js`, une dérive préexistante d'environ 320-330 lignes sur ces ancres (non liée au correctif lui-même, origine non identifiée). §1-§17 d'`app.js` et "Écran 0"/"Écran 1" d'`index.html` n'ont pas été revérifiés dans cette session — une resynchronisation complète et dédiée des deux plans internes (recherche directe, pas arithmétique) serait utile avant de s'y fier pour une prochaine évolution |
 
 ---
 
