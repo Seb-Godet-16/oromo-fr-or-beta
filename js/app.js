@@ -194,30 +194,30 @@
 
    HISTORIQUE DE L'APPLICATION
    ============================================================
-   Du 07/06/2026 au 29/06/2026 : Version Bêta créée avec IA Claude
+   Historique commun aux 2 applications — VACHÉBO (français-espagnol)
+   et Taphad'Meuh (français-oromo) :
+
+   Du 07/06/2026 au 29/06/2026 : Versions Bêta créées avec IA Claude
                                   Sonnet 4.6 et Gemini 3.5 Flash.
 
-   Du 29/06/2026 au 08/07/2026 :
-     - Tests :
-         · Desktop (auto) et iPhone (manuel) par Fédérico
-         · Android (manuel) par Sébastien Godet (aidé par Gemini 3.5
-           Flash Extended)
-     - Correctifs par Sébastien Godet (aidé par Claude Sonnet 5)
+   Du 29/06/2026 au 08/07/2026 : Recettages et correctifs avec IA
+                                  Claude Sonnet 5 et Gemini 3.5 Flash.
 
-   Du 08/07/2026 au 12/07/2026 : Expériences utilisateurs (Christophe
-                                  Elin, Maman, Moi) et correctifs avec
-                                  Claude Sonnet 5.
-
-   22/07/2026 : Refonte des cartes de langue du Lanceur (écran 0) —
-                grille 2 colonnes avec panneaux infos dépliables par
-                parcours + correctif d'accessibilité (contraste texte/
-                fond WCAG 2.1 AA sur les dégradés bleu/rouge et
-                vert/or des cartes). Avec Claude Sonnet 5.
-
-   Du 22/07/2026 au 25/07/2026 : Expériences utilisatrice (Sandrine
-                                  avec application espagnole VACHÉBO,
-                                  Moi) et correctifs avec Claude
+   Du 08/07/2026 au 12/07/2026 : Retours d'expériences utilisateurs
+                                  (Christophe, Maman, Moi) avec des
+                                  correctifs réalisés avec IA Claude
                                   Sonnet 5.
+
+   Du 18/07/2026 au 25/07/2026 : Retours d'expérience utilisatrice
+                                  Sandrine avec des correctifs
+                                  réalisés avec IA Claude Sonnet 5.
+
+   Du 27/08/2026 au 31/08/2026 : Retours d'expérience utilisateur
+                                  Mussa et Moi avec des correctifs
+                                  réalisés avec IA Claude Sonnet 5.
+
+   05/09/2026 : Mise à jour Qui suis-je + Historique avec IA Claude
+                Sonnet 5.
    ============================================================ */
 
 
